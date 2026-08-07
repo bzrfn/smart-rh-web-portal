@@ -21,6 +21,7 @@ import VerifyAccount from '../modules/dashboard/VerifyAccount';
 import LandingPage from '../modules/landing/LandingPage';
 import AnalisisSupervisado from '../modules/ml/AnalisisSupervisado';
 import AnalisisKMeans from '../pages/AnalisisKMeans';
+import DashboardAnalitico from '../pages/DashboardAnalitico';
 
 export default function Navigation() {
   const { user } = useAuth();
@@ -62,6 +63,7 @@ export default function Navigation() {
       {user ? (
         <Route path="/portal" element={<AppShell />}>
           <Route index element={<Dashboard />} />
+
           <Route path="usuarios" element={<Usuarios />} />
           <Route path="asistencia" element={<Asistencia />} />
           <Route path="qr-asistencia" element={<QrAsistencia />} />
@@ -69,6 +71,10 @@ export default function Navigation() {
           <Route path="nomina" element={<Nomina />} />
           <Route path="contratos" element={<Contratos />} />
           <Route path="documentacion" element={<DocumentacionEmpleado />} />
+
+          {user.role === 'admin' && (
+            <Route path="dashboard-analitico" element={<DashboardAnalitico />} />
+          )}
 
           {user.role === 'admin' && (
             <Route path="analisis-supervisado" element={<AnalisisSupervisado />} />
@@ -92,6 +98,16 @@ export default function Navigation() {
       <Route path="/nomina" element={<Navigate to="/portal/nomina" replace />} />
       <Route path="/contratos" element={<Navigate to="/portal/contratos" replace />} />
       <Route path="/documentacion" element={<Navigate to="/portal/documentacion" replace />} />
+
+      <Route
+        path="/dashboard-analitico"
+        element={<Navigate to="/portal/dashboard-analitico" replace />}
+      />
+
+      <Route
+        path="/analitica-visual"
+        element={<Navigate to="/portal/dashboard-analitico" replace />}
+      />
 
       <Route
         path="/analisis-supervisado"

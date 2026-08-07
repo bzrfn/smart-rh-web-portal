@@ -77,6 +77,15 @@ const modules: ModuleCard[] = [
     adminOnly: true,
   },
   {
+    path: '/dashboard-analitico',
+    title: 'Dashboard analítico',
+    description:
+      'Visualización de datos con gráficas de asistencia, nómina, vacaciones, contratos y K-means.',
+    code: 'DA',
+    accent: 'gold',
+    adminOnly: true,
+  },
+  {
     path: '/analisis-supervisado',
     title: 'Análisis supervisado',
     description: 'Predicción y evaluación con modelos de Machine Learning.',
@@ -116,8 +125,10 @@ export default function Dashboard() {
     },
     {
       label: 'Analítica',
-      value: isAdmin ? 'ML + K-means' : 'Operativa',
-      detail: isAdmin ? 'Supervisado y no supervisado' : 'Vista de usuario',
+      value: isAdmin ? 'Visual + ML' : 'Operativa',
+      detail: isAdmin
+        ? 'Dashboard, supervisado y K-means'
+        : 'Vista de usuario',
       accent: 'gold',
     },
     {
@@ -139,7 +150,8 @@ export default function Dashboard() {
           <p>
             Controla la operación de Recursos Humanos desde una vista centralizada:
             usuarios, asistencia, documentación, nómina, vacaciones, soporte,
-            procesos ETL y análisis inteligente con Machine Learning.
+            procesos ETL, visualización de datos y análisis inteligente con
+            Machine Learning.
           </p>
 
           <div className="enterprise-hero-actions">
@@ -148,10 +160,10 @@ export default function Dashboard() {
             </Link>
 
             <Link
-              to={isAdmin ? '/analisis-kmeans' : '/documentacion'}
+              to={isAdmin ? '/dashboard-analitico' : '/documentacion'}
               className="enterprise-secondary-action"
             >
-              {isAdmin ? 'Ver K-means' : 'Ver documentos'}
+              {isAdmin ? 'Ver dashboard analítico' : 'Ver documentos'}
             </Link>
           </div>
         </div>
@@ -226,7 +238,8 @@ export default function Dashboard() {
             <h3>Operación estable</h3>
             <p>
               El portal integra base transaccional, auditoría, notificaciones,
-              documentación laboral, soporte, procesos ETL y análisis de datos.
+              documentación laboral, soporte, procesos ETL, dashboards visuales y
+              análisis de datos.
             </p>
 
             <div className="enterprise-health-list">
@@ -249,6 +262,12 @@ export default function Dashboard() {
               {isAdmin && (
                 <div>
                   <span />
+                  Dashboard analítico
+                </div>
+              )}
+              {isAdmin && (
+                <div>
+                  <span />
                   ML supervisado + K-means
                 </div>
               )}
@@ -262,6 +281,7 @@ export default function Dashboard() {
               <Link to="/documentacion">Documentación</Link>
               <Link to="/asistencia">Asistencia</Link>
               <Link to="/vacaciones">Vacaciones</Link>
+              {isAdmin && <Link to="/dashboard-analitico">Dashboard analítico</Link>}
               {isAdmin && <Link to="/etl">Proceso ETL</Link>}
               {isAdmin && <Link to="/analisis-supervisado">Análisis supervisado</Link>}
               {isAdmin && <Link to="/analisis-kmeans">K-means</Link>}
