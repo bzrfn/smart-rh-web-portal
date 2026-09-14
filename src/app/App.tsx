@@ -10,7 +10,7 @@ function Inner() {
     setAuthToken(token);
   }, [token]);
 
-  return <Navigation isAuthed={Boolean(token)} />;
+  return <Navigation />;
 }
 
 export default function App() {

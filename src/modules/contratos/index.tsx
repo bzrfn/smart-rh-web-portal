@@ -45,7 +45,7 @@ type EditState = {
 };
 
 const PAGE_SIZE = 5;
-const apiBase = import.meta.env.VITE_API_URL?.replace(/\/$/, '') || '';
+const apiBase = import.meta.env?.VITE_API_URL?.replace(/\/$/, '') || '';
 const fullUrl = (url?: string | null) => {
   if (!url) return '';
   return url.startsWith('http') ? url : `${apiBase}${url}`;

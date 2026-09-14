@@ -10,7 +10,7 @@ type NavItem = {
   adminOnly?: boolean;
 };
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+const API_BASE = import.meta.env?.VITE_API_URL || 'http://localhost:4000';
 const AUTH_STORAGE_KEY = 'rrhh_auth';
 
 function fullUrl(url?: string | null) {

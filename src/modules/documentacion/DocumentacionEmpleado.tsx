@@ -29,7 +29,7 @@ type EmployeeFilter =
   | 'con_credencial'
   | 'sin_credencial';
 
-const apiBase = import.meta.env.VITE_API_URL?.replace(/\/$/, '') || '';
+const apiBase = import.meta.env?.VITE_API_URL?.replace(/\/$/, '') || '';
 
 const fullUrl = (url?: string) => {
   if (!url) return '';

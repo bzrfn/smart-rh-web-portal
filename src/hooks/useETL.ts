@@ -5,7 +5,7 @@ import axios from 'axios';
 import { ETLReporteData } from '../types/etl';
 
 // URL base de la API tomada de las variables de entorno, con fallback local
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+const API_BASE = import.meta.env?.VITE_API_URL || 'http://localhost:4000';
 // Clave usada en localStorage para persistir el último reporte ETL
 const STORAGE_KEY = 'smart_rh_etl_report';
 
