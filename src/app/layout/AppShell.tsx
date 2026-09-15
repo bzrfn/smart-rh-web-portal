@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
+import ProtectedImage from '../../components/ProtectedImage';
 
 type NavItem = {
   path: string;
@@ -10,20 +11,16 @@ type NavItem = {
   adminOnly?: boolean;
 };
 
-const API_BASE = import.meta.env?.VITE_API_URL || 'http://localhost:4000';
 const AUTH_STORAGE_KEY = 'rrhh_auth';
-
-function fullUrl(url?: string | null) {
-  if (!url) return '';
-  return url.startsWith('http') ? url : `${API_BASE}${url}`;
-}
 
 export default function AppShell() {
   const { user, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
 
-  const [theme, setTheme] = useState(() => localStorage.getItem('smart_rh_theme') || 'light');
+  const [theme, setTheme] = useState(
+    () => localStorage.getItem('smart_rh_theme') || 'light'
+  );
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
@@ -32,8 +29,8 @@ export default function AppShell() {
 
   /*
     Protección directa del layout privado:
-    Si AppShell se restaura desde caché o se queda sin usuario,
-    se elimina la sesión local y se redirige al login.
+    si AppShell pierde el usuario, se elimina la sesión local
+    y se redirige al login.
   */
   useEffect(() => {
     if (!user) {
@@ -43,9 +40,7 @@ export default function AppShell() {
   }, [user, navigate]);
 
   /*
-    Protección contra back/forward cache:
-    Evita que el navegador muestre una pantalla protegida restaurada desde caché
-    cuando ya no existe sesión en localStorage.
+    Protección contra back/forward cache.
   */
   useEffect(() => {
     const handlePageShow = () => {
@@ -137,20 +132,25 @@ export default function AppShell() {
       },
     ];
 
-    return items.filter((item) => !item.adminOnly || user?.role === 'admin');
+    return items.filter(
+      (item) => !item.adminOnly || user?.role === 'admin'
+    );
   }, [user?.role]);
 
   const activeItem = useMemo(() => {
-    return navItems.find((item) => item.path === location.pathname) || navItems[0];
+    return (
+      navItems.find((item) => item.path === location.pathname) ||
+      navItems[0]
+    );
   }, [location.pathname, navItems]);
 
   const userInitials = useMemo(() => {
     const nombre = user?.nombre?.[0] || 'S';
     const apellido = user?.apellido?.[0] || 'R';
+
     return `${nombre}${apellido}`.toUpperCase();
   }, [user]);
 
-  const photoUrl = fullUrl(user?.foto_perfil_url);
   const isActive = (path: string) => location.pathname === path;
 
   const handleLogout = () => {
@@ -191,28 +191,38 @@ export default function AppShell() {
         <div className="top-user-area">
           <div className="top-user-card">
             <div className="top-user-avatar">
-              {photoUrl ? (
-                <img src={photoUrl} alt="Foto de perfil" />
+              {user.foto_perfil_url ? (
+                <ProtectedImage
+                  src={user.foto_perfil_url}
+                  alt="Foto de perfil"
+                  fallback={<span>{userInitials}</span>}
+                />
               ) : (
                 <span>{userInitials}</span>
               )}
             </div>
 
             <div>
-              <strong>{user?.nombre || 'Usuario'}</strong>
-              <small>{user?.role || 'empleado'}</small>
+              <strong>{user.nombre || 'Usuario'}</strong>
+              <small>{user.role || 'empleado'}</small>
             </div>
           </div>
 
           <button
             className="top-theme-btn"
             type="button"
-            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            onClick={() =>
+              setTheme(theme === 'dark' ? 'light' : 'dark')
+            }
           >
             {theme === 'dark' ? 'Claro' : 'Oscuro'}
           </button>
 
-          <button className="top-logout-btn" type="button" onClick={handleLogout}>
+          <button
+            className="top-logout-btn"
+            type="button"
+            onClick={handleLogout}
+          >
             Salir
           </button>
         </div>
@@ -223,7 +233,9 @@ export default function AppShell() {
           <Link
             key={item.path}
             to={item.path}
-            className={`top-nav-item ${isActive(item.path) ? 'active' : ''}`}
+            className={`top-nav-item ${
+              isActive(item.path) ? 'active' : ''
+            }`}
           >
             <span>{item.icon}</span>
             <strong>{item.label}</strong>

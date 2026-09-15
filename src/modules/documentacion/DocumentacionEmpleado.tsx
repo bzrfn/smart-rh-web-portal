@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { api } from '../../services/api';
+import ProtectedImage from '../../components/ProtectedImage';
+import { openProtectedResource } from '../../services/protectedMedia';
 
 type User = {
   id: number;
@@ -28,13 +30,6 @@ type EmployeeFilter =
   | 'sin_contrato'
   | 'con_credencial'
   | 'sin_credencial';
-
-const apiBase = import.meta.env?.VITE_API_URL?.replace(/\/$/, '') || '';
-
-const fullUrl = (url?: string) => {
-  if (!url) return '';
-  return url.startsWith('http') ? url : `${apiBase}${url}`;
-};
 
 const getUserName = (user?: User) => {
   if (!user) return '';
@@ -243,6 +238,20 @@ export default function DocumentacionEmpleado() {
     }
   }
 
+  async function viewPrivateResource(url: string, label: string) {
+    if (!url) return;
+
+    try {
+      setMessage('');
+      await openProtectedResource(url);
+    } catch (e: any) {
+      setMessage(
+        e?.response?.data?.message ||
+          `No se pudo abrir ${label}.`
+      );
+    }
+  }
+
   async function generateCredencial() {
     if (!selectedId) return;
 
@@ -304,7 +313,11 @@ export default function DocumentacionEmpleado() {
             <div className="employee-selected-summary">
               <div className="employee-selected-avatar">
                 {selected?.foto_perfil_url ? (
-                  <img src={fullUrl(selected.foto_perfil_url)} alt="Empleado seleccionado" />
+                  <ProtectedImage
+                    src={selected.foto_perfil_url}
+                    alt="Empleado seleccionado"
+                    fallback={<span>{selected?.nombre?.[0] || 'S'}</span>}
+                  />
                 ) : (
                   <span>{selected?.nombre?.[0] || 'S'}</span>
                 )}
@@ -384,7 +397,11 @@ export default function DocumentacionEmpleado() {
                           >
                             <div className="employee-result-avatar">
                               {user.foto_perfil_url ? (
-                                <img src={fullUrl(user.foto_perfil_url)} alt={getUserName(user)} />
+                                <ProtectedImage
+                                  src={user.foto_perfil_url}
+                                  alt={getUserName(user)}
+                                  fallback={<span>{user.nombre?.[0] || 'E'}</span>}
+                                />
                               ) : (
                                 <span>{user.nombre?.[0] || 'E'}</span>
                               )}
@@ -428,7 +445,15 @@ export default function DocumentacionEmpleado() {
 
           <div className="profile-preview profile-preview-premium">
             {selected?.foto_perfil_url ? (
-              <img src={fullUrl(selected.foto_perfil_url)} alt="Foto de perfil" />
+              <ProtectedImage
+                src={selected.foto_perfil_url}
+                alt="Foto de perfil"
+                fallback={
+                  <div className="profile-placeholder">
+                    {selected?.nombre?.[0] || 'S'}
+                  </div>
+                }
+              />
             ) : (
               <div className="profile-placeholder">{selected?.nombre?.[0] || 'S'}</div>
             )}
@@ -486,9 +511,13 @@ export default function DocumentacionEmpleado() {
                 </div>
 
                 {contratoUrl ? (
-                  <a className="document-link document-link-button" href={fullUrl(contratoUrl)} target="_blank" rel="noreferrer">
+                  <button
+                    type="button"
+                    className="document-link document-link-button"
+                    onClick={() => viewPrivateResource(contratoUrl, 'el contrato')}
+                  >
                     Ver contrato
-                  </a>
+                  </button>
                 ) : (
                   <span className="document-status-empty">Sin archivo</span>
                 )}
@@ -501,9 +530,13 @@ export default function DocumentacionEmpleado() {
                 </div>
 
                 {credencialUrl ? (
-                  <a className="document-link document-link-button" href={fullUrl(credencialUrl)} target="_blank" rel="noreferrer">
+                  <button
+                    type="button"
+                    className="document-link document-link-button"
+                    onClick={() => viewPrivateResource(credencialUrl, 'la credencial')}
+                  >
                     Ver credencial
-                  </a>
+                  </button>
                 ) : (
                   <span className="document-status-empty">Sin archivo</span>
                 )}

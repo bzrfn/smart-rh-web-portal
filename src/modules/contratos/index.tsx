@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { api } from '../../services/api';
+import { openProtectedResource } from '../../services/protectedMedia';
 
 type Contrato = {
   id: number;
@@ -45,11 +46,6 @@ type EditState = {
 };
 
 const PAGE_SIZE = 5;
-const apiBase = import.meta.env?.VITE_API_URL?.replace(/\/$/, '') || '';
-const fullUrl = (url?: string | null) => {
-  if (!url) return '';
-  return url.startsWith('http') ? url : `${apiBase}${url}`;
-};
 
 export default function Contratos() {
   const [items, setItems] = useState<Contrato[]>([]);
@@ -186,6 +182,20 @@ export default function Contratos() {
     setForm((prev) => ({ ...prev, usuario_id: '' }));
     setUserSearch('');
     setShowUserResults(true);
+  };
+
+  const viewContrato = async (url: string) => {
+    if (!url) return;
+
+    try {
+      setError('');
+      await openProtectedResource(url);
+    } catch (e: any) {
+      setError(
+        e?.response?.data?.message ??
+          'No se pudo abrir el contrato.'
+      );
+    }
   };
 
   const onSubmit = async (e: React.FormEvent) => {
@@ -428,14 +438,13 @@ export default function Contratos() {
                     </div>
 
                     {selectedContratoUrl ? (
-                      <a
+                      <button
+                        type="button"
                         className="document-link document-link-button"
-                        href={fullUrl(selectedContratoUrl)}
-                        target="_blank"
-                        rel="noreferrer"
+                        onClick={() => viewContrato(selectedContratoUrl)}
                       >
                         Ver contrato generado
-                      </a>
+                      </button>
                     ) : (
                       <span className="document-status-empty">Sin PDF generado</span>
                     )}
@@ -664,14 +673,15 @@ export default function Contratos() {
                           </button>
 
                           {item.contrato_pdf_url && (
-                            <a
+                            <button
                               className="btn btn-small btn-secondary"
-                              href={fullUrl(item.contrato_pdf_url)}
-                              target="_blank"
-                              rel="noreferrer"
+                              type="button"
+                              onClick={() =>
+                                viewContrato(item.contrato_pdf_url || '')
+                              }
                             >
                               Ver contrato
-                            </a>
+                            </button>
                           )}
                         </div>
                       </td>
