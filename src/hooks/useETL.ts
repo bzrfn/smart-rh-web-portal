@@ -1,11 +1,9 @@
 // Hook personalizado `useETL` para ejecutar el proceso ETL remoto
 // y mantener el resultado en estado local y en `localStorage`.
 import { useState } from 'react';
-import axios from 'axios';
+import { api } from '../services/api';
 import { ETLReporteData } from '../types/etl';
 
-// URL base de la API tomada de las variables de entorno, con fallback local
-const API_BASE = import.meta.env?.VITE_API_URL || 'http://localhost:4000';
 // Clave usada en localStorage para persistir el último reporte ETL
 const STORAGE_KEY = 'smart_rh_etl_report';
 
@@ -37,11 +35,11 @@ export function useETL() {
 
     try {
       // POST al endpoint que genera el reporte ETL
-      const response = await axios.post<{
+      const response = await api.post<{
         ok: boolean;
         message?: string;
         data: ETLReporteData;
-      }>(`${API_BASE}/etl/reportes`);
+      }>('/etl/reportes');
 
       // Si la API responde con ok=true, actualizamos estado y lo persistimos
       if (response.data.ok) {
