@@ -3,6 +3,9 @@ import QRCode from 'qrcode.react';
 import { api } from '../../services/api';
 import { useAuth } from '../../app/auth/AuthContext';
 
+const QR_REFRESH_SECONDS = 10;
+const QR_REFRESH_MS = QR_REFRESH_SECONDS * 1000;
+
 export default function QrGenerator() {
   const { token, user } = useAuth();
 
@@ -10,8 +13,9 @@ export default function QrGenerator() {
   const [expiresAt, setExpiresAt] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [secondsLeft, setSecondsLeft] = useState(0);
+  const [secondsLeft, setSecondsLeft] = useState(QR_REFRESH_SECONDS);
   const [lastGeneratedAt, setLastGeneratedAt] = useState('');
+  const [nextRefreshAt, setNextRefreshAt] = useState(0);
 
   const mountedRef = useRef(false);
   const generatingRef = useRef(false);
@@ -54,10 +58,6 @@ export default function QrGenerator() {
           }
         }
 
-        /*
-          El interceptor central de api.ts agrega el JWT.
-          No se construyen headers Authorization manualmente aquí.
-        */
         const { data } = await api.post('/asistencia/qr', {});
 
         if (!mountedRef.current) {
@@ -67,36 +67,59 @@ export default function QrGenerator() {
         const nextToken = String(data?.token ?? '');
         const nextExpiresAt = String(data?.expiresAt ?? '');
 
-        if (!nextToken || !nextExpiresAt) {
-          setQrToken('');
-          setExpiresAt('');
-          setSecondsLeft(0);
-
+        if (!nextToken) {
           throw new Error(
-            'El servidor no devolvió un QR válido con fecha de expiración.'
+            'El servidor no devolvió un código QR válido.'
           );
         }
 
-        const expirationTime = new Date(nextExpiresAt).getTime();
+        if (!nextExpiresAt) {
+          throw new Error(
+            'El servidor no devolvió la vigencia del código QR.'
+          );
+        }
 
-        if (!Number.isFinite(expirationTime)) {
+        const expirationTime =
+          new Date(nextExpiresAt).getTime();
+
+        if (Number.isNaN(expirationTime)) {
+          throw new Error(
+            'El servidor devolvió una vigencia QR inválida.'
+          );
+        }
+
+        /*
+          expiresAt es la fuente de verdad.
+
+          El backend comienza a contar la vigencia cuando genera
+          el QR, por lo que no debemos iniciar otros 10 segundos
+          adicionales al recibir la respuesta HTTP.
+        */
+        const remainingMilliseconds =
+          expirationTime - Date.now();
+
+        if (remainingMilliseconds <= 0) {
           setQrToken('');
           setExpiresAt('');
           setSecondsLeft(0);
+          setNextRefreshAt(Date.now());
 
-          throw new Error(
-            'El servidor devolvió una fecha de expiración inválida.'
-          );
+          return;
         }
 
         setQrToken(nextToken);
         setExpiresAt(nextExpiresAt);
         setLastGeneratedAt(new Date().toISOString());
 
+        setNextRefreshAt(expirationTime);
+
         setSecondsLeft(
           Math.max(
             0,
-            Math.ceil((expirationTime - Date.now()) / 1000)
+            Math.ceil(
+              remainingMilliseconds /
+                1000
+            )
           )
         );
       } catch (e: any) {
@@ -109,6 +132,17 @@ export default function QrGenerator() {
             e?.message ??
             'No se pudo generar el QR.'
         );
+
+        /*
+          Si falla una renovación automática, se vuelve a intentar
+          después de otros 10 segundos.
+        */
+        if (silent) {
+          const retryAt = Date.now() + QR_REFRESH_MS;
+
+          setNextRefreshAt(retryAt);
+          setSecondsLeft(QR_REFRESH_SECONDS);
+        }
       } finally {
         generatingRef.current = false;
 
@@ -120,10 +154,6 @@ export default function QrGenerator() {
     [token, user?.role]
   );
 
-  /*
-    Control del montaje para evitar actualizaciones de estado
-    después de salir del módulo.
-  */
   useEffect(() => {
     mountedRef.current = true;
 
@@ -133,8 +163,7 @@ export default function QrGenerator() {
   }, []);
 
   /*
-    Al abrir el módulo se solicita un único QR.
-    MongoDB/backend se encargan de la expiración persistente.
+    Al entrar al módulo se genera inmediatamente el primer QR.
   */
   useEffect(() => {
     if (!canUseModule) {
@@ -150,19 +179,10 @@ export default function QrGenerator() {
   }, [canUseModule, generate]);
 
   /*
-    El contador visual siempre se calcula desde expiresAt,
-    nunca desde una constante del frontend.
+    Cuenta regresiva visual hasta la siguiente renovación.
   */
   useEffect(() => {
-    if (!canUseModule || !expiresAt) {
-      setSecondsLeft(0);
-      return;
-    }
-
-    const expirationTime = new Date(expiresAt).getTime();
-
-    if (!Number.isFinite(expirationTime)) {
-      setSecondsLeft(0);
+    if (!canUseModule || !nextRefreshAt) {
       return;
     }
 
@@ -173,7 +193,7 @@ export default function QrGenerator() {
 
       const remaining = Math.max(
         0,
-        Math.ceil((expirationTime - Date.now()) / 1000)
+        Math.ceil((nextRefreshAt - Date.now()) / 1000)
       );
 
       setSecondsLeft(remaining);
@@ -183,60 +203,51 @@ export default function QrGenerator() {
 
     const intervalId = window.setInterval(
       updateCountdown,
-      1000
+      250
     );
 
     return () => {
       window.clearInterval(intervalId);
     };
-  }, [canUseModule, expiresAt]);
+  }, [canUseModule, nextRefreshAt]);
 
   /*
-    La renovación se programa exactamente a partir del expiresAt
-    recibido del servidor.
-
-    Añadimos un pequeño margen de 250 ms para no pedir el nuevo QR
-    antes de que el anterior haya alcanzado realmente su expiración.
+    El QR mostrado en pantalla se renueva cada 10 segundos.
   */
   useEffect(() => {
-    if (!canUseModule || !expiresAt) {
-      return;
-    }
-
-    const expirationTime = new Date(expiresAt).getTime();
-
-    if (!Number.isFinite(expirationTime)) {
+    if (!canUseModule || !nextRefreshAt) {
       return;
     }
 
     const delay = Math.max(
       0,
-      expirationTime - Date.now() + 250
+      nextRefreshAt - Date.now()
     );
 
-    const timeoutId = window.setTimeout(async () => {
-      if (!mountedRef.current) {
-        return;
-      }
-
+    const timeoutId = window.setTimeout(() => {
       /*
-        El QR anterior ya venció. Se oculta antes de solicitar
-        el siguiente para evitar que el usuario escanee uno expirado.
+        El código actual deja de mostrarse justo al alcanzar
+        la vigencia definida por el servidor.
+
+        Mientras llega el siguiente QR no dejamos visible
+        un código que ya no puede utilizarse.
       */
       setQrToken('');
+      setExpiresAt('');
       setSecondsLeft(0);
+      setNextRefreshAt(0);
 
-      await generate(true);
+      generate(true);
     }, delay);
 
     return () => {
       window.clearTimeout(timeoutId);
     };
-  }, [canUseModule, expiresAt, generate]);
+  }, [canUseModule, nextRefreshAt, generate]);
 
   const formattedExpiresAt = useMemo(() => {
     if (!expiresAt) {
-      return 'Pendiente';
+      return 'No disponible';
     }
 
     const date = new Date(expiresAt);
@@ -256,22 +267,6 @@ export default function QrGenerator() {
     return new Date(lastGeneratedAt).toLocaleString();
   }, [lastGeneratedAt]);
 
-  const qrStatus = useMemo(() => {
-    if (loading) {
-      return 'Generando';
-    }
-
-    if (!qrToken) {
-      return 'Renovando';
-    }
-
-    if (secondsLeft <= 0) {
-      return 'Expirado';
-    }
-
-    return 'QR activo';
-  }, [loading, qrToken, secondsLeft]);
-
   return (
     <div className="qr-admin-layout">
       <div className="qr-admin-card">
@@ -286,8 +281,8 @@ export default function QrGenerator() {
             </h3>
 
             <p className="qr-card-subtitle">
-              Crea un código QR temporal para registrar entrada y
-              salida desde la aplicación móvil.
+              Genera un código QR dinámico para el registro
+              de asistencia desde la aplicación móvil.
             </p>
           </div>
         </div>
@@ -307,15 +302,19 @@ export default function QrGenerator() {
               Estado
             </span>
 
-            <p>{qrStatus}</p>
+            <p>
+              {qrToken
+                ? 'QR activo'
+                : 'Generando'}
+            </p>
           </div>
 
           <div className="qr-detail-box">
             <span className="qr-meta-label">
-              Expira
+              Renovación
             </span>
 
-            <p>{formattedExpiresAt}</p>
+            <p>{secondsLeft}s</p>
           </div>
 
           <div className="qr-detail-box">
@@ -328,14 +327,10 @@ export default function QrGenerator() {
 
           <div className="qr-detail-box">
             <span className="qr-meta-label">
-              Tiempo restante
+              Vigencia del servidor
             </span>
 
-            <p>
-              {qrToken
-                ? `${secondsLeft}s`
-                : 'Pendiente'}
-            </p>
+            <p>{formattedExpiresAt}</p>
           </div>
         </div>
 
@@ -390,8 +385,8 @@ export default function QrGenerator() {
                   textAlign: 'center',
                 }}
               >
-                Se renovará automáticamente cuando alcance
-                la expiración indicada por el servidor.
+                El código se renueva automáticamente cada
+                {` ${QR_REFRESH_SECONDS} segundos`}.
               </p>
             </>
           ) : (
@@ -401,15 +396,11 @@ export default function QrGenerator() {
               </div>
 
               <p className="qr-preview-empty-title">
-                {expiresAt
-                  ? 'Renovando código'
-                  : 'Sin código generado'}
+                Generando código
               </p>
 
               <p className="qr-preview-empty-text">
-                {expiresAt
-                  ? 'Espera mientras se genera el siguiente QR.'
-                  : 'Genera un QR para visualizarlo aquí.'}
+                Espera mientras se genera el código QR.
               </p>
             </>
           )}

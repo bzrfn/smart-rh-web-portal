@@ -114,10 +114,9 @@ export default function QrAsistencia() {
             </h3>
 
             <p>
-              El servidor define la vigencia de cada código.
-              El portal muestra el tiempo restante y genera
-              automáticamente un nuevo QR cuando el actual
-              llega a su expiración.
+              El sistema genera un código QR dinámico y lo
+              renueva automáticamente cada 10 segundos para
+              mantener actualizado el registro de asistencia.
             </p>
           </div>
 
