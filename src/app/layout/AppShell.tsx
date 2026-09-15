@@ -84,6 +84,7 @@ export default function AppShell() {
         label: 'QR',
         icon: 'QR',
         description: 'Registro temporal',
+        adminOnly: true,
       },
       {
         path: '/portal/documentacion',

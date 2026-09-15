@@ -9,17 +9,28 @@ export default function QrAsistencia() {
       <div className="module-card">
         <div className="module-card-header">
           <div>
-            <p className="module-eyebrow">Acceso</p>
-            <h2 className="module-title">QR de asistencia</h2>
+            <p className="module-eyebrow">
+              Acceso
+            </p>
+
+            <h2 className="module-title">
+              QR de asistencia
+            </h2>
+
             <p className="module-subtitle">
-              Debes iniciar sesión para acceder al generador de QR.
+              Debes iniciar sesión para acceder al generador
+              de QR.
             </p>
           </div>
         </div>
 
         <div className="empty-state-card">
           <h3>Sesión requerida</h3>
-          <p>Inicia sesión para continuar con el módulo de QR de asistencia.</p>
+
+          <p>
+            Inicia sesión para continuar con el módulo de QR
+            de asistencia.
+          </p>
         </div>
       </div>
     );
@@ -31,10 +42,17 @@ export default function QrAsistencia() {
         <div className="module-card">
           <div className="module-card-header">
             <div>
-              <p className="module-eyebrow">Control administrativo</p>
-              <h2 className="module-title">QR de asistencia</h2>
+              <p className="module-eyebrow">
+                Control administrativo
+              </p>
+
+              <h2 className="module-title">
+                QR de asistencia
+              </h2>
+
               <p className="module-subtitle">
-                Este módulo está disponible únicamente para perfiles administrativos.
+                Este módulo está disponible únicamente para
+                perfiles administrativos.
               </p>
             </div>
           </div>
@@ -42,8 +60,10 @@ export default function QrAsistencia() {
           <div className="module-hero-banner">
             <div className="module-hero-copy">
               <h3>Acceso restringido</h3>
+
               <p>
-                No cuentas con permisos para generar códigos QR dinámicos de asistencia.
+                No cuentas con permisos para generar códigos
+                QR dinámicos de asistencia.
               </p>
             </div>
 
@@ -54,9 +74,11 @@ export default function QrAsistencia() {
 
           <div className="empty-state-card">
             <h3>Permisos insuficientes</h3>
+
             <p>
-              Solicita acceso al administrador del sistema si este módulo forma parte de
-              tus funciones operativas.
+              Solicita acceso al administrador del sistema si
+              este módulo forma parte de tus funciones
+              operativas.
             </p>
           </div>
         </div>
@@ -69,25 +91,39 @@ export default function QrAsistencia() {
       <div className="module-card">
         <div className="module-card-header">
           <div>
-            <p className="module-eyebrow">Control administrativo</p>
-            <h2 className="module-title">QR de asistencia</h2>
+            <p className="module-eyebrow">
+              Control administrativo
+            </p>
+
+            <h2 className="module-title">
+              QR de asistencia
+            </h2>
+
             <p className="module-subtitle">
-              Genera y administra el código QR dinámico utilizado para el registro del
-              personal desde la aplicación móvil.
+              Genera y administra el código QR temporal
+              utilizado para el registro del personal desde
+              la aplicación móvil.
             </p>
           </div>
         </div>
 
         <div className="module-hero-banner">
           <div className="module-hero-copy">
-            <h3>Generación dinámica en tiempo real</h3>
+            <h3>
+              Generación dinámica en tiempo real
+            </h3>
+
             <p>
-              El sistema emite un QR temporal, lo actualiza automáticamente cada 15
-              segundos y mantiene limpia la tabla de tokens expirados.
+              El servidor define la vigencia de cada código.
+              El portal muestra el tiempo restante y genera
+              automáticamente un nuevo QR cuando el actual
+              llega a su expiración.
             </p>
           </div>
 
-          <div className="module-hero-badge">Operación en tiempo real</div>
+          <div className="module-hero-badge">
+            Operación en tiempo real
+          </div>
         </div>
 
         <QrGenerator />
