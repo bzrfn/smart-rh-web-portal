@@ -13,6 +13,10 @@ module.exports = {
     ],
   },
 
+  moduleNameMapper: {
+    '\\.(css|less|scss|sass)$': '<rootDir>/src/tests/styleMock.cjs',
+  },
+
   setupFilesAfterEnv: [
     '<rootDir>/src/tests/setupTests.ts',
   ],
