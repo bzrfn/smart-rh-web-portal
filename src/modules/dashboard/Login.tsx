@@ -61,9 +61,17 @@ export default function Login() {
       }
 
       if (data?.requires2FA) {
+        if (!data?.challengeId) {
+          setError(
+            'No se recibió el identificador de seguridad del segundo factor.'
+          );
+          return;
+        }
+
         navigate('/verify-login-code', {
           state: {
             correo: data?.correo || correoLimpio,
+            challengeId: data.challengeId,
             message: data?.message,
           },
         });

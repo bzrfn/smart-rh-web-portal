@@ -5,6 +5,7 @@ import { useAuth } from '../../app/auth/AuthContext';
 
 type LocationState = {
   correo?: string;
+  challengeId?: string;
   message?: string;
 };
 
@@ -15,6 +16,7 @@ export default function VerifyLoginCode() {
 
   const state = (location.state || {}) as LocationState;
   const correo = state.correo || '';
+  const challengeId = state.challengeId || '';
 
   const [codigo, setCodigo] = useState('');
   const [error, setError] = useState('');
@@ -25,7 +27,7 @@ export default function VerifyLoginCode() {
     return <Navigate to="/portal" replace />;
   }
 
-  if (!correo) {
+  if (!correo || !challengeId) {
     return <Navigate to="/login" replace />;
   }
 
@@ -45,7 +47,7 @@ export default function VerifyLoginCode() {
       setLoading(true);
 
       const { data } = await api.post('/auth/verify-login-code', {
-        correo,
+        challengeId,
         codigo: codigo.trim(),
       });
 
