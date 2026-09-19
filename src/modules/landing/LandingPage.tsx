@@ -239,7 +239,7 @@ export default function LandingPage() {
             {theme === 'dark' ? '' : ''}
           </button>
 
-          <Link to="/login" className="public-login-btn public-login-btn-premium">
+          <Link to="/admin/acceso" className="public-login-btn public-login-btn-premium">
             {t.nav.login}
           </Link>
         </div>
@@ -262,7 +262,7 @@ export default function LandingPage() {
                 {t.hero.primaryAction}
               </a>
 
-              <Link to="/login" className="public-secondary-btn">
+              <Link to="/admin/acceso" className="public-secondary-btn">
                 {t.hero.secondaryAction}
               </Link>
             </div>

@@ -13,6 +13,8 @@ import ETLProcess from '../components/ETLProcess';
 import Soporte from '../modules/soporte/Soporte';
 import { useAuth } from '../app/auth/AuthContext';
 import Login from '../modules/dashboard/Login';
+import AdminAccess from '../modules/dashboard/AdminAccess';
+import AdminLogin from '../modules/dashboard/AdminLogin';
 import Register from '../modules/dashboard/Register';
 import ForgotPassword from '../modules/dashboard/ForgotPassword';
 import ResetPassword from '../modules/dashboard/ResetPassword';
@@ -30,6 +32,24 @@ export default function Navigation() {
   return (
     <Routes>
       <Route path="/" element={<LandingPage />} />
+
+      <Route
+        path="/admin/acceso"
+        element={
+          user
+            ? <Navigate to="/portal" replace />
+            : <AdminAccess />
+        }
+      />
+
+      <Route
+        path="/admin/login"
+        element={
+          user
+            ? <Navigate to="/portal" replace />
+            : <AdminLogin />
+        }
+      />
 
       <Route
         path="/login"
