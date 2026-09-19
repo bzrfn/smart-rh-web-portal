@@ -7,6 +7,7 @@ type LocationState = {
   correo?: string;
   challengeId?: string;
   message?: string;
+  adminFlow?: boolean;
 };
 
 export default function VerifyLoginCode() {
@@ -17,6 +18,7 @@ export default function VerifyLoginCode() {
   const state = (location.state || {}) as LocationState;
   const correo = state.correo || '';
   const challengeId = state.challengeId || '';
+  const adminFlow = state.adminFlow === true;
 
   const [codigo, setCodigo] = useState('');
   const [error, setError] = useState('');
@@ -161,9 +163,11 @@ export default function VerifyLoginCode() {
             {info && <p className="auth-info">{info}</p>}
 
             <div className="auth-footer-links">
-              <Link to="/login" className="auth-link primary">
-                Volver al login
-              </Link>
+              {!adminFlow && (
+                <Link to="/login" className="auth-link primary">
+                  Volver al login
+                </Link>
+              )}
 
               <Link to="/" className="auth-link">
                 Ir al sitio principal

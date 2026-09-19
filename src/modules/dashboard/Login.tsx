@@ -203,10 +203,6 @@ export default function Login() {
             {info && <p className="auth-info">{info}</p>}
 
             <div className="auth-footer-links">
-              <Link to="/register" className="auth-link primary">
-                Crear cuenta
-              </Link>
-
               <Link to="/forgot-password" className="auth-link">
                 ¿Olvidaste tu contraseña?
               </Link>

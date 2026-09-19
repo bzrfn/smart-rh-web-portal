@@ -451,13 +451,6 @@ export default function AdminAccess() {
 
             <div className="auth-footer-links">
               <Link
-                to="/login"
-                className="auth-link"
-              >
-                Acceso de empleado
-              </Link>
-
-              <Link
                 to="/"
                 className="auth-link"
               >

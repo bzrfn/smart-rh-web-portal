@@ -290,9 +290,9 @@ export default function AdminInvitationAccept() {
           }}
         >
           <Link
-            to="/login"
+            to="/admin/acceso"
           >
-            Ir a iniciar sesión
+            Ir al acceso administrativo
           </Link>
         </div>
       </div>
