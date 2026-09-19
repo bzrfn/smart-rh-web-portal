@@ -16,6 +16,7 @@ import Login from '../modules/dashboard/Login';
 import Register from '../modules/dashboard/Register';
 import ForgotPassword from '../modules/dashboard/ForgotPassword';
 import ResetPassword from '../modules/dashboard/ResetPassword';
+import AdminInvitationAccept from '../modules/dashboard/AdminInvitationAccept';
 import VerifyLoginCode from '../modules/dashboard/VerifyLoginCode';
 import VerifyAccount from '../modules/dashboard/VerifyAccount';
 import LandingPage from '../modules/landing/LandingPage';
@@ -58,6 +59,11 @@ export default function Navigation() {
       <Route
         path="/reset-password"
         element={user ? <Navigate to="/portal" replace /> : <ResetPassword />}
+      />
+
+      <Route
+        path="/admin/invitacion"
+        element={<AdminInvitationAccept />}
       />
 
       {user ? (
