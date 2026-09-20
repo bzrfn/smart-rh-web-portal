@@ -15,7 +15,6 @@ import {
 
 
 type LocationState = {
-  correo?: string;
   adminAccessToken?: string;
 };
 
@@ -33,20 +32,20 @@ export default function AdminLogin() {
       {}
     ) as LocationState;
 
-  const correo =
-    String(
-      state.correo ||
-      ''
-    )
-      .trim()
-      .toLowerCase();
-
   const adminAccessToken =
     String(
       state.adminAccessToken ||
       ''
     )
       .trim();
+
+  const [
+    correo,
+    setCorreo,
+  ] =
+    useState(
+      ''
+    );
 
   const [
     contrasena,
@@ -73,10 +72,11 @@ export default function AdminLogin() {
     );
 
 
-  if (
-    !correo ||
-    !adminAccessToken
-  ) {
+  /*
+   * No se permite abrir directamente /admin/login.
+   * Es obligatorio haber completado antes la autorización central.
+   */
+  if (!adminAccessToken) {
     return (
       <Navigate
         to="/admin/acceso"
@@ -100,9 +100,17 @@ export default function AdminLogin() {
       ''
     );
 
-    if (!contrasena) {
+    const normalizedEmail =
+      correo
+        .trim()
+        .toLowerCase();
+
+    if (
+      !normalizedEmail ||
+      !contrasena
+    ) {
       setError(
-        'Ingresa la contraseña administrativa.'
+        'Ingresa correo y contraseña administrativos.'
       );
 
       return;
@@ -119,7 +127,9 @@ export default function AdminLogin() {
         await api.post(
           '/auth/admin-login',
           {
-            correo,
+            correo:
+              normalizedEmail,
+
             contrasena,
           },
           {
@@ -130,40 +140,48 @@ export default function AdminLogin() {
           }
         );
 
+      const challengeId =
+        String(
+          data?.challengeId ||
+          ''
+        )
+          .trim()
+          .toLowerCase();
+
+      /*
+       * Una contraseña correcta NO puede entregar sesión.
+       * Debe producir un challenge 2FA.
+       */
       if (
-        !data?.ok ||
-        !data?.requires2FA ||
-        !data?.challengeId
+        data?.requires2FA &&
+        /^[a-f0-9]{64}$/.test(
+          challengeId
+        )
       ) {
-        setError(
-          data?.message ||
-          'No fue posible iniciar el segundo factor.'
+        navigate(
+          '/verify-login-code',
+          {
+            replace:
+              true,
+
+            state: {
+              correo:
+                data?.correo ||
+                normalizedEmail,
+
+              challengeId,
+
+              message:
+                data?.message,
+            },
+          }
         );
 
         return;
       }
 
-      navigate(
-        '/verify-login-code',
-        {
-          replace:
-            true,
-
-          state: {
-            correo:
-              data?.correo ||
-              correo,
-
-            challengeId:
-              data.challengeId,
-
-            message:
-              data?.message,
-
-            adminFlow:
-              true,
-          },
-        }
+      setError(
+        'No fue posible iniciar la verificación 2FA administrativa.'
       );
 
     } catch (
@@ -171,7 +189,7 @@ export default function AdminLogin() {
     ) {
       setError(
         err?.response?.data?.message ||
-        'Acceso administrativo inválido o expirado.'
+        'No fue posible iniciar sesión.'
       );
 
     } finally {
@@ -185,16 +203,21 @@ export default function AdminLogin() {
   return (
     <div className="auth-page auth-page-premium">
       <Link
-        to="/admin/acceso"
+        to="/"
         className="auth-back-home"
       >
-        ← Volver a la autorización
+        ← Volver al sitio principal
       </Link>
+
+      <div className="bg-shape bg-shape-top-left-large" />
+      <div className="bg-shape bg-shape-top-left-small" />
+      <div className="bg-shape bg-shape-bottom-right-large" />
+      <div className="bg-shape bg-shape-bottom-right-small" />
 
       <div className="auth-premium-grid">
         <div className="auth-showcase-card">
           <div className="auth-showcase-badge">
-            Identidad administrativa verificada
+            Autorización central validada
           </div>
 
           <h1 className="auth-showcase-title">
@@ -202,29 +225,53 @@ export default function AdminLogin() {
           </h1>
 
           <p className="auth-showcase-text">
-            La autorización por correo fue validada.
-            Ahora ingresa la contraseña de la misma cuenta.
+            El administrador general autorizó este intento.
+            Ahora debes identificarte con tus propias
+            credenciales administrativas.
           </p>
 
           <div className="auth-showcase-points">
             <div className="auth-showcase-point">
               <span className="auth-showcase-dot" />
+
               <div>
-                <h3>Correo vinculado</h3>
+                <h3>
+                  Autorización central
+                </h3>
+
                 <p>
-                  La contraseña solo se acepta para la cuenta
-                  que completó la preautorización.
+                  El código anterior únicamente autorizó
+                  continuar con el proceso.
                 </p>
               </div>
             </div>
 
             <div className="auth-showcase-point">
               <span className="auth-showcase-dot" />
+
               <div>
-                <h3>2FA obligatorio</h3>
+                <h3>
+                  Identidad individual
+                </h3>
+
                 <p>
-                  Una contraseña válida no entrega una sesión:
-                  todavía falta el segundo código.
+                  Ingresa el correo y la contraseña de tu
+                  propia cuenta administrativa.
+                </p>
+              </div>
+            </div>
+
+            <div className="auth-showcase-point">
+              <span className="auth-showcase-dot" />
+
+              <div>
+                <h3>
+                  2FA obligatorio
+                </h3>
+
+                <p>
+                  Después de validar la contraseña recibirás
+                  un segundo código en tu correo personal.
                 </p>
               </div>
             </div>
@@ -243,7 +290,7 @@ export default function AdminLogin() {
                 </p>
 
                 <h2 className="auth-title">
-                  Contraseña
+                  Identifica tu cuenta
                 </h2>
               </div>
 
@@ -253,12 +300,30 @@ export default function AdminLogin() {
             </div>
 
             <p className="auth-description">
-              Cuenta administrativa previamente autorizada:
+              La autorización general fue validada.
+              Ingresa ahora tus credenciales personales.
             </p>
 
-            <div className="auth-email-chip">
-              {correo}
-            </div>
+            <label className="auth-label">
+              Correo administrativo
+            </label>
+
+            <input
+              className="auth-input"
+              type="email"
+              value={correo}
+              onChange={
+                (
+                  event
+                ) =>
+                  setCorreo(
+                    event.target.value
+                  )
+              }
+              placeholder="tu@empresa.com"
+              autoComplete="username"
+              autoFocus
+            />
 
             <label className="auth-label">
               Contraseña
@@ -276,9 +341,8 @@ export default function AdminLogin() {
                     event.target.value
                   )
               }
-              placeholder="Contraseña"
+              placeholder="••••••••"
               autoComplete="current-password"
-              autoFocus
             />
 
             <button
@@ -287,9 +351,11 @@ export default function AdminLogin() {
               disabled={loading}
             >
               <span>
-                {loading
-                  ? 'Validando...'
-                  : 'Continuar con 2FA'}
+                {
+                  loading
+                    ? 'Validando...'
+                    : 'Continuar con 2FA'
+                }
               </span>
 
               <span className="auth-submit-icon">
@@ -305,10 +371,24 @@ export default function AdminLogin() {
 
             <div className="auth-footer-links">
               <Link
-                to="/admin/acceso"
+                to="/forgot-password"
                 className="auth-link primary"
               >
-                Solicitar nueva autorización
+                ¿Olvidaste tu contraseña?
+              </Link>
+
+              <Link
+                to="/admin/acceso"
+                className="auth-link"
+              >
+                Solicitar otra autorización
+              </Link>
+
+              <Link
+                to="/"
+                className="auth-link"
+              >
+                Sitio principal
               </Link>
             </div>
           </form>

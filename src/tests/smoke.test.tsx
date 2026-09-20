@@ -13,6 +13,6 @@ test('redirects legacy login to administrative access', () => {
   );
 
   expect(
-    screen.getByRole('button', { name: /enviar código/i })
+    screen.getByRole('button', { name: /solicitar autorización/i })
   ).toBeInTheDocument();
 });

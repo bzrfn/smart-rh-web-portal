@@ -17,14 +17,6 @@ export default function AdminAccess() {
     useNavigate();
 
   const [
-    correo,
-    setCorreo,
-  ] =
-    useState(
-      ''
-    );
-
-  const [
     challengeId,
     setChallengeId,
   ] =
@@ -83,33 +75,23 @@ export default function AdminAccess() {
       ''
     );
 
-    const normalizedEmail =
-      correo
-        .trim()
-        .toLowerCase();
-
-    if (!normalizedEmail) {
-      setError(
-        'Ingresa el correo administrativo.'
-      );
-
-      return;
-    }
-
     try {
       setLoading(
         true
       );
 
+      /*
+       * El navegador NO envía ningún correo.
+       *
+       * El backend decide exclusivamente qué administrador
+       * general recibe el código.
+       */
       const {
         data,
       } =
         await api.post(
           '/auth/admin-access/request',
-          {
-            correo:
-              normalizedEmail,
-          }
+          {}
         );
 
       const nextChallengeId =
@@ -127,15 +109,11 @@ export default function AdminAccess() {
         )
       ) {
         setError(
-          'No fue posible iniciar la verificación administrativa.'
+          'No fue posible iniciar la autorización administrativa.'
         );
 
         return;
       }
-
-      setCorreo(
-        normalizedEmail
-      );
 
       setChallengeId(
         nextChallengeId
@@ -143,7 +121,7 @@ export default function AdminAccess() {
 
       setInfo(
         data?.message ||
-        'Revisa tu correo e ingresa el código de autorización.'
+        'La solicitud fue enviada al administrador general de SMART RH.'
       );
 
     } catch (
@@ -151,7 +129,7 @@ export default function AdminAccess() {
     ) {
       setError(
         err?.response?.data?.message ||
-        'No fue posible iniciar la verificación administrativa.'
+        'No fue posible solicitar la autorización administrativa.'
       );
 
     } finally {
@@ -183,7 +161,7 @@ export default function AdminAccess() {
       )
     ) {
       setError(
-        'Ingresa el código de 6 dígitos.'
+        'Ingresa el código de autorización de 6 dígitos.'
       );
 
       return;
@@ -212,17 +190,26 @@ export default function AdminAccess() {
         )
           .trim();
 
-      if (!adminAccessToken) {
+      if (
+        !data?.authorized ||
+        !adminAccessToken
+      ) {
         setError(
-          'La preautorización no entregó un token administrativo válido.'
+          'La autorización administrativa no es válida.'
         );
 
         return;
       }
 
       /*
-       * El token de preautorización NO se persiste.
-       * Solo viaja por state hasta el login administrativo.
+       * Seguridad:
+       * adminAccessToken NO se persiste.
+       *
+       * No localStorage.
+       * No sessionStorage.
+       *
+       * Solo viaja por React Router state hacia
+       * el login administrativo.
        */
       navigate(
         '/admin/login',
@@ -231,11 +218,6 @@ export default function AdminAccess() {
             true,
 
           state: {
-            correo:
-              correo
-                .trim()
-                .toLowerCase(),
-
             adminAccessToken,
           },
         }
@@ -283,6 +265,11 @@ export default function AdminAccess() {
         ← Volver al sitio principal
       </Link>
 
+      <div className="bg-shape bg-shape-top-left-large" />
+      <div className="bg-shape bg-shape-top-left-small" />
+      <div className="bg-shape bg-shape-bottom-right-large" />
+      <div className="bg-shape bg-shape-bottom-right-small" />
+
       <div className="auth-premium-grid">
         <div className="auth-showcase-card">
           <div className="auth-showcase-badge">
@@ -294,40 +281,55 @@ export default function AdminAccess() {
           </h1>
 
           <p className="auth-showcase-text">
-            Antes de solicitar la contraseña administrativa,
-            confirma que tienes acceso al correo autorizado.
+            El acceso al portal requiere una autorización
+            central antes de solicitar las credenciales
+            personales del administrador.
           </p>
 
           <div className="auth-showcase-points">
             <div className="auth-showcase-point">
               <span className="auth-showcase-dot" />
+
               <div>
-                <h3>1. Correo autorizado</h3>
+                <h3>
+                  1. Autorización central
+                </h3>
+
                 <p>
                   SMART RH envía un código temporal únicamente
-                  al administrador habilitado.
+                  al administrador general configurado en el sistema.
                 </p>
               </div>
             </div>
 
             <div className="auth-showcase-point">
               <span className="auth-showcase-dot" />
+
               <div>
-                <h3>2. Contraseña</h3>
+                <h3>
+                  2. Credenciales personales
+                </h3>
+
                 <p>
-                  Solo después de validar el correo se habilita
-                  el inicio de sesión administrativo.
+                  Después de validar la autorización,
+                  cada administrador debe ingresar su propio
+                  correo y contraseña.
                 </p>
               </div>
             </div>
 
             <div className="auth-showcase-point">
               <span className="auth-showcase-dot" />
+
               <div>
-                <h3>3. Segundo factor</h3>
+                <h3>
+                  3. Segundo factor
+                </h3>
+
                 <p>
-                  La contraseña correcta todavía requiere el
-                  código 2FA normal antes de entregar la sesión.
+                  Una contraseña correcta todavía requiere
+                  el código 2FA enviado al correo personal
+                  del administrador.
                 </p>
               </div>
             </div>
@@ -350,9 +352,11 @@ export default function AdminAccess() {
                 </p>
 
                 <h2 className="auth-title">
-                  {challengeId
-                    ? 'Verificar autorización'
-                    : 'Solicitar autorización'}
+                  {
+                    challengeId
+                      ? 'Código de autorización'
+                      : 'Solicitar autorización'
+                  }
                 </h2>
               </div>
 
@@ -364,36 +368,23 @@ export default function AdminAccess() {
             {!challengeId ? (
               <>
                 <p className="auth-description">
-                  Ingresa el correo de la cuenta administrativa.
+                  Solicita autorización al administrador general
+                  para continuar al inicio de sesión administrativo.
                 </p>
 
-                <label className="auth-label">
-                  Correo administrativo
-                </label>
-
-                <input
-                  className="auth-input"
-                  value={correo}
-                  onChange={
-                    (
-                      event
-                    ) =>
-                      setCorreo(
-                        event.target.value
-                      )
-                  }
-                  placeholder="admin@empresa.com"
-                  autoComplete="email"
-                />
+                <div className="auth-email-chip">
+                  Autorización controlada por SMART RH
+                </div>
               </>
             ) : (
               <>
                 <p className="auth-description">
-                  Ingresa el código enviado al correo autorizado.
+                  Solicita al administrador general el código temporal
+                  correspondiente a esta solicitud.
                 </p>
 
                 <div className="auth-email-chip">
-                  {correo}
+                  Solicitud enviada al administrador general
                 </div>
 
                 <label className="auth-label">
@@ -414,6 +405,7 @@ export default function AdminAccess() {
                   placeholder="000000"
                   inputMode="numeric"
                   maxLength={6}
+                  autoComplete="one-time-code"
                   autoFocus
                 />
               </>
@@ -425,11 +417,13 @@ export default function AdminAccess() {
               disabled={loading}
             >
               <span>
-                {loading
-                  ? 'Validando...'
-                  : challengeId
-                  ? 'Validar y continuar'
-                  : 'Enviar código'}
+                {
+                  loading
+                    ? 'Procesando...'
+                    : challengeId
+                    ? 'Validar autorización'
+                    : 'Solicitar autorización'
+                }
               </span>
 
               <span className="auth-submit-icon">
