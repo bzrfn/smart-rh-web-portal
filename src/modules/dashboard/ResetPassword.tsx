@@ -29,6 +29,11 @@ export default function ResetPassword() {
     setError('');
     setInfo('');
 
+    if (!correo.trim()) {
+      setError('La sesión de recuperación no es válida. Solicita un nuevo código.');
+      return;
+    }
+
     if (!token.trim() || !nuevaContrasena.trim() || !confirmarContrasena.trim()) {
       setError('Ingresa código, nueva contraseña y confirmación.');
       return;
@@ -43,7 +48,8 @@ export default function ResetPassword() {
       setLoading(true);
 
       const { data } = await api.post('/auth/reset-password', {
-        token: token.trim(),
+        correo: correo.trim(),
+        codigo: token.trim(),
         nuevaContrasena,
       });
 
