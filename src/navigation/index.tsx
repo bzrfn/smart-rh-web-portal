@@ -12,15 +12,12 @@ import DocumentacionEmpleado from '../modules/documentacion/DocumentacionEmplead
 import ETLProcess from '../components/ETLProcess';
 import Soporte from '../modules/soporte/Soporte';
 import { useAuth } from '../app/auth/AuthContext';
-import Login from '../modules/dashboard/Login';
 import AdminAccess from '../modules/dashboard/AdminAccess';
 import AdminLogin from '../modules/dashboard/AdminLogin';
-import Register from '../modules/dashboard/Register';
 import ForgotPassword from '../modules/dashboard/ForgotPassword';
 import ResetPassword from '../modules/dashboard/ResetPassword';
 import AdminInvitationAccept from '../modules/dashboard/AdminInvitationAccept';
 import VerifyLoginCode from '../modules/dashboard/VerifyLoginCode';
-import VerifyAccount from '../modules/dashboard/VerifyAccount';
 import LandingPage from '../modules/landing/LandingPage';
 import AnalisisSupervisado from '../modules/ml/AnalisisSupervisado';
 import AnalisisKMeans from '../pages/AnalisisKMeans';
@@ -29,6 +26,15 @@ import DashboardAnalitico from '../pages/DashboardAnalitico';
 export default function Navigation() {
   const { user } = useAuth();
 
+  const isAdmin =
+    String(
+      user?.role ||
+      ''
+    )
+      .trim()
+      .toLowerCase() ===
+    'admin';
+
   return (
     <Routes>
       <Route path="/" element={<LandingPage />} />
@@ -36,7 +42,7 @@ export default function Navigation() {
       <Route
         path="/admin/acceso"
         element={
-          user
+          isAdmin
             ? <Navigate to="/portal" replace />
             : <AdminAccess />
         }
@@ -45,7 +51,7 @@ export default function Navigation() {
       <Route
         path="/admin/login"
         element={
-          user
+          isAdmin
             ? <Navigate to="/portal" replace />
             : <AdminLogin />
         }
@@ -53,32 +59,47 @@ export default function Navigation() {
 
       <Route
         path="/login"
-        element={user ? <Navigate to="/portal" replace /> : <Login />}
+        element={
+          <Navigate
+            to={isAdmin ? '/portal' : '/admin/acceso'}
+            replace
+          />
+        }
       />
 
       <Route
         path="/register"
-        element={user ? <Navigate to="/portal" replace /> : <Register />}
+        element={
+          <Navigate
+            to={isAdmin ? '/portal' : '/admin/acceso'}
+            replace
+          />
+        }
       />
 
       <Route
         path="/verify-login-code"
-        element={user ? <Navigate to="/portal" replace /> : <VerifyLoginCode />}
+        element={isAdmin ? <Navigate to="/portal" replace /> : <VerifyLoginCode />}
       />
 
       <Route
         path="/verify-account"
-        element={user ? <Navigate to="/portal" replace /> : <VerifyAccount />}
+        element={
+          <Navigate
+            to={isAdmin ? '/portal' : '/admin/acceso'}
+            replace
+          />
+        }
       />
 
       <Route
         path="/forgot-password"
-        element={user ? <Navigate to="/portal" replace /> : <ForgotPassword />}
+        element={isAdmin ? <Navigate to="/portal" replace /> : <ForgotPassword />}
       />
 
       <Route
         path="/reset-password"
-        element={user ? <Navigate to="/portal" replace /> : <ResetPassword />}
+        element={isAdmin ? <Navigate to="/portal" replace /> : <ResetPassword />}
       />
 
       <Route
@@ -86,7 +107,7 @@ export default function Navigation() {
         element={<AdminInvitationAccept />}
       />
 
-      {user ? (
+      {isAdmin ? (
         <Route path="/portal" element={<AppShell />}>
           <Route index element={<Dashboard />} />
 
@@ -98,23 +119,23 @@ export default function Navigation() {
           <Route path="contratos" element={<Contratos />} />
           <Route path="documentacion" element={<DocumentacionEmpleado />} />
 
-          {user.role === 'admin' && (
+          {isAdmin && (
             <Route path="dashboard-analitico" element={<DashboardAnalitico />} />
           )}
 
-          {user.role === 'admin' && (
+          {isAdmin && (
             <Route path="analisis-supervisado" element={<AnalisisSupervisado />} />
           )}
 
-          {user.role === 'admin' && (
+          {isAdmin && (
             <Route path="analisis-kmeans" element={<AnalisisKMeans />} />
           )}
 
-          {user.role === 'admin' && <Route path="soporte" element={<Soporte />} />}
-          {user.role === 'admin' && <Route path="etl" element={<ETLProcess />} />}
+          {isAdmin && <Route path="soporte" element={<Soporte />} />}
+          {isAdmin && <Route path="etl" element={<ETLProcess />} />}
         </Route>
       ) : (
-        <Route path="/portal/*" element={<Navigate to="/login" replace />} />
+        <Route path="/portal/*" element={<Navigate to="/admin/acceso" replace />} />
       )}
 
       <Route path="/usuarios" element={<Navigate to="/portal/usuarios" replace />} />
