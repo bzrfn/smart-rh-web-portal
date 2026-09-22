@@ -15,6 +15,8 @@ import {
 } from '../../app/auth/AuthContext';
 
 
+import { formatAttendanceDate } from './asistenciaDate';
+
 type Asistencia = {
   id: number;
   nombre: string;
@@ -1030,7 +1032,7 @@ export default function Aprobaciones() {
                       </td>
 
                       <td>
-                        {a.fecha}
+                        {formatAttendanceDate(a.fecha)}
                       </td>
 
                       <td>

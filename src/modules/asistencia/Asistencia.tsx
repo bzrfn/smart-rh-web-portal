@@ -3,6 +3,8 @@ import Aprobaciones from './Aprobaciones';
 import { useAuth } from '../../app/auth/AuthContext';
 import { api } from '../../services/api';
 
+import { formatAttendanceDate } from './asistenciaDate';
+
 type AsistenciaItem = {
   id: number;
   usuario_id: number;
@@ -211,7 +213,7 @@ export default function Asistencia() {
                           </div>
                           <div className="table-secondary-text">{item.correo}</div>
                         </td>
-                        <td>{item.fecha}</td>
+                        <td>{formatAttendanceDate(item.fecha)}</td>
                         <td>{item.hora_entrada || 'Sin dato'}</td>
                         <td>{item.hora_salida || 'Sin dato'}</td>
 
