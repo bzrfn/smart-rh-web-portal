@@ -10100,3 +10100,725 @@ body::before {
     border-radius: 24px;
   }
 }
+/* ============================================================
+   CAMBIO3_DARK_ASISTENCIA_3P6_1
+   Ajuste visual del módulo de asistencia en modo oscuro.
+   Solo estilos.
+   ============================================================ */
+
+:root[data-theme='dark'] .module-kpi-card {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(21, 40, 63, 0.98),
+      rgba(13, 29, 48, 0.98)
+    ) !important;
+
+  border:
+    1px solid
+    rgba(56, 189, 248, 0.16) !important;
+
+  box-shadow:
+    0 14px 30px
+    rgba(0, 0, 0, 0.26),
+    inset 0 1px 0
+    rgba(255, 255, 255, 0.04) !important;
+}
+
+:root[data-theme='dark'] .module-kpi-label {
+  color:
+    #94a3b8 !important;
+}
+
+:root[data-theme='dark'] .module-kpi-value {
+  color:
+    #38bdf8 !important;
+}
+
+
+/* Botones neutros:
+   Historial / Justificar / Corregir / Cancelar / Cerrar */
+
+:root[data-theme='dark']
+.module-card
+.action-btn:not(.action-btn-success):not(.action-btn-danger):not(.action-btn-justify):not(.action-btn-correct):not(.action-btn-history) {
+  background:
+    #1e344d !important;
+
+  border:
+    1px solid
+    rgba(148, 163, 184, 0.22) !important;
+
+  color:
+    #e2e8f0 !important;
+
+  box-shadow:
+    none !important;
+}
+
+:root[data-theme='dark']
+.module-card
+.action-btn:not(.action-btn-success):not(.action-btn-danger):not(.action-btn-justify):not(.action-btn-correct):not(.action-btn-history):hover {
+  background:
+    #294966 !important;
+
+  border-color:
+    rgba(56, 189, 248, 0.45) !important;
+
+  color:
+    #ffffff !important;
+
+  transform:
+    translateY(-1px);
+}
+
+:root[data-theme='dark']
+.module-card
+.action-btn:not(.action-btn-success):not(.action-btn-danger):not(.action-btn-justify):not(.action-btn-correct):not(.action-btn-history):focus-visible {
+  outline:
+    2px solid
+    #38bdf8 !important;
+
+  outline-offset:
+    2px;
+}
+
+
+/* Panel que aparece debajo de la tabla */
+
+:root[data-theme='dark']
+.module-card
+.empty-state-card {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(16, 33, 54, 0.98),
+      rgba(12, 26, 43, 0.98)
+    ) !important;
+
+  border:
+    1px solid
+    rgba(56, 189, 248, 0.15) !important;
+
+  box-shadow:
+    0 18px 38px
+    rgba(0, 0, 0, 0.24) !important;
+
+  color:
+    #e2e8f0 !important;
+}
+
+:root[data-theme='dark']
+.module-card
+.empty-state-card h3 {
+  color:
+    #f8fafc !important;
+}
+
+:root[data-theme='dark']
+.module-card
+.empty-state-card p,
+:root[data-theme='dark']
+.module-card
+.empty-state-card .table-secondary-text {
+  color:
+    #a8b7ca !important;
+}
+
+
+/* Mantener claramente semánticos los botones de decisión */
+
+:root[data-theme='dark']
+.module-card
+.action-btn-success {
+  background:
+    rgba(13, 148, 136, 0.20) !important;
+
+  border:
+    1px solid
+    rgba(45, 212, 191, 0.20) !important;
+
+  color:
+    #5eead4 !important;
+}
+
+:root[data-theme='dark']
+.module-card
+.action-btn-success:hover {
+  background:
+    rgba(13, 148, 136, 0.30) !important;
+
+  color:
+    #99f6e4 !important;
+}
+
+:root[data-theme='dark']
+.module-card
+.action-btn-danger {
+  background:
+    rgba(220, 38, 38, 0.16) !important;
+
+  border:
+    1px solid
+    rgba(248, 113, 113, 0.18) !important;
+
+  color:
+    #f87171 !important;
+}
+
+:root[data-theme='dark']
+.module-card
+.action-btn-danger:hover {
+  background:
+    rgba(220, 38, 38, 0.25) !important;
+
+  color:
+    #fca5a5 !important;
+}
+
+/* ============================================================
+   CAMBIO3_ACTION_COLORS_3P6_2
+   Colores semánticos para acciones administrativas.
+   Justificar = ámbar
+   Corregir   = violeta
+   Historial  = azul
+   ============================================================ */
+
+
+/* ------------------------------------------------------------
+   MODO CLARO
+   ------------------------------------------------------------ */
+
+.action-btn.action-btn-justify {
+  background:
+    rgba(245, 158, 11, 0.14);
+
+  border:
+    1px solid
+    rgba(245, 158, 11, 0.22);
+
+  color:
+    #b45309;
+}
+
+.action-btn.action-btn-justify:hover {
+  background:
+    rgba(245, 158, 11, 0.23);
+
+  border-color:
+    rgba(217, 119, 6, 0.34);
+
+  color:
+    #92400e;
+}
+
+
+.action-btn.action-btn-correct {
+  background:
+    rgba(124, 58, 237, 0.12);
+
+  border:
+    1px solid
+    rgba(124, 58, 237, 0.20);
+
+  color:
+    #6d28d9;
+}
+
+.action-btn.action-btn-correct:hover {
+  background:
+    rgba(124, 58, 237, 0.20);
+
+  border-color:
+    rgba(109, 40, 217, 0.32);
+
+  color:
+    #5b21b6;
+}
+
+
+.action-btn.action-btn-history {
+  background:
+    rgba(37, 99, 235, 0.11);
+
+  border:
+    1px solid
+    rgba(37, 99, 235, 0.18);
+
+  color:
+    #1d4ed8;
+}
+
+.action-btn.action-btn-history:hover {
+  background:
+    rgba(37, 99, 235, 0.19);
+
+  border-color:
+    rgba(37, 99, 235, 0.30);
+
+  color:
+    #1e40af;
+}
+
+
+/* ------------------------------------------------------------
+   MODO OSCURO
+   ------------------------------------------------------------ */
+
+:root[data-theme='dark']
+.module-card
+.action-btn.action-btn-justify {
+  background:
+    rgba(245, 158, 11, 0.17) !important;
+
+  border:
+    1px solid
+    rgba(251, 191, 36, 0.30) !important;
+
+  color:
+    #fbbf24 !important;
+}
+
+:root[data-theme='dark']
+.module-card
+.action-btn.action-btn-justify:hover {
+  background:
+    rgba(245, 158, 11, 0.27) !important;
+
+  border-color:
+    rgba(251, 191, 36, 0.48) !important;
+
+  color:
+    #fde68a !important;
+}
+
+
+:root[data-theme='dark']
+.module-card
+.action-btn.action-btn-correct {
+  background:
+    rgba(139, 92, 246, 0.18) !important;
+
+  border:
+    1px solid
+    rgba(167, 139, 250, 0.30) !important;
+
+  color:
+    #c4b5fd !important;
+}
+
+:root[data-theme='dark']
+.module-card
+.action-btn.action-btn-correct:hover {
+  background:
+    rgba(139, 92, 246, 0.29) !important;
+
+  border-color:
+    rgba(196, 181, 253, 0.48) !important;
+
+  color:
+    #ddd6fe !important;
+}
+
+
+:root[data-theme='dark']
+.module-card
+.action-btn.action-btn-history {
+  background:
+    rgba(37, 99, 235, 0.19) !important;
+
+  border:
+    1px solid
+    rgba(96, 165, 250, 0.30) !important;
+
+  color:
+    #93c5fd !important;
+}
+
+:root[data-theme='dark']
+.module-card
+.action-btn.action-btn-history:hover {
+  background:
+    rgba(37, 99, 235, 0.30) !important;
+
+  border-color:
+    rgba(147, 197, 253, 0.48) !important;
+
+  color:
+    #dbeafe !important;
+}
+
+/* ============================================================
+   CAMBIO3_KPI_SPACING_3P6_4
+   Separación visual entre KPIs y tabla de aprobaciones.
+   ============================================================ */
+
+.asistencia-review-kpi-row {
+  margin-bottom: 24px;
+}
+
+/* ============================================================
+   CAMBIO3_REVIEW_MODAL_3P7
+   Modal flotante para revisión administrativa e historial.
+   ============================================================ */
+
+.asistencia-review-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1400;
+
+  display: grid;
+  place-items: center;
+
+  padding: 28px;
+
+  overflow-y: auto;
+
+  background:
+    rgba(15, 23, 42, 0.56);
+
+  backdrop-filter:
+    blur(8px);
+
+  -webkit-backdrop-filter:
+    blur(8px);
+}
+
+
+.asistencia-review-modal {
+  position: relative;
+
+  width:
+    min(
+      920px,
+      100%
+    );
+
+  max-height:
+    calc(
+      100vh - 56px
+    );
+
+  overflow-y: auto;
+
+  margin:
+    0 !important;
+
+  padding:
+    30px !important;
+
+  border-radius:
+    26px !important;
+
+  box-shadow:
+    0 30px 90px
+    rgba(15, 23, 42, 0.28) !important;
+
+  animation:
+    asistenciaReviewModalIn
+    180ms ease-out;
+}
+
+
+.asistencia-review-modal:focus {
+  outline:
+    none;
+}
+
+
+.asistencia-review-modal-close {
+  position: absolute;
+
+  top:
+    16px;
+
+  right:
+    16px;
+
+  z-index:
+    2;
+
+  display: inline-flex;
+
+  width:
+    42px;
+
+  height:
+    42px;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  padding:
+    0;
+
+  border:
+    1px solid
+    rgba(148, 163, 184, 0.22);
+
+  border-radius:
+    14px;
+
+  background:
+    rgba(148, 163, 184, 0.12);
+
+  color:
+    var(--text);
+
+  font-size:
+    27px;
+
+  font-weight:
+    700;
+
+  line-height:
+    1;
+
+  cursor:
+    pointer;
+
+  transition:
+    160ms ease;
+}
+
+
+.asistencia-review-modal-close:hover {
+  background:
+    rgba(239, 68, 68, 0.12);
+
+  border-color:
+    rgba(239, 68, 68, 0.25);
+
+  color:
+    #ef4444;
+
+  transform:
+    scale(1.04);
+}
+
+
+.asistencia-review-modal-close:focus-visible {
+  outline:
+    2px solid
+    var(--primary);
+
+  outline-offset:
+    2px;
+}
+
+
+@keyframes asistenciaReviewModalIn {
+  from {
+    opacity:
+      0;
+
+    transform:
+      translateY(12px)
+      scale(0.985);
+  }
+
+  to {
+    opacity:
+      1;
+
+    transform:
+      translateY(0)
+      scale(1);
+  }
+}
+
+
+/* ------------------------------------------------------------
+   MODO OSCURO
+   ------------------------------------------------------------ */
+
+:root[data-theme='dark']
+.asistencia-review-modal-backdrop {
+  background:
+    rgba(2, 8, 23, 0.76);
+}
+
+
+:root[data-theme='dark']
+.module-card
+.asistencia-review-modal {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(16, 33, 54, 0.99),
+      rgba(9, 24, 41, 0.99)
+    ) !important;
+
+  border:
+    1px solid
+    rgba(56, 189, 248, 0.18) !important;
+
+  box-shadow:
+    0 34px 100px
+    rgba(0, 0, 0, 0.48) !important;
+}
+
+
+:root[data-theme='dark']
+.asistencia-review-modal-close {
+  background:
+    rgba(30, 52, 77, 0.94);
+
+  border-color:
+    rgba(148, 163, 184, 0.22);
+
+  color:
+    #e2e8f0;
+}
+
+
+:root[data-theme='dark']
+.asistencia-review-modal-close:hover {
+  background:
+    rgba(220, 38, 38, 0.20);
+
+  border-color:
+    rgba(248, 113, 113, 0.34);
+
+  color:
+    #fca5a5;
+}
+
+
+/* ------------------------------------------------------------
+   RESPONSIVE
+   ------------------------------------------------------------ */
+
+@media (max-width: 760px) {
+  .asistencia-review-modal-backdrop {
+    align-items:
+      end;
+
+    padding:
+      12px;
+  }
+
+  .asistencia-review-modal {
+    width:
+      100%;
+
+    max-height:
+      calc(
+        100vh - 24px
+      );
+
+    padding:
+      24px 18px
+      20px !important;
+
+    border-radius:
+      24px !important;
+  }
+
+  .asistencia-review-modal-close {
+    top:
+      12px;
+
+    right:
+      12px;
+  }
+}
+
+/* ============================================================
+   CAMBIO3_STRUCTURED_JUSTIFICATION_3P8_1B
+   Formulario profesional de justificación administrativa.
+   ============================================================ */
+
+.asistencia-justification-form {
+  display: grid;
+  gap: 18px;
+  margin-top: 18px;
+}
+
+.asistencia-review-field {
+  display: grid;
+  gap: 8px;
+}
+
+.asistencia-review-field > select,
+.asistencia-review-field > input,
+.asistencia-review-field > textarea {
+  width: 100%;
+}
+
+.asistencia-review-field select {
+  min-height: 48px;
+  padding: 0 14px;
+
+  border:
+    1px solid
+    var(--border);
+
+  border-radius:
+    12px;
+
+  background:
+    var(--surface);
+
+  color:
+    var(--text);
+
+  font:
+    inherit;
+}
+
+.asistencia-review-field select:focus {
+  border-color:
+    var(--primary);
+
+  outline:
+    2px solid
+    rgba(59, 130, 246, 0.14);
+}
+
+.asistencia-review-help {
+  color:
+    var(--text-secondary);
+
+  font-size:
+    0.82rem;
+
+  line-height:
+    1.45;
+}
+
+
+/* Modo oscuro */
+
+:root[data-theme='dark']
+.asistencia-review-field select {
+  background:
+    rgba(15, 35, 57, 0.96);
+
+  border-color:
+    rgba(148, 163, 184, 0.22);
+
+  color:
+    #e2e8f0;
+}
+
+:root[data-theme='dark']
+.asistencia-review-field select:focus {
+  border-color:
+    rgba(56, 189, 248, 0.52);
+
+  outline-color:
+    rgba(56, 189, 248, 0.16);
+}
+
+
+/* Responsive */
+
+@media (max-width: 760px) {
+  .asistencia-justification-form {
+    gap: 14px;
+  }
+}

@@ -12,7 +12,13 @@ type AsistenciaItem = {
   fecha: string;
   hora_entrada?: string | null;
   hora_salida?: string | null;
-  estado: 'pendiente' | 'aprobada' | 'rechazada';
+  estado:
+    | 'pendiente'
+    | 'aprobada'
+    | 'rechazada'
+    | 'INVALIDA_PENDIENTE_REVISION';
+  duracion_minima_aplicada_minutos?: number | null;
+  duracion_registrada_segundos?: number | null;
   qr_token?: string | null;
 };
 
@@ -28,12 +34,18 @@ export default function Asistencia() {
 
   const summary = useMemo(() => {
     const pendientes = items.filter((i) => i.estado === 'pendiente').length;
+
+    const pendientesRevision = items.filter(
+      (i) => i.estado === 'INVALIDA_PENDIENTE_REVISION'
+    ).length;
+
     const aprobadas = items.filter((i) => i.estado === 'aprobada').length;
     const rechazadas = items.filter((i) => i.estado === 'rechazada').length;
 
     return {
       total: items.length,
       pendientes,
+      pendientesRevision,
       aprobadas,
       rechazadas,
     };
@@ -129,6 +141,15 @@ export default function Asistencia() {
             </div>
 
             <div className="asistencia-summary-card">
+              <div className="dashboard-card-accent blue" />
+              <h3>Pendientes de revisión</h3>
+              <p>
+                {summary.pendientesRevision} registros requieren validación
+                administrativa.
+              </p>
+            </div>
+
+            <div className="asistencia-summary-card">
               <div className="dashboard-card-accent teal" />
               <h3>Aprobadas</h3>
               <p>{summary.aprobadas} asistencias aprobadas.</p>
@@ -176,7 +197,8 @@ export default function Asistencia() {
                       <th>Fecha</th>
                       <th>Entrada</th>
                       <th>Salida</th>
-                      <th>Estado</th>
+                        <th>Duración</th>
+                        <th>Estado</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -192,9 +214,25 @@ export default function Asistencia() {
                         <td>{item.fecha}</td>
                         <td>{item.hora_entrada || 'Sin dato'}</td>
                         <td>{item.hora_salida || 'Sin dato'}</td>
-                        <td>
+
+                          <td>
+                            <div className="table-main-text">
+                              {formatDurationSeconds(
+                                item.duracion_registrada_segundos
+                              )}
+                            </div>
+
+                            <div className="table-secondary-text">
+                              Mínimo aplicado:{' '}
+                              {formatMinimumMinutes(
+                                item.duracion_minima_aplicada_minutos
+                              )}
+                            </div>
+                          </td>
+
+                          <td>
                           <span className={`status-pill ${mapEstadoClass(item.estado)}`}>
-                            {item.estado}
+                            {formatEstadoLabel(item.estado)}
                           </span>
                         </td>
                       </tr>
@@ -285,4 +323,73 @@ function mapEstadoClass(estado: AsistenciaItem['estado']) {
     default:
       return 'admin';
   }
+}
+
+
+function formatEstadoLabel(
+  estado: AsistenciaItem['estado']
+) {
+  switch (estado) {
+    case 'INVALIDA_PENDIENTE_REVISION':
+      return 'Pendiente de revisión';
+
+    case 'aprobada':
+      return 'Aprobada';
+
+    case 'rechazada':
+      return 'Rechazada';
+
+    default:
+      return 'Pendiente';
+  }
+}
+
+
+function formatDurationSeconds(
+  value?: number | null
+) {
+  if (
+    value === null ||
+    value === undefined ||
+    !Number.isFinite(Number(value))
+  ) {
+    return 'Sin duración calculada';
+  }
+
+  const totalSeconds =
+    Math.max(
+      0,
+      Math.round(
+        Number(value)
+      )
+    );
+
+  const minutes =
+    Math.floor(
+      totalSeconds / 60
+    );
+
+  const seconds =
+    totalSeconds % 60;
+
+  if (minutes <= 0) {
+    return `${seconds} s`;
+  }
+
+  return `${minutes} min ${seconds} s`;
+}
+
+
+function formatMinimumMinutes(
+  value?: number | null
+) {
+  if (
+    value === null ||
+    value === undefined ||
+    !Number.isFinite(Number(value))
+  ) {
+    return 'No registrado';
+  }
+
+  return `${Number(value)} min`;
 }
