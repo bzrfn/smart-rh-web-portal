@@ -25,14 +25,7 @@ const modules: ModuleCard[] = [
     code: 'AS',
     accent: 'teal',
   },
-  {
-    path: '/qr-asistencia',
-    title: 'QR Asistencia',
-    description: 'Generación de código QR dinámico para registro del personal.',
-    code: 'QR',
-    accent: 'teal',
-  },
-  {
+    {
     path: '/documentacion',
     title: 'Documentación',
     description: 'Foto de perfil, contrato PDF, credencial y expediente digital.',

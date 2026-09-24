@@ -79,14 +79,7 @@ export default function AppShell() {
         icon: 'AS',
         description: 'Registros laborales',
       },
-      {
-        path: '/portal/qr-asistencia',
-        label: 'QR',
-        icon: 'QR',
-        description: 'Registro temporal',
-        adminOnly: true,
-      },
-      {
+            {
         path: '/portal/documentacion',
         label: 'Documentos',
         icon: 'DC',

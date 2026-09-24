@@ -4,7 +4,6 @@ import AppShell from '../app/layout/AppShell';
 import Dashboard from '../modules/dashboard/Dashboard';
 import Usuarios from '../modules/usuarios/Usuarios';
 import Asistencia from '../modules/asistencia/Asistencia';
-import QrAsistencia from '../modules/asistencia/QrAsistencia';
 import Vacaciones from '../modules/vacaciones/index';
 import Nomina from '../modules/nomina/index';
 import Contratos from '../modules/contratos/index';
@@ -19,6 +18,7 @@ import ResetPassword from '../modules/dashboard/ResetPassword';
 import AdminInvitationAccept from '../modules/dashboard/AdminInvitationAccept';
 import VerifyLoginCode from '../modules/dashboard/VerifyLoginCode';
 import LandingPage from '../modules/landing/LandingPage';
+import TerminalAttendance from '../modules/terminal/TerminalAttendance';
 import AnalisisSupervisado from '../modules/ml/AnalisisSupervisado';
 import AnalisisKMeans from '../pages/AnalisisKMeans';
 import DashboardAnalitico from '../pages/DashboardAnalitico';
@@ -38,6 +38,7 @@ export default function Navigation() {
   return (
     <Routes>
       <Route path="/" element={<LandingPage />} />
+      <Route path="/terminal" element={<TerminalAttendance />} />
 
       <Route
         path="/admin/acceso"
@@ -113,7 +114,6 @@ export default function Navigation() {
 
           <Route path="usuarios" element={<Usuarios />} />
           <Route path="asistencia" element={<Asistencia />} />
-          <Route path="qr-asistencia" element={<QrAsistencia />} />
           <Route path="vacaciones" element={<Vacaciones />} />
           <Route path="nomina" element={<Nomina />} />
           <Route path="contratos" element={<Contratos />} />
@@ -140,7 +140,6 @@ export default function Navigation() {
 
       <Route path="/usuarios" element={<Navigate to="/portal/usuarios" replace />} />
       <Route path="/asistencia" element={<Navigate to="/portal/asistencia" replace />} />
-      <Route path="/qr-asistencia" element={<Navigate to="/portal/qr-asistencia" replace />} />
       <Route path="/vacaciones" element={<Navigate to="/portal/vacaciones" replace />} />
       <Route path="/nomina" element={<Navigate to="/portal/nomina" replace />} />
       <Route path="/contratos" element={<Navigate to="/portal/contratos" replace />} />
