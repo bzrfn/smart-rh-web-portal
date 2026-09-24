@@ -714,7 +714,7 @@ export default function Incapacidades() {
           </div>
         </div>
 
-        <div className="module-hero-banner">
+        <div className="module-hero-banner incap-hero-banner">
           <div className="module-hero-copy">
             <h3>
               Gestión de incapacidades médicas
@@ -784,7 +784,7 @@ export default function Incapacidades() {
         </div>
       </div>
 
-      <div className="module-card">
+      <div className="module-card incap-list-card">
         <div className="module-card-header">
           <div>
             <p className="module-eyebrow">
@@ -1039,7 +1039,7 @@ export default function Incapacidades() {
       </div>
 
       {selected && (
-        <div className="module-card">
+        <div className="module-card incap-detail-card">
           <div className="module-card-header">
             <div>
               <p className="module-eyebrow">
@@ -1158,7 +1158,7 @@ export default function Incapacidades() {
 
           {selected.estado ===
           'pendiente' ? (
-            <div className="module-card">
+            <div className="module-card incap-review-card">
               <p className="module-eyebrow">
                 Revisión administrativa
               </p>
