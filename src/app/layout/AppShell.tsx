@@ -104,6 +104,13 @@ export default function AppShell() {
         description: 'Solicitudes y saldos',
       },
       {
+        path: '/portal/incapacidades',
+        label: 'Incapacidades',
+        icon: 'IN',
+        description: 'Solicitudes médicas',
+        adminOnly: true,
+      },
+      {
         path: '/portal/soporte',
         label: 'Soporte',
         icon: 'SP',

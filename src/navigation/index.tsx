@@ -5,6 +5,7 @@ import Dashboard from '../modules/dashboard/Dashboard';
 import Usuarios from '../modules/usuarios/Usuarios';
 import Asistencia from '../modules/asistencia/Asistencia';
 import Vacaciones from '../modules/vacaciones/index';
+import Incapacidades from '../modules/incapacidades';
 import Nomina from '../modules/nomina/index';
 import Contratos from '../modules/contratos/index';
 import DocumentacionEmpleado from '../modules/documentacion/DocumentacionEmpleado';
@@ -122,6 +123,7 @@ export default function Navigation() {
           <Route path="asistencia" element={<Asistencia />} />
               <Route path="terminal-autorizacion" element={<TerminalApproval />} />
           <Route path="vacaciones" element={<Vacaciones />} />
+          <Route path="incapacidades" element={<Incapacidades />} />
           <Route path="nomina" element={<Nomina />} />
           <Route path="contratos" element={<Contratos />} />
           <Route path="documentacion" element={<DocumentacionEmpleado />} />
@@ -148,6 +150,7 @@ export default function Navigation() {
       <Route path="/usuarios" element={<Navigate to="/portal/usuarios" replace />} />
       <Route path="/asistencia" element={<Navigate to="/portal/asistencia" replace />} />
       <Route path="/vacaciones" element={<Navigate to="/portal/vacaciones" replace />} />
+      <Route path="/incapacidades" element={<Navigate to="/portal/incapacidades" replace />} />
       <Route path="/nomina" element={<Navigate to="/portal/nomina" replace />} />
       <Route path="/contratos" element={<Navigate to="/portal/contratos" replace />} />
       <Route path="/documentacion" element={<Navigate to="/portal/documentacion" replace />} />

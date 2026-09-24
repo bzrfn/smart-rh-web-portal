@@ -61,6 +61,14 @@ const modules: ModuleCard[] = [
     accent: 'gold',
   },
   {
+    path: '/incapacidades',
+    title: 'Incapacidades',
+    description: 'Solicitudes médicas, comprobantes, revisión y seguimiento administrativo.',
+    code: 'IN',
+    accent: 'danger',
+    adminOnly: true,
+  },
+  {
     path: '/soporte',
     title: 'Soporte',
     description: 'Tickets, incidencias, respuestas administrativas y seguimiento.',
@@ -281,6 +289,7 @@ export default function Dashboard() {
               <Link to="/documentacion">Documentación</Link>
               <Link to="/asistencia">Asistencia</Link>
               <Link to="/vacaciones">Vacaciones</Link>
+              {isAdmin && <Link to="/incapacidades">Incapacidades</Link>}
               {isAdmin && <Link to="/dashboard-analitico">Dashboard analítico</Link>}
               {isAdmin && <Link to="/etl">Proceso ETL</Link>}
               {isAdmin && <Link to="/analisis-supervisado">Análisis supervisado</Link>}
