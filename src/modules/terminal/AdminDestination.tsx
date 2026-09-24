@@ -19,6 +19,10 @@ import {
   setTerminalSessionMemory,
 } from '../../services/terminalSessionMemory';
 
+import {
+  useTerminalTheme,
+} from './terminalTheme';
+
 import './terminalExperience.css';
 
 
@@ -72,6 +76,12 @@ export default function AdminDestination() {
   const navigate =
     useNavigate();
 
+  const {
+    theme,
+    toggleTheme,
+  } =
+    useTerminalTheme();
+
   const [
     openingTerminal,
     setOpeningTerminal,
@@ -121,7 +131,7 @@ export default function AdminDestination() {
 
   if (loading) {
     return (
-      <main className="terminal-experience terminal-destination-page">
+      <main className={`terminal-experience terminal-destination-page terminal-theme-${theme}`}>
         <div className="terminal-loading-card">
           Verificando sesión administrativa…
         </div>
@@ -262,7 +272,7 @@ export default function AdminDestination() {
   }
 
   return (
-    <main className="terminal-experience terminal-destination-page">
+    <main className={`terminal-experience terminal-destination-page terminal-theme-${theme}`}>
       <section className="terminal-destination-shell">
         <header className="terminal-brand-header">
           <div>
@@ -286,6 +296,36 @@ export default function AdminDestination() {
             Sesión administrativa segura
           </div>
         </header>
+
+        <div className="terminal-selector-theme-row">
+          <button
+            type="button"
+            className="terminal-theme-toggle"
+            onClick={
+              toggleTheme
+            }
+            aria-label={
+              theme ===
+                'dark'
+                ? 'Cambiar a modo claro'
+                : 'Cambiar a modo oscuro'
+            }
+          >
+            <span className="terminal-theme-toggle-icon">
+              {theme ===
+                'dark'
+                ? '☀'
+                : '◐'}
+            </span>
+
+            <span>
+              {theme ===
+                'dark'
+                ? 'Modo claro'
+                : 'Modo oscuro'}
+            </span>
+          </button>
+        </div>
 
         <div className="terminal-destination-account">
           <span>

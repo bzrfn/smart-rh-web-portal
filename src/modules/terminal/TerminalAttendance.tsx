@@ -16,6 +16,10 @@ import {
   setTerminalSessionMemory,
 } from '../../services/terminalSessionMemory';
 
+import {
+  useTerminalTheme,
+} from './terminalTheme';
+
 import './terminalExperience.css';
 
 
@@ -36,6 +40,9 @@ const API_BASE_URL =
 
 const DEFAULT_TERMINAL_ID =
   'terminal-asistencia-01';
+
+const QR_CYCLE_MS =
+  10_000;
 
 
 type AccessStatus =
@@ -219,6 +226,12 @@ function jwtExpiry(
 export default function TerminalAttendance() {
   const navigate =
     useNavigate();
+
+  const {
+    theme,
+    toggleTheme,
+  } =
+    useTerminalTheme();
 
   const initialSession =
     useMemo(
@@ -515,8 +528,15 @@ export default function TerminalAttendance() {
             dataUrl
           );
 
+          const cycleExpiresAt =
+            Math.min(
+              expiresAt,
+              Date.now() +
+                QR_CYCLE_MS
+            );
+
           setQrExpiresAt(
-            expiresAt
+            cycleExpiresAt
           );
 
           setLastQrUpdate(
@@ -577,10 +597,9 @@ export default function TerminalAttendance() {
 
       const delay =
         Math.max(
-          3000,
+          0,
           qrExpiresAt -
-            Date.now() -
-            5000
+            Date.now()
         );
 
       refreshRef.current =
@@ -1053,7 +1072,9 @@ export default function TerminalAttendance() {
     );
 
   return (
-    <main className="terminal-experience">
+    <main
+      className={`terminal-experience terminal-theme-${theme}`}
+    >
       <header className="terminal-topbar">
         <div className="terminal-brand">
           <span className="terminal-logo-mark">
@@ -1085,6 +1106,32 @@ export default function TerminalAttendance() {
               ? 'Terminal autorizada'
               : 'Autorización requerida'}
           </div>
+
+          <button
+            type="button"
+            className="terminal-theme-toggle terminal-theme-toggle-compact"
+            onClick={
+              toggleTheme
+            }
+            aria-label={
+              theme ===
+                'dark'
+                ? 'Cambiar a modo claro'
+                : 'Cambiar a modo oscuro'
+            }
+          >
+            <span className="terminal-theme-toggle-icon">
+              {theme ===
+                'dark'
+                ? '☀'
+                : '◐'}
+            </span>
+
+            {theme ===
+              'dark'
+              ? 'Modo claro'
+              : 'Modo oscuro'}
+          </button>
 
           <button
             type="button"
@@ -1378,7 +1425,7 @@ export default function TerminalAttendance() {
               </strong>
 
               <small>
-                Renovación automática antes de vencer
+                Ciclo de 10 segundos · cambia al llegar a 00:00
               </small>
             </article>
 

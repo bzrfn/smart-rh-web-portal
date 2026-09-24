@@ -767,3 +767,314 @@
     display: none;
   }
 }
+
+
+/* ==========================================================
+   SMART RH · TERMINAL FINAL POLISH
+   Armonización visual + temas claro/oscuro
+   ========================================================== */
+
+.terminal-experience {
+  --terminal-bg: #f8fafc;
+  --terminal-surface: rgba(255, 255, 255, 0.97);
+  --terminal-surface-soft: #f8fafc;
+  --terminal-surface-strong: #ffffff;
+  --terminal-text: #0f172a;
+  --terminal-text-soft: #64748b;
+  --terminal-border: #e2e8f0;
+  --terminal-green: #16a34a;
+  --terminal-green-dark: #15803d;
+  --terminal-green-soft: #f0fdf4;
+  --terminal-shadow: 0 20px 55px rgba(15, 23, 42, 0.07);
+}
+
+.terminal-theme-light {
+  color-scheme: light;
+}
+
+.terminal-theme-dark {
+  color-scheme: dark;
+  --terminal-bg: #080d17;
+  --terminal-surface: rgba(15, 23, 42, 0.96);
+  --terminal-surface-soft: #111827;
+  --terminal-surface-strong: #0f172a;
+  --terminal-text: #e5edf7;
+  --terminal-text-soft: #94a3b8;
+  --terminal-border: #263244;
+  --terminal-green: #22c55e;
+  --terminal-green-dark: #4ade80;
+  --terminal-green-soft: rgba(34, 197, 94, 0.10);
+  --terminal-shadow: 0 24px 70px rgba(0, 0, 0, 0.34);
+
+  color: var(--terminal-text);
+  background:
+    radial-gradient(
+      circle at 8% 0%,
+      rgba(34, 197, 94, 0.13),
+      transparent 27%
+    ),
+    radial-gradient(
+      circle at 92% 10%,
+      rgba(59, 130, 246, 0.09),
+      transparent 23%
+    ),
+    var(--terminal-bg);
+}
+
+.terminal-topbar,
+.terminal-brand-header {
+  padding: 16px 18px;
+  border: 1px solid var(--terminal-border);
+  border-radius: 22px;
+  background: var(--terminal-surface);
+  box-shadow: var(--terminal-shadow);
+  backdrop-filter: blur(14px);
+}
+
+.terminal-brand-header {
+  padding: clamp(20px, 3vw, 28px);
+}
+
+.terminal-clock-panel article {
+  position: relative;
+  overflow: hidden;
+}
+
+.terminal-clock-panel article::after {
+  content: "";
+  position: absolute;
+  right: -18px;
+  bottom: -28px;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: rgba(22, 163, 74, 0.055);
+}
+
+.terminal-qr-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.terminal-qr-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 28px;
+  right: 28px;
+  height: 3px;
+  border-radius: 0 0 999px 999px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    #22c55e,
+    transparent
+  );
+}
+
+.terminal-selector-theme-row {
+  display: flex;
+  justify-content: flex-end;
+  margin: -6px 0 14px;
+}
+
+.terminal-theme-toggle {
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 9px 14px;
+  border: 1px solid var(--terminal-border);
+  border-radius: 999px;
+  color: var(--terminal-text);
+  background: var(--terminal-surface);
+  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease,
+    background 160ms ease;
+}
+
+.terminal-theme-toggle:hover {
+  transform: translateY(-1px);
+  border-color: #86efac;
+}
+
+.terminal-theme-toggle-compact {
+  min-height: 39px;
+  padding: 8px 13px;
+}
+
+.terminal-theme-toggle-icon {
+  width: 22px;
+  height: 22px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 999px;
+  color: #15803d;
+  background: #dcfce7;
+  font-size: 0.82rem;
+}
+
+.terminal-theme-dark .terminal-theme-toggle-icon {
+  color: #bbf7d0;
+  background: rgba(34, 197, 94, 0.16);
+}
+
+.terminal-theme-dark .terminal-topbar,
+.terminal-theme-dark .terminal-brand-header,
+.terminal-theme-dark .terminal-clock-panel article,
+.terminal-theme-dark .terminal-metric-card,
+.terminal-theme-dark .terminal-control-card,
+.terminal-theme-dark .terminal-qr-card,
+.terminal-theme-dark .terminal-auth-card,
+.terminal-theme-dark .terminal-auth-help,
+.terminal-theme-dark .terminal-loading-card {
+  color: var(--terminal-text);
+  border-color: var(--terminal-border);
+  background: var(--terminal-surface);
+  box-shadow: var(--terminal-shadow);
+}
+
+.terminal-theme-dark .terminal-clock-panel span,
+.terminal-theme-dark .terminal-metric-card > span,
+.terminal-theme-dark .terminal-qr-header p,
+.terminal-theme-dark .terminal-auth-card > p,
+.terminal-theme-dark .terminal-auth-help > p,
+.terminal-theme-dark .terminal-qr-caption,
+.terminal-theme-dark .terminal-auto-refresh small,
+.terminal-theme-dark .terminal-destination-account {
+  color: var(--terminal-text-soft);
+}
+
+.terminal-theme-dark .terminal-clock-panel strong,
+.terminal-theme-dark .terminal-metric-card strong,
+.terminal-theme-dark .terminal-qr-caption strong,
+.terminal-theme-dark .terminal-auto-refresh strong {
+  color: var(--terminal-text);
+}
+
+.terminal-theme-dark .terminal-topbar-status,
+.terminal-theme-dark .terminal-secure-pill {
+  color: #dbe7f3;
+  border-color: var(--terminal-border);
+  background: #111827;
+  box-shadow: none;
+}
+
+.terminal-theme-dark .terminal-icon-button,
+.terminal-theme-dark .terminal-secondary-button {
+  color: #e5edf7;
+  border-color: #334155;
+  background: #172033;
+}
+
+.terminal-theme-dark .terminal-destination-account {
+  border-color: var(--terminal-border);
+  background: #111827;
+}
+
+.terminal-theme-dark .terminal-destination-account strong {
+  color: #e5edf7;
+}
+
+.terminal-theme-dark
+  .terminal-destination-card:not(
+    .terminal-destination-card-primary
+  ) {
+  color: #e5edf7;
+  border-color: var(--terminal-border);
+  background:
+    linear-gradient(
+      145deg,
+      #111827,
+      #0f172a
+    );
+  box-shadow: var(--terminal-shadow);
+}
+
+.terminal-theme-dark
+  .terminal-destination-card:not(
+    .terminal-destination-card-primary
+  )
+  .terminal-destination-copy
+  > span {
+  color: #94a3b8;
+}
+
+.terminal-theme-dark
+  .terminal-destination-card:not(
+    .terminal-destination-card-primary
+  )
+  .terminal-destination-copy
+  small {
+  color: #4ade80;
+}
+
+.terminal-theme-dark .terminal-field > span {
+  color: #cbd5e1;
+}
+
+.terminal-theme-dark .terminal-field input {
+  color: #e5edf7;
+  border-color: #334155;
+  background: #0b1220;
+}
+
+.terminal-theme-dark .terminal-pending-grid > div,
+.terminal-theme-dark .terminal-step-list > div,
+.terminal-theme-dark .terminal-auto-refresh {
+  border-color: #263244;
+  background: #0b1220;
+}
+
+.terminal-theme-dark .terminal-step-list span {
+  color: #a7b4c5;
+}
+
+.terminal-theme-dark .terminal-metric-card-accent {
+  border-color: rgba(34, 197, 94, 0.34);
+  background:
+    linear-gradient(
+      145deg,
+      #111827,
+      rgba(22, 101, 52, 0.16)
+    );
+}
+
+.terminal-theme-dark .terminal-metric-card-accent strong,
+.terminal-theme-dark .terminal-online-text {
+  color: #4ade80 !important;
+}
+
+/*
+ * El QR conserva superficie blanca también en modo oscuro.
+ * Esto mantiene contraste óptimo para la cámara del móvil.
+ */
+.terminal-theme-dark .terminal-qr-frame {
+  border-color: #475569;
+  background: #ffffff;
+  box-shadow:
+    0 32px 90px rgba(0, 0, 0, 0.48),
+    inset 0 0 0 10px #f8fafc;
+}
+
+.terminal-theme-dark .terminal-footer {
+  color: #64748b;
+}
+
+@media (max-width: 650px) {
+  .terminal-selector-theme-row {
+    justify-content: flex-start;
+  }
+
+  .terminal-theme-toggle,
+  .terminal-theme-toggle-compact {
+    width: 100%;
+  }
+}
