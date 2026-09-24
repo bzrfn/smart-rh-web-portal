@@ -11369,3 +11369,623 @@ body::before {
 }
 
 /* =================== FIN INC-53A =================== */
+
+/* ==========================================================
+   INC-58: INCAPACIDADES DETAIL SPACING
+   Expediente médico y resolución administrativa.
+   No modifica navegación.
+   ========================================================== */
+
+/* ----------------------------------------------------------
+   EXPEDIENTE
+   Crear respiración real entre sus secciones.
+   ---------------------------------------------------------- */
+
+.incap-detail-card {
+  padding: 30px !important;
+
+  border-radius: 20px !important;
+
+  box-shadow:
+    0 16px 42px
+    rgba(2, 8, 23, 0.08) !important;
+}
+
+/*
+ * Cada bloque directo del expediente se separa.
+ * Evita que métricas, motivo y revisión parezcan pegados.
+ */
+.incap-detail-card > * + * {
+  margin-top: 26px !important;
+}
+
+/* Cabecera del expediente */
+
+.incap-detail-card > .module-card-header {
+  padding-bottom: 22px !important;
+
+  margin-bottom: 0 !important;
+
+  border-bottom:
+    1px solid
+    rgba(148, 163, 184, 0.09) !important;
+}
+
+/* Tarjetas interiores: conservar jerarquía pero más ligeras */
+
+.incap-detail-card .metric-card,
+.incap-detail-card .stat-card,
+.incap-detail-card .kpi-card {
+  min-height: 108px !important;
+
+  padding: 20px !important;
+
+  border-radius: 17px !important;
+}
+
+/* Cualquier grid directo después del encabezado obtiene aire */
+
+.incap-detail-card > [class*="grid"] {
+  column-gap: 18px !important;
+  row-gap: 18px !important;
+
+  margin-bottom: 4px !important;
+}
+
+/* ----------------------------------------------------------
+   MOTIVO / COMPROBANTE
+   ---------------------------------------------------------- */
+
+/*
+ * Los bloques informativos internos dejan de tocar las
+ * métricas que están arriba.
+ */
+.incap-detail-card
+  > :not(.incap-review-card):not(.module-card-header) {
+  scroll-margin-top: 20px;
+}
+
+/* Botón del comprobante separado del texto descriptivo */
+
+.incap-detail-card .action-btn {
+  min-height: 40px !important;
+
+  margin-top: 12px !important;
+
+  padding:
+    0 17px !important;
+
+  border-radius: 10px !important;
+}
+
+/* ----------------------------------------------------------
+   RESOLVER SOLICITUD
+   Panel realmente independiente.
+   ---------------------------------------------------------- */
+
+.incap-detail-card > .incap-review-card,
+.incap-review-card {
+  position: relative !important;
+
+  margin-top: 34px !important;
+
+  padding:
+    28px 30px 24px !important;
+
+  border:
+    1px solid
+    rgba(45, 212, 191, 0.16) !important;
+
+  border-radius: 18px !important;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(13, 148, 136, 0.035),
+      rgba(14, 165, 233, 0.025)
+    ) !important;
+
+  box-shadow:
+    0 12px 30px
+    rgba(2, 8, 23, 0.055) !important;
+}
+
+/* Pequeña línea superior para identificar la zona administrativa */
+
+.incap-review-card::before {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: 30px;
+
+  width: 54px;
+  height: 3px;
+
+  border-radius:
+    0 0 8px 8px;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(45, 212, 191, 0.95),
+      rgba(56, 189, 248, 0.95)
+    );
+}
+
+/* Cabecera de revisión */
+
+.incap-review-card .module-card-header {
+  margin:
+    0 0 24px !important;
+
+  padding:
+    0 0 20px !important;
+
+  border-bottom:
+    1px solid
+    rgba(148, 163, 184, 0.09) !important;
+}
+
+.incap-review-card .module-eyebrow {
+  margin-bottom:
+    8px !important;
+
+  letter-spacing:
+    0.14em !important;
+}
+
+.incap-review-card .module-title {
+  margin:
+    0 0 8px !important;
+
+  line-height:
+    1.12 !important;
+}
+
+.incap-review-card p {
+  max-width:
+    760px !important;
+
+  margin:
+    0 !important;
+
+  line-height:
+    1.55 !important;
+}
+
+/* ----------------------------------------------------------
+   FORMULARIO
+   ---------------------------------------------------------- */
+
+.incap-review-card form {
+  display: block !important;
+
+  width: 100% !important;
+
+  margin-top:
+    4px !important;
+}
+
+.incap-review-card label {
+  display: block !important;
+
+  margin:
+    0 0 10px !important;
+
+  font-size:
+    0.82rem !important;
+
+  font-weight:
+    750 !important;
+}
+
+.incap-review-card textarea {
+  display: block !important;
+
+  width: 100% !important;
+  max-width: none !important;
+
+  min-height: 132px !important;
+
+  box-sizing: border-box !important;
+
+  margin:
+    0 0 20px !important;
+
+  padding:
+    15px 16px !important;
+
+  border:
+    1px solid
+    rgba(148, 163, 184, 0.16) !important;
+
+  border-radius:
+    13px !important;
+
+  background:
+    rgba(2, 8, 23, 0.12) !important;
+
+  line-height:
+    1.55 !important;
+
+  resize:
+    vertical !important;
+
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    background 160ms ease !important;
+}
+
+.incap-review-card textarea:hover {
+  border-color:
+    rgba(148, 163, 184, 0.24) !important;
+}
+
+.incap-review-card textarea:focus {
+  outline:
+    none !important;
+
+  border-color:
+    rgba(45, 212, 191, 0.52) !important;
+
+  background:
+    rgba(2, 8, 23, 0.18) !important;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(45, 212, 191, 0.075) !important;
+}
+
+/* ----------------------------------------------------------
+   ACCIONES
+   ---------------------------------------------------------- */
+
+.incap-review-card
+  :is(div, section):has(> .action-btn) {
+  display: flex !important;
+
+  align-items: center !important;
+  justify-content: flex-end !important;
+
+  gap: 12px !important;
+
+  margin-top:
+    4px !important;
+
+  padding-top:
+    4px !important;
+}
+
+.incap-review-card .action-btn {
+  min-width:
+    126px !important;
+
+  min-height:
+    42px !important;
+
+  margin-top:
+    0 !important;
+
+  padding:
+    0 20px !important;
+
+  border-radius:
+    11px !important;
+
+  font-size:
+    0.79rem !important;
+
+  font-weight:
+    800 !important;
+
+  box-shadow:
+    none !important;
+}
+
+.incap-review-card .action-btn-success {
+  border-color:
+    rgba(45, 212, 191, 0.28) !important;
+
+  background:
+    rgba(13, 148, 136, 0.18) !important;
+}
+
+.incap-review-card .action-btn-danger {
+  border-color:
+    rgba(248, 113, 113, 0.24) !important;
+
+  background:
+    rgba(127, 29, 29, 0.22) !important;
+}
+
+/* ----------------------------------------------------------
+   MODO CLARO
+   ---------------------------------------------------------- */
+
+:root:not([data-theme='dark'])
+.incap-review-card {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(240, 253, 250, 0.72),
+      rgba(248, 250, 252, 0.92)
+    ) !important;
+
+  border-color:
+    rgba(13, 148, 136, 0.13) !important;
+
+  box-shadow:
+    0 12px 30px
+    rgba(15, 23, 42, 0.045) !important;
+}
+
+:root:not([data-theme='dark'])
+.incap-review-card textarea {
+  background:
+    #ffffff !important;
+
+  color:
+    #0f172a !important;
+
+  border-color:
+    rgba(15, 23, 42, 0.13) !important;
+}
+
+/* ----------------------------------------------------------
+   RESPONSIVE
+   ---------------------------------------------------------- */
+
+@media (max-width: 900px) {
+  .incap-detail-card {
+    padding:
+      23px !important;
+  }
+
+  .incap-detail-card > * + * {
+    margin-top:
+      21px !important;
+  }
+
+  .incap-review-card {
+    margin-top:
+      26px !important;
+
+    padding:
+      24px !important;
+  }
+
+  .incap-review-card::before {
+    left:
+      24px !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .incap-detail-card {
+    padding:
+      18px !important;
+  }
+
+  .incap-review-card {
+    padding:
+      20px !important;
+  }
+
+  .incap-review-card::before {
+    left:
+      20px !important;
+  }
+
+  .incap-review-card textarea {
+    min-height:
+      120px !important;
+  }
+
+  .incap-review-card
+    :is(div, section):has(> .action-btn) {
+    align-items:
+      stretch !important;
+
+    flex-direction:
+      column !important;
+  }
+
+  .incap-review-card .action-btn {
+    width:
+      100% !important;
+  }
+}
+
+/* =================== FIN INC-58 =================== */
+
+/* ==========================================================
+   INC-60: SOLICITUDES PAGINATION SPACING
+   Separación entre tabla y controles Anterior/Siguiente.
+   ========================================================== */
+
+.incap-list-card table + *,
+.incap-list-card .table-wrap + *,
+.incap-list-card .table-container + *,
+.incap-list-card .pagination,
+.incap-list-card .table-pagination,
+.incap-list-card .pagination-controls,
+.incap-list-card .pager {
+  margin-top: 16px !important;
+}
+
+/* Evita que los controles queden pegados entre sí. */
+.incap-list-card .pagination,
+.incap-list-card .table-pagination,
+.incap-list-card .pagination-controls,
+.incap-list-card .pager {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+
+/* =================== FIN INC-60 =================== */
+
+/* ==========================================================
+   INC-61A: FINAL INCAPACIDADES SPACING
+   Ajuste fino aprobado para cierre visual del módulo.
+   ========================================================== */
+
+/* ----------------------------------------------------------
+   SOLICITUDES
+   Más aire entre la tabla y la paginación.
+   ---------------------------------------------------------- */
+
+.incap-list-card table + *,
+.incap-list-card .table-wrap + *,
+.incap-list-card .table-container + *,
+.incap-list-card .pagination,
+.incap-list-card .table-pagination,
+.incap-list-card .pagination-controls,
+.incap-list-card .pager {
+  margin-top: 26px !important;
+}
+
+.incap-list-card .pagination,
+.incap-list-card .table-pagination,
+.incap-list-card .pagination-controls,
+.incap-list-card .pager {
+  gap: 12px !important;
+  padding-bottom: 4px !important;
+}
+
+/* ----------------------------------------------------------
+   RESOLVER SOLICITUD
+   Separar claramente descripción, label, textarea y acciones.
+   ---------------------------------------------------------- */
+
+.incap-review-card {
+  padding-top: 30px !important;
+  padding-bottom: 30px !important;
+}
+
+.incap-review-card .module-card-header {
+  margin-bottom: 28px !important;
+  padding-bottom: 22px !important;
+}
+
+.incap-review-card form {
+  margin-top: 20px !important;
+}
+
+.incap-review-card label {
+  display: block !important;
+
+  margin-top: 0 !important;
+  margin-bottom: 12px !important;
+}
+
+.incap-review-card textarea {
+  margin-top: 0 !important;
+  margin-bottom: 28px !important;
+
+  min-height: 138px !important;
+
+  padding: 16px 17px !important;
+}
+
+.incap-review-card
+:is(div, section):has(> .action-btn) {
+  margin-top: 0 !important;
+  padding-top: 6px !important;
+
+  gap: 12px !important;
+}
+
+/* En móvil mantenemos aire sin exagerar alturas. */
+
+@media (max-width: 600px) {
+  .incap-list-card table + *,
+  .incap-list-card .table-wrap + *,
+  .incap-list-card .table-container + *,
+  .incap-list-card .pagination,
+  .incap-list-card .table-pagination,
+  .incap-list-card .pagination-controls,
+  .incap-list-card .pager {
+    margin-top: 20px !important;
+  }
+
+  .incap-review-card {
+    padding-top: 24px !important;
+    padding-bottom: 24px !important;
+  }
+
+  .incap-review-card .module-card-header {
+    margin-bottom: 22px !important;
+  }
+
+  .incap-review-card form {
+    margin-top: 16px !important;
+  }
+
+  .incap-review-card textarea {
+    margin-bottom: 22px !important;
+    min-height: 124px !important;
+  }
+}
+
+/* =================== FIN INC-61A =================== */
+
+/* ==========================================================
+   INC-61D: EXACT ELEMENT SPACING
+   Selectores reales confirmados en JSX.
+   ========================================================== */
+
+/*
+ * PAGINACIÓN REAL:
+ * <div className="table-actions">
+ *   Anterior / Página / Siguiente
+ * </div>
+ */
+.incap-list-card > .table-actions {
+  margin-top: 30px !important;
+  padding-top: 0 !important;
+
+  display: flex !important;
+  align-items: center !important;
+
+  gap: 14px !important;
+}
+
+/*
+ * FORMULARIO REAL:
+ * el textarea está DENTRO del label.
+ * Este margen sí separa físicamente
+ * "Observaciones administrativas" del campo.
+ */
+.incap-review-card > label > textarea {
+  margin-top: 16px !important;
+}
+
+/*
+ * También damos aire entre el texto explicativo
+ * y el bloque de observaciones.
+ */
+.incap-review-card > .module-subtitle + label {
+  margin-top: 22px !important;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .incap-list-card > .table-actions {
+    margin-top: 22px !important;
+    gap: 10px !important;
+  }
+
+  .incap-review-card > label > textarea {
+    margin-top: 12px !important;
+  }
+
+  .incap-review-card > .module-subtitle + label {
+    margin-top: 18px !important;
+  }
+}
+
+/* =================== FIN INC-61D =================== */
