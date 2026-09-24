@@ -26,6 +26,13 @@ const modules: ModuleCard[] = [
     accent: 'teal',
   },
     {
+    path: '/portal/terminal-autorizacion',
+    title: 'Autorizar Terminal',
+    description: 'Aprueba o rechaza solicitudes de acceso de la terminal de asistencia.',
+    code: 'AT',
+    accent: 'teal',
+  },
+  {
     path: '/documentacion',
     title: 'Documentación',
     description: 'Foto de perfil, contrato PDF, credencial y expediente digital.',
