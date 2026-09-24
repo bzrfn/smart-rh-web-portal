@@ -19,6 +19,7 @@ import AdminInvitationAccept from '../modules/dashboard/AdminInvitationAccept';
 import VerifyLoginCode from '../modules/dashboard/VerifyLoginCode';
 import LandingPage from '../modules/landing/LandingPage';
 import TerminalAttendance from '../modules/terminal/TerminalAttendance';
+import AdminDestination from '../modules/terminal/AdminDestination';
 import TerminalApproval from '../modules/terminal/TerminalApproval';
 import AnalisisSupervisado from '../modules/ml/AnalisisSupervisado';
 import AnalisisKMeans from '../pages/AnalisisKMeans';
@@ -40,6 +41,10 @@ export default function Navigation() {
     <Routes>
       <Route path="/" element={<LandingPage />} />
       <Route path="/terminal" element={<TerminalAttendance />} />
+      <Route
+        path="/admin/destino"
+        element={<AdminDestination />}
+      />
 
       <Route
         path="/admin/acceso"

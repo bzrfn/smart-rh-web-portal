@@ -1,135 +1,282 @@
-import React, {
-  FormEvent,
+import {
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react';
 
-import axios from 'axios';
+import {
+  useNavigate,
+} from 'react-router-dom';
 
 import {
-  terminalApi,
-} from '../../services/terminalApi';
+  clearTerminalSessionMemory,
+  getTerminalSessionMemory,
+  setTerminalSessionMemory,
+} from '../../services/terminalSessionMemory';
 
-type TerminalAccessStatus =
+import './terminalExperience.css';
+
+
+const viteEnv =
+  import.meta.env ??
+  {};
+
+const API_BASE_URL =
+  String(
+    viteEnv.VITE_API_URL ??
+    'http://localhost:4000'
+  )
+    .trim()
+    .replace(
+      /\/+$/,
+      ''
+    );
+
+const DEFAULT_TERMINAL_ID =
+  'terminal-asistencia-01';
+
+
+type AccessStatus =
   | 'idle'
   | 'pending'
   | 'approved'
   | 'rejected'
-  | 'expired'
-  | 'consumed'
-  | 'authorized';
+  | 'expired';
 
-type RequestResponse = {
-  challengeId: string;
-  sessionProof: string;
-  status: 'pending';
-  expiresInMinutes: number;
+
+type JsonObject = {
+  [key:
+    string]:
+    unknown;
 };
 
-type StatusResponse = {
-  challengeId: string;
-  status:
-    | 'pending'
-    | 'approved'
-    | 'rejected'
-    | 'expired'
-    | 'consumed';
-};
 
-type SessionResponse = {
-  token: string;
-  tokenType: 'Bearer';
-  terminalId: string;
-};
+async function responseJson(
+  response:
+    Response
+): Promise<JsonObject> {
+  const text =
+    await response.text();
 
-type TerminalQrResponse = {
-  token: string;
-  expiresAt: string;
-  dataUrl: string;
-};
-
-function readError(
-  error: unknown,
-  fallback: string
-): string {
-  if (
-    axios.isAxiosError(
-      error
-    )
-  ) {
-    const message =
-      error.response?.data?.message;
-
-    if (
-      typeof message ===
-        'string' &&
-      message.trim()
-    ) {
-      return message;
-    }
+  if (!text) {
+    return {};
   }
 
-  if (
-    error instanceof
-      Error &&
-    error.message
-  ) {
-    return error.message;
+  try {
+    return JSON.parse(
+      text
+    ) as JsonObject;
+  } catch {
+    return {
+      message:
+        text,
+    };
   }
-
-  return fallback;
 }
 
+
+function messageFrom(
+  value:
+    JsonObject,
+  fallback:
+    string
+) {
+  return String(
+    value.message ??
+    value.error ??
+    fallback
+  );
+}
+
+
+function parseDateTime(
+  value:
+    unknown
+): number | null {
+  if (!value) {
+    return null;
+  }
+
+  const date =
+    new Date(
+      String(
+        value
+      )
+    );
+
+  const time =
+    date.getTime();
+
+  return Number.isFinite(
+    time
+  )
+    ? time
+    : null;
+}
+
+
+function countdown(
+  milliseconds:
+    number
+) {
+  const total =
+    Math.max(
+      0,
+      Math.ceil(
+        milliseconds /
+        1000
+      )
+    );
+
+  const minutes =
+    Math.floor(
+      total /
+      60
+    );
+
+  const seconds =
+    total %
+    60;
+
+  return `${String(
+    minutes
+  ).padStart(
+    2,
+    '0'
+  )}:${String(
+    seconds
+  ).padStart(
+    2,
+    '0'
+  )}`;
+}
+
+
+function jwtExpiry(
+  token:
+    string
+): number | null {
+  try {
+    const encoded =
+      token.split(
+        '.'
+      )[1];
+
+    if (!encoded) {
+      return null;
+    }
+
+    let normalized =
+      encoded
+        .replace(
+          /-/g,
+          '+'
+        )
+        .replace(
+          /_/g,
+          '/'
+        );
+
+    while (
+      normalized.length %
+        4 !==
+      0
+    ) {
+      normalized +=
+        '=';
+    }
+
+    const payload =
+      JSON.parse(
+        window.atob(
+          normalized
+        )
+      ) as {
+        exp?:
+          number;
+      };
+
+    if (
+      typeof payload.exp !==
+      'number'
+    ) {
+      return null;
+    }
+
+    return (
+      payload.exp *
+      1000
+    );
+
+  } catch {
+    return null;
+  }
+}
+
+
 export default function TerminalAttendance() {
+  const navigate =
+    useNavigate();
+
+  const initialSession =
+    useMemo(
+      () =>
+        getTerminalSessionMemory(),
+      []
+    );
+
   const [
     terminalId,
     setTerminalId,
   ] =
     useState(
-      'terminal-asistencia-01'
+      initialSession
+        ?.terminalId ??
+      DEFAULT_TERMINAL_ID
+    );
+
+  const [
+    terminalToken,
+    setTerminalToken,
+  ] =
+    useState(
+      initialSession
+        ?.token ??
+      ''
+    );
+
+  const [
+    accessStatus,
+    setAccessStatus,
+  ] =
+    useState<AccessStatus>(
+      initialSession
+        ?.token
+        ? 'approved'
+        : 'idle'
     );
 
   const [
     challengeId,
     setChallengeId,
   ] =
-    useState('');
+    useState(
+      ''
+    );
 
-  /*
-   * IMPORTANTE:
-   * sessionProof vive únicamente en memoria React.
-   * Nunca se persiste en localStorage/sessionStorage.
-   */
   const [
     sessionProof,
     setSessionProof,
   ] =
-    useState('');
-
-  /*
-   * IMPORTANTE:
-   * terminalToken vive únicamente en memoria React.
-   * Al cerrar/recargar esta página desaparece.
-   */
-  const [
-    terminalToken,
-    setTerminalToken,
-  ] =
-    useState('');
-
-  const [
-    accessStatus,
-    setAccessStatus,
-  ] =
-    useState<TerminalAccessStatus>(
-      'idle'
+    useState(
+      ''
     );
 
   const [
-    expiresInMinutes,
-    setExpiresInMinutes,
+    authorizationExpiresAt,
+    setAuthorizationExpiresAt,
   ] =
     useState<number | null>(
       null
@@ -139,343 +286,144 @@ export default function TerminalAttendance() {
     qrDataUrl,
     setQrDataUrl,
   ] =
-    useState('');
+    useState(
+      ''
+    );
 
   const [
     qrExpiresAt,
     setQrExpiresAt,
   ] =
-    useState('');
+    useState<number | null>(
+      null
+    );
 
   const [
-    requesting,
-    setRequesting,
+    now,
+    setNow,
   ] =
-    useState(false);
+    useState(
+      Date.now()
+    );
 
   const [
     loadingQr,
     setLoadingQr,
   ] =
-    useState(false);
+    useState(
+      false
+    );
+
+  const [
+    requesting,
+    setRequesting,
+  ] =
+    useState(
+      false
+    );
 
   const [
     error,
     setError,
   ] =
-    useState('');
+    useState(
+      ''
+    );
 
-  const exchangeInFlight =
-    useRef(false);
+  const [
+    lastQrUpdate,
+    setLastQrUpdate,
+  ] =
+    useState<number | null>(
+      null
+    );
 
-  const requestAccess =
-    async (
-      event:
-        FormEvent<HTMLFormElement>
-    ) => {
-      event.preventDefault();
+  const pollRef =
+    useRef<number | null>(
+      null
+    );
 
-      const cleanTerminalId =
-        terminalId.trim();
+  const refreshRef =
+    useRef<number | null>(
+      null
+    );
 
-      if (!cleanTerminalId) {
-        setError(
-          'Ingresa un identificador para esta terminal.'
-        );
-
-        return;
-      }
-
-      setRequesting(
-        true
-      );
-
-      setError(
-        ''
-      );
-
-      setChallengeId(
-        ''
-      );
-
-      setSessionProof(
-        ''
-      );
-
-      setTerminalToken(
-        ''
-      );
-
-      setQrDataUrl(
-        ''
-      );
-
-      setQrExpiresAt(
-        ''
-      );
-
-      setAccessStatus(
-        'idle'
-      );
-
-      exchangeInFlight.current =
-        false;
-
-      try {
-        const {
-          data,
-        } =
-          await terminalApi.post<RequestResponse>(
-            '/auth/terminal-access/request',
-            {
-              terminalId:
-                cleanTerminalId,
-            }
-          );
-
-        if (
-          !data?.challengeId ||
-          !data?.sessionProof
-        ) {
-          throw new Error(
-            'El servidor no devolvió una autorización de terminal válida.'
-          );
-        }
-
-        setChallengeId(
-          data.challengeId
-        );
-
-        setSessionProof(
-          data.sessionProof
-        );
-
-        setExpiresInMinutes(
-          Number(
-            data.expiresInMinutes
-          ) || null
-        );
-
-        setAccessStatus(
-          'pending'
-        );
-
-      } catch (
-        requestError
-      ) {
-        setError(
-          readError(
-            requestError,
-            'No se pudo solicitar autorización para esta terminal.'
-          )
-        );
-
-      } finally {
-        setRequesting(
-          false
-        );
-      }
-    };
-
-  /*
-   * Canjea challenge + sessionProof solamente después de que
-   * el administrador autorizado haya aprobado la solicitud.
-   */
-  const createTerminalSession =
-    useCallback(
-      async () => {
-        if (
-          !challengeId ||
-          !sessionProof ||
-          exchangeInFlight.current
-        ) {
-          return;
-        }
-
-        exchangeInFlight.current =
-          true;
-
-        try {
-          const {
-            data,
-          } =
-            await terminalApi.post<SessionResponse>(
-              '/auth/terminal-access/session',
-              {
-                challengeId,
-                sessionProof,
-              }
-            );
-
-          if (
-            !data?.token ||
-            data.tokenType !==
-              'Bearer'
-          ) {
-            throw new Error(
-              'El servidor no devolvió una sesión terminal válida.'
-            );
-          }
-
-          /*
-           * Se elimina el proof de memoria inmediatamente
-           * después del consumo exitoso.
-           */
-          setSessionProof(
-            ''
-          );
-
-          setTerminalToken(
-            data.token
-          );
-
-          setAccessStatus(
-            'authorized'
-          );
-
-          setError(
-            ''
-          );
-
-        } catch (
-          sessionError
-        ) {
-          setError(
-            readError(
-              sessionError,
-              'No se pudo crear la sesión de esta terminal.'
+  const terminalSessionExpiresAt =
+    useMemo(
+      () =>
+        terminalToken
+          ? jwtExpiry(
+              terminalToken
             )
-          );
-
-        } finally {
-          exchangeInFlight.current =
-            false;
-        }
-      },
+          : null,
       [
-        challengeId,
-        sessionProof,
+        terminalToken,
       ]
     );
 
-  /*
-   * Polling público del challenge.
-   * La terminal nunca llama /decision.
-   */
   useEffect(
     () => {
-      if (
-        !challengeId ||
-        !sessionProof ||
-        terminalToken ||
-        accessStatus !==
-          'pending'
-      ) {
-        return;
-      }
-
-      let cancelled =
-        false;
-
-      const checkStatus =
-        async () => {
-          try {
-            const {
-              data,
-            } =
-              await terminalApi.get<StatusResponse>(
-                '/auth/terminal-access/status',
-                {
-                  params: {
-                    challengeId,
-                  },
-                }
-              );
-
-            if (
-              cancelled
-            ) {
-              return;
-            }
-
-            if (
-              data.status ===
-                'approved'
-            ) {
-              await createTerminalSession();
-
-              return;
-            }
-
-            if (
-              data.status ===
-                'rejected' ||
-              data.status ===
-                'expired' ||
-              data.status ===
-                'consumed'
-            ) {
-              setAccessStatus(
-                data.status
-              );
-
-              if (
-                data.status !==
-                  'consumed'
-              ) {
-                setSessionProof(
-                  ''
-                );
-              }
-            }
-
-          } catch (
-            statusError
-          ) {
-            if (
-              !cancelled
-            ) {
-              setError(
-                readError(
-                  statusError,
-                  'No se pudo consultar el estado de autorización.'
-                )
-              );
-            }
-          }
-        };
-
-      void checkStatus();
-
-      const intervalId =
+      const clock =
         window.setInterval(
-          () => {
-            void checkStatus();
-          },
-          2000
+          () =>
+            setNow(
+              Date.now()
+            ),
+          1000
         );
 
-      return () => {
-        cancelled =
-          true;
-
+      return () =>
         window.clearInterval(
-          intervalId
+          clock
         );
-      };
     },
-    [
-      accessStatus,
-      challengeId,
-      createTerminalSession,
-      sessionProof,
-      terminalToken,
-    ]
+    []
   );
 
-  /*
-   * GET protegido exclusivamente con Bearer terminal.
-   */
+  const dateText =
+    new Intl.DateTimeFormat(
+      'es-MX',
+      {
+        weekday:
+          'long',
+
+        day:
+          '2-digit',
+
+        month:
+          'long',
+
+        year:
+          'numeric',
+      }
+    ).format(
+      new Date(
+        now
+      )
+    );
+
+  const timeText =
+    new Intl.DateTimeFormat(
+      'es-MX',
+      {
+        hour:
+          '2-digit',
+
+        minute:
+          '2-digit',
+
+        second:
+          '2-digit',
+
+        hour12:
+          true,
+      }
+    ).format(
+      new Date(
+        now
+      )
+    );
+
   const generateQr =
     useCallback(
       async () => {
@@ -489,13 +437,18 @@ export default function TerminalAttendance() {
           true
         );
 
+        setError(
+          ''
+        );
+
         try {
-          const {
-            data,
-          } =
-            await terminalApi.get<TerminalQrResponse>(
-              '/terminal/qr',
+          const response =
+            await fetch(
+              `${API_BASE_URL}/terminal/qr`,
               {
+                method:
+                  'GET',
+
                 headers: {
                   Authorization:
                     `Bearer ${terminalToken}`,
@@ -503,35 +456,81 @@ export default function TerminalAttendance() {
               }
             );
 
+          const body =
+            await responseJson(
+              response
+            );
+
+          if (!response.ok) {
+            if (
+              response.status ===
+                401 ||
+              response.status ===
+                403
+            ) {
+              clearTerminalSessionMemory();
+
+              setTerminalToken(
+                ''
+              );
+
+              setAccessStatus(
+                'idle'
+              );
+
+              setQrDataUrl(
+                ''
+              );
+            }
+
+            throw new Error(
+              messageFrom(
+                body,
+                'No fue posible generar el QR.'
+              )
+            );
+          }
+
+          const dataUrl =
+            String(
+              body.dataUrl ??
+              ''
+            );
+
+          const expiresAt =
+            parseDateTime(
+              body.expiresAt
+            );
+
           if (
-            !data?.dataUrl ||
-            !data?.expiresAt
+            !dataUrl ||
+            !expiresAt
           ) {
             throw new Error(
-              'El servidor no devolvió un QR válido.'
+              'El servidor entregó un QR incompleto.'
             );
           }
 
           setQrDataUrl(
-            data.dataUrl
+            dataUrl
           );
 
           setQrExpiresAt(
-            data.expiresAt
+            expiresAt
           );
 
-          setError(
-            ''
+          setLastQrUpdate(
+            Date.now()
           );
 
         } catch (
-          qrError
+          requestError:
+            unknown
         ) {
           setError(
-            readError(
-              qrError,
-              'No se pudo generar el QR de asistencia.'
-            )
+            requestError instanceof Error
+              ? requestError.message
+              : 'No fue posible generar el QR.'
           );
 
         } finally {
@@ -545,574 +544,959 @@ export default function TerminalAttendance() {
       ]
     );
 
-  /*
-   * Primer QR inmediato y renovación mientras la sesión
-   * permanezca viva en memoria.
-   */
   useEffect(
     () => {
       if (
-        !terminalToken
+        terminalToken
+      ) {
+        void generateQr();
+      }
+    },
+    [
+      terminalToken,
+      generateQr,
+    ]
+  );
+
+  useEffect(
+    () => {
+      if (
+        refreshRef.current
+      ) {
+        window.clearTimeout(
+          refreshRef.current
+        );
+      }
+
+      if (
+        !terminalToken ||
+        !qrExpiresAt
       ) {
         return;
       }
 
-      void generateQr();
+      const delay =
+        Math.max(
+          3000,
+          qrExpiresAt -
+            Date.now() -
+            5000
+        );
 
-      const intervalId =
-        window.setInterval(
-          () => {
-            void generateQr();
-          },
-          9000
+      refreshRef.current =
+        window.setTimeout(
+          () =>
+            void generateQr(),
+          delay
         );
 
       return () => {
-        window.clearInterval(
-          intervalId
-        );
+        if (
+          refreshRef.current
+        ) {
+          window.clearTimeout(
+            refreshRef.current
+          );
+        }
       };
     },
     [
-      generateQr,
       terminalToken,
+      qrExpiresAt,
+      generateQr,
     ]
   );
 
-  const resetTerminal =
+  const consumeApprovedRequest =
+    useCallback(
+      async () => {
+        if (
+          !challengeId ||
+          !sessionProof
+        ) {
+          return;
+        }
+
+        const response =
+          await fetch(
+            `${API_BASE_URL}/auth/terminal-access/session`,
+            {
+              method:
+                'POST',
+
+              headers: {
+                'Content-Type':
+                  'application/json',
+              },
+
+              body:
+                JSON.stringify({
+                  challengeId,
+                  sessionProof,
+                }),
+            }
+          );
+
+        const body =
+          await responseJson(
+            response
+          );
+
+        if (!response.ok) {
+          throw new Error(
+            messageFrom(
+              body,
+              'No fue posible crear la sesión del terminal.'
+            )
+          );
+        }
+
+        const token =
+          String(
+            body.token ??
+            ''
+          ).trim();
+
+        const approvedTerminal =
+          String(
+            body.terminalId ??
+            terminalId
+          ).trim();
+
+        if (!token) {
+          throw new Error(
+            'No se recibió el JWT exclusivo de terminal.'
+          );
+        }
+
+        setTerminalSessionMemory({
+          token,
+          terminalId:
+            approvedTerminal,
+
+          source:
+            'approved-device',
+        });
+
+        setTerminalId(
+          approvedTerminal
+        );
+
+        setTerminalToken(
+          token
+        );
+
+        setAccessStatus(
+          'approved'
+        );
+
+        setSessionProof(
+          ''
+        );
+      },
+      [
+        challengeId,
+        sessionProof,
+        terminalId,
+      ]
+    );
+
+  useEffect(
     () => {
+      if (
+        pollRef.current
+      ) {
+        window.clearInterval(
+          pollRef.current
+        );
+      }
+
+      if (
+        accessStatus !==
+          'pending' ||
+        !challengeId
+      ) {
+        return;
+      }
+
+      pollRef.current =
+        window.setInterval(
+          async () => {
+            try {
+              const response =
+                await fetch(
+                  `${API_BASE_URL}/auth/terminal-access/status?challengeId=${encodeURIComponent(
+                    challengeId
+                  )}`
+                );
+
+              const body =
+                await responseJson(
+                  response
+                );
+
+              if (!response.ok) {
+                throw new Error(
+                  messageFrom(
+                    body,
+                    'No fue posible consultar el estado de autorización.'
+                  )
+                );
+              }
+
+              const status =
+                String(
+                  body.status ??
+                  ''
+                )
+                  .trim()
+                  .toLowerCase();
+
+              if (
+                status ===
+                'approved'
+              ) {
+                if (
+                  pollRef.current
+                ) {
+                  window.clearInterval(
+                    pollRef.current
+                  );
+                }
+
+                await consumeApprovedRequest();
+
+                return;
+              }
+
+              if (
+                status ===
+                'rejected'
+              ) {
+                setAccessStatus(
+                  'rejected'
+                );
+
+                setSessionProof(
+                  ''
+                );
+
+                return;
+              }
+
+              if (
+                status ===
+                  'expired' ||
+                (
+                  authorizationExpiresAt !==
+                    null &&
+                  authorizationExpiresAt <=
+                    Date.now()
+                )
+              ) {
+                setAccessStatus(
+                  'expired'
+                );
+
+                setSessionProof(
+                  ''
+                );
+              }
+
+            } catch (
+              statusError:
+                unknown
+            ) {
+              setError(
+                statusError instanceof Error
+                  ? statusError.message
+                  : 'No fue posible consultar la autorización.'
+              );
+            }
+          },
+          2000
+        );
+
+      return () => {
+        if (
+          pollRef.current
+        ) {
+          window.clearInterval(
+            pollRef.current
+          );
+        }
+      };
+    },
+    [
+      accessStatus,
+      challengeId,
+      authorizationExpiresAt,
+      consumeApprovedRequest,
+    ]
+  );
+
+  async function requestAccess() {
+    setRequesting(
+      true
+    );
+
+    setError(
+      ''
+    );
+
+    try {
+      const response =
+        await fetch(
+          `${API_BASE_URL}/auth/terminal-access/request`,
+          {
+            method:
+              'POST',
+
+            headers: {
+              'Content-Type':
+                'application/json',
+            },
+
+            body:
+              JSON.stringify({
+                terminalId:
+                  terminalId.trim(),
+              }),
+          }
+        );
+
+      const body =
+        await responseJson(
+          response
+        );
+
+      if (!response.ok) {
+        throw new Error(
+          messageFrom(
+            body,
+            'No fue posible solicitar autorización.'
+          )
+        );
+      }
+
+      const nextChallenge =
+        String(
+          body.challengeId ??
+          ''
+        ).trim();
+
+      const proof =
+        String(
+          body.sessionProof ??
+          ''
+        ).trim();
+
+      if (
+        !nextChallenge ||
+        !proof
+      ) {
+        throw new Error(
+          'La solicitud de terminal está incompleta.'
+        );
+      }
+
+      const expiresAt =
+        parseDateTime(
+          body.expiresAt
+        );
+
+      const expiresMinutes =
+        Number(
+          body.expiresInMinutes ??
+          5
+        );
+
       setChallengeId(
-        ''
+        nextChallenge
       );
 
       setSessionProof(
-        ''
+        proof
       );
 
-      setTerminalToken(
-        ''
+      setAuthorizationExpiresAt(
+        expiresAt ??
+        (
+          Date.now() +
+          expiresMinutes *
+            60 *
+            1000
+        )
       );
 
       setAccessStatus(
-        'idle'
+        'pending'
       );
 
-      setExpiresInMinutes(
-        null
-      );
-
-      setQrDataUrl(
-        ''
-      );
-
-      setQrExpiresAt(
-        ''
-      );
-
+    } catch (
+      requestError:
+        unknown
+    ) {
       setError(
-        ''
+        requestError instanceof Error
+          ? requestError.message
+          : 'No fue posible solicitar autorización.'
       );
 
-      exchangeInFlight.current =
-        false;
-    };
+    } finally {
+      setRequesting(
+        false
+      );
+    }
+  }
 
-  const statusText =
-    accessStatus ===
-      'pending'
-      ? 'Esperando aprobación administrativa'
-      : accessStatus ===
-          'authorized'
-        ? 'Terminal autorizada'
-        : accessStatus ===
-            'rejected'
-          ? 'Solicitud rechazada'
-          : accessStatus ===
-              'expired'
-            ? 'Solicitud expirada'
-            : accessStatus ===
-                'consumed'
-              ? 'Solicitud ya utilizada'
-              : 'Sin autorización activa';
+  function resetWaiting() {
+    if (
+      pollRef.current
+    ) {
+      window.clearInterval(
+        pollRef.current
+      );
+    }
+
+    setChallengeId(
+      ''
+    );
+
+    setSessionProof(
+      ''
+    );
+
+    setAuthorizationExpiresAt(
+      null
+    );
+
+    setAccessStatus(
+      'idle'
+    );
+
+    setError(
+      ''
+    );
+  }
+
+  function closeTerminal() {
+    clearTerminalSessionMemory();
+
+    setTerminalToken(
+      ''
+    );
+
+    setQrDataUrl(
+      ''
+    );
+
+    setQrExpiresAt(
+      null
+    );
+
+    navigate(
+      '/admin/destino',
+      {
+        replace:
+          true,
+      }
+    );
+  }
+
+  async function toggleFullscreen() {
+    try {
+      if (
+        document.fullscreenElement
+      ) {
+        await document.exitFullscreen();
+
+        return;
+      }
+
+      await document.documentElement.requestFullscreen();
+
+    } catch {
+      setError(
+        'El navegador no permitió cambiar a pantalla completa.'
+      );
+    }
+  }
+
+  const qrRemaining =
+    qrExpiresAt
+      ? countdown(
+          qrExpiresAt -
+          now
+        )
+      : '--:--';
+
+  const authorizationRemaining =
+    authorizationExpiresAt
+      ? countdown(
+          authorizationExpiresAt -
+          now
+        )
+      : '--:--';
+
+  const sessionRemaining =
+    terminalSessionExpiresAt
+      ? countdown(
+          terminalSessionExpiresAt -
+          now
+        )
+      : '--:--';
+
+  const active =
+    Boolean(
+      terminalToken
+    );
 
   return (
-    <main
-      style={{
-        minHeight:
-          '100vh',
+    <main className="terminal-experience">
+      <header className="terminal-topbar">
+        <div className="terminal-brand">
+          <span className="terminal-logo-mark">
+            RH
+          </span>
 
-        background:
-          '#f8fafc',
+          <div>
+            <span className="terminal-brand-kicker">
+              SMART RH · CONTROL DE ASISTENCIA
+            </span>
 
-        color:
-          '#0f172a',
+            <h1>
+              Terminal QR
+            </h1>
+          </div>
+        </div>
 
-        padding:
-          '32px 20px',
+        <div className="terminal-topbar-actions">
+          <div className="terminal-topbar-status">
+            <span
+              className={`terminal-status-dot ${
+                active
+                  ? 'terminal-status-dot-online'
+                  : ''
+              }`}
+            />
 
-        fontFamily:
-          'Inter, system-ui, sans-serif',
-      }}
-    >
-      <div
-        style={{
-          width:
-            'min(1080px, 100%)',
+            {active
+              ? 'Terminal autorizada'
+              : 'Autorización requerida'}
+          </div>
 
-          margin:
-            '0 auto',
-        }}
-      >
-        <header
-          style={{
-            marginBottom:
-              24,
-          }}
+          <button
+            type="button"
+            className="terminal-icon-button"
+            onClick={
+              () =>
+                void toggleFullscreen()
+            }
+          >
+            Pantalla completa
+          </button>
+        </div>
+      </header>
+
+      <section className="terminal-clock-panel">
+        <article>
+          <span>
+            Hora
+          </span>
+
+          <strong>
+            {timeText}
+          </strong>
+        </article>
+
+        <article>
+          <span>
+            Fecha
+          </span>
+
+          <strong className="terminal-capitalize">
+            {dateText}
+          </strong>
+        </article>
+
+        <article>
+          <span>
+            Identificador terminal
+          </span>
+
+          <strong>
+            {terminalId}
+          </strong>
+        </article>
+      </section>
+
+      {error && (
+        <div
+          className="terminal-message terminal-message-error"
+          role="alert"
         >
-          <p
-            style={{
-              margin:
-                '0 0 8px',
+          <strong>
+            Atención
+          </strong>
 
-              color:
-                '#15803d',
+          <span>
+            {error}
+          </span>
+        </div>
+      )}
 
-              fontWeight:
-                700,
+      {!active ? (
+        <section className="terminal-auth-layout">
+          <article className="terminal-auth-card">
+            <span className="terminal-section-eyebrow">
+              AUTORIZACIÓN SEGURA
+            </span>
 
-              letterSpacing:
-                '.08em',
-
-              textTransform:
-                'uppercase',
-
-              fontSize:
-                12,
-            }}
-          >
-            SMART RH · Terminal independiente
-          </p>
-
-          <h1
-            style={{
-              margin:
-                0,
-
-              fontSize:
-                'clamp(28px, 4vw, 44px)',
-            }}
-          >
-            Terminal de asistencia
-          </h1>
-
-          <p
-            style={{
-              color:
-                '#475569',
-
-              maxWidth:
-                720,
-
-              lineHeight:
-                1.6,
-            }}
-          >
-            Esta pantalla opera fuera del portal administrativo.
-            Requiere autorización temporal antes de mostrar códigos
-            QR para registrar entrada y salida.
-          </p>
-        </header>
-
-        <section
-          style={{
-            display:
-              'grid',
-
-            gridTemplateColumns:
-              'repeat(auto-fit, minmax(300px, 1fr))',
-
-            gap:
-              20,
-          }}
-        >
-          <article
-            style={{
-              background:
-                '#ffffff',
-
-              border:
-                '1px solid #e2e8f0',
-
-              borderRadius:
-                18,
-
-              padding:
-                24,
-
-              boxShadow:
-                '0 18px 50px rgba(15,23,42,.06)',
-            }}
-          >
-            <h2
-              style={{
-                marginTop:
-                  0,
-              }}
-            >
-              Autorización
+            <h2>
+              Activar esta terminal
             </h2>
 
-            <p
-              style={{
-                color:
-                  '#475569',
-              }}
-            >
-              Estado: <strong>{statusText}</strong>
+            <p>
+              La terminal utiliza una sesión exclusiva de
+              asistencia. Las credenciales administrativas
+              nunca se convierten en una sesión QR.
             </p>
 
-            {expiresInMinutes && accessStatus === 'pending' ? (
-              <p
-                style={{
-                  color:
-                    '#475569',
-                }}
-              >
-                La solicitud vence aproximadamente en{' '}
-                {expiresInMinutes} minutos.
-              </p>
-            ) : null}
+            <label className="terminal-field">
+              <span>
+                Identificador de terminal
+              </span>
 
-            {!terminalToken ? (
-              <form
-                onSubmit={
-                  requestAccess
+              <input
+                value={
+                  terminalId
                 }
-              >
-                <label
-                  htmlFor="terminalId"
-                  style={{
-                    display:
-                      'block',
-
-                    marginBottom:
-                      8,
-
-                    fontWeight:
-                      600,
-                  }}
-                >
-                  Identificador de terminal
-                </label>
-
-                <input
-                  id="terminalId"
-                  value={
-                    terminalId
-                  }
-                  onChange={
-                    (
-                      event
-                    ) =>
-                      setTerminalId(
-                        event.target.value
-                      )
-                  }
-                  disabled={
-                    requesting ||
-                    accessStatus ===
-                      'pending'
-                  }
-                  maxLength={
-                    64
-                  }
-                  autoComplete="off"
-                  style={{
-                    width:
-                      '100%',
-
-                    boxSizing:
-                      'border-box',
-
-                    padding:
-                      '12px 14px',
-
-                    borderRadius:
-                      10,
-
-                    border:
-                      '1px solid #cbd5e1',
-
-                    marginBottom:
-                      14,
-                  }}
-                />
-
-                {accessStatus !==
-                'pending' ? (
-                  <button
-                    type="submit"
-                    disabled={
-                      requesting
-                    }
-                    style={{
-                      border:
-                        0,
-
-                      borderRadius:
-                        10,
-
-                      padding:
-                        '12px 18px',
-
-                      background:
-                        '#16a34a',
-
-                      color:
-                        '#ffffff',
-
-                      fontWeight:
-                        700,
-
-                      cursor:
-                        'pointer',
-                    }}
-                  >
-                    {requesting
-                      ? 'Solicitando...'
-                      : 'Solicitar autorización'}
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={
-                      resetTerminal
-                    }
-                    style={{
-                      border:
-                        '1px solid #cbd5e1',
-
-                      borderRadius:
-                        10,
-
-                      padding:
-                        '12px 18px',
-
-                      background:
-                        '#ffffff',
-
-                      fontWeight:
-                        700,
-
-                      cursor:
-                        'pointer',
-                    }}
-                  >
-                    Cancelar espera local
-                  </button>
-                )}
-              </form>
-            ) : (
-              <button
-                type="button"
-                onClick={
-                  resetTerminal
+                maxLength={
+                  64
                 }
-                style={{
-                  border:
-                    '1px solid #cbd5e1',
+                autoComplete="off"
+                disabled={
+                  accessStatus ===
+                  'pending'
+                }
+                onChange={
+                  event =>
+                    setTerminalId(
+                      event.target.value
+                    )
+                }
+              />
+            </label>
 
-                  borderRadius:
-                    10,
+            {accessStatus ===
+              'pending' && (
+              <div className="terminal-pending-grid">
+                <div>
+                  <span>
+                    Estado
+                  </span>
 
-                  padding:
-                    '12px 18px',
+                  <strong>
+                    Esperando aprobación
+                  </strong>
+                </div>
 
-                  background:
-                    '#ffffff',
+                <div>
+                  <span>
+                    Tiempo restante
+                  </span>
 
-                  fontWeight:
-                    700,
-
-                  cursor:
-                    'pointer',
-                }}
-              >
-                Cerrar sesión de terminal
-              </button>
+                  <strong>
+                    {authorizationRemaining}
+                  </strong>
+                </div>
+              </div>
             )}
 
-            {error ? (
-              <div
-                role="alert"
-                style={{
-                  marginTop:
-                    18,
-
-                  padding:
-                    12,
-
-                  borderRadius:
-                    10,
-
-                  background:
-                    '#fef2f2',
-
-                  color:
-                    '#991b1b',
-                }}
-              >
-                {error}
+            {accessStatus ===
+              'rejected' && (
+              <div className="terminal-message terminal-message-warning">
+                La solicitud fue rechazada por el administrador.
               </div>
-            ) : null}
-          </article>
+            )}
 
-          <article
-            style={{
-              background:
-                '#ffffff',
+            {accessStatus ===
+              'expired' && (
+              <div className="terminal-message terminal-message-warning">
+                La solicitud venció. Genera una nueva autorización.
+              </div>
+            )}
 
-              border:
-                '1px solid #e2e8f0',
-
-              borderRadius:
-                18,
-
-              padding:
-                24,
-
-              minHeight:
-                420,
-
-              display:
-                'flex',
-
-              flexDirection:
-                'column',
-
-              alignItems:
-                'center',
-
-              justifyContent:
-                'center',
-
-              textAlign:
-                'center',
-
-              boxShadow:
-                '0 18px 50px rgba(15,23,42,.06)',
-            }}
-          >
-            <h2>
-              QR de asistencia
-            </h2>
-
-            {qrDataUrl ? (
-              <>
-                <img
-                  src={
-                    qrDataUrl
-                  }
-                  alt="Código QR temporal de asistencia"
-                  width={
-                    280
-                  }
-                  height={
-                    280
-                  }
-                  style={{
-                    maxWidth:
-                      '100%',
-
-                    height:
-                      'auto',
-                  }}
-                />
-
-                <p
-                  style={{
-                    color:
-                      '#475569',
-
-                    marginBottom:
-                      4,
-                  }}
-                >
-                  QR activo para escaneo
-                </p>
-
-                {qrExpiresAt ? (
-                  <small
-                    style={{
-                      color:
-                        '#64748b',
-                    }}
-                  >
-                    Vigencia del QR:{' '}
-                    {new Date(
-                      qrExpiresAt
-                    ).toLocaleTimeString()}
-                  </small>
-                ) : null}
-
+            <div className="terminal-button-row">
+              {accessStatus !==
+              'pending' ? (
                 <button
                   type="button"
+                  className="terminal-primary-button"
+                  disabled={
+                    requesting ||
+                    terminalId
+                      .trim()
+                      .length <
+                      3
+                  }
                   onClick={
                     () =>
-                      void generateQr()
+                      void requestAccess()
                   }
-                  disabled={
-                    loadingQr
-                  }
-                  style={{
-                    marginTop:
-                      18,
-
-                    border:
-                      '1px solid #cbd5e1',
-
-                    borderRadius:
-                      10,
-
-                    padding:
-                      '10px 16px',
-
-                    background:
-                      '#ffffff',
-
-                    fontWeight:
-                      700,
-
-                    cursor:
-                      'pointer',
-                  }}
                 >
-                  {loadingQr
-                    ? 'Actualizando...'
-                    : 'Actualizar QR'}
+                  {requesting
+                    ? 'Solicitando…'
+                    : 'Solicitar autorización'}
                 </button>
-              </>
-            ) : (
-              <p
-                style={{
-                  color:
-                    '#64748b',
+              ) : (
+                <button
+                  type="button"
+                  className="terminal-secondary-button"
+                  onClick={
+                    resetWaiting
+                  }
+                >
+                  Cancelar espera local
+                </button>
+              )}
+            </div>
+          </article>
 
-                  maxWidth:
-                    380,
+          <article className="terminal-auth-help">
+            <span className="terminal-section-eyebrow">
+              FLUJO SMART RH
+            </span>
 
-                  lineHeight:
-                    1.6,
-                }}
-              >
-                El QR aparecerá únicamente cuando esta terminal
-                haya sido aprobada y cuente con una sesión
-                dedicada.
-              </p>
-            )}
+            <h2>
+              Autorización del dispositivo
+            </h2>
+
+            <div className="terminal-step-list">
+              <div>
+                <strong>
+                  01
+                </strong>
+
+                <span>
+                  La terminal solicita autorización.
+                </span>
+              </div>
+
+              <div>
+                <strong>
+                  02
+                </strong>
+
+                <span>
+                  El administrador recibe un correo con
+                  el botón para revisar la solicitud.
+                </span>
+              </div>
+
+              <div>
+                <strong>
+                  03
+                </strong>
+
+                <span>
+                  Al aprobarla, este dispositivo obtiene
+                  una sesión exclusiva y muestra el QR.
+                </span>
+              </div>
+            </div>
           </article>
         </section>
-      </div>
+      ) : (
+        <section className="terminal-active-layout">
+          <article className="terminal-qr-card">
+            <header className="terminal-qr-header">
+              <div>
+                <span className="terminal-section-eyebrow">
+                  QR DINÁMICO ACTIVO
+                </span>
+
+                <h2>
+                  Escanea para registrar asistencia
+                </h2>
+
+                <p>
+                  Utiliza la aplicación móvil SMART RH.
+                </p>
+              </div>
+
+              <span className="terminal-live-badge">
+                <span />
+                EN LÍNEA
+              </span>
+            </header>
+
+            <div className="terminal-qr-stage">
+              <div className="terminal-qr-frame">
+                {qrDataUrl ? (
+                  <img
+                    src={
+                      qrDataUrl
+                    }
+                    alt="Código QR dinámico de asistencia SMART RH"
+                  />
+                ) : (
+                  <div className="terminal-qr-placeholder">
+                    {loadingQr
+                      ? 'Generando código seguro…'
+                      : 'QR no disponible'}
+                  </div>
+                )}
+
+                <i className="terminal-corner terminal-corner-tl" />
+                <i className="terminal-corner terminal-corner-tr" />
+                <i className="terminal-corner terminal-corner-bl" />
+                <i className="terminal-corner terminal-corner-br" />
+              </div>
+            </div>
+
+            <footer className="terminal-qr-caption">
+              <span>
+                Acerca la cámara del teléfono al código.
+              </span>
+
+              <strong>
+                No compartas capturas del QR.
+              </strong>
+            </footer>
+          </article>
+
+          <aside className="terminal-control-column">
+            <article className="terminal-metric-card terminal-metric-card-accent">
+              <span>
+                Vigencia del QR
+              </span>
+
+              <strong>
+                {qrRemaining}
+              </strong>
+
+              <small>
+                Renovación automática antes de vencer
+              </small>
+            </article>
+
+            <article className="terminal-metric-card">
+              <span>
+                Sesión de terminal
+              </span>
+
+              <strong className="terminal-online-text">
+                Activa
+              </strong>
+
+              <small>
+                Tiempo restante: {sessionRemaining}
+              </small>
+            </article>
+
+            <article className="terminal-metric-card">
+              <span>
+                Última actualización
+              </span>
+
+              <strong>
+                {lastQrUpdate
+                  ? new Intl.DateTimeFormat(
+                      'es-MX',
+                      {
+                        hour:
+                          '2-digit',
+
+                        minute:
+                          '2-digit',
+
+                        second:
+                          '2-digit',
+                      }
+                    ).format(
+                      new Date(
+                        lastQrUpdate
+                      )
+                    )
+                  : 'Pendiente'}
+              </strong>
+
+              <small>
+                Sincronización con Backend SMART RH
+              </small>
+            </article>
+
+            <article className="terminal-control-card">
+              <span className="terminal-section-eyebrow">
+                CONTROLES
+              </span>
+
+              <button
+                type="button"
+                className="terminal-primary-button"
+                disabled={
+                  loadingQr
+                }
+                onClick={
+                  () =>
+                    void generateQr()
+                }
+              >
+                {loadingQr
+                  ? 'Renovando…'
+                  : 'Renovar QR'}
+              </button>
+
+              <button
+                type="button"
+                className="terminal-secondary-button"
+                onClick={
+                  () =>
+                    void toggleFullscreen()
+                }
+              >
+                Pantalla completa
+              </button>
+
+              <button
+                type="button"
+                className="terminal-secondary-button"
+                onClick={
+                  closeTerminal
+                }
+              >
+                Volver al selector
+              </button>
+
+              <div className="terminal-auto-refresh">
+                <span className="terminal-status-dot terminal-status-dot-online" />
+
+                <div>
+                  <strong>
+                    Renovación automática
+                  </strong>
+
+                  <small>
+                    El código cambia antes de que expire.
+                  </small>
+                </div>
+              </div>
+            </article>
+          </aside>
+        </section>
+      )}
+
+      <footer className="terminal-footer">
+        <span>
+          SMART RH · Sistema de Recursos Humanos
+        </span>
+
+        <span>
+          QR dinámico · Sesión dedicada · Auditoría activa
+        </span>
+      </footer>
     </main>
   );
 }

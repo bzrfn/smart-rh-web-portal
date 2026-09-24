@@ -60,7 +60,7 @@ export default function VerifyLoginCode() {
 
       setAuthToken(data.token);
       setAuth({ token: data.token, user: data.user });
-      navigate('/portal', { replace: true });
+      navigate('/admin/destino', { replace: true });
     } catch (err: any) {
       setError(err?.response?.data?.message || 'Error de conexión');
     } finally {

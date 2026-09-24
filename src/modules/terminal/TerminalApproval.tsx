@@ -1,21 +1,46 @@
-import React, {
+import {
+  useEffect,
   useState,
 } from 'react';
 
-import { api } from '../../services/api';
+import {
+  Link,
+  useSearchParams,
+} from 'react-router-dom';
+
+import {
+  api,
+} from '../../services/api';
+
+import './terminalExperience.css';
 
 
 type Decision =
-  'approve' |
-  'reject';
+  | 'approve'
+  | 'reject';
 
 
 export default function TerminalApproval() {
   const [
+    searchParams,
+  ] =
+    useSearchParams();
+
+  const challengeFromUrl =
+    String(
+      searchParams.get(
+        'challengeId'
+      ) ??
+      ''
+    ).trim();
+
+  const [
     challengeId,
     setChallengeId,
   ] =
-    useState('');
+    useState(
+      challengeFromUrl
+    );
 
   const [
     loading,
@@ -29,23 +54,47 @@ export default function TerminalApproval() {
     message,
     setMessage,
   ] =
-    useState('');
+    useState(
+      ''
+    );
 
   const [
     error,
     setError,
   ] =
-    useState('');
+    useState(
+      ''
+    );
 
+  useEffect(
+    () => {
+      if (
+        challengeFromUrl
+      ) {
+        setChallengeId(
+          challengeFromUrl
+        );
+      }
+    },
+    [
+      challengeFromUrl,
+    ]
+  );
 
   async function decide(
-    decision: Decision
+    decision:
+      Decision
   ) {
     const normalized =
       challengeId.trim();
 
-    setMessage('');
-    setError('');
+    setMessage(
+      ''
+    );
+
+    setError(
+      ''
+    );
 
     if (!normalized) {
       setError(
@@ -75,7 +124,7 @@ export default function TerminalApproval() {
 
       const status =
         String(
-          data?.status ||
+          data?.status ??
           ''
         )
           .trim()
@@ -83,62 +132,74 @@ export default function TerminalApproval() {
 
       if (
         status ===
-          'approved'
+        'approved'
       ) {
         setMessage(
           'Terminal autorizada correctamente. El dispositivo continuará automáticamente.'
         );
+
       } else if (
         status ===
-          'rejected'
+        'rejected'
       ) {
         setMessage(
           'Solicitud de terminal rechazada correctamente.'
         );
+
       } else {
         setMessage(
           'La decisión fue procesada correctamente.'
         );
       }
 
-      setChallengeId(
-        ''
-      );
     } catch (
       requestError:
-        any
+        unknown
     ) {
       const status =
         Number(
-          requestError
-            ?.response
-            ?.status ||
+          (
+            requestError as {
+              response?: {
+                status?:
+                  number;
+              };
+            }
+          )?.response
+            ?.status ??
           0
         );
 
       if (
-        status === 403
+        status ===
+        403
       ) {
         setError(
           'Solo el administrador general configurado puede autorizar terminales.'
         );
+
       } else if (
-        status === 404
+        status ===
+        404
       ) {
         setError(
           'No se encontró la solicitud. Verifica el identificador recibido por correo.'
         );
+
       } else if (
-        status === 409
+        status ===
+        409
       ) {
         setError(
           'La solicitud ya fue procesada o ya no puede modificarse.'
         );
+
       } else {
         setError(
           'No fue posible procesar la autorización. Intenta nuevamente.'
         );
       }
+
     } finally {
       setLoading(
         null
@@ -146,162 +207,67 @@ export default function TerminalApproval() {
     }
   }
 
-
   return (
-    <section
-      style={{
-        maxWidth:
-          760,
-        margin:
-          '0 auto',
-        padding:
-          '28px 20px',
-      }}
-    >
-      <div
-        style={{
-          background:
-            'var(--surface, #ffffff)',
-          border:
-            '1px solid var(--border, #e2e8f0)',
-          borderRadius:
-            18,
-          padding:
-            24,
-          boxShadow:
-            '0 12px 35px rgba(15, 23, 42, 0.08)',
-        }}
-      >
-        <div
-          style={{
-            display:
-              'flex',
-            flexDirection:
-              'column',
-            gap:
-              8,
-            marginBottom:
-              24,
-          }}
-        >
-          <span
-            style={{
-              fontSize:
-                13,
-              fontWeight:
-                700,
-              textTransform:
-                'uppercase',
-              letterSpacing:
-                '0.08em',
-              color:
-                '#15803d',
-            }}
-          >
-            SMART RH
+    <main className="terminal-approval-page">
+      <section className="terminal-approval-card">
+        <header className="terminal-approval-header">
+          <span className="terminal-section-eyebrow">
+            SMART RH · SEGURIDAD DE TERMINAL
           </span>
 
-          <h1
-            style={{
-              margin:
-                0,
-              fontSize:
-                28,
-            }}
-          >
+          <h1>
             Autorizar Terminal
           </h1>
 
-          <p
-            style={{
-              margin:
-                0,
-              color:
-                'var(--text-secondary, #475569)',
-              lineHeight:
-                1.6,
-            }}
-          >
-            Ingresa el identificador de la solicitud
-            recibido en el correo del administrador
-            general. La terminal nunca necesita las
-            credenciales administrativas.
+          <p>
+            Confirma o rechaza la solicitud de un dispositivo
+            que desea operar el QR dinámico de asistencia.
           </p>
-        </div>
+        </header>
 
-        <label
-          htmlFor="terminalChallengeId"
-          style={{
-            display:
-              'block',
-            fontWeight:
-              700,
-            marginBottom:
-              8,
-          }}
-        >
-          Identificador de solicitud
+        {challengeFromUrl && (
+          <div className="terminal-message terminal-message-success">
+            <strong>
+              Solicitud cargada desde el correo.
+            </strong>
+
+            <span>
+              Revisa la información y toma una decisión.
+            </span>
+          </div>
+        )}
+
+        <label className="terminal-field">
+          <span>
+            Identificador de solicitud
+          </span>
+
+          <input
+            value={
+              challengeId
+            }
+            onChange={
+              event =>
+                setChallengeId(
+                  event.target.value
+                )
+            }
+            placeholder="Solicitud recibida por correo"
+            autoComplete="off"
+            spellCheck={
+              false
+            }
+            disabled={
+              loading !==
+              null
+            }
+          />
         </label>
-
-        <input
-          id="terminalChallengeId"
-          value={
-            challengeId
-          }
-          onChange={
-            (
-              event
-            ) =>
-              setChallengeId(
-                event
-                  .target
-                  .value
-              )
-          }
-          placeholder="Pega aquí el identificador recibido por correo"
-          autoComplete="off"
-          spellCheck={
-            false
-          }
-          disabled={
-            loading !==
-            null
-          }
-          style={{
-            width:
-              '100%',
-            boxSizing:
-              'border-box',
-            border:
-              '1px solid var(--border, #cbd5e1)',
-            borderRadius:
-              12,
-            padding:
-              '13px 14px',
-            fontSize:
-              15,
-            outline:
-              'none',
-          }}
-        />
 
         {error && (
           <div
+            className="terminal-message terminal-message-error"
             role="alert"
-            style={{
-              marginTop:
-                16,
-              padding:
-                12,
-              borderRadius:
-                10,
-              background:
-                'rgba(239,68,68,0.10)',
-              color:
-                '#b91c1c',
-              fontWeight:
-                600,
-            }}
           >
             {error}
           </div>
@@ -309,113 +275,63 @@ export default function TerminalApproval() {
 
         {message && (
           <div
+            className="terminal-message terminal-message-success"
             role="status"
-            style={{
-              marginTop:
-                16,
-              padding:
-                12,
-              borderRadius:
-                10,
-              background:
-                'rgba(22,163,74,0.10)',
-              color:
-                '#15803d',
-              fontWeight:
-                600,
-            }}
           >
             {message}
           </div>
         )}
 
-        <div
-          style={{
-            display:
-              'flex',
-            flexWrap:
-              'wrap',
-            gap:
-              12,
-            marginTop:
-              22,
-          }}
-        >
+        <div className="terminal-approval-actions">
           <button
             type="button"
+            className="terminal-primary-button"
+            disabled={
+              loading !==
+                null ||
+              !challengeId.trim()
+            }
             onClick={
               () =>
-                decide(
+                void decide(
                   'approve'
                 )
             }
-            disabled={
-              loading !==
-              null
-            }
-            style={{
-              border:
-                0,
-              borderRadius:
-                12,
-              padding:
-                '12px 18px',
-              background:
-                '#16a34a',
-              color:
-                '#ffffff',
-              fontWeight:
-                700,
-              cursor:
-                loading
-                  ? 'not-allowed'
-                  : 'pointer',
-            }}
           >
             {loading ===
             'approve'
-              ? 'Autorizando...'
+              ? 'Autorizando…'
               : 'Aprobar terminal'}
           </button>
 
           <button
             type="button"
+            className="terminal-danger-button"
+            disabled={
+              loading !==
+                null ||
+              !challengeId.trim()
+            }
             onClick={
               () =>
-                decide(
+                void decide(
                   'reject'
                 )
             }
-            disabled={
-              loading !==
-              null
-            }
-            style={{
-              border:
-                '1px solid #ef4444',
-              borderRadius:
-                12,
-              padding:
-                '12px 18px',
-              background:
-                'transparent',
-              color:
-                '#dc2626',
-              fontWeight:
-                700,
-              cursor:
-                loading
-                  ? 'not-allowed'
-                  : 'pointer',
-            }}
           >
             {loading ===
             'reject'
-              ? 'Rechazando...'
+              ? 'Rechazando…'
               : 'Rechazar solicitud'}
           </button>
         </div>
-      </div>
-    </section>
+
+        <footer className="terminal-approval-footer">
+          <Link to="/portal">
+            ← Volver al portal administrativo
+          </Link>
+        </footer>
+      </section>
+    </main>
   );
 }
