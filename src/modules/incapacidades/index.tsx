@@ -25,6 +25,52 @@ type EstadoFiltro =
   | EstadoIncapacidad;
 
 
+type ValidacionAutomatica = {
+  estado_validacion:
+    | 'pendiente'
+    | 'consistente'
+    | 'requiere_revision';
+
+  analisis_disponible:
+    boolean;
+
+  estado_analisis:
+    | 'pendiente'
+    | 'completado'
+    | 'requiere_revision'
+    | 'error'
+    | null;
+
+  estado_estructura:
+    | 'valido'
+    | 'requiere_revision'
+    | 'invalido'
+    | null;
+
+  puntaje_estructura:
+    number | null;
+
+  pdf_version:
+    string | null;
+
+  duplicado_detectado:
+    boolean;
+
+  duplicado_de_incapacidad_id:
+    number | null;
+
+  motivos_revision:
+    (
+      | 'DOCUMENTO_DUPLICADO'
+      | 'ESTRUCTURA_PDF'
+      | 'ERROR_ANALISIS'
+    )[];
+
+  analizado_at:
+    string | null;
+};
+
+
 type Incapacidad = {
   id: number;
   usuario_id: number;
@@ -53,6 +99,9 @@ type Incapacidad = {
   admin_apellido?: string | null;
 
   created_at?: string | null;
+
+  validacion_automatica?:
+    ValidacionAutomatica;
 };
 
 
@@ -176,6 +225,174 @@ function statusClass(
   }
 
   return 'pending';
+}
+
+
+function validationLabel(
+  validation:
+    ValidacionAutomatica | undefined
+): string {
+  if (
+    !validation ||
+    validation.estado_validacion ===
+      'pendiente'
+  ) {
+    return 'Pendiente de análisis';
+  }
+
+  if (
+    validation.estado_validacion ===
+    'consistente'
+  ) {
+    return 'Consistente';
+  }
+
+  return 'Requiere revisión';
+}
+
+
+function validationStatusClass(
+  validation:
+    ValidacionAutomatica | undefined
+): string {
+  if (
+    validation?.estado_validacion ===
+    'consistente'
+  ) {
+    return statusClass(
+      'aprobada'
+    );
+  }
+
+  if (
+    validation?.estado_validacion ===
+    'requiere_revision'
+  ) {
+    return statusClass(
+      'pendiente'
+    );
+  }
+
+  return statusClass(
+    'pendiente'
+  );
+}
+
+
+function validationDescription(
+  validation:
+    ValidacionAutomatica | undefined
+): string {
+  if (
+    !validation ||
+    !validation.analisis_disponible ||
+    validation.estado_validacion ===
+      'pendiente'
+  ) {
+    return (
+      'La validación automática todavía no está disponible para este comprobante.'
+    );
+  }
+
+  if (
+    validation.estado_validacion ===
+    'consistente'
+  ) {
+    return (
+      'La revisión técnica del PDF no detectó un duplicado exacto ni anomalías estructurales. Esto no confirma la autenticidad médica del documento.'
+    );
+  }
+
+  return (
+    'SMART RH detectó señales técnicas que requieren revisión humana antes de tomar una decisión administrativa.'
+  );
+}
+
+
+function validationReasonLabel(
+  reason:
+    ValidacionAutomatica[
+      'motivos_revision'
+    ][number]
+): string {
+  switch (reason) {
+    case 'DOCUMENTO_DUPLICADO':
+      return (
+        'El mismo archivo PDF ya aparece asociado a otra incapacidad.'
+      );
+
+    case 'ESTRUCTURA_PDF':
+      return (
+        'La estructura técnica del PDF requiere revisión.'
+      );
+
+    case 'ERROR_ANALISIS':
+      return (
+        'El análisis automático no pudo completarse correctamente.'
+      );
+
+    default:
+      return (
+        'Se requiere revisión administrativa.'
+      );
+  }
+}
+
+
+function validationScoreLabel(
+  validation:
+    ValidacionAutomatica | undefined
+): string {
+  const score =
+    validation?.puntaje_estructura;
+
+  if (
+    typeof score !==
+      'number' ||
+    !Number.isFinite(
+      score
+    )
+  ) {
+    return 'No disponible';
+  }
+
+  const normalized =
+    Math.max(
+      0,
+      Math.min(
+        1,
+        score
+      )
+    );
+
+  return `${Math.round(
+    normalized * 100
+  )}%`;
+}
+
+
+function validationDateLabel(
+  value:
+    string | null | undefined
+): string {
+  if (!value) {
+    return 'No disponible';
+  }
+
+  const date =
+    new Date(value);
+
+  if (
+    Number.isNaN(
+      date.getTime()
+    )
+  ) {
+    return value;
+  }
+
+  return date.toLocaleString(
+    'es-MX'
+  );
 }
 
 
@@ -880,6 +1097,7 @@ export default function Incapacidades() {
                     <th>Periodo</th>
                     <th>Días</th>
                     <th>Comprobante</th>
+                    <th>Validación automática</th>
                     <th>Estado</th>
                     <th>Acciones</th>
                   </tr>
@@ -944,6 +1162,25 @@ export default function Incapacidades() {
                         <td>
                           <span
                             className={
+                              `status-pill ${validationStatusClass(
+                                item.validacion_automatica
+                              )}`
+                            }
+                            title={
+                              validationDescription(
+                                item.validacion_automatica
+                              )
+                            }
+                          >
+                            {validationLabel(
+                              item.validacion_automatica
+                            )}
+                          </span>
+                        </td>
+
+                        <td>
+                          <span
+                            className={
                               `status-pill ${statusClass(
                                 item.estado
                               )}`
@@ -962,17 +1199,65 @@ export default function Incapacidades() {
                             disabled={
                               detailLoading
                             }
+                            style={{
+                              position:
+                                'relative',
+
+                              zIndex:
+                                5,
+
+                              pointerEvents:
+                                'auto',
+                            }}
                             onClick={
-                              () =>
-                                openDetail(
+                              () => {
+                                /*
+                                 * INC81J_REVIEW_FIX
+                                 *
+                                 * La selección inmediata da
+                                 * respuesta visual al clic.
+                                 * Después se consulta el
+                                 * detalle oficial al Backend.
+                                 */
+                                setSelected(
                                   item
-                                )
+                                );
+
+                                setObservaciones(
+                                  item
+                                    .observaciones_admin ||
+                                    ''
+                                );
+
+                                window
+                                  .requestAnimationFrame(
+                                    () => {
+                                      document
+                                        .getElementById(
+                                          'incapacidad-review-detail'
+                                        )
+                                        ?.scrollIntoView({
+                                          behavior:
+                                            'smooth',
+
+                                          block:
+                                            'start',
+                                        });
+                                    }
+                                  );
+
+                                void openDetail(
+                                  item
+                                );
+                              }
                             }
                           >
-                            {item.estado ===
-                            'pendiente'
-                              ? 'Revisar'
-                              : 'Ver detalle'}
+                            {detailLoading
+                              ? 'Abriendo...'
+                              : item.estado ===
+                                'pendiente'
+                                ? 'Revisar'
+                                : 'Ver detalle'}
                           </button>
                         </td>
                       </tr>
@@ -1039,7 +1324,14 @@ export default function Incapacidades() {
       </div>
 
       {selected && (
-        <div className="module-card incap-detail-card">
+        <div
+          id="incapacidad-review-detail"
+          className="module-card incap-detail-card"
+          style={{
+            scrollMarginTop:
+              '96px',
+          }}
+        >
           <div className="module-card-header">
             <div>
               <p className="module-eyebrow">
@@ -1155,6 +1447,131 @@ export default function Incapacidades() {
               </div>
             )}
           </div>
+
+          <section
+            className="module-card"
+            data-testid="incapacidad-validacion-automatica"
+          >
+            <div>
+              <p className="module-eyebrow">
+                Apoyo para Recursos Humanos
+              </p>
+
+              <h3 className="module-title">
+                Validación automática
+              </h3>
+
+              <p className="module-subtitle">
+                Revisión técnica del comprobante PDF.
+                La decisión final continúa en manos
+                de Recursos Humanos.
+              </p>
+            </div>
+
+            <div className="table-actions">
+              <span
+                className={
+                  `status-pill ${validationStatusClass(
+                    selected.validacion_automatica
+                  )}`
+                }
+              >
+                {validationLabel(
+                  selected.validacion_automatica
+                )}
+              </span>
+            </div>
+
+            <p className="table-secondary-text">
+              {validationDescription(
+                selected.validacion_automatica
+              )}
+            </p>
+
+            <div className="asistencia-summary-grid">
+              <div className="asistencia-summary-card">
+                <h3>
+                  Integridad técnica
+                </h3>
+
+                <p>
+                  {validationScoreLabel(
+                    selected.validacion_automatica
+                  )}
+                </p>
+              </div>
+
+              <div className="asistencia-summary-card">
+                <h3>
+                  Versión PDF
+                </h3>
+
+                <p>
+                  {selected.validacion_automatica
+                    ?.pdf_version ||
+                    'No disponible'}
+                </p>
+              </div>
+
+              <div className="asistencia-summary-card">
+                <h3>
+                  Duplicado exacto
+                </h3>
+
+                <p>
+                  {selected.validacion_automatica
+                    ?.duplicado_detectado
+                    ? 'Detectado'
+                    : 'No detectado'}
+                </p>
+              </div>
+            </div>
+
+            {selected.validacion_automatica
+              ?.duplicado_detectado &&
+              selected.validacion_automatica
+                .duplicado_de_incapacidad_id ? (
+                <p className="table-secondary-text">
+                  Coincide exactamente con el archivo
+                  de la incapacidad #
+                  {selected.validacion_automatica
+                    .duplicado_de_incapacidad_id}.
+                  Esta coincidencia no implica por sí
+                  sola fraude.
+                </p>
+              ) : null}
+
+            {selected.validacion_automatica
+              ?.motivos_revision?.length ? (
+                <div>
+                  <strong>
+                    Motivos para revisión
+                  </strong>
+
+                  <ul>
+                    {selected.validacion_automatica
+                      .motivos_revision
+                      .map(
+                        reason => (
+                          <li key={reason}>
+                            {validationReasonLabel(
+                              reason
+                            )}
+                          </li>
+                        )
+                      )}
+                  </ul>
+                </div>
+              ) : null}
+
+            <p className="table-secondary-text">
+              Último análisis:{' '}
+              {validationDateLabel(
+                selected.validacion_automatica
+                  ?.analizado_at
+              )}
+            </p>
+          </section>
 
           {selected.estado ===
           'pendiente' ? (
