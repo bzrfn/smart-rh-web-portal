@@ -3,8 +3,23 @@ import axios from 'axios';
 
 const STORAGE_KEY = 'rrhh_auth';
 
+const DEFAULT_API_BASE_URL =
+  import.meta.env?.DEV ? '/api' : 'https://api.smart-rh.com.mx';
+
+const CONFIGURED_API_BASE_URL =
+  String(import.meta.env?.VITE_API_URL || '').trim();
+
+const SHOULD_USE_DEV_PROXY =
+  import.meta.env?.DEV &&
+  (
+    !CONFIGURED_API_BASE_URL ||
+    CONFIGURED_API_BASE_URL === 'https://api.smart-rh.com.mx'
+  );
+
 export const API_BASE_URL =
-  import.meta.env?.VITE_API_URL || 'http://localhost:4000';
+  SHOULD_USE_DEV_PROXY
+    ? '/api'
+    : CONFIGURED_API_BASE_URL || DEFAULT_API_BASE_URL;
 
 export const api = axios.create({
   baseURL: API_BASE_URL,

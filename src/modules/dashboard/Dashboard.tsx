@@ -26,6 +26,13 @@ const modules: ModuleCard[] = [
     accent: 'teal',
   },
   {
+    path: '/calendario',
+    title: 'Calendario laboral',
+    description: 'Agenda mensual de asistencia, vacaciones e incapacidades.',
+    code: 'CL',
+    accent: 'blue',
+  },
+  {
     path: '/qr-asistencia',
     title: 'QR Asistencia',
     description: 'Generación de código QR dinámico para registro del personal.',
