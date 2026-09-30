@@ -33,6 +33,13 @@ const modules: ModuleCard[] = [
     accent: 'blue',
   },
   {
+    path: '/asistente',
+    title: 'Asistente SMART RH',
+    description: 'Ayuda guiada por rol con escalamiento a soporte.',
+    code: 'AI',
+    accent: 'teal',
+  },
+  {
     path: '/portal/terminal-autorizacion',
     title: 'Autorizar Terminal',
     description: 'Aprueba o rechaza solicitudes de acceso de la terminal de asistencia.',
@@ -294,6 +301,7 @@ export default function Dashboard() {
 
             <div className="enterprise-quick-links">
               <Link to="/documentacion">Documentación</Link>
+              <Link to="/asistente">Asistente SMART RH</Link>
               <Link to="/asistencia">Asistencia</Link>
               <Link to="/vacaciones">Vacaciones</Link>
               {isAdmin && <Link to="/incapacidades">Incapacidades</Link>}

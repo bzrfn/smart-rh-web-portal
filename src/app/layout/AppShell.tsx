@@ -86,6 +86,12 @@ export default function AppShell() {
         description: 'Agenda laboral',
       },
       {
+        path: '/portal/asistente',
+        label: 'Asistente',
+        icon: 'AI',
+        description: 'Ayuda inteligente',
+      },
+      {
         path: '/portal/documentacion',
         label: 'Documentos',
         icon: 'DC',
