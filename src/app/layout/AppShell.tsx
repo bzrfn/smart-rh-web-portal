@@ -80,11 +80,16 @@ export default function AppShell() {
         description: 'Registros laborales',
       },
       {
-        path: '/portal/qr-asistencia',
-        label: 'QR',
-        icon: 'QR',
-        description: 'Registro temporal',
-        adminOnly: true,
+        path: '/portal/calendario',
+        label: 'Calendario',
+        icon: 'CL',
+        description: 'Agenda laboral',
+      },
+      {
+        path: '/portal/asistente',
+        label: 'Asistente',
+        icon: 'AI',
+        description: 'Ayuda inteligente',
       },
       {
         path: '/portal/documentacion',
@@ -109,6 +114,13 @@ export default function AppShell() {
         label: 'Vacaciones',
         icon: 'VC',
         description: 'Solicitudes y saldos',
+      },
+      {
+        path: '/portal/incapacidades',
+        label: 'Incapacidades',
+        icon: 'IN',
+        description: 'Solicitudes médicas',
+        adminOnly: true,
       },
       {
         path: '/portal/soporte',

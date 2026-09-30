@@ -26,10 +26,24 @@ const modules: ModuleCard[] = [
     accent: 'teal',
   },
   {
-    path: '/qr-asistencia',
-    title: 'QR Asistencia',
-    description: 'Generación de código QR dinámico para registro del personal.',
-    code: 'QR',
+    path: '/calendario',
+    title: 'Calendario laboral',
+    description: 'Vista mensual de asistencia, vacaciones e incapacidades.',
+    code: 'CL',
+    accent: 'blue',
+  },
+  {
+    path: '/asistente',
+    title: 'Asistente SMART RH',
+    description: 'Ayuda guiada por rol con escalamiento a soporte.',
+    code: 'AI',
+    accent: 'teal',
+  },
+  {
+    path: '/portal/terminal-autorizacion',
+    title: 'Autorizar Terminal',
+    description: 'Aprueba o rechaza solicitudes de acceso de la terminal de asistencia.',
+    code: 'AT',
     accent: 'teal',
   },
   {
@@ -59,6 +73,14 @@ const modules: ModuleCard[] = [
     description: 'Solicitudes, días disponibles y seguimiento administrativo.',
     code: 'VC',
     accent: 'gold',
+  },
+  {
+    path: '/incapacidades',
+    title: 'Incapacidades',
+    description: 'Solicitudes médicas, comprobantes, revisión y seguimiento administrativo.',
+    code: 'IN',
+    accent: 'danger',
+    adminOnly: true,
   },
   {
     path: '/soporte',
@@ -279,8 +301,10 @@ export default function Dashboard() {
 
             <div className="enterprise-quick-links">
               <Link to="/documentacion">Documentación</Link>
+              <Link to="/asistente">Asistente SMART RH</Link>
               <Link to="/asistencia">Asistencia</Link>
               <Link to="/vacaciones">Vacaciones</Link>
+              {isAdmin && <Link to="/incapacidades">Incapacidades</Link>}
               {isAdmin && <Link to="/dashboard-analitico">Dashboard analítico</Link>}
               {isAdmin && <Link to="/etl">Proceso ETL</Link>}
               {isAdmin && <Link to="/analisis-supervisado">Análisis supervisado</Link>}

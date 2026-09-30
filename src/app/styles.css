@@ -1417,6 +1417,264 @@
   border: 1px solid rgba(10, 87, 164, 0.08);
 }
 
+/* ===== Asistente SMART RH ===== */
+.assistant-page {
+  display: grid;
+  gap: 22px;
+}
+
+.assistant-hero,
+.assistant-layout,
+.assistant-chat-card,
+.assistant-side-card {
+  border: 1px solid var(--border);
+  background: var(--card);
+  box-shadow: var(--shadow-soft);
+}
+
+.assistant-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  border-radius: 24px;
+  padding: 24px;
+}
+
+.assistant-hero h2,
+.assistant-chat-header h3,
+.assistant-side-card h3 {
+  margin: 0;
+  color: var(--text);
+}
+
+.assistant-hero h2 {
+  font-size: clamp(1.8rem, 2.8vw, 2.7rem);
+}
+
+.assistant-hero p,
+.assistant-side-card p {
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.assistant-eyebrow {
+  margin: 0 0 8px;
+  color: var(--primary);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.assistant-context-card {
+  min-width: 220px;
+  border-radius: 20px;
+  padding: 18px;
+  background: var(--card-muted);
+  border: 1px solid var(--border);
+}
+
+.assistant-context-card span,
+.assistant-context-card small {
+  display: block;
+  color: var(--text-muted);
+}
+
+.assistant-context-card strong {
+  display: block;
+  margin: 6px 0;
+  color: var(--text);
+}
+
+.assistant-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 18px;
+  border-radius: 24px;
+  padding: 18px;
+}
+
+.assistant-chat-card,
+.assistant-side-card {
+  border-radius: 22px;
+}
+
+.assistant-chat-card {
+  display: grid;
+  min-height: 620px;
+  grid-template-rows: auto 1fr auto auto;
+  overflow: hidden;
+}
+
+.assistant-chat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.assistant-support-link,
+.assistant-actions a,
+.assistant-ticket-btn,
+.assistant-input-row button,
+.assistant-suggestions button {
+  border: 0;
+  border-radius: 999px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.assistant-support-link,
+.assistant-actions a {
+  text-decoration: none;
+}
+
+.assistant-support-link {
+  padding: 10px 14px;
+  color: var(--primary);
+  background: var(--primary-soft);
+}
+
+.assistant-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+  overflow: auto;
+}
+
+.assistant-message {
+  max-width: 82%;
+  border-radius: 20px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+}
+
+.assistant-message p {
+  margin: 0;
+  line-height: 1.55;
+}
+
+.assistant-message.user {
+  align-self: flex-end;
+  color: #ffffff;
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+.assistant-message.assistant {
+  align-self: flex-start;
+  color: var(--text);
+  background: var(--card-muted);
+}
+
+.assistant-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.assistant-actions a {
+  padding: 8px 11px;
+  color: var(--primary);
+  background: var(--primary-soft);
+}
+
+.assistant-error {
+  margin: 0 20px 12px;
+  border-radius: 14px;
+  padding: 12px 14px;
+  color: var(--danger);
+  background: var(--danger-soft);
+  font-weight: 700;
+}
+
+.assistant-input-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  padding: 16px 20px 20px;
+  border-top: 1px solid var(--border);
+}
+
+.assistant-input-row input {
+  min-width: 0;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 12px 15px;
+  color: var(--text);
+  background: var(--card-muted);
+  outline: none;
+}
+
+.assistant-input-row button,
+.assistant-ticket-btn {
+  padding: 12px 18px;
+  color: #ffffff;
+  background: var(--primary);
+}
+
+.assistant-input-row button:disabled,
+.assistant-ticket-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.assistant-side {
+  display: grid;
+  align-content: start;
+  gap: 16px;
+}
+
+.assistant-side-card {
+  padding: 18px;
+}
+
+.assistant-suggestions {
+  display: grid;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.assistant-suggestions button {
+  width: 100%;
+  padding: 12px 14px;
+  text-align: left;
+  color: var(--text);
+  background: var(--card-muted);
+  border: 1px solid var(--border);
+}
+
+.assistant-suggestions button:hover {
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
+.assistant-ticket-btn {
+  width: 100%;
+  margin-top: 12px;
+}
+
+@media (max-width: 920px) {
+  .assistant-hero,
+  .assistant-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .assistant-hero {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .assistant-message {
+    max-width: 100%;
+  }
+}
+
 .module-hero-copy h3 {
   margin: 0;
   font-size: 22px;
@@ -10098,5 +10356,2430 @@ body::before {
   .ml-model-explain-hero {
     padding: 20px;
     border-radius: 24px;
+  }
+}
+/* ============================================================
+   CAMBIO3_DARK_ASISTENCIA_3P6_1
+   Ajuste visual del módulo de asistencia en modo oscuro.
+   Solo estilos.
+   ============================================================ */
+
+:root[data-theme='dark'] .module-kpi-card {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(21, 40, 63, 0.98),
+      rgba(13, 29, 48, 0.98)
+    ) !important;
+
+  border:
+    1px solid
+    rgba(56, 189, 248, 0.16) !important;
+
+  box-shadow:
+    0 14px 30px
+    rgba(0, 0, 0, 0.26),
+    inset 0 1px 0
+    rgba(255, 255, 255, 0.04) !important;
+}
+
+:root[data-theme='dark'] .module-kpi-label {
+  color:
+    #94a3b8 !important;
+}
+
+:root[data-theme='dark'] .module-kpi-value {
+  color:
+    #38bdf8 !important;
+}
+
+
+/* Botones neutros:
+   Historial / Justificar / Corregir / Cancelar / Cerrar */
+
+:root[data-theme='dark']
+.module-card
+.action-btn:not(.action-btn-success):not(.action-btn-danger):not(.action-btn-justify):not(.action-btn-correct):not(.action-btn-history) {
+  background:
+    #1e344d !important;
+
+  border:
+    1px solid
+    rgba(148, 163, 184, 0.22) !important;
+
+  color:
+    #e2e8f0 !important;
+
+  box-shadow:
+    none !important;
+}
+
+:root[data-theme='dark']
+.module-card
+.action-btn:not(.action-btn-success):not(.action-btn-danger):not(.action-btn-justify):not(.action-btn-correct):not(.action-btn-history):hover {
+  background:
+    #294966 !important;
+
+  border-color:
+    rgba(56, 189, 248, 0.45) !important;
+
+  color:
+    #ffffff !important;
+
+  transform:
+    translateY(-1px);
+}
+
+:root[data-theme='dark']
+.module-card
+.action-btn:not(.action-btn-success):not(.action-btn-danger):not(.action-btn-justify):not(.action-btn-correct):not(.action-btn-history):focus-visible {
+  outline:
+    2px solid
+    #38bdf8 !important;
+
+  outline-offset:
+    2px;
+}
+
+
+/* Panel que aparece debajo de la tabla */
+
+:root[data-theme='dark']
+.module-card
+.empty-state-card {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(16, 33, 54, 0.98),
+      rgba(12, 26, 43, 0.98)
+    ) !important;
+
+  border:
+    1px solid
+    rgba(56, 189, 248, 0.15) !important;
+
+  box-shadow:
+    0 18px 38px
+    rgba(0, 0, 0, 0.24) !important;
+
+  color:
+    #e2e8f0 !important;
+}
+
+:root[data-theme='dark']
+.module-card
+.empty-state-card h3 {
+  color:
+    #f8fafc !important;
+}
+
+:root[data-theme='dark']
+.module-card
+.empty-state-card p,
+:root[data-theme='dark']
+.module-card
+.empty-state-card .table-secondary-text {
+  color:
+    #a8b7ca !important;
+}
+
+
+/* Mantener claramente semánticos los botones de decisión */
+
+:root[data-theme='dark']
+.module-card
+.action-btn-success {
+  background:
+    rgba(13, 148, 136, 0.20) !important;
+
+  border:
+    1px solid
+    rgba(45, 212, 191, 0.20) !important;
+
+  color:
+    #5eead4 !important;
+}
+
+:root[data-theme='dark']
+.module-card
+.action-btn-success:hover {
+  background:
+    rgba(13, 148, 136, 0.30) !important;
+
+  color:
+    #99f6e4 !important;
+}
+
+:root[data-theme='dark']
+.module-card
+.action-btn-danger {
+  background:
+    rgba(220, 38, 38, 0.16) !important;
+
+  border:
+    1px solid
+    rgba(248, 113, 113, 0.18) !important;
+
+  color:
+    #f87171 !important;
+}
+
+:root[data-theme='dark']
+.module-card
+.action-btn-danger:hover {
+  background:
+    rgba(220, 38, 38, 0.25) !important;
+
+  color:
+    #fca5a5 !important;
+}
+
+/* ============================================================
+   CAMBIO3_ACTION_COLORS_3P6_2
+   Colores semánticos para acciones administrativas.
+   Justificar = ámbar
+   Corregir   = violeta
+   Historial  = azul
+   ============================================================ */
+
+
+/* ------------------------------------------------------------
+   MODO CLARO
+   ------------------------------------------------------------ */
+
+.action-btn.action-btn-justify {
+  background:
+    rgba(245, 158, 11, 0.14);
+
+  border:
+    1px solid
+    rgba(245, 158, 11, 0.22);
+
+  color:
+    #b45309;
+}
+
+.action-btn.action-btn-justify:hover {
+  background:
+    rgba(245, 158, 11, 0.23);
+
+  border-color:
+    rgba(217, 119, 6, 0.34);
+
+  color:
+    #92400e;
+}
+
+
+.action-btn.action-btn-correct {
+  background:
+    rgba(124, 58, 237, 0.12);
+
+  border:
+    1px solid
+    rgba(124, 58, 237, 0.20);
+
+  color:
+    #6d28d9;
+}
+
+.action-btn.action-btn-correct:hover {
+  background:
+    rgba(124, 58, 237, 0.20);
+
+  border-color:
+    rgba(109, 40, 217, 0.32);
+
+  color:
+    #5b21b6;
+}
+
+
+.action-btn.action-btn-history {
+  background:
+    rgba(37, 99, 235, 0.11);
+
+  border:
+    1px solid
+    rgba(37, 99, 235, 0.18);
+
+  color:
+    #1d4ed8;
+}
+
+.action-btn.action-btn-history:hover {
+  background:
+    rgba(37, 99, 235, 0.19);
+
+  border-color:
+    rgba(37, 99, 235, 0.30);
+
+  color:
+    #1e40af;
+}
+
+
+/* ------------------------------------------------------------
+   MODO OSCURO
+   ------------------------------------------------------------ */
+
+:root[data-theme='dark']
+.module-card
+.action-btn.action-btn-justify {
+  background:
+    rgba(245, 158, 11, 0.17) !important;
+
+  border:
+    1px solid
+    rgba(251, 191, 36, 0.30) !important;
+
+  color:
+    #fbbf24 !important;
+}
+
+:root[data-theme='dark']
+.module-card
+.action-btn.action-btn-justify:hover {
+  background:
+    rgba(245, 158, 11, 0.27) !important;
+
+  border-color:
+    rgba(251, 191, 36, 0.48) !important;
+
+  color:
+    #fde68a !important;
+}
+
+
+:root[data-theme='dark']
+.module-card
+.action-btn.action-btn-correct {
+  background:
+    rgba(139, 92, 246, 0.18) !important;
+
+  border:
+    1px solid
+    rgba(167, 139, 250, 0.30) !important;
+
+  color:
+    #c4b5fd !important;
+}
+
+:root[data-theme='dark']
+.module-card
+.action-btn.action-btn-correct:hover {
+  background:
+    rgba(139, 92, 246, 0.29) !important;
+
+  border-color:
+    rgba(196, 181, 253, 0.48) !important;
+
+  color:
+    #ddd6fe !important;
+}
+
+
+:root[data-theme='dark']
+.module-card
+.action-btn.action-btn-history {
+  background:
+    rgba(37, 99, 235, 0.19) !important;
+
+  border:
+    1px solid
+    rgba(96, 165, 250, 0.30) !important;
+
+  color:
+    #93c5fd !important;
+}
+
+:root[data-theme='dark']
+.module-card
+.action-btn.action-btn-history:hover {
+  background:
+    rgba(37, 99, 235, 0.30) !important;
+
+  border-color:
+    rgba(147, 197, 253, 0.48) !important;
+
+  color:
+    #dbeafe !important;
+}
+
+/* ============================================================
+   CAMBIO3_KPI_SPACING_3P6_4
+   Separación visual entre KPIs y tabla de aprobaciones.
+   ============================================================ */
+
+.asistencia-review-kpi-row {
+  margin-bottom: 24px;
+}
+
+/* ============================================================
+   CAMBIO3_REVIEW_MODAL_3P7
+   Modal flotante para revisión administrativa e historial.
+   ============================================================ */
+
+.asistencia-review-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1400;
+
+  display: grid;
+  place-items: center;
+
+  padding: 28px;
+
+  overflow-y: auto;
+
+  background:
+    rgba(15, 23, 42, 0.56);
+
+  backdrop-filter:
+    blur(8px);
+
+  -webkit-backdrop-filter:
+    blur(8px);
+}
+
+
+.asistencia-review-modal {
+  position: relative;
+
+  width:
+    min(
+      920px,
+      100%
+    );
+
+  max-height:
+    calc(
+      100vh - 56px
+    );
+
+  overflow-y: auto;
+
+  margin:
+    0 !important;
+
+  padding:
+    30px !important;
+
+  border-radius:
+    26px !important;
+
+  box-shadow:
+    0 30px 90px
+    rgba(15, 23, 42, 0.28) !important;
+
+  animation:
+    asistenciaReviewModalIn
+    180ms ease-out;
+}
+
+
+.asistencia-review-modal:focus {
+  outline:
+    none;
+}
+
+
+.asistencia-review-modal-close {
+  position: absolute;
+
+  top:
+    16px;
+
+  right:
+    16px;
+
+  z-index:
+    2;
+
+  display: inline-flex;
+
+  width:
+    42px;
+
+  height:
+    42px;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  padding:
+    0;
+
+  border:
+    1px solid
+    rgba(148, 163, 184, 0.22);
+
+  border-radius:
+    14px;
+
+  background:
+    rgba(148, 163, 184, 0.12);
+
+  color:
+    var(--text);
+
+  font-size:
+    27px;
+
+  font-weight:
+    700;
+
+  line-height:
+    1;
+
+  cursor:
+    pointer;
+
+  transition:
+    160ms ease;
+}
+
+
+.asistencia-review-modal-close:hover {
+  background:
+    rgba(239, 68, 68, 0.12);
+
+  border-color:
+    rgba(239, 68, 68, 0.25);
+
+  color:
+    #ef4444;
+
+  transform:
+    scale(1.04);
+}
+
+
+.asistencia-review-modal-close:focus-visible {
+  outline:
+    2px solid
+    var(--primary);
+
+  outline-offset:
+    2px;
+}
+
+
+@keyframes asistenciaReviewModalIn {
+  from {
+    opacity:
+      0;
+
+    transform:
+      translateY(12px)
+      scale(0.985);
+  }
+
+  to {
+    opacity:
+      1;
+
+    transform:
+      translateY(0)
+      scale(1);
+  }
+}
+
+
+/* ------------------------------------------------------------
+   MODO OSCURO
+   ------------------------------------------------------------ */
+
+:root[data-theme='dark']
+.asistencia-review-modal-backdrop {
+  background:
+    rgba(2, 8, 23, 0.76);
+}
+
+
+:root[data-theme='dark']
+.module-card
+.asistencia-review-modal {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(16, 33, 54, 0.99),
+      rgba(9, 24, 41, 0.99)
+    ) !important;
+
+  border:
+    1px solid
+    rgba(56, 189, 248, 0.18) !important;
+
+  box-shadow:
+    0 34px 100px
+    rgba(0, 0, 0, 0.48) !important;
+}
+
+
+:root[data-theme='dark']
+.asistencia-review-modal-close {
+  background:
+    rgba(30, 52, 77, 0.94);
+
+  border-color:
+    rgba(148, 163, 184, 0.22);
+
+  color:
+    #e2e8f0;
+}
+
+
+:root[data-theme='dark']
+.asistencia-review-modal-close:hover {
+  background:
+    rgba(220, 38, 38, 0.20);
+
+  border-color:
+    rgba(248, 113, 113, 0.34);
+
+  color:
+    #fca5a5;
+}
+
+
+/* ------------------------------------------------------------
+   RESPONSIVE
+   ------------------------------------------------------------ */
+
+@media (max-width: 760px) {
+  .asistencia-review-modal-backdrop {
+    align-items:
+      end;
+
+    padding:
+      12px;
+  }
+
+  .asistencia-review-modal {
+    width:
+      100%;
+
+    max-height:
+      calc(
+        100vh - 24px
+      );
+
+    padding:
+      24px 18px
+      20px !important;
+
+    border-radius:
+      24px !important;
+  }
+
+  .asistencia-review-modal-close {
+    top:
+      12px;
+
+    right:
+      12px;
+  }
+}
+
+/* ============================================================
+   CAMBIO3_STRUCTURED_JUSTIFICATION_3P8_1B
+   Formulario profesional de justificación administrativa.
+   ============================================================ */
+
+.asistencia-justification-form {
+  display: grid;
+  gap: 18px;
+  margin-top: 18px;
+}
+
+.asistencia-review-field {
+  display: grid;
+  gap: 8px;
+}
+
+.asistencia-review-field > select,
+.asistencia-review-field > input,
+.asistencia-review-field > textarea {
+  width: 100%;
+}
+
+.asistencia-review-field select {
+  min-height: 48px;
+  padding: 0 14px;
+
+  border:
+    1px solid
+    var(--border);
+
+  border-radius:
+    12px;
+
+  background:
+    var(--surface);
+
+  color:
+    var(--text);
+
+  font:
+    inherit;
+}
+
+.asistencia-review-field select:focus {
+  border-color:
+    var(--primary);
+
+  outline:
+    2px solid
+    rgba(59, 130, 246, 0.14);
+}
+
+.asistencia-review-help {
+  color:
+    var(--text-secondary);
+
+  font-size:
+    0.82rem;
+
+  line-height:
+    1.45;
+}
+
+
+/* Modo oscuro */
+
+:root[data-theme='dark']
+.asistencia-review-field select {
+  background:
+    rgba(15, 35, 57, 0.96);
+
+  border-color:
+    rgba(148, 163, 184, 0.22);
+
+  color:
+    #e2e8f0;
+}
+
+:root[data-theme='dark']
+.asistencia-review-field select:focus {
+  border-color:
+    rgba(56, 189, 248, 0.52);
+
+  outline-color:
+    rgba(56, 189, 248, 0.16);
+}
+
+
+/* Responsive */
+
+@media (max-width: 760px) {
+  .asistencia-justification-form {
+    gap: 14px;
+  }
+}
+
+
+/* ==========================================================
+   INC-51: SMART RH SOFT UI
+   Navegación compacta + Incapacidades con jerarquía ligera
+   ========================================================== */
+
+/* ----------------------------------------------------------
+   NAVEGACIÓN PRINCIPAL
+   Escritorio: todos los módulos visibles en una sola fila.
+   ---------------------------------------------------------- */
+
+.top-nav {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+
+  width: 100% !important;
+
+  gap: 6px !important;
+
+  padding: 9px 10px !important;
+
+  overflow: visible !important;
+
+  scrollbar-width: none !important;
+}
+
+.top-nav::-webkit-scrollbar {
+  display: none !important;
+}
+
+.top-nav-item {
+  flex: 1 1 0 !important;
+
+  min-width: 0 !important;
+  min-height: 42px !important;
+
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  gap: 7px !important;
+
+  padding: 6px 7px !important;
+
+  border:
+    1px solid transparent !important;
+
+  border-radius: 11px !important;
+
+  background: transparent !important;
+
+  box-shadow: none !important;
+
+  white-space: nowrap !important;
+
+  transition:
+    background 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease,
+    transform 160ms ease !important;
+}
+
+.top-nav-item:hover {
+  transform: translateY(-1px) !important;
+
+  background:
+    rgba(56, 189, 248, 0.055) !important;
+
+  border-color:
+    rgba(56, 189, 248, 0.1) !important;
+}
+
+.top-nav-item.active {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(14, 165, 233, 0.92),
+      rgba(45, 212, 191, 0.88)
+    ) !important;
+
+  border-color:
+    rgba(125, 211, 252, 0.28) !important;
+
+  box-shadow:
+    0 5px 14px
+    rgba(14, 165, 233, 0.12) !important;
+}
+
+.top-nav-item span {
+  flex: 0 0 28px !important;
+
+  width: 28px !important;
+  height: 28px !important;
+
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  border-radius: 8px !important;
+
+  font-size: 0.67rem !important;
+}
+
+.top-nav-item strong {
+  min-width: 0 !important;
+
+  font-size: 0.76rem !important;
+  font-weight: 750 !important;
+
+  line-height: 1 !important;
+
+  white-space: nowrap !important;
+
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+/* Activo: icono ligeramente translúcido sin crear otra tarjeta */
+
+.top-nav-item.active span {
+  background:
+    rgba(255, 255, 255, 0.14) !important;
+}
+
+/* ----------------------------------------------------------
+   INCAPACIDADES — ESPACIADO GENERAL
+   ---------------------------------------------------------- */
+
+.incap-hero-banner {
+  min-height: 0 !important;
+
+  margin-bottom: 20px !important;
+
+  padding: 20px 24px !important;
+
+  border-radius: 16px !important;
+
+  border:
+    1px solid
+    rgba(45, 212, 191, 0.1) !important;
+
+  background:
+    linear-gradient(
+      110deg,
+      rgba(14, 165, 233, 0.035),
+      rgba(45, 212, 191, 0.045)
+    ) !important;
+
+  box-shadow: none !important;
+}
+
+.incap-hero-banner h2 {
+  margin-top: 0 !important;
+  margin-bottom: 7px !important;
+}
+
+.incap-hero-banner p {
+  max-width: 820px !important;
+
+  margin-bottom: 0 !important;
+
+  line-height: 1.5 !important;
+}
+
+/* ----------------------------------------------------------
+   LISTADO Y EXPEDIENTE
+   Menos cajas pesadas.
+   ---------------------------------------------------------- */
+
+.incap-list-card,
+.incap-detail-card {
+  margin-top: 20px !important;
+
+  padding: 22px 24px !important;
+
+  border-radius: 17px !important;
+
+  border:
+    1px solid
+    rgba(148, 163, 184, 0.11) !important;
+
+  box-shadow: none !important;
+}
+
+.incap-list-card .module-card-header,
+.incap-detail-card .module-card-header {
+  margin-bottom: 16px !important;
+}
+
+.incap-list-card table {
+  width: 100% !important;
+}
+
+.incap-list-card th {
+  padding-top: 11px !important;
+  padding-bottom: 11px !important;
+}
+
+.incap-list-card td {
+  padding-top: 13px !important;
+  padding-bottom: 13px !important;
+}
+
+/* ----------------------------------------------------------
+   RESOLVER SOLICITUD
+   Panel limpio sin apariencia de caja dentro de otra caja.
+   ---------------------------------------------------------- */
+
+.incap-review-card {
+  margin-top: 18px !important;
+
+  padding: 22px 24px !important;
+
+  border-radius: 16px !important;
+
+  border:
+    1px solid
+    rgba(45, 212, 191, 0.13) !important;
+
+  background:
+    rgba(15, 23, 42, 0.14) !important;
+
+  box-shadow: none !important;
+}
+
+.incap-review-card .module-card-header {
+  margin-bottom: 14px !important;
+}
+
+.incap-review-card .module-eyebrow {
+  display: block !important;
+
+  margin-bottom: 6px !important;
+}
+
+.incap-review-card .module-title {
+  margin:
+    0 0 6px !important;
+}
+
+.incap-review-card p {
+  max-width: 820px !important;
+
+  margin:
+    0 0 17px !important;
+
+  line-height: 1.5 !important;
+}
+
+.incap-review-card form {
+  width: 100% !important;
+
+  display: grid !important;
+
+  gap: 8px !important;
+}
+
+.incap-review-card label {
+  margin-bottom: 5px !important;
+
+  font-size: 0.82rem !important;
+  font-weight: 700 !important;
+}
+
+.incap-review-card textarea {
+  display: block !important;
+
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0 !important;
+
+  min-height: 110px !important;
+
+  box-sizing: border-box !important;
+
+  margin:
+    4px 0 14px !important;
+
+  padding:
+    13px 14px !important;
+
+  border-radius: 12px !important;
+
+  border:
+    1px solid
+    rgba(148, 163, 184, 0.18) !important;
+
+  line-height: 1.5 !important;
+
+  resize: vertical !important;
+
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease !important;
+}
+
+.incap-review-card textarea:focus {
+  outline: none !important;
+
+  border-color:
+    rgba(45, 212, 191, 0.55) !important;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(45, 212, 191, 0.08) !important;
+}
+
+/* Fila de acciones */
+
+.incap-review-card
+:is(div, section):has(> .action-btn) {
+  display: flex !important;
+
+  align-items: center !important;
+  justify-content: flex-end !important;
+
+  flex-wrap: wrap !important;
+
+  gap: 9px !important;
+
+  margin-top: 2px !important;
+}
+
+.incap-review-card .action-btn {
+  min-width: 112px !important;
+  min-height: 39px !important;
+
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  padding:
+    0 17px !important;
+
+  border-radius: 10px !important;
+
+  font-size: 0.78rem !important;
+  font-weight: 750 !important;
+
+  box-shadow: none !important;
+
+  transition:
+    transform 150ms ease,
+    filter 150ms ease !important;
+}
+
+.incap-review-card .action-btn:hover {
+  transform: translateY(-1px) !important;
+}
+
+/* No convertir el comprobante en otro bloque pesado */
+
+.incap-detail-card .action-btn {
+  margin-top: 6px !important;
+}
+
+/* ----------------------------------------------------------
+   MODO CLARO
+   ---------------------------------------------------------- */
+
+:root:not([data-theme='dark'])
+.incap-hero-banner {
+  background:
+    linear-gradient(
+      110deg,
+      rgba(240, 249, 255, 0.74),
+      rgba(240, 253, 250, 0.76)
+    ) !important;
+
+  border-color:
+    rgba(15, 118, 110, 0.09) !important;
+}
+
+:root:not([data-theme='dark'])
+.incap-review-card {
+  background:
+    rgba(248, 250, 252, 0.76) !important;
+
+  border-color:
+    rgba(15, 118, 110, 0.11) !important;
+}
+
+:root:not([data-theme='dark'])
+.incap-review-card textarea {
+  background: #ffffff !important;
+
+  color: #0f172a !important;
+
+  border-color:
+    rgba(15, 23, 42, 0.12) !important;
+}
+
+/* ----------------------------------------------------------
+   RESPONSIVE
+   En desktop evitamos scroll.
+   En tablet/móvil permitimos varias filas limpias.
+   ---------------------------------------------------------- */
+
+@media (max-width: 1180px) {
+  .top-nav {
+    display: grid !important;
+
+    grid-template-columns:
+      repeat(4, minmax(0, 1fr)) !important;
+
+    gap: 7px !important;
+  }
+
+  .top-nav-item {
+    justify-content: flex-start !important;
+
+    padding-left: 10px !important;
+  }
+
+  .top-nav-item strong {
+    font-size: 0.78rem !important;
+  }
+}
+
+@media (max-width: 820px) {
+  .top-nav {
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  .incap-hero-banner,
+  .incap-list-card,
+  .incap-detail-card,
+  .incap-review-card {
+    padding:
+      19px !important;
+  }
+}
+
+@media (max-width: 580px) {
+  .top-nav {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .top-nav-item {
+    min-height: 40px !important;
+  }
+
+  .incap-review-card
+  :is(div, section):has(> .action-btn) {
+    justify-content: stretch !important;
+  }
+
+  .incap-review-card .action-btn {
+    flex:
+      1 1 120px !important;
+  }
+}
+
+/* =================== FIN INC-51 =================== */
+
+/* ==========================================================
+   INC-53A: NAVBAR COMPLETE LABELS
+   Etiquetas completas sin puntos suspensivos en escritorio.
+   ========================================================== */
+
+@media (min-width: 1181px) {
+  .top-nav {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+
+    gap: 4px !important;
+
+    width: 100% !important;
+
+    padding: 8px 9px !important;
+
+    overflow-x: visible !important;
+    overflow-y: visible !important;
+  }
+
+  .top-nav-item {
+    flex: 0 1 auto !important;
+
+    width: auto !important;
+    min-width: max-content !important;
+    min-height: 40px !important;
+
+    gap: 6px !important;
+
+    padding: 6px 8px !important;
+
+    border-radius: 10px !important;
+  }
+
+  .top-nav-item span {
+    flex: 0 0 27px !important;
+
+    width: 27px !important;
+    height: 27px !important;
+
+    font-size: 0.64rem !important;
+  }
+
+  .top-nav-item strong {
+    display: inline-block !important;
+
+    width: auto !important;
+    min-width: max-content !important;
+    max-width: none !important;
+
+    font-size: 0.71rem !important;
+    line-height: 1 !important;
+
+    white-space: nowrap !important;
+
+    overflow: visible !important;
+    text-overflow: clip !important;
+  }
+
+  .top-nav-item.active {
+    padding-left: 9px !important;
+    padding-right: 10px !important;
+  }
+}
+
+@media (min-width: 1450px) {
+  .top-nav {
+    gap: 7px !important;
+
+    padding-left: 11px !important;
+    padding-right: 11px !important;
+  }
+
+  .top-nav-item {
+    gap: 7px !important;
+
+    padding-left: 9px !important;
+    padding-right: 9px !important;
+  }
+
+  .top-nav-item strong {
+    font-size: 0.75rem !important;
+  }
+}
+
+/* =================== FIN INC-53A =================== */
+
+/* ==========================================================
+   INC-58: INCAPACIDADES DETAIL SPACING
+   Expediente médico y resolución administrativa.
+   No modifica navegación.
+   ========================================================== */
+
+/* ----------------------------------------------------------
+   EXPEDIENTE
+   Crear respiración real entre sus secciones.
+   ---------------------------------------------------------- */
+
+.incap-detail-card {
+  padding: 30px !important;
+
+  border-radius: 20px !important;
+
+  box-shadow:
+    0 16px 42px
+    rgba(2, 8, 23, 0.08) !important;
+}
+
+/*
+ * Cada bloque directo del expediente se separa.
+ * Evita que métricas, motivo y revisión parezcan pegados.
+ */
+.incap-detail-card > * + * {
+  margin-top: 26px !important;
+}
+
+/* Cabecera del expediente */
+
+.incap-detail-card > .module-card-header {
+  padding-bottom: 22px !important;
+
+  margin-bottom: 0 !important;
+
+  border-bottom:
+    1px solid
+    rgba(148, 163, 184, 0.09) !important;
+}
+
+/* Tarjetas interiores: conservar jerarquía pero más ligeras */
+
+.incap-detail-card .metric-card,
+.incap-detail-card .stat-card,
+.incap-detail-card .kpi-card {
+  min-height: 108px !important;
+
+  padding: 20px !important;
+
+  border-radius: 17px !important;
+}
+
+/* Cualquier grid directo después del encabezado obtiene aire */
+
+.incap-detail-card > [class*="grid"] {
+  column-gap: 18px !important;
+  row-gap: 18px !important;
+
+  margin-bottom: 4px !important;
+}
+
+/* ----------------------------------------------------------
+   MOTIVO / COMPROBANTE
+   ---------------------------------------------------------- */
+
+/*
+ * Los bloques informativos internos dejan de tocar las
+ * métricas que están arriba.
+ */
+.incap-detail-card
+  > :not(.incap-review-card):not(.module-card-header) {
+  scroll-margin-top: 20px;
+}
+
+/* Botón del comprobante separado del texto descriptivo */
+
+.incap-detail-card .action-btn {
+  min-height: 40px !important;
+
+  margin-top: 12px !important;
+
+  padding:
+    0 17px !important;
+
+  border-radius: 10px !important;
+}
+
+/* ----------------------------------------------------------
+   RESOLVER SOLICITUD
+   Panel realmente independiente.
+   ---------------------------------------------------------- */
+
+.incap-detail-card > .incap-review-card,
+.incap-review-card {
+  position: relative !important;
+
+  margin-top: 34px !important;
+
+  padding:
+    28px 30px 24px !important;
+
+  border:
+    1px solid
+    rgba(45, 212, 191, 0.16) !important;
+
+  border-radius: 18px !important;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(13, 148, 136, 0.035),
+      rgba(14, 165, 233, 0.025)
+    ) !important;
+
+  box-shadow:
+    0 12px 30px
+    rgba(2, 8, 23, 0.055) !important;
+}
+
+/* Pequeña línea superior para identificar la zona administrativa */
+
+.incap-review-card::before {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: 30px;
+
+  width: 54px;
+  height: 3px;
+
+  border-radius:
+    0 0 8px 8px;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(45, 212, 191, 0.95),
+      rgba(56, 189, 248, 0.95)
+    );
+}
+
+/* Cabecera de revisión */
+
+.incap-review-card .module-card-header {
+  margin:
+    0 0 24px !important;
+
+  padding:
+    0 0 20px !important;
+
+  border-bottom:
+    1px solid
+    rgba(148, 163, 184, 0.09) !important;
+}
+
+.incap-review-card .module-eyebrow {
+  margin-bottom:
+    8px !important;
+
+  letter-spacing:
+    0.14em !important;
+}
+
+.incap-review-card .module-title {
+  margin:
+    0 0 8px !important;
+
+  line-height:
+    1.12 !important;
+}
+
+.incap-review-card p {
+  max-width:
+    760px !important;
+
+  margin:
+    0 !important;
+
+  line-height:
+    1.55 !important;
+}
+
+/* ----------------------------------------------------------
+   FORMULARIO
+   ---------------------------------------------------------- */
+
+.incap-review-card form {
+  display: block !important;
+
+  width: 100% !important;
+
+  margin-top:
+    4px !important;
+}
+
+.incap-review-card label {
+  display: block !important;
+
+  margin:
+    0 0 10px !important;
+
+  font-size:
+    0.82rem !important;
+
+  font-weight:
+    750 !important;
+}
+
+.incap-review-card textarea {
+  display: block !important;
+
+  width: 100% !important;
+  max-width: none !important;
+
+  min-height: 132px !important;
+
+  box-sizing: border-box !important;
+
+  margin:
+    0 0 20px !important;
+
+  padding:
+    15px 16px !important;
+
+  border:
+    1px solid
+    rgba(148, 163, 184, 0.16) !important;
+
+  border-radius:
+    13px !important;
+
+  background:
+    rgba(2, 8, 23, 0.12) !important;
+
+  line-height:
+    1.55 !important;
+
+  resize:
+    vertical !important;
+
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    background 160ms ease !important;
+}
+
+.incap-review-card textarea:hover {
+  border-color:
+    rgba(148, 163, 184, 0.24) !important;
+}
+
+.incap-review-card textarea:focus {
+  outline:
+    none !important;
+
+  border-color:
+    rgba(45, 212, 191, 0.52) !important;
+
+  background:
+    rgba(2, 8, 23, 0.18) !important;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(45, 212, 191, 0.075) !important;
+}
+
+/* ----------------------------------------------------------
+   ACCIONES
+   ---------------------------------------------------------- */
+
+.incap-review-card
+  :is(div, section):has(> .action-btn) {
+  display: flex !important;
+
+  align-items: center !important;
+  justify-content: flex-end !important;
+
+  gap: 12px !important;
+
+  margin-top:
+    4px !important;
+
+  padding-top:
+    4px !important;
+}
+
+.incap-review-card .action-btn {
+  min-width:
+    126px !important;
+
+  min-height:
+    42px !important;
+
+  margin-top:
+    0 !important;
+
+  padding:
+    0 20px !important;
+
+  border-radius:
+    11px !important;
+
+  font-size:
+    0.79rem !important;
+
+  font-weight:
+    800 !important;
+
+  box-shadow:
+    none !important;
+}
+
+.incap-review-card .action-btn-success {
+  border-color:
+    rgba(45, 212, 191, 0.28) !important;
+
+  background:
+    rgba(13, 148, 136, 0.18) !important;
+}
+
+.incap-review-card .action-btn-danger {
+  border-color:
+    rgba(248, 113, 113, 0.24) !important;
+
+  background:
+    rgba(127, 29, 29, 0.22) !important;
+}
+
+/* ----------------------------------------------------------
+   MODO CLARO
+   ---------------------------------------------------------- */
+
+:root:not([data-theme='dark'])
+.incap-review-card {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(240, 253, 250, 0.72),
+      rgba(248, 250, 252, 0.92)
+    ) !important;
+
+  border-color:
+    rgba(13, 148, 136, 0.13) !important;
+
+  box-shadow:
+    0 12px 30px
+    rgba(15, 23, 42, 0.045) !important;
+}
+
+:root:not([data-theme='dark'])
+.incap-review-card textarea {
+  background:
+    #ffffff !important;
+
+  color:
+    #0f172a !important;
+
+  border-color:
+    rgba(15, 23, 42, 0.13) !important;
+}
+
+/* ----------------------------------------------------------
+   RESPONSIVE
+   ---------------------------------------------------------- */
+
+@media (max-width: 900px) {
+  .incap-detail-card {
+    padding:
+      23px !important;
+  }
+
+  .incap-detail-card > * + * {
+    margin-top:
+      21px !important;
+  }
+
+  .incap-review-card {
+    margin-top:
+      26px !important;
+
+    padding:
+      24px !important;
+  }
+
+  .incap-review-card::before {
+    left:
+      24px !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .incap-detail-card {
+    padding:
+      18px !important;
+  }
+
+  .incap-review-card {
+    padding:
+      20px !important;
+  }
+
+  .incap-review-card::before {
+    left:
+      20px !important;
+  }
+
+  .incap-review-card textarea {
+    min-height:
+      120px !important;
+  }
+
+  .incap-review-card
+    :is(div, section):has(> .action-btn) {
+    align-items:
+      stretch !important;
+
+    flex-direction:
+      column !important;
+  }
+
+  .incap-review-card .action-btn {
+    width:
+      100% !important;
+  }
+}
+
+/* =================== FIN INC-58 =================== */
+
+/* ==========================================================
+   INC-60: SOLICITUDES PAGINATION SPACING
+   Separación entre tabla y controles Anterior/Siguiente.
+   ========================================================== */
+
+.incap-list-card table + *,
+.incap-list-card .table-wrap + *,
+.incap-list-card .table-container + *,
+.incap-list-card .pagination,
+.incap-list-card .table-pagination,
+.incap-list-card .pagination-controls,
+.incap-list-card .pager {
+  margin-top: 16px !important;
+}
+
+/* Evita que los controles queden pegados entre sí. */
+.incap-list-card .pagination,
+.incap-list-card .table-pagination,
+.incap-list-card .pagination-controls,
+.incap-list-card .pager {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+
+/* =================== FIN INC-60 =================== */
+
+/* ==========================================================
+   INC-61A: FINAL INCAPACIDADES SPACING
+   Ajuste fino aprobado para cierre visual del módulo.
+   ========================================================== */
+
+/* ----------------------------------------------------------
+   SOLICITUDES
+   Más aire entre la tabla y la paginación.
+   ---------------------------------------------------------- */
+
+.incap-list-card table + *,
+.incap-list-card .table-wrap + *,
+.incap-list-card .table-container + *,
+.incap-list-card .pagination,
+.incap-list-card .table-pagination,
+.incap-list-card .pagination-controls,
+.incap-list-card .pager {
+  margin-top: 26px !important;
+}
+
+.incap-list-card .pagination,
+.incap-list-card .table-pagination,
+.incap-list-card .pagination-controls,
+.incap-list-card .pager {
+  gap: 12px !important;
+  padding-bottom: 4px !important;
+}
+
+/* ----------------------------------------------------------
+   RESOLVER SOLICITUD
+   Separar claramente descripción, label, textarea y acciones.
+   ---------------------------------------------------------- */
+
+.incap-review-card {
+  padding-top: 30px !important;
+  padding-bottom: 30px !important;
+}
+
+.incap-review-card .module-card-header {
+  margin-bottom: 28px !important;
+  padding-bottom: 22px !important;
+}
+
+.incap-review-card form {
+  margin-top: 20px !important;
+}
+
+.incap-review-card label {
+  display: block !important;
+
+  margin-top: 0 !important;
+  margin-bottom: 12px !important;
+}
+
+.incap-review-card textarea {
+  margin-top: 0 !important;
+  margin-bottom: 28px !important;
+
+  min-height: 138px !important;
+
+  padding: 16px 17px !important;
+}
+
+.incap-review-card
+:is(div, section):has(> .action-btn) {
+  margin-top: 0 !important;
+  padding-top: 6px !important;
+
+  gap: 12px !important;
+}
+
+/* En móvil mantenemos aire sin exagerar alturas. */
+
+@media (max-width: 600px) {
+  .incap-list-card table + *,
+  .incap-list-card .table-wrap + *,
+  .incap-list-card .table-container + *,
+  .incap-list-card .pagination,
+  .incap-list-card .table-pagination,
+  .incap-list-card .pagination-controls,
+  .incap-list-card .pager {
+    margin-top: 20px !important;
+  }
+
+  .incap-review-card {
+    padding-top: 24px !important;
+    padding-bottom: 24px !important;
+  }
+
+  .incap-review-card .module-card-header {
+    margin-bottom: 22px !important;
+  }
+
+  .incap-review-card form {
+    margin-top: 16px !important;
+  }
+
+  .incap-review-card textarea {
+    margin-bottom: 22px !important;
+    min-height: 124px !important;
+  }
+}
+
+/* =================== FIN INC-61A =================== */
+
+/* ==========================================================
+   INC-61D: EXACT ELEMENT SPACING
+   Selectores reales confirmados en JSX.
+   ========================================================== */
+
+/*
+ * PAGINACIÓN REAL:
+ * <div className="table-actions">
+ *   Anterior / Página / Siguiente
+ * </div>
+ */
+.incap-list-card > .table-actions {
+  margin-top: 30px !important;
+  padding-top: 0 !important;
+
+  display: flex !important;
+  align-items: center !important;
+
+  gap: 14px !important;
+}
+
+/*
+ * FORMULARIO REAL:
+ * el textarea está DENTRO del label.
+ * Este margen sí separa físicamente
+ * "Observaciones administrativas" del campo.
+ */
+.incap-review-card > label > textarea {
+  margin-top: 16px !important;
+}
+
+/*
+ * También damos aire entre el texto explicativo
+ * y el bloque de observaciones.
+ */
+.incap-review-card > .module-subtitle + label {
+  margin-top: 22px !important;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .incap-list-card > .table-actions {
+    margin-top: 22px !important;
+    gap: 10px !important;
+  }
+
+  .incap-review-card > label > textarea {
+    margin-top: 12px !important;
+  }
+
+  .incap-review-card > .module-subtitle + label {
+    margin-top: 18px !important;
+  }
+}
+
+/* =================== FIN INC-61D =================== */
+
+/* ===== Calendario laboral ===== */
+.calendar-page {
+  gap: 20px;
+}
+
+.calendar-hero {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 22px;
+  background: var(--enterprise-gradient-card, var(--card));
+  border: 1px solid rgba(10, 87, 164, 0.08);
+  border-radius: 28px;
+  padding: 26px;
+  box-shadow: var(--shadow-soft);
+}
+
+.calendar-hero h1 {
+  margin: 12px 0 10px;
+  color: var(--primary);
+  font-size: 34px;
+  line-height: 1.05;
+  font-weight: 900;
+}
+
+.calendar-hero p {
+  max-width: 720px;
+  margin: 0;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.calendar-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.calendar-primary-btn,
+.calendar-soft-btn {
+  border: none;
+  border-radius: 999px;
+  padding: 11px 16px;
+  font-weight: 900;
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+
+.calendar-primary-btn {
+  color: #fff;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  box-shadow: 0 12px 22px rgba(10, 87, 164, 0.18);
+}
+
+.calendar-soft-btn {
+  color: var(--primary);
+  background: var(--primary-soft);
+  border: 1px solid rgba(10, 87, 164, 0.1);
+}
+
+.calendar-primary-btn:hover,
+.calendar-soft-btn:hover {
+  transform: translateY(-1px);
+}
+
+.calendar-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.calendar-summary-card {
+  position: relative;
+  overflow: hidden;
+  min-height: 138px;
+  text-align: left;
+  border: 1px solid rgba(10, 87, 164, 0.08);
+  border-radius: 22px;
+  padding: 20px 18px 18px;
+  background: var(--card);
+  box-shadow: var(--shadow-xs);
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.calendar-summary-card:hover,
+.calendar-summary-card.active {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-soft);
+  border-color: rgba(10, 87, 164, 0.18);
+}
+
+.calendar-summary-accent {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 5px;
+}
+
+.calendar-summary-card strong {
+  display: block;
+  font-size: 34px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.calendar-summary-card h3 {
+  margin: 10px 0 6px;
+  color: var(--text);
+  font-size: 17px;
+}
+
+.calendar-summary-card p {
+  margin: 0;
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+
+.calendar-summary-card.blue {
+  background: rgba(10, 87, 164, 0.055);
+}
+
+.calendar-summary-card.teal {
+  background: rgba(15, 118, 110, 0.055);
+}
+
+.calendar-summary-card.gold {
+  background: rgba(183, 121, 31, 0.07);
+}
+
+.calendar-summary-card.danger {
+  background: rgba(180, 35, 24, 0.055);
+}
+
+.calendar-summary-card.blue .calendar-summary-accent {
+  background: var(--primary);
+}
+
+.calendar-summary-card.teal .calendar-summary-accent {
+  background: var(--teal);
+}
+
+.calendar-summary-card.gold .calendar-summary-accent {
+  background: #b7791f;
+}
+
+.calendar-summary-card.danger .calendar-summary-accent {
+  background: #b42318;
+}
+
+.calendar-summary-card.blue strong {
+  color: var(--primary);
+}
+
+.calendar-summary-card.teal strong {
+  color: var(--teal);
+}
+
+.calendar-summary-card.gold strong {
+  color: #b7791f;
+}
+
+.calendar-summary-card.danger strong {
+  color: #b42318;
+}
+
+.calendar-layout {
+  display: grid;
+  grid-template-columns: minmax(360px, 0.95fr) minmax(360px, 1.05fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.calendar-month-card,
+.calendar-events-panel {
+  background: var(--card);
+  border: 1px solid rgba(10, 87, 164, 0.08);
+  border-radius: 26px;
+  padding: 20px;
+  box-shadow: var(--shadow-soft);
+}
+
+.calendar-month-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.calendar-month-header button {
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgba(10, 87, 164, 0.08);
+  border-radius: 16px;
+  color: var(--primary);
+  background: var(--primary-soft);
+  font-size: 28px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.calendar-month-header h2 {
+  margin: 0;
+  text-align: center;
+  color: var(--text);
+  text-transform: capitalize;
+}
+
+.calendar-month-header p {
+  margin: 4px 0 0;
+  text-align: center;
+  color: var(--text-muted);
+  font-weight: 800;
+}
+
+.calendar-week-row,
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.calendar-week-row {
+  margin-bottom: 8px;
+}
+
+.calendar-week-row span {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.calendar-day {
+  min-height: 64px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--card-muted);
+  color: var(--text);
+  display: grid;
+  place-items: center;
+  gap: 3px;
+  cursor: pointer;
+  transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+}
+
+.calendar-day:hover {
+  transform: translateY(-1px);
+  border-color: rgba(10, 87, 164, 0.22);
+}
+
+.calendar-day.empty {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.calendar-day.today {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+}
+
+.calendar-day.selected {
+  color: #fff;
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+.calendar-day strong {
+  font-size: 15px;
+}
+
+.calendar-day span {
+  min-width: 20px;
+  height: 20px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  color: var(--teal);
+  background: var(--teal-soft);
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.calendar-day.selected span {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.calendar-events-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.calendar-events-header span {
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+.calendar-events-header h2 {
+  margin: 6px 0 0;
+  color: var(--text);
+  text-transform: capitalize;
+}
+
+.calendar-event-list {
+  display: grid;
+  gap: 12px;
+}
+
+.calendar-event-card {
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 14px;
+  align-items: center;
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 16px;
+  text-align: left;
+  background: var(--card-muted);
+  color: var(--text);
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.calendar-event-card::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 5px;
+}
+
+.calendar-event-card:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-xs);
+}
+
+.calendar-event-card.asistencia::before,
+.calendar-event-card.asistencia .calendar-event-code {
+  background: var(--teal);
+}
+
+.calendar-event-card.vacacion::before,
+.calendar-event-card.vacacion .calendar-event-code {
+  background: #b7791f;
+}
+
+.calendar-event-card.incapacidad::before,
+.calendar-event-card.incapacidad .calendar-event-code {
+  background: #b42318;
+}
+
+.calendar-event-code {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 16px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.calendar-event-code.asistencia {
+  background: var(--teal);
+}
+
+.calendar-event-code.vacacion {
+  background: #b7791f;
+}
+
+.calendar-event-code.incapacidad {
+  background: #b42318;
+}
+
+.calendar-event-card small,
+.calendar-modal-type,
+.calendar-detail-box small {
+  color: var(--text-muted);
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 900;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+.calendar-event-card strong {
+  display: block;
+  margin-top: 3px;
+  color: var(--text);
+  font-size: 16px;
+}
+
+.calendar-event-card p,
+.calendar-event-card em {
+  display: block;
+  margin: 6px 0 0;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-style: normal;
+  line-height: 1.4;
+}
+
+.calendar-status-pill {
+  white-space: nowrap;
+  border-radius: 999px;
+  padding: 7px 11px;
+  color: var(--text-muted);
+  background: var(--card);
+  border: 1px solid var(--border);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.calendar-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  padding: 22px;
+  background: rgba(15, 23, 42, 0.5);
+}
+
+.calendar-modal-card {
+  width: min(620px, 100%);
+  border-radius: 28px;
+  padding: 24px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  box-shadow: 0 28px 70px rgba(15, 23, 42, 0.24);
+}
+
+.calendar-modal-header,
+.calendar-modal-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.calendar-modal-card h2 {
+  margin: 10px 0 16px;
+  color: var(--text);
+  font-size: 28px;
+  line-height: 1.15;
+}
+
+.calendar-modal-meta {
+  border-radius: 18px;
+  padding: 14px;
+  background: var(--primary-soft);
+  color: var(--primary);
+  font-weight: 900;
+}
+
+.calendar-detail-box {
+  margin-top: 14px;
+  border-radius: 18px;
+  padding: 14px;
+  background: var(--card-muted);
+  border: 1px solid var(--border);
+}
+
+.calendar-detail-box p {
+  margin: 7px 0 0;
+  color: var(--text);
+  line-height: 1.55;
+  font-weight: 700;
+}
+
+:root[data-theme='dark'] .calendar-month-card,
+:root[data-theme='dark'] .calendar-events-panel,
+:root[data-theme='dark'] .calendar-summary-card,
+:root[data-theme='dark'] .calendar-modal-card {
+  border-color: rgba(125, 211, 252, 0.12);
+}
+
+:root[data-theme='dark'] .calendar-modal-backdrop {
+  background: rgba(2, 6, 23, 0.76);
+}
+
+@media (max-width: 1120px) {
+  .calendar-summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .calendar-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 680px) {
+  .calendar-hero,
+  .calendar-events-header,
+  .calendar-modal-header,
+  .calendar-modal-meta {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .calendar-summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .calendar-month-card,
+  .calendar-events-panel,
+  .calendar-hero,
+  .calendar-modal-card {
+    border-radius: 22px;
+    padding: 18px;
+  }
+
+  .calendar-day {
+    min-height: 50px;
+    border-radius: 13px;
+  }
+
+  .calendar-event-card {
+    grid-template-columns: auto 1fr;
+  }
+
+  .calendar-status-pill {
+    grid-column: 1 / -1;
+    justify-self: start;
   }
 }

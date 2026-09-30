@@ -5,7 +5,9 @@ import { useAuth } from '../../app/auth/AuthContext';
 
 type LocationState = {
   correo?: string;
+  challengeId?: string;
   message?: string;
+  adminFlow?: boolean;
 };
 
 export default function VerifyLoginCode() {
@@ -15,6 +17,8 @@ export default function VerifyLoginCode() {
 
   const state = (location.state || {}) as LocationState;
   const correo = state.correo || '';
+  const challengeId = state.challengeId || '';
+  const adminFlow = state.adminFlow === true;
 
   const [codigo, setCodigo] = useState('');
   const [error, setError] = useState('');
@@ -25,7 +29,7 @@ export default function VerifyLoginCode() {
     return <Navigate to="/portal" replace />;
   }
 
-  if (!correo) {
+  if (!correo || !challengeId) {
     return <Navigate to="/login" replace />;
   }
 
@@ -45,7 +49,7 @@ export default function VerifyLoginCode() {
       setLoading(true);
 
       const { data } = await api.post('/auth/verify-login-code', {
-        correo,
+        challengeId,
         codigo: codigo.trim(),
       });
 
@@ -56,7 +60,7 @@ export default function VerifyLoginCode() {
 
       setAuthToken(data.token);
       setAuth({ token: data.token, user: data.user });
-      navigate('/portal', { replace: true });
+      navigate('/admin/destino', { replace: true });
     } catch (err: any) {
       setError(err?.response?.data?.message || 'Error de conexión');
     } finally {
@@ -159,9 +163,11 @@ export default function VerifyLoginCode() {
             {info && <p className="auth-info">{info}</p>}
 
             <div className="auth-footer-links">
-              <Link to="/login" className="auth-link primary">
-                Volver al login
-              </Link>
+              {!adminFlow && (
+                <Link to="/login" className="auth-link primary">
+                  Volver al login
+                </Link>
+              )}
 
               <Link to="/" className="auth-link">
                 Ir al sitio principal

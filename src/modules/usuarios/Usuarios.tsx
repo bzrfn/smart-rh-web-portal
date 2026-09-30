@@ -342,26 +342,63 @@ export default function Usuarios() {
   async function saveUser() {
     if (!token) return;
 
-    const payload: any = {
+    const roleId = Number(form.rol_id);
+
+    const basePayload: any = {
       nombre: form.nombre.trim(),
       apellido: form.apellido.trim(),
       correo: form.correo.trim(),
-      rol_id: Number(form.rol_id),
       telefono: form.telefono.trim() || null,
       direccion: form.direccion.trim() || null,
       fecha_ingreso: form.fecha_ingreso || null,
       dias_vacaciones_disponibles: Number(form.dias_vacaciones_disponibles || 12),
     };
 
-    if (!editingId) payload.contrasena = form.contrasena;
-
-    if (!payload.nombre || !payload.apellido || !payload.correo || !payload.rol_id) {
+    if (!basePayload.nombre || !basePayload.apellido || !basePayload.correo || !roleId) {
       setError('Nombre, apellido, correo y rol son obligatorios.');
       return;
     }
 
+    if (!editingId && roleId === 1) {
+      try {
+        setSavingKey('user-form');
+        setError('');
+        setMessage('');
+
+        const { data } = await api.post(
+          '/auth/admin-invitations',
+          basePayload,
+          authConfig
+        );
+
+        resetForm();
+        setMessage(
+          data?.message ||
+          'Invitación administrativa enviada correctamente.'
+        );
+      } catch (e: any) {
+        setError(
+          e?.response?.data?.message ??
+          'No se pudo enviar la invitación administrativa.'
+        );
+      } finally {
+        setSavingKey('');
+      }
+
+      return;
+    }
+
+    const payload: any = {
+      ...basePayload,
+      rol_id: roleId,
+    };
+
+    if (!editingId) {
+      payload.contrasena = form.contrasena;
+    }
+
     if (!editingId && !payload.contrasena) {
-      setError('La contraseña es obligatoria para crear un usuario.');
+      setError('La contraseña es obligatoria para crear un empleado.');
       return;
     }
 
@@ -371,17 +408,30 @@ export default function Usuarios() {
       setMessage('');
 
       if (editingId) {
-        await api.put(`/users/${editingId}`, payload, authConfig);
+        await api.put(
+          `/users/${editingId}`,
+          payload,
+          authConfig
+        );
+
+        resetForm();
         setMessage('Usuario actualizado correctamente.');
       } else {
-        await api.post('/users', payload, authConfig);
-        setMessage('Usuario creado correctamente.');
-      }
+        await api.post(
+          '/users',
+          payload,
+          authConfig
+        );
 
-      resetForm();
-      await loadUsers();
+        resetForm();
+        setMessage('Empleado creado correctamente.');
+        await loadUsers();
+      }
     } catch (e: any) {
-      setError(e?.response?.data?.message ?? 'No se pudo guardar el usuario.');
+      setError(
+        e?.response?.data?.message ??
+        'No se pudo guardar el usuario.'
+      );
     } finally {
       setSavingKey('');
     }
@@ -818,7 +868,7 @@ export default function Usuarios() {
                 <input type="email" value={form.correo} onChange={(e) => updateForm('correo', e.target.value)} />
               </label>
 
-              {!editingId && (
+              {!editingId && form.rol_id !== '1' && (
                 <label className="form-label">
                   Contraseña
                   <input
@@ -832,10 +882,29 @@ export default function Usuarios() {
               <label className="form-label">
                 Rol
                 <select value={form.rol_id} onChange={(e) => updateForm('rol_id', e.target.value)}>
-                  <option value="1">Administrador</option>
+                  <option
+                    value="1"
+                    disabled={
+                      Boolean(editingId) &&
+                      !users.some(
+                        (candidate) =>
+                          candidate.id === editingId &&
+                          isAdminUser(candidate)
+                      )
+                    }
+                  >
+                    Administrador
+                  </option>
                   <option value="2">Empleado</option>
                 </select>
               </label>
+
+              {!editingId && form.rol_id === '1' && (
+                <p className="module-info">
+                  El administrador recibirá una invitación por correo y
+                  establecerá personalmente su contraseña.
+                </p>
+              )}
 
               <label className="form-label">
                 Teléfono
@@ -869,7 +938,15 @@ export default function Usuarios() {
 
             <div className="users-form-actions">
               <button className="btn" type="button" disabled={savingKey === 'user-form'} onClick={saveUser}>
-                {savingKey === 'user-form' ? 'Guardando...' : editingId ? 'Actualizar usuario' : 'Crear usuario'}
+                {
+                  savingKey === 'user-form'
+                    ? 'Guardando...'
+                    : editingId
+                      ? 'Actualizar usuario'
+                      : form.rol_id === '1'
+                        ? 'Enviar invitación'
+                        : 'Crear empleado'
+                }
               </button>
 
               {editingId && (

@@ -61,9 +61,17 @@ export default function Login() {
       }
 
       if (data?.requires2FA) {
+        if (!data?.challengeId) {
+          setError(
+            'No se recibió el identificador de seguridad del segundo factor.'
+          );
+          return;
+        }
+
         navigate('/verify-login-code', {
           state: {
             correo: data?.correo || correoLimpio,
+            challengeId: data.challengeId,
             message: data?.message,
           },
         });
@@ -195,10 +203,6 @@ export default function Login() {
             {info && <p className="auth-info">{info}</p>}
 
             <div className="auth-footer-links">
-              <Link to="/register" className="auth-link primary">
-                Crear cuenta
-              </Link>
-
               <Link to="/forgot-password" className="auth-link">
                 ¿Olvidaste tu contraseña?
               </Link>

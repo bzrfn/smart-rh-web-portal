@@ -1791,9 +1791,9 @@ function Grafica10KMeansBarras({
   const colorLineasCuadricula = colors.chartGrid;
   const colorTextoEjes = colors.chartAxis;
 
-  const colorCluster1 = colors.isDark ? '#38BDF8' : '#0A57A4';
-  const colorCluster2 = colors.isDark ? '#2DD4BF' : '#0F9F96';
-  const colorCluster3 = colors.isDark ? '#FACC15' : '#B45309';
+  const colorCluster1 = colors.isDark ? '#38BDF8' : '#4f6173';
+  const colorCluster2 = colors.isDark ? '#2DD4BF' : '#c13373';
+  const colorCluster3 = colors.isDark ? '#FACC15' : '#2cb8ce';
   const colorCluster4 = colors.isDark ? '#A78BFA' : '#7C3AED';
   const colorCluster5 = colors.isDark ? '#F87171' : '#D64545';
 
@@ -1807,6 +1807,8 @@ function Grafica10KMeansBarras({
 
   const radioSuperiorBarras: [number, number, number, number] = [14, 14, 0, 0];
   const separacionCuadricula = '3 3';
+  const etiquetaEjeY = 'Empleados';
+  const margenGrafica = { left: 16, right: 8, top: 8, bottom: 8 };
 
   const info: VisualizationInfo = {
     number: '10',
@@ -1833,13 +1835,22 @@ function Grafica10KMeansBarras({
       >
         {hasData(data) ? (
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={data}>
+            <BarChart data={data} margin={margenGrafica}>
               <CartesianGrid
                 strokeDasharray={separacionCuadricula}
                 stroke={colorLineasCuadricula}
               />
               <XAxis dataKey="name" stroke={colorTextoEjes} />
-              <YAxis stroke={colorTextoEjes} />
+              <YAxis
+                stroke={colorTextoEjes}
+                label={{
+                  value: etiquetaEjeY,
+                  angle: -90,
+                  position: 'insideLeft',
+                  fill: colorTextoEjes,
+                  style: { textAnchor: 'middle' },
+                }}
+              />
               <Tooltip contentStyle={styles.tooltip} />
               <Bar
                 dataKey="empleados"

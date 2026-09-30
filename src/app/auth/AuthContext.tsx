@@ -44,6 +44,20 @@ function getInitialAuthState(): AuthState {
       return { token: null, user: null };
     }
 
+    const role =
+      String(
+        parsed.user.role ||
+        ''
+      )
+        .trim()
+        .toLowerCase();
+
+    if (role !== 'admin') {
+      localStorage.removeItem(STORAGE_KEY);
+      setAuthToken(null);
+      return { token: null, user: null };
+    }
+
     setAuthToken(parsed.token);
 
     return {
@@ -65,6 +79,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       ...state,
 
       setAuth: (data) => {
+        const role =
+          String(
+            data.user?.role ||
+            ''
+          )
+            .trim()
+            .toLowerCase();
+
+        if (role !== 'admin') {
+          setAuthToken(null);
+          localStorage.removeItem(STORAGE_KEY);
+          setState({
+            token: null,
+            user: null,
+          });
+          return;
+        }
+
         const next = {
           token: data.token,
           user: data.user,
