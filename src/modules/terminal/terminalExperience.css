@@ -1068,6 +1068,56 @@
   color: #64748b;
 }
 
+/*
+ * La autorización administrativa vive dentro del portal y no dentro
+ * de .terminal-experience. En modo oscuro el tema global cambiaba
+ * texto e inputs sobre una tarjeta clara, reduciendo el contraste.
+ */
+:root[data-theme='dark'] .terminal-approval-page {
+  color: #0f172a;
+}
+
+:root[data-theme='dark'] .terminal-approval-card {
+  color: #0f172a;
+  border-color: #e2e8f0;
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.28);
+}
+
+:root[data-theme='dark'] .terminal-approval-header h1 {
+  color: #0f172a;
+}
+
+:root[data-theme='dark'] .terminal-approval-header p {
+  color: #475569;
+}
+
+:root[data-theme='dark'] .terminal-approval-card .terminal-section-eyebrow {
+  color: #15803d;
+}
+
+:root[data-theme='dark'] .terminal-approval-card .terminal-field > span {
+  color: #1e293b;
+}
+
+:root[data-theme='dark'] .terminal-approval-card .terminal-field input {
+  color: #0f172a;
+  border-color: #cbd5e1;
+  background: #f8fafc;
+}
+
+:root[data-theme='dark'] .terminal-approval-card .terminal-field input::placeholder {
+  color: #64748b;
+}
+
+:root[data-theme='dark'] .terminal-approval-footer {
+  border-top-color: #e2e8f0;
+}
+
+:root[data-theme='dark'] .terminal-approval-footer a {
+  color: #15803d;
+}
+
 @media (max-width: 650px) {
   .terminal-selector-theme-row {
     justify-content: flex-start;

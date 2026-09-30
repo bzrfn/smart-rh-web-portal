@@ -79,7 +79,13 @@ export default function AppShell() {
         icon: 'AS',
         description: 'Registros laborales',
       },
-            {
+      {
+        path: '/portal/calendario',
+        label: 'Calendario',
+        icon: 'CL',
+        description: 'Agenda laboral',
+      },
+      {
         path: '/portal/documentacion',
         label: 'Documentos',
         icon: 'DC',

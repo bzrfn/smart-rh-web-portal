@@ -25,7 +25,14 @@ const modules: ModuleCard[] = [
     code: 'AS',
     accent: 'teal',
   },
-    {
+  {
+    path: '/calendario',
+    title: 'Calendario laboral',
+    description: 'Vista mensual de asistencia, vacaciones e incapacidades.',
+    code: 'CL',
+    accent: 'blue',
+  },
+  {
     path: '/portal/terminal-autorizacion',
     title: 'Autorizar Terminal',
     description: 'Aprueba o rechaza solicitudes de acceso de la terminal de asistencia.',
