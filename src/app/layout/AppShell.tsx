@@ -80,12 +80,6 @@ export default function AppShell() {
         description: 'Registros laborales',
       },
       {
-        path: '/portal/calendario',
-        label: 'Calendario',
-        icon: 'CL',
-        description: 'Agenda laboral',
-      },
-      {
         path: '/portal/qr-asistencia',
         label: 'QR',
         icon: 'QR',

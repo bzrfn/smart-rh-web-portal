@@ -5,7 +5,6 @@ import Dashboard from '../modules/dashboard/Dashboard';
 import Usuarios from '../modules/usuarios/Usuarios';
 import Asistencia from '../modules/asistencia/Asistencia';
 import QrAsistencia from '../modules/asistencia/QrAsistencia';
-import CalendarioLaboral from '../modules/calendario/CalendarioLaboral';
 import Vacaciones from '../modules/vacaciones/index';
 import Nomina from '../modules/nomina/index';
 import Contratos from '../modules/contratos/index';
@@ -68,7 +67,6 @@ export default function Navigation() {
           <Route path="usuarios" element={<Usuarios />} />
           <Route path="asistencia" element={<Asistencia />} />
           <Route path="qr-asistencia" element={<QrAsistencia />} />
-          <Route path="calendario" element={<CalendarioLaboral />} />
           <Route path="vacaciones" element={<Vacaciones />} />
           <Route path="nomina" element={<Nomina />} />
           <Route path="contratos" element={<Contratos />} />
@@ -96,7 +94,6 @@ export default function Navigation() {
       <Route path="/usuarios" element={<Navigate to="/portal/usuarios" replace />} />
       <Route path="/asistencia" element={<Navigate to="/portal/asistencia" replace />} />
       <Route path="/qr-asistencia" element={<Navigate to="/portal/qr-asistencia" replace />} />
-      <Route path="/calendario" element={<Navigate to="/portal/calendario" replace />} />
       <Route path="/vacaciones" element={<Navigate to="/portal/vacaciones" replace />} />
       <Route path="/nomina" element={<Navigate to="/portal/nomina" replace />} />
       <Route path="/contratos" element={<Navigate to="/portal/contratos" replace />} />
