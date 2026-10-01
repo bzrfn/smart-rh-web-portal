@@ -1438,12 +1438,11 @@
   position: fixed;
   z-index: 82;
   display: grid;
-  grid-template-rows: 1fr auto;
   place-items: center;
-  width: 78px;
-  height: 78px;
+  width: 76px;
+  height: 76px;
   border: 1px solid rgba(255, 255, 255, 0.68);
-  border-radius: 26px;
+  border-radius: 28px;
   color: #ffffff;
   background:
     radial-gradient(circle at 76% 20%, rgba(255, 255, 255, 0.38), transparent 18px),
@@ -1480,37 +1479,29 @@
   display: grid;
   place-items: center;
   line-height: 1;
+  transform: translateY(1px);
 }
 
 .max-floating-logo strong {
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   font-weight: 950;
   letter-spacing: 0.12em;
 }
 
 .max-floating-logo em {
-  margin-top: 4px;
-  font-size: 1.05rem;
+  margin-top: 6px;
+  font-size: 1.22rem;
   font-style: normal;
   font-weight: 950;
   letter-spacing: 0.01em;
 }
 
-.max-floating-btn small {
-  margin-bottom: 12px;
-  font-size: 0.58rem;
-  font-weight: 900;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  opacity: 0.9;
-}
-
 .max-floating-btn::after {
   position: absolute;
-  top: 10px;
-  right: 10px;
-  width: 14px;
-  height: 14px;
+  top: 9px;
+  right: 9px;
+  width: 13px;
+  height: 13px;
   border: 3px solid #ffffff;
   border-radius: 999px;
   background: #2dd4bf;

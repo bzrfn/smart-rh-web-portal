@@ -550,7 +550,8 @@ export default function AsistenteSmartRh() {
           dragState?.moved ? 'is-dragging' : ''
         }`}
         type="button"
-        aria-label="Abrir Max"
+        aria-label="Abrir Max. Mantén presionado para moverlo."
+        title="Max"
         style={buttonStyle}
         onPointerDown={handleButtonPointerDown}
         onPointerMove={handleButtonPointerMove}
@@ -567,7 +568,6 @@ export default function AsistenteSmartRh() {
           <strong>SRH</strong>
           <em>Max</em>
         </span>
-        <small>Arrástrame</small>
       </button>
     </div>
   );
