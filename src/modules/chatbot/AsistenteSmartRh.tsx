@@ -570,7 +570,7 @@ export default function AsistenteSmartRh() {
               </article>
             ) : null}
 
-            {maxHistoryPreview.length > 1 ? (
+            {true ? (
 
 
               <div className="max-history-tools">
@@ -579,7 +579,7 @@ export default function AsistenteSmartRh() {
                 <button type="button" onClick={() => setHistoryOpen((value) => !value)}>
 
 
-                  Historial 7 dias
+                  Historial
 
 
                 </button>
