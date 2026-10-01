@@ -26,7 +26,6 @@ import AnalisisSupervisado from '../modules/ml/AnalisisSupervisado';
 import AnalisisKMeans from '../pages/AnalisisKMeans';
 import DashboardAnalitico from '../pages/DashboardAnalitico';
 import CalendarioLaboral from '../modules/calendario/CalendarioLaboral';
-import AsistenteSmartRh from '../modules/chatbot/AsistenteSmartRh';
 
 export default function Navigation() {
   const { user } = useAuth();
@@ -124,7 +123,7 @@ export default function Navigation() {
           <Route path="usuarios" element={<Usuarios />} />
           <Route path="asistencia" element={<Asistencia />} />
           <Route path="terminal-autorizacion" element={<TerminalApproval />} />
-          <Route path="asistente" element={<AsistenteSmartRh />} />
+          <Route path="asistente" element={<Navigate to="/portal" replace />} />
           <Route path="calendario" element={<CalendarioLaboral />} />
           <Route path="vacaciones" element={<Vacaciones />} />
           <Route path="incapacidades" element={<Incapacidades />} />
@@ -154,7 +153,7 @@ export default function Navigation() {
       <Route path="/usuarios" element={<Navigate to="/portal/usuarios" replace />} />
       <Route path="/asistencia" element={<Navigate to="/portal/asistencia" replace />} />
       <Route path="/calendario" element={<Navigate to="/portal/calendario" replace />} />
-      <Route path="/asistente" element={<Navigate to="/portal/asistente" replace />} />
+      <Route path="/asistente" element={<Navigate to="/portal" replace />} />
       <Route path="/vacaciones" element={<Navigate to="/portal/vacaciones" replace />} />
       <Route path="/incapacidades" element={<Navigate to="/portal/incapacidades" replace />} />
       <Route path="/nomina" element={<Navigate to="/portal/nomina" replace />} />

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 import ProtectedImage from '../../components/ProtectedImage';
+import AsistenteSmartRh from '../../modules/chatbot/AsistenteSmartRh';
 
 type NavItem = {
   path: string;
@@ -84,12 +85,6 @@ export default function AppShell() {
         label: 'Calendario',
         icon: 'CL',
         description: 'Agenda laboral',
-      },
-      {
-        path: '/portal/asistente',
-        label: 'Asistente',
-        icon: 'AI',
-        description: 'Ayuda inteligente',
       },
       {
         path: '/portal/documentacion',
@@ -259,6 +254,8 @@ export default function AppShell() {
       <main className="top-shell-main">
         <Outlet />
       </main>
+
+      <AsistenteSmartRh />
     </div>
   );
 }

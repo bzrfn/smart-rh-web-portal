@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useMemo, useState } from 'react';
+import { FormEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../../services/api';
 import { useAuth } from '../../app/auth/AuthContext';
@@ -10,9 +10,14 @@ type ChatbotAction = {
 };
 
 type ChatbotResponse = {
+  asistente?: 'Max';
   categoria: string;
   titulo: string;
+  intent?: string;
+  confianza?: 'alta' | 'media' | 'baja';
   respuesta: string;
+  pasos?: string[];
+  preguntas_seguimiento?: string[];
   acciones: ChatbotAction[];
   sugerencias: string[];
   requiere_escalamiento: boolean;
@@ -54,12 +59,14 @@ function getWebTarget(target: string) {
 
 export default function AsistenteSmartRh() {
   const { user } = useAuth();
+  const messagesRef = useRef<HTMLDivElement | null>(null);
+  const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
       id: buildId(),
       author: 'assistant',
       text:
-        'Hola. Soy el asistente de SMART RH. Puedo orientarte sobre asistencia, calendario, incapacidades, documentos, nomina, soporte y herramientas administrativas.',
+        'Hola, soy Max. Cuentame que intentas resolver en SMART RH y te ayudo con pasos concretos.',
     },
   ]);
   const [suggestions, setSuggestions] = useState<string[]>([]);
@@ -74,15 +81,24 @@ export default function AsistenteSmartRh() {
     [user?.apellido, user?.nombre]
   );
 
+  const historyPayload = useMemo(
+    () =>
+      messages.slice(-6).map((item) => ({
+        author: item.author,
+        text: item.text,
+      })),
+    [messages]
+  );
+
   async function loadSuggestions() {
     try {
       const { data } = await api.get('/chatbot/sugerencias');
       setSuggestions(Array.isArray(data?.sugerencias) ? data.sugerencias : []);
     } catch {
       setSuggestions([
-        '¿Cómo reviso mi asistencia?',
-        '¿Dónde consulto mi calendario laboral?',
-        '¿Cómo levanto un ticket de soporte?',
+        'Max, no puedo registrar mi asistencia',
+        'Quiero revisar mi calendario laboral',
+        'Necesito levantar un ticket',
       ]);
     }
   }
@@ -91,11 +107,37 @@ export default function AsistenteSmartRh() {
     loadSuggestions();
   }, []);
 
+  useEffect(() => {
+    if (!open) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setOpen(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+
+    messagesRef.current?.scrollTo({
+      top: messagesRef.current.scrollHeight,
+      behavior: 'smooth',
+    });
+  }, [messages, loading, open]);
+
   async function sendMessage(nextMessage?: string) {
     const cleanMessage = String(nextMessage || message).trim();
 
     if (!cleanMessage || loading) return;
 
+    setOpen(true);
     setError('');
     setMessage('');
     setLastQuestion(cleanMessage);
@@ -113,6 +155,7 @@ export default function AsistenteSmartRh() {
 
       const { data } = await api.post('/chatbot/mensaje', {
         mensaje: cleanMessage,
+        historial: historyPayload,
       });
 
       const response = data?.respuesta as ChatbotResponse;
@@ -122,7 +165,9 @@ export default function AsistenteSmartRh() {
         {
           id: buildId(),
           author: 'assistant',
-          text: response?.respuesta || 'No pude generar una respuesta segura.',
+          text:
+            response?.respuesta ||
+            'No pude generar una respuesta segura. Dame un poco mas de contexto.',
           response,
         },
       ]);
@@ -133,7 +178,7 @@ export default function AsistenteSmartRh() {
     } catch (err: any) {
       setError(
         err?.response?.data?.message ||
-          'No se pudo contactar al asistente SMART RH.'
+          'No se pudo contactar a Max. Revisa conexion o intenta de nuevo.'
       );
     } finally {
       setLoading(false);
@@ -149,6 +194,7 @@ export default function AsistenteSmartRh() {
 
       const { data } = await api.post('/chatbot/mensaje', {
         mensaje: lastQuestion,
+        historial: historyPayload,
         crear_ticket: true,
       });
 
@@ -160,8 +206,8 @@ export default function AsistenteSmartRh() {
           id: buildId(),
           author: 'assistant',
           text: ticketId
-            ? `Ticket creado correctamente. Folio: ${ticketId}. Puedes darle seguimiento desde Soporte.`
-            : 'La solicitud fue enviada a soporte.',
+            ? `Listo. Cree el ticket con folio ${ticketId}. Puedes darle seguimiento desde Soporte.`
+            : 'Listo. Envie la consulta a soporte con el contexto disponible.',
         },
       ]);
     } catch (err: any) {
@@ -180,50 +226,58 @@ export default function AsistenteSmartRh() {
   }
 
   return (
-    <div className="assistant-page">
-      <section className="assistant-hero">
-        <div>
-          <p className="assistant-eyebrow">Cambio #6</p>
-          <h2>Asistente SMART RH</h2>
-          <p>
-            Consulta guiada por rol para resolver dudas operativas y escalar
-            casos a soporte cuando se requiera seguimiento administrativo.
-          </p>
-        </div>
+    <div className="max-assistant">
+      {open ? (
+        <button
+          className="max-assistant-backdrop"
+          type="button"
+          aria-label="Cerrar Max"
+          onClick={() => setOpen(false)}
+        />
+      ) : null}
 
-        <div className="assistant-context-card">
-          <span>Sesión activa</span>
-          <strong>{userName || 'Usuario SMART RH'}</strong>
-          <small>{user?.role || 'empleado'}</small>
-        </div>
-      </section>
-
-      <section className="assistant-layout">
-        <div className="assistant-chat-card">
-          <div className="assistant-chat-header">
+      {open ? (
+        <section className="max-assistant-panel" aria-label="Chat con Max">
+          <header className="max-assistant-header">
+            <div className="max-avatar">MX</div>
             <div>
-              <p className="assistant-eyebrow">Conversación</p>
-              <h3>Centro de ayuda inteligente</h3>
+              <span>Asistente interno</span>
+              <h2>Max</h2>
+              <p>{userName || 'Usuario SMART RH'} · {user?.role || 'empleado'}</p>
             </div>
-            <Link className="assistant-support-link" to="/portal/soporte">
-              Ver soporte
-            </Link>
-          </div>
+            <button
+              className="max-close-btn"
+              type="button"
+              aria-label="Cerrar Max"
+              onClick={() => setOpen(false)}
+            >
+              ×
+            </button>
+          </header>
 
-          <div className="assistant-messages">
+          <div className="max-messages" ref={messagesRef}>
             {messages.map((item) => (
               <article
                 key={item.id}
-                className={`assistant-message ${item.author}`}
+                className={`max-message ${item.author}`}
               >
                 <p>{item.text}</p>
 
+                {item.response?.pasos?.length ? (
+                  <ol className="max-steps">
+                    {item.response.pasos.slice(0, 4).map((step) => (
+                      <li key={step}>{step}</li>
+                    ))}
+                  </ol>
+                ) : null}
+
                 {item.response?.acciones?.some(isWebAction) ? (
-                  <div className="assistant-actions">
+                  <div className="max-actions">
                     {item.response.acciones.filter(isWebAction).map((action) => (
                       <Link
                         key={`${item.id}-${action.label}`}
                         to={getWebTarget(action.target)}
+                        onClick={() => setOpen(false)}
                       >
                         {action.label}
                       </Link>
@@ -234,32 +288,17 @@ export default function AsistenteSmartRh() {
             ))}
 
             {loading ? (
-              <article className="assistant-message assistant">
-                <p>Consultando conocimiento de SMART RH...</p>
+              <article className="max-message assistant">
+                <p>Max esta revisando el contexto...</p>
               </article>
             ) : null}
           </div>
 
-          {error ? <p className="assistant-error">{error}</p> : null}
+          {error ? <p className="max-error">{error}</p> : null}
 
-          <form className="assistant-input-row" onSubmit={submit}>
-            <input
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              placeholder="Escribe tu duda sobre SMART RH..."
-            />
-            <button type="submit" disabled={loading || !message.trim()}>
-              Enviar
-            </button>
-          </form>
-        </div>
-
-        <aside className="assistant-side">
-          <div className="assistant-side-card">
-            <p className="assistant-eyebrow">Sugerencias</p>
-            <h3>Preguntas frecuentes</h3>
-            <div className="assistant-suggestions">
-              {suggestions.map((item) => (
+          {suggestions.length ? (
+            <div className="max-suggestions">
+              {suggestions.slice(0, 4).map((item) => (
                 <button
                   key={item}
                   type="button"
@@ -269,26 +308,40 @@ export default function AsistenteSmartRh() {
                 </button>
               ))}
             </div>
-          </div>
+          ) : null}
 
-          <div className="assistant-side-card">
-            <p className="assistant-eyebrow">Escalamiento</p>
-            <h3>Crear ticket</h3>
-            <p>
-              Si la respuesta no resuelve el caso, registra la consulta como
-              ticket de soporte con el contexto del asistente.
-            </p>
-            <button
-              className="assistant-ticket-btn"
-              type="button"
-              onClick={createTicket}
-              disabled={!lastQuestion || ticketLoading}
-            >
-              {ticketLoading ? 'Creando...' : 'Crear ticket con contexto'}
+          <form className="max-input-row" onSubmit={submit}>
+            <textarea
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              placeholder="Escribe tu duda..."
+              rows={2}
+            />
+            <button type="submit" disabled={loading || !message.trim()}>
+              Enviar
             </button>
-          </div>
-        </aside>
-      </section>
+          </form>
+
+          <button
+            className="max-ticket-btn"
+            type="button"
+            onClick={createTicket}
+            disabled={!lastQuestion || ticketLoading}
+          >
+            {ticketLoading ? 'Creando ticket...' : 'Crear ticket con contexto'}
+          </button>
+        </section>
+      ) : null}
+
+      <button
+        className="max-floating-btn"
+        type="button"
+        aria-label="Abrir Max"
+        onClick={() => setOpen(true)}
+      >
+        <span>MX</span>
+        <small>Max</small>
+      </button>
     </div>
   );
 }
