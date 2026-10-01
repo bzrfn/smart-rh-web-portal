@@ -10,6 +10,7 @@ import {
 import { Link } from 'react-router-dom';
 import { api } from '../../services/api';
 import { useAuth } from '../../app/auth/AuthContext';
+import maxIconUrl from '../../assets/max-icon.png';
 
 type ChatbotAction = {
   label: string;
@@ -449,8 +450,7 @@ export default function AsistenteSmartRh() {
         >
           <header className="max-assistant-header">
             <div className="max-avatar" aria-hidden="true">
-              <span>SRH</span>
-              <strong>Max</strong>
+              <img src={maxIconUrl} alt="" />
             </div>
             <div>
               <span>Asistente interno</span>
@@ -565,8 +565,7 @@ export default function AsistenteSmartRh() {
         }}
       >
         <span className="max-floating-logo">
-          <strong>SRH</strong>
-          <em>Max</em>
+          <img src={maxIconUrl} alt="" />
         </span>
       </button>
     </div>
