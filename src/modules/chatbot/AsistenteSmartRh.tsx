@@ -570,34 +570,17 @@ export default function AsistenteSmartRh() {
               </article>
             ) : null}
 
-            {true ? (
-
-
-              <div className="max-history-tools">
-
-
+            <details className="max-chat-menu">
+              <summary aria-label="Opciones de chat" title="Opciones">...</summary>
+              <div className="max-chat-menu-panel">
                 <button type="button" onClick={() => setHistoryOpen((value) => !value)}>
-
-
                   Historial
-
-
                 </button>
-
-
                 <button type="button" onClick={clearMaxHistory}>
-
-
                   Nuevo chat
-
-
                 </button>
-
-
               </div>
-
-
-            ) : null}
+            </details>
 
 
             {historyOpen ? (
