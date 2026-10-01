@@ -304,6 +304,7 @@ export default function AsistenteSmartRh() {
       const { data } = await api.post('/chatbot/mensaje', {
         mensaje: cleanMessage,
         historial: historyPayload,
+        canal: 'web',
       });
 
       const response = data?.respuesta as ChatbotResponse;
@@ -345,6 +346,7 @@ export default function AsistenteSmartRh() {
       const { data } = await api.post('/chatbot/mensaje', {
         mensaje: lastQuestion,
         historial: historyPayload,
+        canal: 'web',
         crear_ticket: true,
       });
 
@@ -549,12 +551,23 @@ export default function AsistenteSmartRh() {
             <textarea
               value={message}
               onChange={(e) => setMessage(e.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter' && !event.shiftKey) {
+                    event.preventDefault();
+                    sendMessage();
+                  }
+                }}
               placeholder="Preguntame..."
               rows={2}
             />
-            <button type="submit" disabled={loading || !message.trim()}>
-                ↑
-              </button>
+            <button
+              className="max-send-btn"
+              type="submit"
+              aria-label="Enviar mensaje a Max"
+              disabled={loading || !message.trim()}
+            >
+              <span aria-hidden="true">↑</span>
+            </button>
           </form>
 
           {canCreateContextTicket ? (

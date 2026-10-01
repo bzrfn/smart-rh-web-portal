@@ -12881,3 +12881,94 @@ body::before {
     justify-self: start;
   }
 }
+
+
+
+
+
+/* max-final-composer-v9 */
+.max-assistant-panel {
+  overflow: hidden !important;
+}
+
+.max-assistant-panel .max-messages {
+  padding-bottom: 190px !important;
+}
+
+.max-assistant-panel .max-suggestions {
+  position: absolute !important;
+  left: 20px !important;
+  right: 20px !important;
+  bottom: 98px !important;
+  z-index: 4 !important;
+  margin: 0 !important;
+}
+
+.max-assistant-panel .max-suggestions span {
+  display: none !important;
+}
+
+.max-assistant-panel .max-suggestions div {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+}
+
+.max-assistant-panel .max-suggestions button {
+  flex: 1 1 150px !important;
+  min-width: 0 !important;
+  padding: 9px 13px !important;
+  border-radius: 999px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.max-assistant-panel .max-input-row {
+  position: absolute !important;
+  left: 20px !important;
+  right: 20px !important;
+  bottom: 20px !important;
+  z-index: 5 !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) 54px !important;
+  align-items: center !important;
+  gap: 10px !important;
+  margin: 0 !important;
+  padding: 8px 8px 8px 18px !important;
+  border-radius: 999px !important;
+}
+
+.max-assistant-panel .max-input-row textarea {
+  min-height: 42px !important;
+  max-height: 92px !important;
+  padding: 10px 0 !important;
+  resize: none !important;
+}
+
+.max-assistant-panel .max-input-row button[type='submit'],
+.max-assistant-panel .max-send-btn {
+  width: 54px !important;
+  min-width: 54px !important;
+  max-width: 54px !important;
+  height: 54px !important;
+  min-height: 54px !important;
+  max-height: 54px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  display: grid !important;
+  place-items: center !important;
+  color: #ffffff !important;
+  background:
+    radial-gradient(circle at 35% 22%, rgba(255, 255, 255, 0.35), transparent 30%),
+    linear-gradient(145deg, #38bdf8, #0ea5e9) !important;
+  box-shadow: 0 16px 28px rgba(14, 165, 233, 0.28) !important;
+  font-size: 1.7rem !important;
+  line-height: 1 !important;
+}
+
+.max-assistant-panel .max-send-btn span {
+  transform: translateY(-1px);
+}
+/* end max-final-composer-v9 */
