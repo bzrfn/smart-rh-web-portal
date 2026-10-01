@@ -183,6 +183,7 @@ export default function AsistenteSmartRh() {
     },
   ]);
   const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(true);
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [ticketLoading, setTicketLoading] = useState(false);
@@ -218,12 +219,14 @@ export default function AsistenteSmartRh() {
     try {
       const { data } = await api.get('/chatbot/sugerencias');
       setSuggestions(Array.isArray(data?.sugerencias) ? data.sugerencias : []);
+      setShowSuggestions(true);
     } catch {
       setSuggestions([
         'No puedo registrar asistencia',
         'Ver calendario laboral',
         'Crear ticket de soporte',
       ]);
+      setShowSuggestions(true);
     }
   }
 
@@ -277,9 +280,14 @@ export default function AsistenteSmartRh() {
 
     if (!cleanMessage || loading) return;
 
+    const isQuickSuggestion = Boolean(nextMessage) && suggestions.some(
+      (item) => item.trim().toLowerCase() === cleanMessage.toLowerCase()
+    );
+
     setOpen(true);
     setError('');
     setMessage('');
+    setShowSuggestions(isQuickSuggestion);
     setLastQuestion(cleanMessage);
     setMessages((current) => [
       ...current,
@@ -312,8 +320,10 @@ export default function AsistenteSmartRh() {
         },
       ]);
 
-      if (Array.isArray(response?.sugerencias)) {
+      if (isQuickSuggestion && Array.isArray(response?.sugerencias)) {
         setSuggestions(response.sugerencias);
+      } else if (!isQuickSuggestion) {
+        setSuggestions([]);
       }
     } catch (err: any) {
       setError(
@@ -515,7 +525,7 @@ export default function AsistenteSmartRh() {
               </article>
             ) : null}
 
-            {suggestions.length ? (
+            {showSuggestions && suggestions.length ? (
               <div className="max-suggestions">
                 <span>Sugerencias</span>
                 <div>
