@@ -10,7 +10,7 @@ import {
 import { Link } from 'react-router-dom';
 import { api } from '../../services/api';
 import { useAuth } from '../../app/auth/AuthContext';
-import maxIconUrl from '../../assets/max-icon.png';
+import maxIconUrl from '../../assets/max-touch-icon.png';
 
 type ChatbotAction = {
   label: string;
@@ -94,6 +94,22 @@ function clampPosition(position: FloatingPosition): FloatingPosition {
       Math.max(EDGE_GAP, window.innerHeight - BUTTON_SIZE - EDGE_GAP)
     ),
   };
+}
+
+function snapPositionToSide(position: FloatingPosition): FloatingPosition {
+  if (typeof window === 'undefined') return position;
+
+  const leftX = EDGE_GAP;
+  const rightX = Math.max(
+    EDGE_GAP,
+    window.innerWidth - BUTTON_SIZE - EDGE_GAP
+  );
+  const centerX = position.x + BUTTON_SIZE / 2;
+
+  return clampPosition({
+    ...position,
+    x: centerX < window.innerWidth / 2 ? leftX : rightX,
+  });
 }
 
 function getInitialPosition(): FloatingPosition {
@@ -420,7 +436,10 @@ export default function AsistenteSmartRh() {
     if (!dragState || dragState.pointerId !== event.pointerId) return;
 
     event.currentTarget.releasePointerCapture(event.pointerId);
-    const next = clampPosition(buttonPosition);
+    const clampedPosition = clampPosition(buttonPosition);
+    const next = dragState.moved
+      ? snapPositionToSide(clampedPosition)
+      : clampedPosition;
     setButtonPosition(next);
     persistPosition(next);
 
