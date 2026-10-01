@@ -2,7 +2,7 @@ import { CSSProperties, FormEvent, PointerEvent, useEffect, useMemo, useRef, use
 import { Link } from 'react-router-dom';
 import { api } from '../../services/api';
 import { useAuth } from '../../app/auth/AuthContext';
-import maxIconUrl from '../../assets/max-touch-icon.png';
+import maxAssistantIcon from '../../assets/max-touch-icon.svg';
 
 const MAX_PORTAL_HISTORY_KEY = 'smart-rh:max:portal-history:v1';
 const MAX_CHAT_HISTORY_TTL_MS = 7 * 24 * 60 * 60 * 1000;
@@ -515,7 +515,7 @@ export default function AsistenteSmartRh() {
         >
           <header className="max-assistant-header">
             <div className="max-avatar" aria-hidden="true">
-              <img src={maxIconUrl} alt="" />
+              <img src={maxAssistantIcon} alt="" />
             </div>
             <div>
               <span>Asistente interno</span>
@@ -646,8 +646,11 @@ export default function AsistenteSmartRh() {
               type="submit"
               aria-label="Enviar mensaje a Max"
               disabled={loading || !message.trim()}
-            >
-              <span aria-hidden="true">↑</span>
+             title="Enviar mensaje">
+              <svg className="max-send-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M5 12h12" />
+                <path d="M13 7l5 5-5 5" />
+              </svg>
             </button>
           </form>
 
@@ -684,7 +687,7 @@ export default function AsistenteSmartRh() {
         }}
       >
         <span className="max-floating-logo">
-          <img src={maxIconUrl} alt="" />
+          <img src={maxAssistantIcon} alt="" />
         </span>
       </button>
     </div>
