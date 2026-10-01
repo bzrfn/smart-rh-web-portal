@@ -403,7 +403,7 @@
     align-items: center;
     min-height: 48px;
     color: white;
-    padding: 14px 16px;
+    padding: 13px 16px;
     border-radius: 16px;
     font-weight: 800;
     transition: 0.2s ease;
@@ -428,7 +428,7 @@
   
   .shell-user-card {
     background: rgba(255, 255, 255, 0.1);
-    border-radius: 22px;
+    border-radius: 999px;
     padding: 18px;
     backdrop-filter: blur(4px);
   }
@@ -1587,12 +1587,12 @@
 
 .max-message {
   width: fit-content;
-  max-width: 88%;
+  max-width: min(88%, 430px);
   border: 1px solid var(--border);
   border-radius: 18px;
   padding: 10px 12px;
   box-shadow: var(--shadow-xs);
-  font-size: 0.88rem;
+  font-size: 0.84rem;
 }
 
 .max-message p {
@@ -5174,7 +5174,7 @@ textarea:focus {
 @media (max-width: 1280px) {
   .users-filter-grid,
   .users-filter-grid-large {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .bulk-permissions-grid {
@@ -9908,7 +9908,7 @@ body::before {
 
 .ml-chart-box {
   width: 100%;
-  min-height: 300px;
+  min-height: 340px;
 }
 
 .ml-chart-legend {

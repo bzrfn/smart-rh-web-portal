@@ -552,8 +552,8 @@ export default function AsistenteSmartRh() {
               rows={2}
             />
             <button type="submit" disabled={loading || !message.trim()}>
-              Enviar
-            </button>
+                ↑
+              </button>
           </form>
 
           {lastQuestion ? (
