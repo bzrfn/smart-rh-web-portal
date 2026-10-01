@@ -569,66 +569,35 @@ export default function AsistenteSmartRh() {
                 <p>Max esta revisando el contexto...</p>
               </article>
             ) : null}
-
-            <details className="max-chat-menu">
-              <summary aria-label="Opciones de chat" title="Opciones">...</summary>
-              <div className="max-chat-menu-panel">
-                <button type="button" onClick={() => setHistoryOpen((value) => !value)}>
-                  Historial
+          {historyOpen ? (
+            <div className="max-history-panel" role="dialog" aria-label="Historial de Max">
+              <div className="max-history-panel-header">
+                <button type="button" onClick={() => setHistoryOpen(false)}>
+                  Volver
                 </button>
-                <button type="button" onClick={clearMaxHistory}>
-                  Nuevo chat
-                </button>
+                <strong>Historial</strong>
+                <span>7 dias</span>
               </div>
-            </details>
-
-
-            {historyOpen ? (
-
-
-              <div className="max-history-panel">
-
-
-                {maxHistoryPreview.map((item, index) => {
-
-
-                  const entry = item as any;
-
-
-                  const text = String(entry.content ?? entry.contenido ?? entry.text ?? entry.respuesta ?? '').trim();
-
-
-                  if (!text) return null;
-
-
-                  return (
-
-
-                    <div className="max-history-item" key={entry.id ?? index}>
-
-
-                      <span>{entry.role === 'user' || entry.autor === 'user' ? 'Tu' : 'Max'}</span>
-
-
-                      <p>{text.length > 120 ? `${text.slice(0, 120)}...` : text}</p>
-
-
-                    </div>
-
-
-                  );
-
-
-                })}
-
-
+              <div className="max-history-list">
+                {maxHistoryPreview.length ? (
+                  maxHistoryPreview.map((item, index) => {
+                    const entry = item as any;
+                    const text = String(entry.content ?? entry.contenido ?? entry.text ?? entry.respuesta ?? '').trim();
+                    if (!text) return null;
+                    return (
+                      <div className="max-history-item" key={entry.id ?? index}>
+                        <span>{entry.role === 'user' || entry.autor === 'user' ? 'Tu' : 'Max'}</span>
+                        <p>{text.length > 116 ? `${text.slice(0, 116)}...` : text}</p>
+                      </div>
+                    );
+                  })
+                ) : (
+                  <p className="max-history-empty">Sin mensajes recientes.</p>
+                )}
               </div>
-
-
-            ) : null}
-
-
-            {showSuggestions && suggestions.length ? (
+            </div>
+          ) : null}
+{showSuggestions && suggestions.length ? (
               <div className="max-suggestions">
                 <span>Sugerencias</span>
                 <div>
@@ -649,20 +618,31 @@ export default function AsistenteSmartRh() {
           {error ? <p className="max-error">{error}</p> : null}
 
           <form className="max-input-row" onSubmit={submit}>
-            <textarea
+            <details className="max-chat-menu">
+              <summary aria-label="Abrir opciones de Max" title="Opciones de Max">Menu</summary>
+              <div className="max-chat-menu-panel">
+                <button type="button" onClick={() => setHistoryOpen((value) => !value)}>
+                  Historial
+                </button>
+                <button type="button" onClick={clearMaxHistory}>
+                  Nuevo chat
+                </button>
+              </div>
+            </details>
+                        <textarea
               value={message}
-              onChange={(e) => setMessage(e.target.value)}
+              onChange={(event) => setMessage(event.target.value)}
+              placeholder="Preguntame..."
+              rows={2}
               onKeyDown={(event) => {
                 if (event.key === 'Enter' && !event.shiftKey) {
                   event.preventDefault();
                   event.currentTarget.form?.requestSubmit();
                 }
               }}
-              placeholder="Preguntame..."
-              rows={2}
             />
             <button
-              className="max-send-btn"
+              className="max-send-btn max-send-round"
               type="submit"
               aria-label="Enviar mensaje a Max"
               disabled={loading || !message.trim()}

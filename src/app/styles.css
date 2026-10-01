@@ -13025,591 +13025,242 @@ body::before {
 }
 /* end max-footer-layout-v10 */
 
-
-/* Max assistant final layout: clean footer, compact chips and round send button */
-.max-suggestions {
-  display: flex !important;
-  flex-direction: row !important;
-  align-items: center !important;
-  gap: 8px !important;
-  width: 100% !important;
-  margin: 0 0 10px !important;
-  padding: 0 2px 4px !important;
-  overflow-x: auto !important;
-  overflow-y: hidden !important;
-  scrollbar-width: none !important;
+/* Max final professional composer v2 */
+.max-assistant {
+  pointer-events: none;
 }
 
-.max-suggestions::-webkit-scrollbar {
-  display: none !important;
+.max-assistant-backdrop {
+  background: rgba(2, 6, 23, 0.18) !important;
+  backdrop-filter: blur(1px) !important;
 }
 
-.max-suggestions span {
-  display: none !important;
-}
-
-.max-suggestions div {
-  display: flex !important;
-  flex: 1 1 auto !important;
-  gap: 8px !important;
-  min-width: 0 !important;
-  overflow-x: auto !important;
-  scrollbar-width: none !important;
-}
-
-.max-suggestions div::-webkit-scrollbar {
-  display: none !important;
-}
-
-.max-suggestions button {
-  flex: 0 0 auto !important;
-  min-width: auto !important;
-  width: auto !important;
-  max-width: 168px !important;
-  min-height: 34px !important;
-  padding: 8px 13px !important;
-  border-radius: 999px !important;
-  border: 1px solid rgba(148, 163, 184, 0.22) !important;
-  background: rgba(15, 23, 42, 0.78) !important;
-  color: rgba(226, 232, 240, 0.92) !important;
-  font-size: 0.78rem !important;
-  font-weight: 700 !important;
-  line-height: 1.15 !important;
-  white-space: nowrap !important;
-  box-shadow: none !important;
-}
-
-.max-history-tools {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-  margin: 0 0 10px;
-}
-
-.max-history-tools button {
-  border: 1px solid rgba(148, 163, 184, 0.22);
-  border-radius: 999px;
-  background: rgba(15, 23, 42, 0.72);
-  color: rgba(226, 232, 240, 0.84);
-  font-size: 0.74rem;
-  font-weight: 700;
-  padding: 7px 11px;
-}
-
-.max-history-panel {
-  display: grid;
-  gap: 7px;
-  max-height: 132px;
-  margin: 0 0 10px;
-  padding: 10px;
-  overflow: auto;
-  border: 1px solid rgba(148, 163, 184, 0.16);
-  border-radius: 18px;
-  background: rgba(2, 6, 23, 0.38);
-}
-
-.max-history-item {
-  display: grid;
-  gap: 2px;
-  padding: 8px 10px;
-  border-radius: 14px;
-  background: rgba(15, 23, 42, 0.72);
-}
-
-.max-history-item span {
-  color: rgba(56, 189, 248, 0.92);
-  font-size: 0.68rem;
-  font-weight: 800;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-.max-history-item p {
-  margin: 0;
-  color: rgba(226, 232, 240, 0.88);
-  font-size: 0.78rem;
-  line-height: 1.32;
-}
-
-.max-chat-footer,
-.max-footer,
-.max-composer-wrap,
-.max-input-area {
-  flex: 0 0 auto !important;
-  padding: 14px 18px 16px !important;
-  border-top: 1px solid rgba(148, 163, 184, 0.16) !important;
-  background: linear-gradient(180deg, rgba(15, 23, 42, 0.72), rgba(15, 23, 42, 0.96)) !important;
-}
-
-.max-composer,
-.max-message-form,
-.max-input-form {
-  display: grid !important;
-  grid-template-columns: minmax(0, 1fr) 48px !important;
-  align-items: end !important;
-  gap: 10px !important;
-  width: 100% !important;
-  margin: 0 !important;
-  padding: 8px 8px 8px 15px !important;
-  border: 1px solid rgba(56, 189, 248, 0.25) !important;
-  border-radius: 26px !important;
-  background: rgba(15, 23, 42, 0.9) !important;
-  box-shadow: 0 18px 45px rgba(2, 132, 199, 0.16) !important;
-}
-
-.max-composer textarea,
-.max-message-form textarea,
-.max-input-form textarea,
-.max-composer input,
-.max-message-form input,
-.max-input-form input {
-  width: 100% !important;
-  min-width: 0 !important;
-  min-height: 42px !important;
-  max-height: 112px !important;
-  padding: 10px 2px !important;
-  border: 0 !important;
-  outline: 0 !important;
-  resize: none !important;
-  background: transparent !important;
-  color: rgba(248, 250, 252, 0.96) !important;
-  font-size: 0.92rem !important;
-  line-height: 1.35 !important;
-}
-
-.max-composer textarea::placeholder,
-.max-message-form textarea::placeholder,
-.max-input-form textarea::placeholder,
-.max-composer input::placeholder,
-.max-message-form input::placeholder,
-.max-input-form input::placeholder {
-  color: rgba(148, 163, 184, 0.78) !important;
-}
-
-.max-send-round {
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  width: 48px !important;
-  height: 48px !important;
-  min-width: 48px !important;
-  min-height: 48px !important;
-  padding: 0 !important;
-  border: 0 !important;
-  border-radius: 999px !important;
-  background: linear-gradient(135deg, #38bdf8, #2563eb) !important;
-  color: #ffffff !important;
-  box-shadow: 0 14px 30px rgba(37, 99, 235, 0.32) !important;
-}
-
-.max-send-round:disabled {
-  opacity: 0.45 !important;
-  box-shadow: none !important;
-}
-
-@media (max-width: 720px) {
-  .max-suggestions button {
-    max-width: 142px !important;
-    font-size: 0.74rem !important;
-  }
-
-  .max-composer,
-  .max-message-form,
-  .max-input-form {
-    grid-template-columns: minmax(0, 1fr) 44px !important;
-    border-radius: 24px !important;
-  }
-
-  .max-send-round {
-    width: 44px !important;
-    height: 44px !important;
-    min-width: 44px !important;
-    min-height: 44px !important;
-  }
-}
-
-/* Max assistant final layout */
-.max-suggestions {
-  display: flex !important;
-  flex-direction: row !important;
-  align-items: center !important;
-  gap: 8px !important;
-  width: 100% !important;
-  margin: auto 0 10px !important;
-  padding: 0 2px 4px !important;
-  overflow-x: auto !important;
-  overflow-y: hidden !important;
-  scrollbar-width: none !important;
-}
-
-.max-suggestions::-webkit-scrollbar,
-.max-suggestions div::-webkit-scrollbar {
-  display: none !important;
-}
-
-.max-suggestions span {
-  display: none !important;
-}
-
-.max-suggestions div {
-  display: flex !important;
-  flex: 1 1 auto !important;
-  gap: 8px !important;
-  min-width: 0 !important;
-  overflow-x: auto !important;
-  scrollbar-width: none !important;
-}
-
-.max-suggestions button {
-  flex: 0 0 auto !important;
-  min-width: auto !important;
-  width: auto !important;
-  max-width: 160px !important;
-  min-height: 34px !important;
-  padding: 8px 13px !important;
-  border-radius: 999px !important;
-  border: 1px solid rgba(148, 163, 184, 0.22) !important;
-  background: rgba(15, 23, 42, 0.74) !important;
-  color: rgba(226, 232, 240, 0.9) !important;
-  font-size: 0.78rem !important;
-  font-weight: 700 !important;
-  line-height: 1.15 !important;
-  white-space: nowrap !important;
-  box-shadow: none !important;
-}
-
-.max-history-tools {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-  margin: 0 0 10px;
-}
-
-.max-history-tools button {
-  border: 1px solid rgba(148, 163, 184, 0.22);
-  border-radius: 999px;
-  background: rgba(15, 23, 42, 0.72);
-  color: rgba(226, 232, 240, 0.84);
-  font-size: 0.74rem;
-  font-weight: 700;
-  padding: 7px 11px;
-}
-
-.max-history-panel {
-  display: grid;
-  gap: 7px;
-  max-height: 132px;
-  margin: 0 0 10px;
-  padding: 10px;
-  overflow: auto;
-  border: 1px solid rgba(148, 163, 184, 0.16);
-  border-radius: 18px;
-  background: rgba(2, 6, 23, 0.38);
-}
-
-.max-history-item {
-  display: grid;
-  gap: 2px;
-  padding: 8px 10px;
-  border-radius: 14px;
-  background: rgba(15, 23, 42, 0.72);
-}
-
-.max-history-item span {
-  color: rgba(56, 189, 248, 0.92);
-  font-size: 0.68rem;
-  font-weight: 800;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-.max-history-item p {
-  margin: 0;
-  color: rgba(226, 232, 240, 0.88);
-  font-size: 0.78rem;
-  line-height: 1.32;
-}
-
-.max-chat-footer,
-.max-footer,
-.max-composer-wrap,
-.max-input-area {
-  flex: 0 0 auto !important;
-  padding: 14px 18px 16px !important;
-  border-top: 1px solid rgba(148, 163, 184, 0.16) !important;
-  background: linear-gradient(180deg, rgba(15, 23, 42, 0.72), rgba(15, 23, 42, 0.96)) !important;
-}
-
-.max-composer,
-.max-message-form,
-.max-input-form {
-  display: grid !important;
-  grid-template-columns: minmax(0, 1fr) 48px !important;
-  align-items: end !important;
-  gap: 10px !important;
-  width: 100% !important;
-  margin: 0 !important;
-  padding: 8px 8px 8px 15px !important;
-  border: 1px solid rgba(56, 189, 248, 0.25) !important;
-  border-radius: 26px !important;
-  background: rgba(15, 23, 42, 0.9) !important;
-  box-shadow: 0 18px 45px rgba(2, 132, 199, 0.16) !important;
-}
-
-.max-composer textarea,
-.max-message-form textarea,
-.max-input-form textarea,
-.max-composer input,
-.max-message-form input,
-.max-input-form input {
-  width: 100% !important;
-  min-width: 0 !important;
-  min-height: 42px !important;
-  max-height: 112px !important;
-  padding: 10px 2px !important;
-  border: 0 !important;
-  outline: 0 !important;
-  resize: none !important;
-  background: transparent !important;
-  color: rgba(248, 250, 252, 0.96) !important;
-  font-size: 0.92rem !important;
-  line-height: 1.35 !important;
-}
-
-.max-composer textarea::placeholder,
-.max-message-form textarea::placeholder,
-.max-input-form textarea::placeholder,
-.max-composer input::placeholder,
-.max-message-form input::placeholder,
-.max-input-form input::placeholder {
-  color: rgba(148, 163, 184, 0.78) !important;
-}
-
-.max-send-round {
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  width: 48px !important;
-  height: 48px !important;
-  min-width: 48px !important;
-  min-height: 48px !important;
-  padding: 0 !important;
-  border: 0 !important;
-  border-radius: 999px !important;
-  background: linear-gradient(135deg, #38bdf8, #2563eb) !important;
-  color: #ffffff !important;
-  box-shadow: 0 14px 30px rgba(37, 99, 235, 0.32) !important;
-}
-
-.max-send-round:disabled {
-  opacity: 0.45 !important;
-  box-shadow: none !important;
-}
-
-@media (max-width: 720px) {
-  .max-suggestions button {
-    max-width: 140px !important;
-    font-size: 0.74rem !important;
-  }
-
-  .max-composer,
-  .max-message-form,
-  .max-input-form {
-    grid-template-columns: minmax(0, 1fr) 44px !important;
-    border-radius: 24px !important;
-  }
-
-  .max-send-round {
-    width: 44px !important;
-    height: 44px !important;
-    min-width: 44px !important;
-    min-height: 44px !important;
-  }
-}
-
-/* Max final side composer polish */
-html body :is(.max-assistant-panel, .max-chat-panel, .max-panel, .max-widget-panel, .max-window, [class*="max"][class*="panel"], [class*="max"][class*="window"]) {
+.max-assistant-panel {
   position: fixed !important;
   right: 24px !important;
   left: auto !important;
-  top: 164px !important;
+  top: 126px !important;
   bottom: auto !important;
   transform: none !important;
+  display: flex !important;
+  flex-direction: column !important;
   width: min(430px, calc(100vw - 32px)) !important;
-  max-width: min(430px, calc(100vw - 32px)) !important;
-  height: min(620px, calc(100vh - 190px)) !important;
-  max-height: min(620px, calc(100vh - 190px)) !important;
-  border-radius: 26px !important;
+  height: min(650px, calc(100vh - 150px)) !important;
+  max-height: min(650px, calc(100vh - 150px)) !important;
+  border: 1px solid rgba(125, 211, 252, 0.16) !important;
+  border-radius: 28px !important;
   overflow: hidden !important;
   background: #07111f !important;
-  box-shadow: 0 28px 80px rgba(2, 6, 23, 0.5) !important;
+  box-shadow: 0 28px 80px rgba(2, 6, 23, 0.52) !important;
+  pointer-events: auto !important;
 }
 
-html body :is(.max-header, .max-chat-header, [class*="max"][class*="header"]) {
+.max-assistant-header {
+  display: grid !important;
+  grid-template-columns: 58px minmax(0, 1fr) 44px !important;
+  align-items: center !important;
+  gap: 14px !important;
   min-height: auto !important;
-  padding: 18px 22px 18px !important;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.16) !important;
+  padding: 18px 20px !important;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.14) !important;
   background: linear-gradient(135deg, #172554 0%, #0369a1 58%, #06b6d4 100%) !important;
 }
 
-html body :is(.max-header, .max-chat-header, [class*="max"][class*="header"]) h2,
-html body :is(.max-header, .max-chat-header, [class*="max"][class*="header"]) h3 {
+.max-avatar {
+  display: grid !important;
+  place-items: center !important;
+  width: 54px !important;
+  height: 54px !important;
+  border-radius: 18px !important;
+  border: 1px solid rgba(255, 255, 255, 0.86) !important;
+  background: #ffffff !important;
+  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.22) !important;
+  overflow: hidden !important;
+}
+
+.max-avatar img {
+  width: 42px !important;
+  height: 42px !important;
+  object-fit: contain !important;
+  filter: none !important;
+}
+
+.max-assistant-header span {
+  display: block !important;
+  color: rgba(226, 232, 240, 0.78) !important;
+  font-size: 0.68rem !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.16em !important;
+  text-transform: uppercase !important;
+}
+
+.max-assistant-header h2 {
+  margin: 2px 0 4px !important;
+  color: #ffffff !important;
+  font-size: 1.34rem !important;
+  line-height: 1.05 !important;
+}
+
+.max-assistant-header p {
   margin: 0 !important;
-  font-size: 1.28rem !important;
-  line-height: 1.1 !important;
+  color: rgba(226, 232, 240, 0.74) !important;
+  font-size: 0.82rem !important;
+  line-height: 1.2 !important;
 }
 
-html body :is(.max-header, .max-chat-header, [class*="max"][class*="header"]) p,
-html body :is(.max-header, .max-chat-header, [class*="max"][class*="header"]) span {
-  font-size: 0.8rem !important;
-  line-height: 1.25 !important;
+.max-close-btn {
+  display: grid !important;
+  place-items: center !important;
+  width: 40px !important;
+  height: 40px !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  border-radius: 999px !important;
+  background: rgba(2, 6, 23, 0.46) !important;
+  color: #ffffff !important;
+  font-size: 1.3rem !important;
+  line-height: 1 !important;
 }
 
-html body :is(.max-body, .max-chat-body, .max-messages, .max-conversation, [class*="max"][class*="body"], [class*="max"][class*="messages"], [class*="max"][class*="conversation"]) {
-  min-height: 0 !important;
+.max-messages {
   flex: 1 1 auto !important;
-  padding: 20px 18px 128px !important;
+  min-height: 0 !important;
+  padding: 18px 18px 156px !important;
   overflow-y: auto !important;
-  background: #07111f !important;
+  background:
+    radial-gradient(circle at 12% 0%, rgba(14, 165, 233, 0.08), transparent 32%),
+    #07111f !important;
 }
 
-html body .max-suggestions {
+.max-message {
+  max-width: 86% !important;
+  padding: 12px 14px !important;
+  border-radius: 18px !important;
+  font-size: 0.84rem !important;
+  line-height: 1.42 !important;
+}
+
+.max-message.assistant {
+  margin-right: auto !important;
+  border: 1px solid rgba(125, 211, 252, 0.16) !important;
+  background: rgba(15, 23, 42, 0.82) !important;
+  color: rgba(248, 250, 252, 0.95) !important;
+}
+
+.max-message.user {
+  margin-left: auto !important;
+  background: linear-gradient(135deg, #0284c7, #2563eb) !important;
+  color: #ffffff !important;
+}
+
+.max-suggestions {
   position: absolute !important;
   left: 18px !important;
   right: 18px !important;
   bottom: 86px !important;
-  z-index: 7 !important;
-  display: flex !important;
-  align-items: center !important;
+  z-index: 8 !important;
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 8px !important;
   width: auto !important;
   margin: 0 !important;
   padding: 0 !important;
-  overflow-x: auto !important;
-  overflow-y: hidden !important;
-  scrollbar-width: none !important;
+  overflow: visible !important;
 }
 
-html body .max-suggestions::-webkit-scrollbar,
-html body .max-suggestions div::-webkit-scrollbar {
+.max-suggestions span {
   display: none !important;
 }
 
-html body .max-suggestions span {
-  display: none !important;
+.max-suggestions div {
+  display: contents !important;
 }
 
-html body .max-suggestions div {
-  display: flex !important;
-  grid-template-columns: none !important;
-  flex: 1 1 auto !important;
-  gap: 8px !important;
-  min-width: 0 !important;
-  overflow-x: auto !important;
-  scrollbar-width: none !important;
-}
-
-html body .max-suggestions button {
-  flex: 0 0 auto !important;
-  width: auto !important;
-  min-width: max-content !important;
-  max-width: none !important;
-  min-height: 32px !important;
-  padding: 7px 12px !important;
-  border-radius: 999px !important;
-  border: 1px solid rgba(125, 211, 252, 0.22) !important;
-  background: rgba(15, 23, 42, 0.86) !important;
-  color: rgba(226, 232, 240, 0.92) !important;
-  font-size: 0.73rem !important;
-  font-weight: 800 !important;
-  line-height: 1.1 !important;
-  white-space: nowrap !important;
-  text-overflow: clip !important;
-  box-shadow: 0 10px 24px rgba(2, 6, 23, 0.22) !important;
-}
-
-html body .max-history-tools {
-  display: none !important;
-}
-
-html body .max-chat-menu {
-  position: absolute !important;
-  left: 26px !important;
-  bottom: 25px !important;
-  z-index: 12 !important;
-}
-
-html body .max-chat-menu summary {
+.max-suggestions button {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  width: 32px !important;
-  height: 32px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 38px !important;
+  padding: 8px 10px !important;
   border-radius: 999px !important;
-  border: 1px solid rgba(125, 211, 252, 0.24) !important;
-  background: rgba(2, 6, 23, 0.56) !important;
-  color: rgba(226, 232, 240, 0.92) !important;
-  font-size: 1rem !important;
-  font-weight: 900 !important;
-  cursor: pointer !important;
-  list-style: none !important;
+  border: 1px solid rgba(125, 211, 252, 0.2) !important;
+  background: rgba(15, 23, 42, 0.92) !important;
+  color: rgba(226, 232, 240, 0.94) !important;
+  font-size: 0.73rem !important;
+  font-weight: 800 !important;
+  line-height: 1.12 !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  text-align: center !important;
+  box-shadow: 0 10px 24px rgba(2, 6, 23, 0.22) !important;
 }
 
-html body .max-chat-menu summary::-webkit-details-marker {
+.max-history-tools {
   display: none !important;
 }
 
-html body .max-chat-menu-panel {
-  position: absolute !important;
-  left: 0 !important;
-  bottom: 40px !important;
-  display: grid !important;
-  gap: 7px !important;
-  width: 136px !important;
-  padding: 8px !important;
-  border: 1px solid rgba(125, 211, 252, 0.18) !important;
-  border-radius: 16px !important;
-  background: rgba(2, 6, 23, 0.96) !important;
-  box-shadow: 0 20px 44px rgba(2, 6, 23, 0.34) !important;
-}
-
-html body .max-chat-menu-panel button {
-  min-height: 30px !important;
-  padding: 7px 9px !important;
-  border: 0 !important;
-  border-radius: 12px !important;
-  background: rgba(15, 23, 42, 0.88) !important;
-  color: rgba(226, 232, 240, 0.9) !important;
-  font-size: 0.74rem !important;
-  font-weight: 800 !important;
-  text-align: left !important;
-}
-
-html body .max-history-panel {
+.max-history-panel {
   position: absolute !important;
   left: 18px !important;
   right: 18px !important;
-  bottom: 126px !important;
-  z-index: 9 !important;
+  bottom: 86px !important;
+  z-index: 16 !important;
   display: grid !important;
-  gap: 7px !important;
-  max-height: 154px !important;
-  padding: 10px !important;
+  gap: 10px !important;
+  max-height: 300px !important;
+  padding: 12px !important;
   overflow: auto !important;
-  border: 1px solid rgba(125, 211, 252, 0.18) !important;
-  border-radius: 18px !important;
+  border: 1px solid rgba(125, 211, 252, 0.2) !important;
+  border-radius: 20px !important;
   background: rgba(2, 6, 23, 0.96) !important;
-  box-shadow: 0 20px 44px rgba(2, 6, 23, 0.34) !important;
+  box-shadow: 0 22px 52px rgba(2, 6, 23, 0.42) !important;
 }
 
-html body .max-history-item {
+.max-history-panel-header {
+  display: grid !important;
+  grid-template-columns: auto 1fr auto !important;
+  align-items: center !important;
+  gap: 9px !important;
+}
+
+.max-history-panel-header button {
+  min-height: 30px !important;
+  padding: 6px 10px !important;
+  border: 1px solid rgba(125, 211, 252, 0.24) !important;
+  border-radius: 999px !important;
+  background: rgba(15, 23, 42, 0.86) !important;
+  color: rgba(226, 232, 240, 0.92) !important;
+  font-size: 0.72rem !important;
+  font-weight: 900 !important;
+}
+
+.max-history-panel-header strong {
+  color: #ffffff !important;
+  font-size: 0.86rem !important;
+}
+
+.max-history-panel-header span {
+  color: rgba(148, 163, 184, 0.9) !important;
+  font-size: 0.68rem !important;
+  font-weight: 800 !important;
+}
+
+.max-history-list {
+  display: grid !important;
+  gap: 8px !important;
+}
+
+.max-history-item {
   display: grid !important;
   gap: 3px !important;
-  padding: 8px 10px !important;
+  padding: 9px 10px !important;
   border-radius: 14px !important;
   background: rgba(15, 23, 42, 0.86) !important;
 }
 
-html body .max-history-item span {
+.max-history-item span {
   color: #38bdf8 !important;
   font-size: 0.66rem !important;
   font-weight: 900 !important;
@@ -13617,91 +13268,239 @@ html body .max-history-item span {
   text-transform: uppercase !important;
 }
 
-html body .max-history-item p {
+.max-history-item p,
+.max-history-empty {
   margin: 0 !important;
   color: rgba(226, 232, 240, 0.9) !important;
   font-size: 0.76rem !important;
-  line-height: 1.32 !important;
+  line-height: 1.35 !important;
 }
 
-html body :is(.max-chat-footer, .max-footer, .max-composer-wrap, .max-input-area, [class*="max"][class*="footer"], [class*="max"][class*="composer-wrap"], [class*="max"][class*="input-area"]) {
-  flex: 0 0 auto !important;
-  padding: 12px 16px 14px !important;
-  border-top: 1px solid rgba(148, 163, 184, 0.16) !important;
-  background: rgba(15, 23, 42, 0.98) !important;
-}
-
-html body form:has(.max-send-round),
-html body :is(.max-composer, .max-message-form, .max-input-form) {
+.max-input-row {
+  position: absolute !important;
+  left: 18px !important;
+  right: 18px !important;
+  bottom: 18px !important;
+  z-index: 10 !important;
   display: grid !important;
-  grid-template-columns: minmax(0, 1fr) 38px !important;
+  grid-template-columns: 58px minmax(0, 1fr) 36px !important;
   align-items: center !important;
   gap: 8px !important;
-  width: 100% !important;
-  min-height: 50px !important;
+  min-height: 54px !important;
   margin: 0 !important;
-  padding: 6px 6px 6px 54px !important;
-  border: 1px solid rgba(56, 189, 248, 0.26) !important;
+  padding: 7px 7px 7px 8px !important;
+  border: 1px solid rgba(56, 189, 248, 0.28) !important;
   border-radius: 999px !important;
-  background: rgba(15, 23, 42, 0.92) !important;
-  box-shadow: 0 14px 34px rgba(2, 132, 199, 0.16) !important;
+  background: rgba(15, 23, 42, 0.98) !important;
+  box-shadow: 0 18px 42px rgba(2, 132, 199, 0.16) !important;
 }
 
-html body form:has(.max-send-round) :is(textarea, input),
-html body :is(.max-composer, .max-message-form, .max-input-form) :is(textarea, input) {
+.max-chat-menu {
+  position: relative !important;
+  z-index: 14 !important;
+  grid-column: 1 !important;
+  justify-self: stretch !important;
+}
+
+.max-chat-menu summary {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  min-height: 36px !important;
+  border: 1px solid rgba(125, 211, 252, 0.24) !important;
+  border-radius: 999px !important;
+  background: rgba(2, 6, 23, 0.58) !important;
+  color: rgba(226, 232, 240, 0.92) !important;
+  font-size: 0.72rem !important;
+  font-weight: 900 !important;
+  cursor: pointer !important;
+  list-style: none !important;
+}
+
+.max-chat-menu summary::-webkit-details-marker {
+  display: none !important;
+}
+
+.max-chat-menu-panel {
+  position: absolute !important;
+  left: 0 !important;
+  bottom: 44px !important;
+  display: grid !important;
+  gap: 7px !important;
+  width: 142px !important;
+  padding: 8px !important;
+  border: 1px solid rgba(125, 211, 252, 0.2) !important;
+  border-radius: 16px !important;
+  background: rgba(2, 6, 23, 0.98) !important;
+  box-shadow: 0 20px 44px rgba(2, 6, 23, 0.38) !important;
+}
+
+.max-chat-menu-panel button {
+  min-height: 30px !important;
+  width: 100% !important;
+  padding: 7px 9px !important;
+  border: 0 !important;
+  border-radius: 12px !important;
+  background: rgba(15, 23, 42, 0.9) !important;
+  color: rgba(226, 232, 240, 0.92) !important;
+  font-size: 0.72rem !important;
+  font-weight: 850 !important;
+  text-align: left !important;
+}
+
+.max-input-row textarea,
+.max-input-row input {
+  grid-column: 2 !important;
   width: 100% !important;
   min-width: 0 !important;
   min-height: 34px !important;
-  max-height: 92px !important;
+  max-height: 88px !important;
   padding: 8px 0 !important;
   border: 0 !important;
   outline: 0 !important;
   resize: none !important;
   background: transparent !important;
   color: rgba(248, 250, 252, 0.96) !important;
-  font-size: 0.86rem !important;
+  font-size: 0.84rem !important;
   line-height: 1.3 !important;
 }
 
-html body form:has(.max-send-round) :is(textarea, input)::placeholder,
-html body :is(.max-composer, .max-message-form, .max-input-form) :is(textarea, input)::placeholder {
-  color: rgba(148, 163, 184, 0.74) !important;
+.max-input-row textarea::placeholder,
+.max-input-row input::placeholder {
+  color: rgba(148, 163, 184, 0.72) !important;
 }
 
-html body .max-send-round {
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  width: 38px !important;
-  height: 38px !important;
-  min-width: 38px !important;
-  min-height: 38px !important;
+.max-send-round {
+  grid-column: 3 !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  width: 36px !important;
+  height: 36px !important;
+  min-width: 36px !important;
+  min-height: 36px !important;
   padding: 0 !important;
   border: 0 !important;
   border-radius: 999px !important;
   background: linear-gradient(135deg, #38bdf8, #2563eb) !important;
   color: #ffffff !important;
-  box-shadow: 0 12px 26px rgba(37, 99, 235, 0.3) !important;
+  font-size: 0 !important;
+  box-shadow: 0 12px 24px rgba(37, 99, 235, 0.28) !important;
 }
 
-html body .max-send-round:disabled {
-  opacity: 0.48 !important;
+.max-send-round::before {
+  content: '↑' !important;
+  font-size: 1.05rem !important;
+  line-height: 1 !important;
+  font-weight: 900 !important;
+}
+
+.max-send-round:disabled {
+  opacity: 0.45 !important;
   box-shadow: none !important;
 }
 
+.max-ticket-btn {
+  display: none !important;
+}
+
+.max-floating-btn {
+  display: grid !important;
+  place-items: center !important;
+  width: 64px !important;
+  height: 64px !important;
+  padding: 6px !important;
+  border: 1px solid rgba(2, 132, 199, 0.14) !important;
+  border-radius: 999px !important;
+  background: #ffffff !important;
+  box-shadow: 0 18px 38px rgba(2, 6, 23, 0.28) !important;
+  cursor: grab !important;
+  pointer-events: auto !important;
+}
+
+.max-floating-btn img,
+.max-floating-logo img {
+  width: 48px !important;
+  height: 48px !important;
+  object-fit: contain !important;
+  filter: none !important;
+}
+
+.max-floating-btn span,
+.max-floating-btn small {
+  display: none !important;
+}
+
+[data-theme='dark'] .max-floating-btn {
+  background: #ffffff !important;
+  box-shadow: 0 18px 42px rgba(56, 189, 248, 0.22), 0 12px 28px rgba(0, 0, 0, 0.32) !important;
+}
+
 @media (max-width: 720px) {
-  html body :is(.max-assistant-panel, .max-chat-panel, .max-panel, .max-widget-panel, .max-window, [class*="max"][class*="panel"], [class*="max"][class*="window"]) {
+  .max-assistant-panel {
     right: 10px !important;
-    top: 96px !important;
+    top: 82px !important;
     width: calc(100vw - 20px) !important;
-    height: min(620px, calc(100vh - 116px)) !important;
-    max-height: min(620px, calc(100vh - 116px)) !important;
-    border-radius: 22px !important;
+    height: min(640px, calc(100vh - 104px)) !important;
+    border-radius: 24px !important;
   }
 
-  html body .max-suggestions {
+  .max-assistant-header {
+    grid-template-columns: 52px minmax(0, 1fr) 40px !important;
+    padding: 16px !important;
+  }
+
+  .max-avatar {
+    width: 50px !important;
+    height: 50px !important;
+    border-radius: 16px !important;
+  }
+
+  .max-avatar img {
+    width: 39px !important;
+    height: 39px !important;
+  }
+
+  .max-messages {
+    padding: 16px 14px 154px !important;
+  }
+
+  .max-suggestions {
     left: 14px !important;
     right: 14px !important;
-    bottom: 82px !important;
+    bottom: 84px !important;
+    gap: 7px !important;
+  }
+
+  .max-suggestions button {
+    min-height: 36px !important;
+    padding: 7px 8px !important;
+    font-size: 0.7rem !important;
+  }
+
+  .max-input-row {
+    left: 14px !important;
+    right: 14px !important;
+    bottom: 14px !important;
+    grid-template-columns: 54px minmax(0, 1fr) 34px !important;
+  }
+
+  .max-send-round {
+    width: 34px !important;
+    height: 34px !important;
+    min-width: 34px !important;
+    min-height: 34px !important;
+  }
+
+  .max-floating-btn {
+    width: 58px !important;
+    height: 58px !important;
+    padding: 6px !important;
+  }
+
+  .max-floating-btn img,
+  .max-floating-logo img {
+    width: 44px !important;
+    height: 44px !important;
   }
 }
