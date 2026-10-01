@@ -1421,8 +1421,8 @@
 .max-assistant {
   position: fixed;
   z-index: 80;
-  right: 24px;
-  bottom: 24px;
+  inset: 0;
+  pointer-events: none;
 }
 
 .max-assistant-backdrop {
@@ -1436,44 +1436,82 @@
 
 .max-floating-btn {
   position: fixed;
-  right: 24px;
-  bottom: 24px;
   z-index: 82;
   display: grid;
+  grid-template-rows: 1fr auto;
   place-items: center;
-  width: 72px;
-  height: 72px;
-  border: 1px solid rgba(255, 255, 255, 0.55);
-  border-radius: 24px;
+  width: 78px;
+  height: 78px;
+  border: 1px solid rgba(255, 255, 255, 0.68);
+  border-radius: 26px;
   color: #ffffff;
   background:
-    linear-gradient(135deg, rgba(56, 189, 248, 0.98), rgba(14, 165, 233, 0.92)),
+    radial-gradient(circle at 76% 20%, rgba(255, 255, 255, 0.38), transparent 18px),
+    linear-gradient(145deg, rgba(56, 189, 248, 0.98), rgba(14, 165, 233, 0.92)),
     var(--primary);
-  box-shadow: 0 24px 45px rgba(2, 132, 199, 0.28);
-  cursor: pointer;
+  box-shadow:
+    0 26px 44px rgba(2, 132, 199, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28);
+  cursor: grab;
+  pointer-events: auto;
+  touch-action: none;
+  user-select: none;
+  transition:
+    opacity 160ms ease,
+    transform 160ms ease,
+    box-shadow 160ms ease;
 }
 
-.max-floating-btn span {
-  font-size: 1.05rem;
+.max-floating-btn:active,
+.max-floating-btn.is-dragging {
+  cursor: grabbing;
+  transform: scale(0.98);
+  box-shadow:
+    0 18px 34px rgba(2, 132, 199, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.24);
+}
+
+.max-floating-btn.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.max-floating-logo {
+  display: grid;
+  place-items: center;
+  line-height: 1;
+}
+
+.max-floating-logo strong {
+  font-size: 0.72rem;
   font-weight: 950;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.12em;
+}
+
+.max-floating-logo em {
+  margin-top: 4px;
+  font-size: 1.05rem;
+  font-style: normal;
+  font-weight: 950;
+  letter-spacing: 0.01em;
 }
 
 .max-floating-btn small {
-  margin-top: -12px;
-  font-size: 0.68rem;
+  margin-bottom: 12px;
+  font-size: 0.58rem;
   font-weight: 900;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+  opacity: 0.9;
 }
 
 .max-floating-btn::after {
   position: absolute;
-  top: 11px;
-  right: 11px;
-  width: 12px;
-  height: 12px;
-  border: 2px solid #ffffff;
+  top: 10px;
+  right: 10px;
+  width: 14px;
+  height: 14px;
+  border: 3px solid #ffffff;
   border-radius: 999px;
   background: #2dd4bf;
   content: '';
@@ -1481,18 +1519,17 @@
 
 .max-assistant-panel {
   position: fixed;
-  right: 24px;
-  bottom: 108px;
   z-index: 90;
   display: grid;
-  width: min(440px, calc(100vw - 32px));
-  max-height: min(720px, calc(100vh - 136px));
-  grid-template-rows: auto minmax(220px, 1fr) auto auto auto;
+  grid-template-rows: auto minmax(190px, 1fr) auto auto auto;
   overflow: hidden;
   border: 1px solid var(--border);
-  border-radius: 28px;
+  border-radius: 30px;
   background: var(--card);
-  box-shadow: 0 30px 70px rgba(2, 8, 23, 0.28);
+  box-shadow:
+    0 34px 76px rgba(2, 8, 23, 0.32),
+    0 0 0 1px rgba(255, 255, 255, 0.04);
+  pointer-events: auto;
 }
 
 .max-assistant-header {
@@ -1500,21 +1537,38 @@
   grid-template-columns: auto 1fr auto;
   gap: 14px;
   align-items: center;
-  padding: 18px;
+  padding: 18px 18px 17px;
   border-bottom: 1px solid var(--border);
-  background: var(--card-muted);
+  background:
+    linear-gradient(135deg, rgba(56, 189, 248, 0.10), transparent 42%),
+    var(--card-muted);
 }
 
 .max-avatar {
   display: grid;
-  width: 46px;
-  height: 46px;
+  width: 58px;
+  height: 58px;
   place-items: center;
-  border-radius: 17px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 20px;
   color: #ffffff;
-  background: var(--primary);
+  background:
+    radial-gradient(circle at 75% 20%, rgba(255, 255, 255, 0.36), transparent 18px),
+    linear-gradient(145deg, #38bdf8, #0ea5e9);
   font-weight: 950;
-  letter-spacing: 0.04em;
+  line-height: 1;
+  box-shadow: 0 18px 32px rgba(14, 165, 233, 0.22);
+}
+
+.max-avatar span {
+  font-size: 0.64rem;
+  letter-spacing: 0.12em;
+}
+
+.max-avatar strong {
+  margin-top: 3px;
+  font-size: 0.98rem;
+  letter-spacing: 0.01em;
 }
 
 .max-assistant-header span {
@@ -1560,7 +1614,8 @@
   align-content: start;
   gap: 12px;
   overflow: auto;
-  padding: 16px;
+  min-height: 210px;
+  padding: 16px 18px;
   background: var(--bg);
 }
 
@@ -1569,7 +1624,8 @@
   max-width: 92%;
   border: 1px solid var(--border);
   border-radius: 20px;
-  padding: 13px 15px;
+  padding: 12px 14px;
+  box-shadow: var(--shadow-xs);
 }
 
 .max-message p {
@@ -1629,30 +1685,36 @@
 }
 
 .max-suggestions {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
-  overflow-x: auto;
-  padding: 12px 16px 4px;
+  padding: 12px 18px 4px;
 }
 
 .max-suggestions button {
-  flex: 0 0 auto;
-  max-width: 230px;
   border: 1px solid var(--border);
-  border-radius: 999px;
-  padding: 9px 12px;
+  border-radius: 18px;
+  padding: 10px 12px;
   color: var(--text);
   background: var(--card-muted);
+  font-size: 0.82rem;
   font-weight: 800;
   text-align: left;
   cursor: pointer;
+  line-height: 1.25;
+}
+
+.max-suggestions button:hover {
+  color: var(--primary);
+  border-color: var(--primary);
+  background: var(--primary-soft);
 }
 
 .max-input-row {
   display: grid;
   grid-template-columns: 1fr auto;
   gap: 10px;
-  padding: 14px 16px;
+  padding: 14px 18px;
 }
 
 .max-input-row textarea {
@@ -1684,7 +1746,7 @@
 }
 
 .max-ticket-btn {
-  margin: 0 16px 16px;
+  margin: 0 18px 18px;
   padding: 12px 14px;
   background: #14b8a6;
 }
@@ -1700,25 +1762,18 @@
 }
 
 @media (max-width: 720px) {
-  .max-assistant {
-    right: 16px;
-    bottom: 16px;
-  }
-
   .max-floating-btn {
-    right: 16px;
-    bottom: 16px;
-    width: 64px;
-    height: 64px;
-    border-radius: 22px;
+    width: 70px;
+    height: 70px;
+    border-radius: 24px;
   }
 
   .max-assistant-panel {
-    right: 12px;
-    bottom: 92px;
-    width: calc(100vw - 24px);
-    max-height: calc(100vh - 116px);
     border-radius: 24px;
+  }
+
+  .max-suggestions {
+    grid-template-columns: 1fr;
   }
 
   .max-input-row {

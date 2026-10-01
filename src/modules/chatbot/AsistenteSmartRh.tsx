@@ -1,4 +1,12 @@
-import { FormEvent, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  CSSProperties,
+  FormEvent,
+  PointerEvent,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../../services/api';
 import { useAuth } from '../../app/auth/AuthContext';
@@ -31,8 +39,92 @@ type Message = {
   response?: ChatbotResponse;
 };
 
+type FloatingPosition = {
+  x: number;
+  y: number;
+};
+
+type DragState = {
+  pointerId: number;
+  offsetX: number;
+  offsetY: number;
+  startX: number;
+  startY: number;
+  moved: boolean;
+};
+
+const POSITION_STORAGE_KEY = 'smart_rh_max_position';
+const BUTTON_SIZE = 78;
+const EDGE_GAP = 18;
+const PANEL_GAP = 16;
+const PANEL_WIDTH = 430;
+
 function buildId() {
   return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+}
+
+function clamp(value: number, min: number, max: number) {
+  return Math.min(Math.max(value, min), max);
+}
+
+function getDefaultPosition(): FloatingPosition {
+  if (typeof window === 'undefined') {
+    return { x: 24, y: 24 };
+  }
+
+  return {
+    x: window.innerWidth - BUTTON_SIZE - 24,
+    y: window.innerHeight - BUTTON_SIZE - 24,
+  };
+}
+
+function clampPosition(position: FloatingPosition): FloatingPosition {
+  if (typeof window === 'undefined') return position;
+
+  return {
+    x: clamp(
+      position.x,
+      EDGE_GAP,
+      Math.max(EDGE_GAP, window.innerWidth - BUTTON_SIZE - EDGE_GAP)
+    ),
+    y: clamp(
+      position.y,
+      EDGE_GAP,
+      Math.max(EDGE_GAP, window.innerHeight - BUTTON_SIZE - EDGE_GAP)
+    ),
+  };
+}
+
+function getInitialPosition(): FloatingPosition {
+  if (typeof window === 'undefined') {
+    return getDefaultPosition();
+  }
+
+  try {
+    const saved = window.localStorage.getItem(POSITION_STORAGE_KEY);
+    const parsed = saved ? JSON.parse(saved) : null;
+
+    if (
+      parsed &&
+      Number.isFinite(parsed.x) &&
+      Number.isFinite(parsed.y)
+    ) {
+      return clampPosition(parsed);
+    }
+  } catch {
+    return getDefaultPosition();
+  }
+
+  return getDefaultPosition();
+}
+
+function persistPosition(position: FloatingPosition) {
+  if (typeof window === 'undefined') return;
+
+  window.localStorage.setItem(
+    POSITION_STORAGE_KEY,
+    JSON.stringify(position)
+  );
 }
 
 function isWebAction(action: ChatbotAction) {
@@ -61,6 +153,10 @@ export default function AsistenteSmartRh() {
   const { user } = useAuth();
   const messagesRef = useRef<HTMLDivElement | null>(null);
   const [open, setOpen] = useState(false);
+  const [buttonPosition, setButtonPosition] = useState<FloatingPosition>(
+    () => getInitialPosition()
+  );
+  const [dragState, setDragState] = useState<DragState | null>(null);
   const [messages, setMessages] = useState<Message[]>([
     {
       id: buildId(),
@@ -105,6 +201,22 @@ export default function AsistenteSmartRh() {
 
   useEffect(() => {
     loadSuggestions();
+  }, []);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setButtonPosition((current) => {
+        const next = clampPosition(current);
+        persistPosition(next);
+        return next;
+      });
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
   }, []);
 
   useEffect(() => {
@@ -225,6 +337,99 @@ export default function AsistenteSmartRh() {
     sendMessage();
   }
 
+  const buttonStyle = useMemo<CSSProperties>(
+    () => ({
+      left: `${buttonPosition.x}px`,
+      top: `${buttonPosition.y}px`,
+    }),
+    [buttonPosition.x, buttonPosition.y]
+  );
+
+  const panelStyle = useMemo<CSSProperties>(() => {
+    if (typeof window === 'undefined') return {};
+
+    const width = Math.min(PANEL_WIDTH, window.innerWidth - EDGE_GAP * 2);
+    const maxHeight = Math.min(640, window.innerHeight - EDGE_GAP * 2);
+    const opensLeft =
+      buttonPosition.x + BUTTON_SIZE / 2 > window.innerWidth / 2;
+
+    const preferredLeft = opensLeft
+      ? buttonPosition.x - width - PANEL_GAP
+      : buttonPosition.x + BUTTON_SIZE + PANEL_GAP;
+
+    const preferredTop =
+      buttonPosition.y + BUTTON_SIZE + PANEL_GAP + maxHeight >
+      window.innerHeight - EDGE_GAP
+        ? buttonPosition.y - maxHeight - PANEL_GAP
+        : buttonPosition.y + BUTTON_SIZE + PANEL_GAP;
+
+    return {
+      width: `${width}px`,
+      maxHeight: `${maxHeight}px`,
+      left: `${clamp(
+        preferredLeft,
+        EDGE_GAP,
+        window.innerWidth - width - EDGE_GAP
+      )}px`,
+      top: `${clamp(
+        preferredTop,
+        EDGE_GAP,
+        window.innerHeight - maxHeight - EDGE_GAP
+      )}px`,
+    };
+  }, [buttonPosition.x, buttonPosition.y]);
+
+  function handleButtonPointerDown(
+    event: PointerEvent<HTMLButtonElement>
+  ) {
+    event.currentTarget.setPointerCapture(event.pointerId);
+    setDragState({
+      pointerId: event.pointerId,
+      offsetX: event.clientX - buttonPosition.x,
+      offsetY: event.clientY - buttonPosition.y,
+      startX: event.clientX,
+      startY: event.clientY,
+      moved: false,
+    });
+  }
+
+  function handleButtonPointerMove(
+    event: PointerEvent<HTMLButtonElement>
+  ) {
+    if (!dragState || dragState.pointerId !== event.pointerId) return;
+
+    const distance = Math.hypot(
+      event.clientX - dragState.startX,
+      event.clientY - dragState.startY
+    );
+
+    const next = clampPosition({
+      x: event.clientX - dragState.offsetX,
+      y: event.clientY - dragState.offsetY,
+    });
+
+    setButtonPosition(next);
+    setDragState({
+      ...dragState,
+      moved: dragState.moved || distance > 5,
+    });
+  }
+
+  function handleButtonPointerUp(event: PointerEvent<HTMLButtonElement>) {
+    if (!dragState || dragState.pointerId !== event.pointerId) return;
+
+    event.currentTarget.releasePointerCapture(event.pointerId);
+    const next = clampPosition(buttonPosition);
+    setButtonPosition(next);
+    persistPosition(next);
+
+    if (!dragState.moved) {
+      setOpen(true);
+    }
+
+    setDragState(null);
+  }
+
   return (
     <div className="max-assistant">
       {open ? (
@@ -237,9 +442,16 @@ export default function AsistenteSmartRh() {
       ) : null}
 
       {open ? (
-        <section className="max-assistant-panel" aria-label="Chat con Max">
+        <section
+          className="max-assistant-panel"
+          style={panelStyle}
+          aria-label="Chat con Max"
+        >
           <header className="max-assistant-header">
-            <div className="max-avatar">MX</div>
+            <div className="max-avatar" aria-hidden="true">
+              <span>SRH</span>
+              <strong>Max</strong>
+            </div>
             <div>
               <span>Asistente interno</span>
               <h2>Max</h2>
@@ -334,13 +546,28 @@ export default function AsistenteSmartRh() {
       ) : null}
 
       <button
-        className="max-floating-btn"
+        className={`max-floating-btn ${open ? 'is-hidden' : ''} ${
+          dragState?.moved ? 'is-dragging' : ''
+        }`}
         type="button"
         aria-label="Abrir Max"
-        onClick={() => setOpen(true)}
+        style={buttonStyle}
+        onPointerDown={handleButtonPointerDown}
+        onPointerMove={handleButtonPointerMove}
+        onPointerUp={handleButtonPointerUp}
+        onPointerCancel={() => setDragState(null)}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            setOpen(true);
+          }
+        }}
       >
-        <span>MX</span>
-        <small>Max</small>
+        <span className="max-floating-logo">
+          <strong>SRH</strong>
+          <em>Max</em>
+        </span>
+        <small>Arrástrame</small>
       </button>
     </div>
   );
