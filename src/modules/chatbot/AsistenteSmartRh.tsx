@@ -58,7 +58,7 @@ const POSITION_STORAGE_KEY = 'smart_rh_max_position';
 const BUTTON_SIZE = 78;
 const EDGE_GAP = 18;
 const PANEL_GAP = 16;
-const PANEL_WIDTH = 430;
+const PANEL_WIDTH = 470;
 
 function buildId() {
   return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
@@ -179,7 +179,7 @@ export default function AsistenteSmartRh() {
       id: buildId(),
       author: 'assistant',
       text:
-        'Hola, soy Max. Cuentame que intentas resolver en SMART RH y te ayudo con pasos concretos.',
+        'Hola, soy Max. Cuentame que necesitas resolver en SMART RH y lo revisamos paso a paso.',
     },
   ]);
   const [suggestions, setSuggestions] = useState<string[]>([]);
@@ -209,9 +209,9 @@ export default function AsistenteSmartRh() {
       setSuggestions(Array.isArray(data?.sugerencias) ? data.sugerencias : []);
     } catch {
       setSuggestions([
-        'Max, no puedo registrar mi asistencia',
-        'Quiero revisar mi calendario laboral',
-        'Necesito levantar un ticket',
+        'No puedo registrar asistencia',
+        'Ver calendario laboral',
+        'Crear ticket de soporte',
       ]);
     }
   }
@@ -366,7 +366,7 @@ export default function AsistenteSmartRh() {
     if (typeof window === 'undefined') return {};
 
     const width = Math.min(PANEL_WIDTH, window.innerWidth - EDGE_GAP * 2);
-    const maxHeight = Math.min(640, window.innerHeight - EDGE_GAP * 2);
+    const maxHeight = Math.min(720, window.innerHeight - EDGE_GAP * 2);
     const opensLeft =
       buttonPosition.x + BUTTON_SIZE / 2 > window.innerWidth / 2;
 
@@ -523,29 +523,32 @@ export default function AsistenteSmartRh() {
                 <p>Max esta revisando el contexto...</p>
               </article>
             ) : null}
+
+            {suggestions.length ? (
+              <div className="max-suggestions">
+                <span>Preguntas rapidas</span>
+                <div>
+                  {suggestions.slice(0, 5).map((item) => (
+                    <button
+                      key={item}
+                      type="button"
+                      onClick={() => sendMessage(item)}
+                    >
+                      {item}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ) : null}
           </div>
 
           {error ? <p className="max-error">{error}</p> : null}
-
-          {suggestions.length ? (
-            <div className="max-suggestions">
-              {suggestions.slice(0, 4).map((item) => (
-                <button
-                  key={item}
-                  type="button"
-                  onClick={() => sendMessage(item)}
-                >
-                  {item}
-                </button>
-              ))}
-            </div>
-          ) : null}
 
           <form className="max-input-row" onSubmit={submit}>
             <textarea
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              placeholder="Escribe tu duda..."
+              placeholder="Preguntame..."
               rows={2}
             />
             <button type="submit" disabled={loading || !message.trim()}>
@@ -553,14 +556,16 @@ export default function AsistenteSmartRh() {
             </button>
           </form>
 
-          <button
-            className="max-ticket-btn"
-            type="button"
-            onClick={createTicket}
-            disabled={!lastQuestion || ticketLoading}
-          >
-            {ticketLoading ? 'Creando ticket...' : 'Crear ticket con contexto'}
-          </button>
+          {lastQuestion ? (
+            <button
+              className="max-ticket-btn"
+              type="button"
+              onClick={createTicket}
+              disabled={ticketLoading}
+            >
+              {ticketLoading ? 'Creando ticket...' : 'Crear ticket con contexto'}
+            </button>
+          ) : null}
         </section>
       ) : null}
 

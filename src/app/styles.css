@@ -1491,7 +1491,7 @@
   position: fixed;
   z-index: 90;
   display: grid;
-  grid-template-rows: auto minmax(190px, 1fr) auto auto auto;
+  grid-template-rows: auto minmax(290px, 1fr) auto auto;
   overflow: hidden;
   border: 1px solid var(--border);
   border-radius: 30px;
@@ -1507,7 +1507,7 @@
   grid-template-columns: auto 1fr auto;
   gap: 14px;
   align-items: center;
-  padding: 18px 18px 17px;
+  padding: 14px 16px;
   border-bottom: 1px solid var(--border);
   background:
     linear-gradient(135deg, rgba(56, 189, 248, 0.10), transparent 42%),
@@ -1516,8 +1516,8 @@
 
 .max-avatar {
   display: grid;
-  width: 58px;
-  height: 58px;
+  width: 48px;
+  height: 48px;
   place-items: center;
   border: 0;
   border-radius: 999px;
@@ -1530,14 +1530,14 @@
 
 .max-avatar img {
   display: block;
-  width: 58px;
-  height: 58px;
+  width: 48px;
+  height: 48px;
   object-fit: contain;
 }
 
 .max-assistant-header span {
   color: var(--primary);
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   font-weight: 900;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -1545,12 +1545,14 @@
 
 .max-assistant-header h2,
 .max-assistant-header p {
-  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-weight: 700;
 }
 
 .max-assistant-header h2 {
   color: var(--text);
-  font-size: 1.5rem;
+  font-size: 1.28rem;
 }
 
 .max-assistant-header p {
@@ -1561,8 +1563,8 @@
 
 .max-close-btn {
   display: grid;
-  width: 38px;
-  height: 38px;
+  width: 34px;
+  height: 34px;
   place-items: center;
   border: 1px solid var(--border);
   border-radius: 999px;
@@ -1576,25 +1578,26 @@
 .max-messages {
   display: grid;
   align-content: start;
-  gap: 12px;
+  gap: 9px;
   overflow: auto;
-  min-height: 210px;
-  padding: 16px 18px;
+  min-height: 290px;
+  padding: 14px 16px 16px;
   background: var(--bg);
 }
 
 .max-message {
   width: fit-content;
-  max-width: 92%;
+  max-width: 88%;
   border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 12px 14px;
+  border-radius: 18px;
+  padding: 10px 12px;
   box-shadow: var(--shadow-xs);
+  font-size: 0.88rem;
 }
 
 .max-message p {
   margin: 0;
-  line-height: 1.55;
+  line-height: 1.45;
 }
 
 .max-message.user {
@@ -1612,34 +1615,34 @@
 
 .max-steps {
   display: grid;
-  gap: 6px;
-  margin: 11px 0 0;
-  padding: 10px 0 0 18px;
+  gap: 5px;
+  margin: 9px 0 0;
+  padding: 9px 0 0 17px;
   border-top: 1px solid var(--border);
   color: var(--text-muted);
-  font-size: 0.86rem;
+  font-size: 0.78rem;
   font-weight: 700;
 }
 
 .max-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 12px;
+  gap: 7px;
+  margin-top: 10px;
 }
 
 .max-actions a {
   border-radius: 999px;
-  padding: 8px 11px;
+  padding: 7px 10px;
   color: var(--primary);
   background: var(--primary-soft);
-  font-size: 0.82rem;
+  font-size: 0.76rem;
   font-weight: 900;
   text-decoration: none;
 }
 
 .max-error {
-  margin: 12px 16px 0;
+  margin: 10px 16px 0;
   border: 1px solid var(--danger);
   border-radius: 14px;
   padding: 10px 12px;
@@ -1650,22 +1653,37 @@
 
 .max-suggestions {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
-  padding: 12px 18px 4px;
+  gap: 7px;
+  margin-top: 2px;
+}
+
+.max-suggestions span {
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+.max-suggestions div {
+  display: flex;
+  gap: 7px;
+  overflow-x: auto;
+  padding-bottom: 2px;
 }
 
 .max-suggestions button {
+  flex: 0 0 auto;
+  max-width: 190px;
   border: 1px solid var(--border);
-  border-radius: 18px;
-  padding: 10px 12px;
+  border-radius: 999px;
+  padding: 8px 11px;
   color: var(--text);
   background: var(--card-muted);
-  font-size: 0.82rem;
+  font-size: 0.76rem;
   font-weight: 800;
   text-align: left;
   cursor: pointer;
-  line-height: 1.25;
+  line-height: 1.18;
+  white-space: nowrap;
 }
 
 .max-suggestions button:hover {
@@ -1677,8 +1695,8 @@
 .max-input-row {
   display: grid;
   grid-template-columns: 1fr auto;
-  gap: 10px;
-  padding: 14px 18px;
+  gap: 9px;
+  padding: 12px 16px;
 }
 
 .max-input-row textarea {
@@ -1686,8 +1704,8 @@
   max-height: 110px;
   resize: none;
   border: 1px solid var(--border);
-  border-radius: 18px;
-  padding: 12px 13px;
+  border-radius: 17px;
+  padding: 10px 12px;
   color: var(--text);
   background: var(--card-muted);
   font: inherit;
@@ -1696,17 +1714,14 @@
 
 .max-input-row button,
 .max-ticket-btn {
-  border: 0;
-  border-radius: 16px;
-  color: #ffffff;
-  background: var(--primary);
-  font-weight: 900;
-  cursor: pointer;
+  margin: 0 16px 16px;
+  padding: 11px 14px;
+  background: #14b8a6;
 }
 
 .max-input-row button {
   align-self: end;
-  padding: 13px 16px;
+  padding: 11px 15px;
 }
 
 .max-ticket-btn {
