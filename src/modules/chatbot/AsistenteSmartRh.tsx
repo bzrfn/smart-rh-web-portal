@@ -1,16 +1,11 @@
-import {
-  CSSProperties,
-  FormEvent,
-  PointerEvent,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { CSSProperties, FormEvent, PointerEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../../services/api';
 import { useAuth } from '../../app/auth/AuthContext';
 import maxIconUrl from '../../assets/max-touch-icon.png';
+
+const MAX_PORTAL_HISTORY_KEY = 'smart-rh:max:portal-history:v1';
+const MAX_CHAT_HISTORY_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 
 type ChatbotAction = {
   label: string;
@@ -182,6 +177,54 @@ export default function AsistenteSmartRh() {
         'Hola, soy Max. Cuentame que necesitas resolver en SMART RH y lo revisamos paso a paso.',
     },
   ]);
+  const [maxHistoryReady, setMaxHistoryReady] = useState(false);
+  const [historyOpen, setHistoryOpen] = useState(false);
+
+  useEffect(() => {
+    if (maxHistoryReady || typeof window === 'undefined') return;
+    setMaxHistoryReady(true);
+
+    try {
+      const raw = window.localStorage.getItem(MAX_PORTAL_HISTORY_KEY);
+      if (!raw) return;
+
+      const payload = JSON.parse(raw) as { savedAt?: number; messages?: unknown[] };
+      const isFresh = typeof payload.savedAt === 'number' && Date.now() - payload.savedAt <= MAX_CHAT_HISTORY_TTL_MS;
+
+      if (isFresh && Array.isArray(payload.messages) && payload.messages.length > 0) {
+        setMessages(payload.messages as any);
+      } else {
+        window.localStorage.removeItem(MAX_PORTAL_HISTORY_KEY);
+      }
+    } catch {
+      window.localStorage.removeItem(MAX_PORTAL_HISTORY_KEY);
+    }
+  }, [maxHistoryReady]);
+
+  useEffect(() => {
+    if (!maxHistoryReady || typeof window === 'undefined') return;
+
+    try {
+      window.localStorage.setItem(
+        MAX_PORTAL_HISTORY_KEY,
+        JSON.stringify({ savedAt: Date.now(), messages })
+      );
+    } catch {
+      // El historial local no debe bloquear el chat.
+    }
+  }, [maxHistoryReady, messages]);
+
+  const maxHistoryPreview = messages.slice(-6);
+
+  const clearMaxHistory = () => {
+    if (typeof window !== 'undefined') {
+      window.localStorage.removeItem(MAX_PORTAL_HISTORY_KEY);
+    }
+
+    setMessages([] as any);
+    setShowSuggestions(true);
+    setHistoryOpen(false);
+  };
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(true);
   const [message, setMessage] = useState('');
@@ -527,6 +570,81 @@ export default function AsistenteSmartRh() {
               </article>
             ) : null}
 
+            {maxHistoryPreview.length > 1 ? (
+
+
+              <div className="max-history-tools">
+
+
+                <button type="button" onClick={() => setHistoryOpen((value) => !value)}>
+
+
+                  Historial 7 dias
+
+
+                </button>
+
+
+                <button type="button" onClick={clearMaxHistory}>
+
+
+                  Nuevo chat
+
+
+                </button>
+
+
+              </div>
+
+
+            ) : null}
+
+
+            {historyOpen ? (
+
+
+              <div className="max-history-panel">
+
+
+                {maxHistoryPreview.map((item, index) => {
+
+
+                  const entry = item as any;
+
+
+                  const text = String(entry.content ?? entry.contenido ?? entry.text ?? entry.respuesta ?? '').trim();
+
+
+                  if (!text) return null;
+
+
+                  return (
+
+
+                    <div className="max-history-item" key={entry.id ?? index}>
+
+
+                      <span>{entry.role === 'user' || entry.autor === 'user' ? 'Tu' : 'Max'}</span>
+
+
+                      <p>{text.length > 120 ? `${text.slice(0, 120)}...` : text}</p>
+
+
+                    </div>
+
+
+                  );
+
+
+                })}
+
+
+              </div>
+
+
+            ) : null}
+
+
             {showSuggestions && suggestions.length ? (
               <div className="max-suggestions">
                 <span>Sugerencias</span>
@@ -551,12 +669,12 @@ export default function AsistenteSmartRh() {
             <textarea
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-                onKeyDown={(event) => {
-                  if (event.key === 'Enter' && !event.shiftKey) {
-                    event.preventDefault();
-                    sendMessage();
-                  }
-                }}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' && !event.shiftKey) {
+                  event.preventDefault();
+                  event.currentTarget.form?.requestSubmit();
+                }
+              }}
               placeholder="Preguntame..."
               rows={2}
             />

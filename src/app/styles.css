@@ -13024,3 +13024,406 @@ body::before {
   }
 }
 /* end max-footer-layout-v10 */
+
+
+/* Max assistant final layout: clean footer, compact chips and round send button */
+.max-suggestions {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 8px !important;
+  width: 100% !important;
+  margin: 0 0 10px !important;
+  padding: 0 2px 4px !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  scrollbar-width: none !important;
+}
+
+.max-suggestions::-webkit-scrollbar {
+  display: none !important;
+}
+
+.max-suggestions span {
+  display: none !important;
+}
+
+.max-suggestions div {
+  display: flex !important;
+  flex: 1 1 auto !important;
+  gap: 8px !important;
+  min-width: 0 !important;
+  overflow-x: auto !important;
+  scrollbar-width: none !important;
+}
+
+.max-suggestions div::-webkit-scrollbar {
+  display: none !important;
+}
+
+.max-suggestions button {
+  flex: 0 0 auto !important;
+  min-width: auto !important;
+  width: auto !important;
+  max-width: 168px !important;
+  min-height: 34px !important;
+  padding: 8px 13px !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(148, 163, 184, 0.22) !important;
+  background: rgba(15, 23, 42, 0.78) !important;
+  color: rgba(226, 232, 240, 0.92) !important;
+  font-size: 0.78rem !important;
+  font-weight: 700 !important;
+  line-height: 1.15 !important;
+  white-space: nowrap !important;
+  box-shadow: none !important;
+}
+
+.max-history-tools {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin: 0 0 10px;
+}
+
+.max-history-tools button {
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.72);
+  color: rgba(226, 232, 240, 0.84);
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 7px 11px;
+}
+
+.max-history-panel {
+  display: grid;
+  gap: 7px;
+  max-height: 132px;
+  margin: 0 0 10px;
+  padding: 10px;
+  overflow: auto;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 18px;
+  background: rgba(2, 6, 23, 0.38);
+}
+
+.max-history-item {
+  display: grid;
+  gap: 2px;
+  padding: 8px 10px;
+  border-radius: 14px;
+  background: rgba(15, 23, 42, 0.72);
+}
+
+.max-history-item span {
+  color: rgba(56, 189, 248, 0.92);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.max-history-item p {
+  margin: 0;
+  color: rgba(226, 232, 240, 0.88);
+  font-size: 0.78rem;
+  line-height: 1.32;
+}
+
+.max-chat-footer,
+.max-footer,
+.max-composer-wrap,
+.max-input-area {
+  flex: 0 0 auto !important;
+  padding: 14px 18px 16px !important;
+  border-top: 1px solid rgba(148, 163, 184, 0.16) !important;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.72), rgba(15, 23, 42, 0.96)) !important;
+}
+
+.max-composer,
+.max-message-form,
+.max-input-form {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) 48px !important;
+  align-items: end !important;
+  gap: 10px !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 8px 8px 8px 15px !important;
+  border: 1px solid rgba(56, 189, 248, 0.25) !important;
+  border-radius: 26px !important;
+  background: rgba(15, 23, 42, 0.9) !important;
+  box-shadow: 0 18px 45px rgba(2, 132, 199, 0.16) !important;
+}
+
+.max-composer textarea,
+.max-message-form textarea,
+.max-input-form textarea,
+.max-composer input,
+.max-message-form input,
+.max-input-form input {
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 42px !important;
+  max-height: 112px !important;
+  padding: 10px 2px !important;
+  border: 0 !important;
+  outline: 0 !important;
+  resize: none !important;
+  background: transparent !important;
+  color: rgba(248, 250, 252, 0.96) !important;
+  font-size: 0.92rem !important;
+  line-height: 1.35 !important;
+}
+
+.max-composer textarea::placeholder,
+.max-message-form textarea::placeholder,
+.max-input-form textarea::placeholder,
+.max-composer input::placeholder,
+.max-message-form input::placeholder,
+.max-input-form input::placeholder {
+  color: rgba(148, 163, 184, 0.78) !important;
+}
+
+.max-send-round {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 48px !important;
+  height: 48px !important;
+  min-width: 48px !important;
+  min-height: 48px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: linear-gradient(135deg, #38bdf8, #2563eb) !important;
+  color: #ffffff !important;
+  box-shadow: 0 14px 30px rgba(37, 99, 235, 0.32) !important;
+}
+
+.max-send-round:disabled {
+  opacity: 0.45 !important;
+  box-shadow: none !important;
+}
+
+@media (max-width: 720px) {
+  .max-suggestions button {
+    max-width: 142px !important;
+    font-size: 0.74rem !important;
+  }
+
+  .max-composer,
+  .max-message-form,
+  .max-input-form {
+    grid-template-columns: minmax(0, 1fr) 44px !important;
+    border-radius: 24px !important;
+  }
+
+  .max-send-round {
+    width: 44px !important;
+    height: 44px !important;
+    min-width: 44px !important;
+    min-height: 44px !important;
+  }
+}
+
+/* Max assistant final layout */
+.max-suggestions {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 8px !important;
+  width: 100% !important;
+  margin: auto 0 10px !important;
+  padding: 0 2px 4px !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  scrollbar-width: none !important;
+}
+
+.max-suggestions::-webkit-scrollbar,
+.max-suggestions div::-webkit-scrollbar {
+  display: none !important;
+}
+
+.max-suggestions span {
+  display: none !important;
+}
+
+.max-suggestions div {
+  display: flex !important;
+  flex: 1 1 auto !important;
+  gap: 8px !important;
+  min-width: 0 !important;
+  overflow-x: auto !important;
+  scrollbar-width: none !important;
+}
+
+.max-suggestions button {
+  flex: 0 0 auto !important;
+  min-width: auto !important;
+  width: auto !important;
+  max-width: 160px !important;
+  min-height: 34px !important;
+  padding: 8px 13px !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(148, 163, 184, 0.22) !important;
+  background: rgba(15, 23, 42, 0.74) !important;
+  color: rgba(226, 232, 240, 0.9) !important;
+  font-size: 0.78rem !important;
+  font-weight: 700 !important;
+  line-height: 1.15 !important;
+  white-space: nowrap !important;
+  box-shadow: none !important;
+}
+
+.max-history-tools {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin: 0 0 10px;
+}
+
+.max-history-tools button {
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.72);
+  color: rgba(226, 232, 240, 0.84);
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 7px 11px;
+}
+
+.max-history-panel {
+  display: grid;
+  gap: 7px;
+  max-height: 132px;
+  margin: 0 0 10px;
+  padding: 10px;
+  overflow: auto;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 18px;
+  background: rgba(2, 6, 23, 0.38);
+}
+
+.max-history-item {
+  display: grid;
+  gap: 2px;
+  padding: 8px 10px;
+  border-radius: 14px;
+  background: rgba(15, 23, 42, 0.72);
+}
+
+.max-history-item span {
+  color: rgba(56, 189, 248, 0.92);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.max-history-item p {
+  margin: 0;
+  color: rgba(226, 232, 240, 0.88);
+  font-size: 0.78rem;
+  line-height: 1.32;
+}
+
+.max-chat-footer,
+.max-footer,
+.max-composer-wrap,
+.max-input-area {
+  flex: 0 0 auto !important;
+  padding: 14px 18px 16px !important;
+  border-top: 1px solid rgba(148, 163, 184, 0.16) !important;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.72), rgba(15, 23, 42, 0.96)) !important;
+}
+
+.max-composer,
+.max-message-form,
+.max-input-form {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) 48px !important;
+  align-items: end !important;
+  gap: 10px !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 8px 8px 8px 15px !important;
+  border: 1px solid rgba(56, 189, 248, 0.25) !important;
+  border-radius: 26px !important;
+  background: rgba(15, 23, 42, 0.9) !important;
+  box-shadow: 0 18px 45px rgba(2, 132, 199, 0.16) !important;
+}
+
+.max-composer textarea,
+.max-message-form textarea,
+.max-input-form textarea,
+.max-composer input,
+.max-message-form input,
+.max-input-form input {
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 42px !important;
+  max-height: 112px !important;
+  padding: 10px 2px !important;
+  border: 0 !important;
+  outline: 0 !important;
+  resize: none !important;
+  background: transparent !important;
+  color: rgba(248, 250, 252, 0.96) !important;
+  font-size: 0.92rem !important;
+  line-height: 1.35 !important;
+}
+
+.max-composer textarea::placeholder,
+.max-message-form textarea::placeholder,
+.max-input-form textarea::placeholder,
+.max-composer input::placeholder,
+.max-message-form input::placeholder,
+.max-input-form input::placeholder {
+  color: rgba(148, 163, 184, 0.78) !important;
+}
+
+.max-send-round {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 48px !important;
+  height: 48px !important;
+  min-width: 48px !important;
+  min-height: 48px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: linear-gradient(135deg, #38bdf8, #2563eb) !important;
+  color: #ffffff !important;
+  box-shadow: 0 14px 30px rgba(37, 99, 235, 0.32) !important;
+}
+
+.max-send-round:disabled {
+  opacity: 0.45 !important;
+  box-shadow: none !important;
+}
+
+@media (max-width: 720px) {
+  .max-suggestions button {
+    max-width: 140px !important;
+    font-size: 0.74rem !important;
+  }
+
+  .max-composer,
+  .max-message-form,
+  .max-input-form {
+    grid-template-columns: minmax(0, 1fr) 44px !important;
+    border-radius: 24px !important;
+  }
+
+  .max-send-round {
+    width: 44px !important;
+    height: 44px !important;
+    min-width: 44px !important;
+    min-height: 44px !important;
+  }
+}
+
