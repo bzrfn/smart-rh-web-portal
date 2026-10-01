@@ -203,6 +203,17 @@ export default function AsistenteSmartRh() {
     [messages]
   );
 
+  const canCreateContextTicket = useMemo(() => {
+    const latestAssistant = [...messages]
+      .reverse()
+      .find((item) => item.author === 'assistant' && item.response);
+
+    return Boolean(
+      lastQuestion &&
+        latestAssistant?.response?.requiere_escalamiento
+    );
+  }, [lastQuestion, messages]);
+
   async function loadSuggestions() {
     try {
       const { data } = await api.get('/chatbot/sugerencias');
@@ -366,35 +377,15 @@ export default function AsistenteSmartRh() {
     if (typeof window === 'undefined') return {};
 
     const width = Math.min(PANEL_WIDTH, window.innerWidth - EDGE_GAP * 2);
-    const maxHeight = Math.min(720, window.innerHeight - EDGE_GAP * 2);
-    const opensLeft =
-      buttonPosition.x + BUTTON_SIZE / 2 > window.innerWidth / 2;
-
-    const preferredLeft = opensLeft
-      ? buttonPosition.x - width - PANEL_GAP
-      : buttonPosition.x + BUTTON_SIZE + PANEL_GAP;
-
-    const preferredTop =
-      buttonPosition.y + BUTTON_SIZE + PANEL_GAP + maxHeight >
-      window.innerHeight - EDGE_GAP
-        ? buttonPosition.y - maxHeight - PANEL_GAP
-        : buttonPosition.y + BUTTON_SIZE + PANEL_GAP;
+    const height = Math.min(700, window.innerHeight - EDGE_GAP * 2);
 
     return {
       width: `${width}px`,
-      maxHeight: `${maxHeight}px`,
-      left: `${clamp(
-        preferredLeft,
-        EDGE_GAP,
-        window.innerWidth - width - EDGE_GAP
-      )}px`,
-      top: `${clamp(
-        preferredTop,
-        EDGE_GAP,
-        window.innerHeight - maxHeight - EDGE_GAP
-      )}px`,
+      height: `${height}px`,
+      right: `${EDGE_GAP}px`,
+      bottom: `${EDGE_GAP}px`,
     };
-  }, [buttonPosition.x, buttonPosition.y]);
+  }, []);
 
   function handleButtonPointerDown(
     event: PointerEvent<HTMLButtonElement>
@@ -526,7 +517,7 @@ export default function AsistenteSmartRh() {
 
             {suggestions.length ? (
               <div className="max-suggestions">
-                <span>Preguntas rapidas</span>
+                <span>Sugerencias</span>
                 <div>
                   {suggestions.slice(0, 5).map((item) => (
                     <button
@@ -556,7 +547,7 @@ export default function AsistenteSmartRh() {
               </button>
           </form>
 
-          {lastQuestion ? (
+          {canCreateContextTicket ? (
             <button
               className="max-ticket-btn"
               type="button"
