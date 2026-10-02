@@ -231,7 +231,6 @@ export default function AsistenteSmartRh() {
     setError('');
     setShowSuggestions(true);
     setHistoryOpen(false);
-    document.querySelector('.max-chat-menu')?.removeAttribute('open');
   };
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(true);
@@ -625,17 +624,30 @@ export default function AsistenteSmartRh() {
           {error ? <p className="max-error">{error}</p> : null}
 
           <form className="max-input-row" onSubmit={submit}>
-            <details className="max-chat-menu">
-              <summary aria-label="Abrir opciones de Max" title="Opciones de Max">Opciones</summary>
-              <div className="max-chat-menu-panel">
-                <button type="button" onClick={() => setHistoryOpen((value) => !value)}>
-                  Historial
-                </button>
-                <button type="button" onClick={clearMaxHistory}>
-                  Nuevo chat
-                </button>
-              </div>
-            </details>
+            <div className="max-composer-actions" aria-label="Acciones de Max">
+              <button
+                className="max-tool-btn"
+                type="button"
+                aria-label="Nuevo chat"
+                title="Nuevo chat"
+                onClick={clearMaxHistory}
+              >
+                +
+              </button>
+              <button
+                className={`max-tool-btn ${historyOpen ? 'is-active' : ''}`}
+                type="button"
+                aria-label="Abrir historial"
+                title="Historial"
+                onClick={() => setHistoryOpen((value) => !value)}
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M4 12a8 8 0 1 0 2.35-5.65" />
+                  <path d="M4 5v5h5" />
+                  <path d="M12 7v5l3 2" />
+                </svg>
+              </button>
+            </div>
                         <textarea
               value={message}
               onChange={(event) => setMessage(event.target.value)}
