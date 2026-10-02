@@ -53,7 +53,7 @@ const POSITION_STORAGE_KEY = 'smart_rh_max_position';
 const BUTTON_SIZE = 60;
 const EDGE_GAP = 18;
 const PANEL_GAP = 16;
-const PANEL_WIDTH = 470;
+const PANEL_WIDTH = 620;
 
 function buildId() {
   return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
@@ -218,7 +218,7 @@ export default function AsistenteSmartRh() {
     }
   }, [maxHistoryReady, messages]);
 
-  const maxHistoryPreview = messages.slice(-6);
+  const maxHistoryPreview = messages;
 
   const clearMaxHistory = () => {
     if (typeof window !== 'undefined') {
@@ -590,11 +590,12 @@ export default function AsistenteSmartRh() {
                   maxHistoryPreview.map((item, index) => {
                     const entry = item as any;
                     const text = String(entry.content ?? entry.contenido ?? entry.text ?? entry.respuesta ?? '').trim();
+                    const isUser = entry.author === 'user' || entry.role === 'user' || entry.autor === 'user';
                     if (!text) return null;
                     return (
-                      <div className="max-history-item" key={entry.id ?? index}>
-                        <span>{entry.role === 'user' || entry.autor === 'user' ? 'Tu' : 'Max'}</span>
-                        <p>{text.length > 116 ? `${text.slice(0, 116)}...` : text}</p>
+                      <div className={`max-history-item ${isUser ? 'user' : 'assistant'}`} key={entry.id ?? index}>
+                        <span>{isUser ? 'Tu' : 'Max'}</span>
+                        <p>{text}</p>
                       </div>
                     );
                   })

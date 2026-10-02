@@ -13549,3 +13549,58 @@ body::before {
     font-size: 0.86rem !important;
   }
 }
+
+
+/* Max wider panel and useful history transcript v11 */
+.max-assistant-panel {
+  max-width: calc(100vw - 36px) !important;
+}
+
+.max-message {
+  max-width: min(90%, 460px) !important;
+}
+
+.max-input-row textarea {
+  min-height: 54px !important;
+  padding: 7px 2px 8px !important;
+  line-height: 1.38 !important;
+}
+
+.max-history-panel {
+  top: 128px !important;
+  bottom: 108px !important;
+}
+
+.max-history-list {
+  gap: 12px !important;
+  padding: 16px !important;
+}
+
+.max-history-item {
+  max-width: 92% !important;
+  white-space: normal !important;
+}
+
+.max-history-item.user {
+  justify-self: end !important;
+  border-color: rgba(56, 189, 248, 0.36) !important;
+  background: rgba(14, 116, 190, 0.22) !important;
+}
+
+.max-history-item.assistant {
+  justify-self: start !important;
+}
+
+.max-history-item p {
+  white-space: pre-wrap !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  word-break: normal !important;
+  overflow-wrap: anywhere !important;
+}
+
+@media (max-width: 720px) {
+  .max-message {
+    max-width: min(92%, 420px) !important;
+  }
+}
