@@ -53,7 +53,7 @@ const POSITION_STORAGE_KEY = 'smart_rh_max_position';
 const BUTTON_SIZE = 60;
 const EDGE_GAP = 18;
 const PANEL_GAP = 16;
-const PANEL_WIDTH = 760;
+const PANEL_WIDTH = 820;
 
 function buildId() {
   return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
