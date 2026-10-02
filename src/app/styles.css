@@ -13374,18 +13374,12 @@ body::before {
 }
 
 
-/* Max composer no-overlap final */
-.max-assistant-panel {
-  max-width: min(820px, calc(100vw - 36px)) !important;
-}
 
+/* Max composer textbox flat final */
 .max-input-row {
-  grid-template-columns: 104px minmax(0, 1fr) 40px !important;
+  grid-template-columns: auto minmax(0, 1fr) 40px !important;
   align-items: center !important;
   column-gap: 14px !important;
-  row-gap: 0 !important;
-  width: auto !important;
-  max-width: none !important;
   min-height: 66px !important;
   margin: 0 28px 22px !important;
   padding: 10px 12px !important;
@@ -13395,15 +13389,18 @@ body::before {
 
 .max-composer-actions {
   grid-column: 1 !important;
-  display: flex !important;
+  display: inline-flex !important;
   align-items: center !important;
-  justify-content: flex-start !important;
-  gap: 10px !important;
-  width: 104px !important;
-  min-width: 104px !important;
-  padding-right: 12px !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  padding: 4px !important;
+  border: 1px solid rgba(121, 203, 255, 0.22) !important;
+  border-radius: 999px !important;
+  background: rgba(8, 20, 36, 0.72) !important;
   box-sizing: border-box !important;
-  border-right: 1px solid rgba(121, 203, 255, 0.2) !important;
 }
 
 .max-tool-btn {
@@ -13425,13 +13422,29 @@ body::before {
   min-height: 44px !important;
   max-height: 96px !important;
   margin: 0 !important;
-  padding: 10px 0 !important;
+  padding: 10px 14px !important;
   box-sizing: border-box !important;
   align-self: center !important;
-  line-height: 1.34 !important;
+  color: #edf7ff !important;
+  background: rgba(6, 16, 29, 0.92) !important;
+  border: 1px solid rgba(121, 203, 255, 0.18) !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+  outline: none !important;
+  resize: none !important;
+  line-height: 1.35 !important;
+  overflow-y: auto !important;
+  appearance: none !important;
+}
+
+.max-input-row textarea:focus {
+  border-color: rgba(121, 203, 255, 0.32) !important;
+  box-shadow: none !important;
+  outline: none !important;
 }
 
 .max-input-row textarea::placeholder {
+  color: rgba(211, 227, 242, 0.58) !important;
   opacity: 1 !important;
 }
 
@@ -13450,117 +13463,10 @@ body::before {
 
 @media (max-width: 720px) {
   .max-input-row {
-    grid-template-columns: 90px minmax(0, 1fr) 38px !important;
-    column-gap: 10px !important;
-    min-height: 60px !important;
-    margin: 0 14px 16px !important;
-    padding: 8px 10px !important;
-  }
-
-  .max-composer-actions {
-    width: 90px !important;
-    min-width: 90px !important;
-    gap: 8px !important;
-    padding-right: 10px !important;
-  }
-
-  .max-tool-btn {
-    flex-basis: 38px !important;
-    width: 38px !important;
-    height: 38px !important;
-    min-width: 38px !important;
-    min-height: 38px !important;
-    max-width: 38px !important;
-    max-height: 38px !important;
-  }
-
-  .max-input-row textarea {
-    height: 42px !important;
-    min-height: 42px !important;
-    font-size: 0.88rem !important;
-  }
-
-  .max-input-row .max-send-btn,
-  .max-input-row button[type='submit'].max-send-round {
-    width: 38px !important;
-    height: 38px !important;
-    min-width: 38px !important;
-    min-height: 38px !important;
-    max-width: 38px !important;
-    max-height: 38px !important;
-  }
-}
-
-
-/* Max composer cluster final */
-.max-input-row {
-  grid-template-columns: auto minmax(0, 1fr) 40px !important;
-  column-gap: 18px !important;
-  min-height: 68px !important;
-  padding: 10px 12px !important;
-  overflow: hidden !important;
-}
-
-.max-composer-actions {
-  grid-column: 1 !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 8px !important;
-  width: auto !important;
-  min-width: 0 !important;
-  max-width: none !important;
-  padding: 4px !important;
-  border: 1px solid rgba(121, 203, 255, 0.22) !important;
-  border-right: 1px solid rgba(121, 203, 255, 0.22) !important;
-  border-radius: 999px !important;
-  background: rgba(8, 20, 36, 0.72) !important;
-  box-sizing: border-box !important;
-  z-index: 2 !important;
-}
-
-.max-tool-btn {
-  flex: 0 0 40px !important;
-  width: 40px !important;
-  height: 40px !important;
-  min-width: 40px !important;
-  min-height: 40px !important;
-  max-width: 40px !important;
-  max-height: 40px !important;
-}
-
-.max-input-row textarea {
-  grid-column: 2 !important;
-  min-width: 0 !important;
-  width: 100% !important;
-  height: 44px !important;
-  min-height: 44px !important;
-  margin: 0 !important;
-  padding: 10px 0 !important;
-  align-self: center !important;
-  box-sizing: border-box !important;
-  z-index: 1 !important;
-}
-
-.max-input-row .max-send-btn,
-.max-input-row button[type='submit'].max-send-round {
-  grid-column: 3 !important;
-  justify-self: end !important;
-  align-self: center !important;
-  width: 40px !important;
-  height: 40px !important;
-  min-width: 40px !important;
-  min-height: 40px !important;
-  max-width: 40px !important;
-  max-height: 40px !important;
-  z-index: 2 !important;
-}
-
-@media (max-width: 720px) {
-  .max-input-row {
     grid-template-columns: auto minmax(0, 1fr) 38px !important;
     column-gap: 12px !important;
     min-height: 62px !important;
+    margin: 0 14px 16px !important;
     padding: 8px 10px !important;
   }
 
@@ -13582,6 +13488,7 @@ body::before {
   .max-input-row textarea {
     height: 42px !important;
     min-height: 42px !important;
+    padding: 9px 12px !important;
   }
 
   .max-input-row .max-send-btn,
