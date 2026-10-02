@@ -51,9 +51,9 @@ type DragState = {
 
 const POSITION_STORAGE_KEY = 'smart_rh_max_position';
 const BUTTON_SIZE = 60;
-const EDGE_GAP = 18;
+const EDGE_GAP = 24;
 const PANEL_GAP = 16;
-const PANEL_WIDTH = 820;
+const PANEL_WIDTH = 860;
 
 function buildId() {
   return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
@@ -443,23 +443,26 @@ export default function AsistenteSmartRh() {
   const panelStyle = useMemo<CSSProperties>(() => {
     if (typeof window === 'undefined') return {};
 
-    const width = Math.min(PANEL_WIDTH, window.innerWidth - EDGE_GAP * 2);
-    const height = Math.min(760, window.innerHeight - EDGE_GAP * 2);
+    const panelEdgeGap = window.innerWidth <= 720 ? 14 : 34;
+    const safeWidth = Math.max(300, window.innerWidth - panelEdgeGap * 2);
+    const safeHeight = Math.max(360, window.innerHeight - panelEdgeGap * 2);
+    const width = Math.min(PANEL_WIDTH, safeWidth);
+    const height = Math.min(760, safeHeight);
     const opensLeft =
       buttonPosition.x + BUTTON_SIZE / 2 > window.innerWidth / 2;
     const rawLeft = opensLeft
-      ? buttonPosition.x + BUTTON_SIZE - width
-      : buttonPosition.x;
+      ? buttonPosition.x + BUTTON_SIZE + PANEL_GAP - width
+      : buttonPosition.x - PANEL_GAP;
     const rawTop = buttonPosition.y + BUTTON_SIZE - height;
     const left = clamp(
       rawLeft,
-      EDGE_GAP,
-      Math.max(EDGE_GAP, window.innerWidth - width - EDGE_GAP)
+      panelEdgeGap,
+      Math.max(panelEdgeGap, window.innerWidth - width - panelEdgeGap)
     );
     const top = clamp(
       rawTop,
-      EDGE_GAP,
-      Math.max(EDGE_GAP, window.innerHeight - height - EDGE_GAP)
+      panelEdgeGap,
+      Math.max(panelEdgeGap, window.innerHeight - height - panelEdgeGap)
     );
 
     return {
