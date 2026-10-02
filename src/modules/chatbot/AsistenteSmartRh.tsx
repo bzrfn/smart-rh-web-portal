@@ -50,7 +50,7 @@ type DragState = {
 };
 
 const POSITION_STORAGE_KEY = 'smart_rh_max_position';
-const BUTTON_SIZE = 78;
+const BUTTON_SIZE = 60;
 const EDGE_GAP = 18;
 const PANEL_GAP = 16;
 const PANEL_WIDTH = 470;
@@ -597,29 +597,28 @@ export default function AsistenteSmartRh() {
               </div>
             </div>
           ) : null}
-{showSuggestions && suggestions.length ? (
-              <div className="max-suggestions">
-                <span>Sugerencias</span>
-                <div>
-                  {suggestions.slice(0, 5).map((item) => (
-                    <button
-                      key={item}
-                      type="button"
-                      onClick={() => sendMessage(item)}
-                    >
-                      {item}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            ) : null}
+
           </div>
+
+          {showSuggestions && suggestions.length ? (
+            <div className="max-suggestions" aria-label="Preguntas frecuentes">
+              {suggestions.slice(0, 4).map((item) => (
+                <button
+                  key={item}
+                  type="button"
+                  onClick={() => sendMessage(item)}
+                >
+                  {item}
+                </button>
+              ))}
+            </div>
+          ) : null}
 
           {error ? <p className="max-error">{error}</p> : null}
 
           <form className="max-input-row" onSubmit={submit}>
             <details className="max-chat-menu">
-              <summary aria-label="Abrir opciones de Max" title="Opciones de Max">Menu</summary>
+              <summary aria-label="Abrir opciones de Max" title="Opciones de Max">Opciones</summary>
               <div className="max-chat-menu-panel">
                 <button type="button" onClick={() => setHistoryOpen((value) => !value)}>
                   Historial
