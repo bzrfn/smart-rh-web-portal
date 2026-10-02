@@ -53,7 +53,7 @@ const POSITION_STORAGE_KEY = 'smart_rh_max_position';
 const BUTTON_SIZE = 60;
 const EDGE_GAP = 18;
 const PANEL_GAP = 16;
-const PANEL_WIDTH = 620;
+const PANEL_WIDTH = 760;
 
 function buildId() {
   return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
@@ -183,6 +183,7 @@ export default function AsistenteSmartRh() {
   ]);
   const [maxHistoryReady, setMaxHistoryReady] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
+  const [selectedHistoryIndex, setSelectedHistoryIndex] = useState<number | null>(null);
 
   useEffect(() => {
     if (maxHistoryReady || typeof window === 'undefined') return;
@@ -219,6 +220,9 @@ export default function AsistenteSmartRh() {
   }, [maxHistoryReady, messages]);
 
   const maxHistoryPreview = messages;
+  const maxHistorySelectors = messages
+    .map((item, index) => ({ item, index }))
+    .filter(({ item }) => item.author === 'user');
 
   const clearMaxHistory = () => {
     if (typeof window !== 'undefined') {
@@ -231,6 +235,7 @@ export default function AsistenteSmartRh() {
     setError('');
     setShowSuggestions(true);
     setHistoryOpen(false);
+    setSelectedHistoryIndex(null);
   };
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(true);
@@ -439,15 +444,31 @@ export default function AsistenteSmartRh() {
     if (typeof window === 'undefined') return {};
 
     const width = Math.min(PANEL_WIDTH, window.innerWidth - EDGE_GAP * 2);
-    const height = Math.min(700, window.innerHeight - EDGE_GAP * 2);
+    const height = Math.min(760, window.innerHeight - EDGE_GAP * 2);
+    const opensLeft =
+      buttonPosition.x + BUTTON_SIZE / 2 > window.innerWidth / 2;
+    const rawLeft = opensLeft
+      ? buttonPosition.x + BUTTON_SIZE - width
+      : buttonPosition.x;
+    const rawTop = buttonPosition.y + BUTTON_SIZE - height;
+    const left = clamp(
+      rawLeft,
+      EDGE_GAP,
+      Math.max(EDGE_GAP, window.innerWidth - width - EDGE_GAP)
+    );
+    const top = clamp(
+      rawTop,
+      EDGE_GAP,
+      Math.max(EDGE_GAP, window.innerHeight - height - EDGE_GAP)
+    );
 
     return {
       width: `${width}px`,
       height: `${height}px`,
-      right: `${EDGE_GAP}px`,
-      bottom: `${EDGE_GAP}px`,
+      left: `${left}px`,
+      top: `${top}px`,
     };
-  }, []);
+  }, [buttonPosition.x, buttonPosition.y]);
 
   function handleButtonPointerDown(
     event: PointerEvent<HTMLButtonElement>
@@ -576,37 +597,74 @@ export default function AsistenteSmartRh() {
                 <p>Max esta revisando el contexto...</p>
               </article>
             ) : null}
+          </div>
+
           {historyOpen ? (
             <div className="max-history-panel" role="dialog" aria-label="Historial de Max">
               <div className="max-history-panel-header">
-                <button type="button" onClick={() => setHistoryOpen(false)}>
-                  Volver
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (selectedHistoryIndex !== null) {
+                      setSelectedHistoryIndex(null);
+                      return;
+                    }
+
+                    setHistoryOpen(false);
+                  }}
+                >
+                  {selectedHistoryIndex === null ? 'Cerrar' : 'Volver'}
                 </button>
-                <strong>Historial</strong>
+                <strong>{selectedHistoryIndex === null ? 'Historial' : 'Conversacion'}</strong>
                 <span>7 dias</span>
               </div>
-              <div className="max-history-list">
-                {maxHistoryPreview.length ? (
-                  maxHistoryPreview.map((item, index) => {
-                    const entry = item as any;
-                    const text = String(entry.content ?? entry.contenido ?? entry.text ?? entry.respuesta ?? '').trim();
-                    const isUser = entry.author === 'user' || entry.role === 'user' || entry.autor === 'user';
-                    if (!text) return null;
-                    return (
-                      <div className={`max-history-item ${isUser ? 'user' : 'assistant'}`} key={entry.id ?? index}>
-                        <span>{isUser ? 'Tu' : 'Max'}</span>
-                        <p>{text}</p>
-                      </div>
-                    );
-                  })
-                ) : (
-                  <p className="max-history-empty">Sin mensajes recientes.</p>
-                )}
-              </div>
+              {selectedHistoryIndex === null ? (
+                <div className="max-history-selector-list">
+                  {maxHistorySelectors.length ? (
+                    maxHistorySelectors.map(({ item, index }) => (
+                      <button
+                        className="max-history-selector"
+                        key={item.id}
+                        type="button"
+                        onClick={() => setSelectedHistoryIndex(index)}
+                      >
+                        <span>Consulta</span>
+                        <p>{item.text}</p>
+                        <strong>Ver conversacion</strong>
+                      </button>
+                    ))
+                  ) : (
+                    <p className="max-history-empty">Aun no hay consultas para mostrar.</p>
+                  )}
+                </div>
+              ) : (
+                <div className="max-history-list">
+                  {maxHistoryPreview.length ? (
+                    maxHistoryPreview.map((item, index) => {
+                      const entry = item as any;
+                      const text = String(entry.content ?? entry.contenido ?? entry.text ?? entry.respuesta ?? '').trim();
+                      const isUser = entry.author === 'user' || entry.role === 'user' || entry.autor === 'user';
+                      if (!text) return null;
+
+                      return (
+                        <div
+                          className={`max-history-item ${isUser ? 'user' : 'assistant'} ${
+                            index === selectedHistoryIndex ? 'is-selected' : ''
+                          }`}
+                          key={entry.id ?? index}
+                        >
+                          <span>{isUser ? 'Tu' : 'Max'}</span>
+                          <p>{text}</p>
+                        </div>
+                      );
+                    })
+                  ) : (
+                    <p className="max-history-empty">Sin mensajes recientes.</p>
+                  )}
+                </div>
+              )}
             </div>
           ) : null}
-
-          </div>
 
           {showSuggestions && suggestions.length ? (
             <div className="max-suggestions" aria-label="Preguntas frecuentes">
@@ -640,7 +698,10 @@ export default function AsistenteSmartRh() {
                 type="button"
                 aria-label="Abrir historial"
                 title="Historial"
-                onClick={() => setHistoryOpen((value) => !value)}
+                onClick={() => {
+                  setSelectedHistoryIndex(null);
+                  setHistoryOpen((value) => !value);
+                }}
               >
                 <svg viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M4 12a8 8 0 1 0 2.35-5.65" />
@@ -649,7 +710,7 @@ export default function AsistenteSmartRh() {
                 </svg>
               </button>
             </div>
-                        <textarea
+            <textarea
               value={message}
               onChange={(event) => setMessage(event.target.value)}
               placeholder="Preguntame..."
@@ -665,8 +726,9 @@ export default function AsistenteSmartRh() {
               className="max-send-btn max-send-round"
               type="submit"
               aria-label="Enviar mensaje a Max"
+              title="Enviar mensaje"
               disabled={loading || !message.trim()}
-             title="Enviar mensaje">
+            >
               <svg className="max-send-icon" viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M5 12h12" />
                 <path d="M13 7l5 5-5 5" />
