@@ -59,6 +59,15 @@ function buildId() {
   return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
 
+function buildWelcomeMessage(): Message {
+  return {
+    id: buildId(),
+    author: 'assistant',
+    text:
+      'Hola, soy Max. Cuentame que necesitas resolver en SMART RH y lo revisamos paso a paso.',
+  };
+}
+
 function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max);
 }
@@ -169,13 +178,8 @@ export default function AsistenteSmartRh() {
     () => getInitialPosition()
   );
   const [dragState, setDragState] = useState<DragState | null>(null);
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: buildId(),
-      author: 'assistant',
-      text:
-        'Hola, soy Max. Cuentame que necesitas resolver en SMART RH y lo revisamos paso a paso.',
-    },
+  const [messages, setMessages] = useState<Message[]>(() => [
+    buildWelcomeMessage(),
   ]);
   const [maxHistoryReady, setMaxHistoryReady] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
@@ -221,9 +225,13 @@ export default function AsistenteSmartRh() {
       window.localStorage.removeItem(MAX_PORTAL_HISTORY_KEY);
     }
 
-    setMessages([] as any);
+    setMessages([buildWelcomeMessage()]);
+    setMessage('');
+    setLastQuestion('');
+    setError('');
     setShowSuggestions(true);
     setHistoryOpen(false);
+    document.querySelector('.max-chat-menu')?.removeAttribute('open');
   };
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(true);
