@@ -5,7 +5,9 @@ import { useAuth } from '../../app/auth/AuthContext';
 import maxAssistantIcon from '../../assets/max-touch-icon.svg';
 
 const MAX_PORTAL_HISTORY_KEY = 'smart-rh:max:portal-history:v1';
+const MAX_PORTAL_SESSIONS_KEY = 'smart-rh:max:portal-sessions:v1';
 const MAX_CHAT_HISTORY_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+const MAX_CHAT_HISTORY_LIMIT = 12;
 
 type ChatbotAction = {
   label: string;
@@ -33,6 +35,13 @@ type Message = {
   author: 'user' | 'assistant';
   text: string;
   response?: ChatbotResponse;
+};
+
+type MaxChatSession = {
+  id: string;
+  title: string;
+  savedAt: number;
+  messages: Message[];
 };
 
 type FloatingPosition = {
@@ -66,6 +75,36 @@ function buildWelcomeMessage(): Message {
     text:
       'Hola, soy Max. Cuentame que necesitas resolver en SMART RH y lo revisamos paso a paso.',
   };
+}
+
+function buildChatTitle(messages: Message[]) {
+  const firstQuestion = messages.find((item) => item.author === 'user')?.text;
+  const title = String(firstQuestion || 'Nuevo chat').trim();
+
+  return title.length > 54 ? `${title.slice(0, 51)}...` : title;
+}
+
+function buildChatSession(messages: Message[] = [buildWelcomeMessage()]): MaxChatSession {
+  return {
+    id: buildId(),
+    title: buildChatTitle(messages),
+    savedAt: Date.now(),
+    messages,
+  };
+}
+
+function isFreshSession(session: MaxChatSession) {
+  return Date.now() - Number(session.savedAt || 0) <= MAX_CHAT_HISTORY_TTL_MS;
+}
+
+function persistChatSessions(activeSessionId: string, sessions: MaxChatSession[]) {
+  if (typeof window === 'undefined') return;
+
+  window.localStorage.setItem(
+    MAX_PORTAL_SESSIONS_KEY,
+    JSON.stringify({ activeSessionId, sessions })
+  );
+  window.localStorage.removeItem(MAX_PORTAL_HISTORY_KEY);
 }
 
 function clamp(value: number, min: number, max: number) {
@@ -193,15 +232,38 @@ export default function AsistenteSmartRh() {
   const [messages, setMessages] = useState<Message[]>(() => [
     buildWelcomeMessage(),
   ]);
+  const [activeSessionId, setActiveSessionId] = useState(() => buildId());
+  const [chatSessions, setChatSessions] = useState<MaxChatSession[]>([]);
   const [maxHistoryReady, setMaxHistoryReady] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
-  const [selectedHistoryIndex, setSelectedHistoryIndex] = useState<number | null>(null);
+  const [selectedHistoryId, setSelectedHistoryId] = useState<string | null>(null);
 
   useEffect(() => {
     if (maxHistoryReady || typeof window === 'undefined') return;
-    setMaxHistoryReady(true);
 
     try {
+      const sessionsRaw = window.localStorage.getItem(MAX_PORTAL_SESSIONS_KEY);
+      if (sessionsRaw) {
+        const payload = JSON.parse(sessionsRaw) as {
+          activeSessionId?: string;
+          sessions?: MaxChatSession[];
+        };
+        const sessions = Array.isArray(payload.sessions)
+          ? payload.sessions.filter(isFreshSession).slice(0, MAX_CHAT_HISTORY_LIMIT)
+          : [];
+
+        if (sessions.length > 0) {
+          const activeSession =
+            sessions.find((item) => item.id === payload.activeSessionId) ||
+            sessions[0];
+
+          setChatSessions(sessions);
+          setActiveSessionId(activeSession.id);
+          setMessages(activeSession.messages);
+          return;
+        }
+      }
+
       const raw = window.localStorage.getItem(MAX_PORTAL_HISTORY_KEY);
       if (!raw) return;
 
@@ -209,12 +271,18 @@ export default function AsistenteSmartRh() {
       const isFresh = typeof payload.savedAt === 'number' && Date.now() - payload.savedAt <= MAX_CHAT_HISTORY_TTL_MS;
 
       if (isFresh && Array.isArray(payload.messages) && payload.messages.length > 0) {
-        setMessages(payload.messages as any);
+        const migratedSession = buildChatSession(payload.messages as Message[]);
+        setChatSessions([migratedSession]);
+        setActiveSessionId(migratedSession.id);
+        setMessages(migratedSession.messages);
       } else {
         window.localStorage.removeItem(MAX_PORTAL_HISTORY_KEY);
       }
     } catch {
       window.localStorage.removeItem(MAX_PORTAL_HISTORY_KEY);
+      window.localStorage.removeItem(MAX_PORTAL_SESSIONS_KEY);
+    } finally {
+      setMaxHistoryReady(true);
     }
   }, [maxHistoryReady]);
 
@@ -222,32 +290,98 @@ export default function AsistenteSmartRh() {
     if (!maxHistoryReady || typeof window === 'undefined') return;
 
     try {
-      window.localStorage.setItem(
-        MAX_PORTAL_HISTORY_KEY,
-        JSON.stringify({ savedAt: Date.now(), messages })
-      );
+      const currentSession: MaxChatSession = {
+        id: activeSessionId,
+        title: buildChatTitle(messages),
+        savedAt: Date.now(),
+        messages,
+      };
+      const nextSessions = [
+        currentSession,
+        ...chatSessions.filter((item) => item.id !== activeSessionId),
+      ]
+        .filter(isFreshSession)
+        .slice(0, MAX_CHAT_HISTORY_LIMIT);
+
+      setChatSessions(nextSessions);
+      persistChatSessions(activeSessionId, nextSessions);
     } catch {
       // El historial local no debe bloquear el chat.
     }
-  }, [maxHistoryReady, messages]);
+  }, [activeSessionId, maxHistoryReady, messages]);
 
-  const maxHistoryPreview = messages;
-  const maxHistorySelectors = messages
-    .map((item, index) => ({ item, index }))
-    .filter(({ item }) => item.author === 'user');
+  const maxHistorySelectors = chatSessions.filter((session) =>
+    session.messages.some((item) => item.author === 'user') ||
+    session.id === activeSessionId
+  );
+  const selectedHistorySession = selectedHistoryId
+    ? chatSessions.find((session) => session.id === selectedHistoryId) || null
+    : null;
+  const maxHistoryPreview = selectedHistorySession?.messages || [];
 
-  const clearMaxHistory = () => {
-    if (typeof window !== 'undefined') {
-      window.localStorage.removeItem(MAX_PORTAL_HISTORY_KEY);
-    }
-
-    setMessages([buildWelcomeMessage()]);
+  const resetComposerState = () => {
     setMessage('');
     setLastQuestion('');
     setError('');
     setShowSuggestions(true);
+    setSelectedHistoryId(null);
+  };
+
+  const startNewChat = () => {
+    const session = buildChatSession();
+
+    setActiveSessionId(session.id);
+    setMessages(session.messages);
+    setChatSessions((current) => [session, ...current].slice(0, MAX_CHAT_HISTORY_LIMIT));
+    resetComposerState();
     setHistoryOpen(false);
-    setSelectedHistoryIndex(null);
+  };
+
+  const openChatSession = (session: MaxChatSession) => {
+    setActiveSessionId(session.id);
+    setMessages(session.messages);
+    setSelectedHistoryId(session.id);
+    setMessage('');
+    setLastQuestion('');
+    setError('');
+    setShowSuggestions(false);
+  };
+
+  const deleteChatSession = (sessionId: string) => {
+    const remainingSessions = chatSessions.filter((session) => session.id !== sessionId);
+    const fallbackSession = remainingSessions[0] || buildChatSession();
+    const nextSessions = remainingSessions.length ? remainingSessions : [fallbackSession];
+
+    setChatSessions(nextSessions);
+    if (activeSessionId === sessionId) {
+      setActiveSessionId(fallbackSession.id);
+      setMessages(fallbackSession.messages);
+      resetComposerState();
+    }
+
+    persistChatSessions(
+      activeSessionId === sessionId ? fallbackSession.id : activeSessionId,
+      nextSessions
+    );
+
+    if (selectedHistoryId === sessionId) {
+      setSelectedHistoryId(null);
+    }
+  };
+
+  const clearAllChatSessions = () => {
+    const session = buildChatSession();
+
+    if (typeof window !== 'undefined') {
+      window.localStorage.removeItem(MAX_PORTAL_HISTORY_KEY);
+      window.localStorage.removeItem(MAX_PORTAL_SESSIONS_KEY);
+    }
+
+    setChatSessions([session]);
+    setActiveSessionId(session.id);
+    setMessages(session.messages);
+    persistChatSessions(session.id, [session]);
+    resetComposerState();
   };
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(true);
@@ -638,42 +772,63 @@ export default function AsistenteSmartRh() {
                 <button
                   type="button"
                   onClick={() => {
-                    if (selectedHistoryIndex !== null) {
-                      setSelectedHistoryIndex(null);
+                    if (selectedHistoryId !== null) {
+                      setSelectedHistoryId(null);
                       return;
                     }
 
                     setHistoryOpen(false);
                   }}
                 >
-                  {selectedHistoryIndex === null ? 'Cerrar' : 'Volver'}
+                  {selectedHistoryId === null ? 'Cerrar' : 'Volver'}
                 </button>
-                <strong>{selectedHistoryIndex === null ? 'Historial' : 'Conversacion'}</strong>
+                <strong>{selectedHistoryId === null ? 'Historial' : 'Conversacion'}</strong>
                 <span>7 dias</span>
               </div>
-              {selectedHistoryIndex === null ? (
+              {selectedHistoryId === null ? (
                 <div className="max-history-selector-list">
                   {maxHistorySelectors.length ? (
-                    maxHistorySelectors.map(({ item, index }) => (
-                      <button
-                        className="max-history-selector"
-                        key={item.id}
-                        type="button"
-                        onClick={() => setSelectedHistoryIndex(index)}
-                      >
-                        <span>Consulta</span>
-                        <p>{item.text}</p>
-                        <strong>Ver conversacion</strong>
-                      </button>
+                    maxHistorySelectors.map((session) => (
+                      <div className="max-history-selector-row" key={session.id}>
+                        <button
+                          className="max-history-selector"
+                          type="button"
+                          onClick={() => openChatSession(session)}
+                        >
+                          <span>
+                            {session.id === activeSessionId ? 'Chat actual' : 'Chat guardado'}
+                          </span>
+                          <p>{session.title}</p>
+                          <strong>Ver conversacion</strong>
+                        </button>
+                        <button
+                          className="max-history-delete-btn"
+                          type="button"
+                          aria-label={`Eliminar ${session.title}`}
+                          title="Eliminar chat"
+                          onClick={() => deleteChatSession(session.id)}
+                        >
+                          ×
+                        </button>
+                      </div>
                     ))
                   ) : (
                     <p className="max-history-empty">Aun no hay consultas para mostrar.</p>
                   )}
+                  {maxHistorySelectors.length ? (
+                    <button
+                      className="max-history-clear-btn"
+                      type="button"
+                      onClick={clearAllChatSessions}
+                    >
+                      Borrar historial
+                    </button>
+                  ) : null}
                 </div>
               ) : (
                 <div className="max-history-list">
                   {maxHistoryPreview.length ? (
-                    maxHistoryPreview.map((item, index) => {
+                    maxHistoryPreview.map((item) => {
                       const entry = item as any;
                       const text = String(entry.content ?? entry.contenido ?? entry.text ?? entry.respuesta ?? '').trim();
                       const isUser = entry.author === 'user' || entry.role === 'user' || entry.autor === 'user';
@@ -681,10 +836,8 @@ export default function AsistenteSmartRh() {
 
                       return (
                         <div
-                          className={`max-history-item ${isUser ? 'user' : 'assistant'} ${
-                            index === selectedHistoryIndex ? 'is-selected' : ''
-                          }`}
-                          key={entry.id ?? index}
+                          className={`max-history-item ${isUser ? 'user' : 'assistant'}`}
+                          key={entry.id ?? text}
                         >
                           <span>{isUser ? 'Tu' : 'Max'}</span>
                           <p>{text}</p>
@@ -722,7 +875,7 @@ export default function AsistenteSmartRh() {
                 type="button"
                 aria-label="Nuevo chat"
                 title="Nuevo chat"
-                onClick={clearMaxHistory}
+                onClick={startNewChat}
               >
                 +
               </button>
@@ -732,7 +885,7 @@ export default function AsistenteSmartRh() {
                 aria-label="Abrir historial"
                 title="Historial"
                 onClick={() => {
-                  setSelectedHistoryIndex(null);
+                  setSelectedHistoryId(null);
                   setHistoryOpen((value) => !value);
                 }}
               >

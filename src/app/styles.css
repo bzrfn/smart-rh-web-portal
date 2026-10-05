@@ -13251,9 +13251,50 @@ body::before {
   cursor: pointer !important;
 }
 
+.max-history-selector-row {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) 38px !important;
+  align-items: stretch !important;
+  gap: 10px !important;
+}
+
 .max-history-selector:hover {
   border-color: rgba(74, 205, 255, 0.56) !important;
   background: rgba(14, 46, 75, 0.96) !important;
+}
+
+.max-history-delete-btn {
+  width: 38px !important;
+  min-width: 38px !important;
+  border-radius: 14px !important;
+  border: 1px solid rgba(248, 113, 113, 0.24) !important;
+  color: #fecaca !important;
+  background: rgba(127, 29, 29, 0.32) !important;
+  font-size: 1.1rem !important;
+  font-weight: 900 !important;
+  cursor: pointer !important;
+}
+
+.max-history-delete-btn:hover {
+  color: #ffffff !important;
+  border-color: rgba(248, 113, 113, 0.54) !important;
+  background: rgba(185, 28, 28, 0.56) !important;
+}
+
+.max-history-clear-btn {
+  min-height: 40px !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(122, 202, 255, 0.22) !important;
+  color: rgba(234, 246, 255, 0.88) !important;
+  background: rgba(15, 30, 52, 0.88) !important;
+  font-size: 0.78rem !important;
+  font-weight: 850 !important;
+  cursor: pointer !important;
+}
+
+.max-history-clear-btn:hover {
+  border-color: rgba(74, 205, 255, 0.52) !important;
+  background: rgba(14, 46, 75, 0.95) !important;
 }
 
 .max-history-selector span,
