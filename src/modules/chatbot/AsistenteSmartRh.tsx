@@ -152,6 +152,18 @@ function isWebAction(action: ChatbotAction) {
   return action.scope === 'web' || action.scope === 'both';
 }
 
+function isCreateTicketAction(action: ChatbotAction) {
+  const label = action.label.toLowerCase();
+
+  return label.includes('crear') && label.includes('ticket');
+}
+
+function isTicketConfirmation(text: string) {
+  return /cree el ticket con folio|creé el ticket con folio|envie la consulta a soporte|envié la consulta a soporte/i.test(
+    text
+  );
+}
+
 function getWebTarget(target: string) {
   if (target.startsWith('/')) return target;
 
@@ -259,6 +271,14 @@ export default function AsistenteSmartRh() {
     [messages]
   );
 
+  const hasCreatedTicket = useMemo(
+    () =>
+      messages.some(
+        (item) => item.author === 'assistant' && isTicketConfirmation(item.text)
+      ),
+    [messages]
+  );
+
   const canCreateContextTicket = useMemo(() => {
     const latestAssistant = [...messages]
       .reverse()
@@ -266,9 +286,10 @@ export default function AsistenteSmartRh() {
 
     return Boolean(
       lastQuestion &&
+        !hasCreatedTicket &&
         latestAssistant?.response?.requiere_escalamiento
     );
-  }, [lastQuestion, messages]);
+  }, [hasCreatedTicket, lastQuestion, messages]);
 
   async function loadSuggestions() {
     try {
@@ -579,17 +600,26 @@ export default function AsistenteSmartRh() {
                   </ol>
                 ) : null}
 
-                {item.response?.acciones?.some(isWebAction) ? (
+                {item.response?.acciones?.some((action) =>
+                  isWebAction(action) &&
+                  !(hasCreatedTicket && isCreateTicketAction(action))
+                ) ? (
                   <div className="max-actions">
-                    {item.response.acciones.filter(isWebAction).map((action) => (
-                      <Link
-                        key={`${item.id}-${action.label}`}
-                        to={getWebTarget(action.target)}
-                        onClick={() => setOpen(false)}
-                      >
-                        {action.label}
-                      </Link>
-                    ))}
+                    {item.response.acciones
+                      .filter(
+                        (action) =>
+                          isWebAction(action) &&
+                          !(hasCreatedTicket && isCreateTicketAction(action))
+                      )
+                      .map((action) => (
+                        <Link
+                          key={`${item.id}-${action.label}`}
+                          to={getWebTarget(action.target)}
+                          onClick={() => setOpen(false)}
+                        >
+                          {action.label}
+                        </Link>
+                      ))}
                   </div>
                 ) : null}
               </article>
