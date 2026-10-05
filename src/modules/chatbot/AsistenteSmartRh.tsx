@@ -789,7 +789,7 @@ export default function AsistenteSmartRh() {
                 <div className="max-history-selector-list">
                   {maxHistorySelectors.length ? (
                     maxHistorySelectors.map((session) => (
-                      <div className="max-history-selector-row" key={session.id}>
+                      <article className="max-history-selector-row" key={session.id}>
                         <button
                           className="max-history-selector"
                           type="button"
@@ -808,9 +808,15 @@ export default function AsistenteSmartRh() {
                           title="Eliminar chat"
                           onClick={() => deleteChatSession(session.id)}
                         >
-                          ×
+                          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                            <path d="M9 3h6" />
+                            <path d="M4 6h16" />
+                            <path d="M18 6l-.8 14H6.8L6 6" />
+                            <path d="M10 10v6" />
+                            <path d="M14 10v6" />
+                          </svg>
                         </button>
-                      </div>
+                      </article>
                     ))
                   ) : (
                     <p className="max-history-empty">Aun no hay consultas para mostrar.</p>

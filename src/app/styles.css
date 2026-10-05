@@ -13239,48 +13239,66 @@ body::before {
 .max-history-selector {
   width: 100% !important;
   margin: 0 !important;
-  padding: 14px 16px !important;
+  padding: 0 !important;
   display: grid !important;
   gap: 7px !important;
-  border-radius: 18px !important;
-  border: 1px solid rgba(122, 202, 255, 0.2) !important;
+  border: 0 !important;
+  border-radius: 0 !important;
   color: #eef8ff !important;
-  background: rgba(11, 25, 44, 0.92) !important;
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18) !important;
+  background: transparent !important;
+  box-shadow: none !important;
   text-align: left !important;
   cursor: pointer !important;
 }
 
 .max-history-selector-row {
   display: grid !important;
-  grid-template-columns: minmax(0, 1fr) 38px !important;
-  align-items: stretch !important;
-  gap: 10px !important;
+  grid-template-columns: minmax(0, 1fr) 34px !important;
+  align-items: center !important;
+  gap: 12px !important;
+  padding: 14px 14px 14px 16px !important;
+  border-radius: 18px !important;
+  border: 1px solid rgba(122, 202, 255, 0.2) !important;
+  background: rgba(11, 25, 44, 0.92) !important;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18) !important;
+  transition: border-color 0.16s ease, background 0.16s ease, transform 0.16s ease !important;
 }
 
-.max-history-selector:hover {
+.max-history-selector-row:hover {
   border-color: rgba(74, 205, 255, 0.56) !important;
   background: rgba(14, 46, 75, 0.96) !important;
 }
 
 .max-history-delete-btn {
-  width: 38px !important;
-  min-width: 38px !important;
-  border-radius: 14px !important;
-  border: 1px solid rgba(248, 113, 113, 0.24) !important;
-  color: #fecaca !important;
-  background: rgba(127, 29, 29, 0.32) !important;
-  font-size: 1.1rem !important;
-  font-weight: 900 !important;
+  width: 34px !important;
+  height: 34px !important;
+  min-width: 34px !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(148, 163, 184, 0.22) !important;
+  color: rgba(226, 232, 240, 0.72) !important;
+  background: rgba(15, 23, 42, 0.62) !important;
   cursor: pointer !important;
+  transition: color 0.16s ease, border-color 0.16s ease, background 0.16s ease, transform 0.16s ease !important;
+}
+
+.max-history-delete-btn svg {
+  width: 16px !important;
+  height: 16px !important;
+  fill: none !important;
+  stroke: currentColor !important;
+  stroke-width: 1.9 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
 }
 
 .max-history-delete-btn:hover {
-  color: #ffffff !important;
-  border-color: rgba(248, 113, 113, 0.54) !important;
-  background: rgba(185, 28, 28, 0.56) !important;
+  color: #fecaca !important;
+  border-color: rgba(248, 113, 113, 0.42) !important;
+  background: rgba(127, 29, 29, 0.32) !important;
+  transform: translateY(-1px) !important;
 }
-
 .max-history-clear-btn {
   min-height: 40px !important;
   border-radius: 999px !important;
