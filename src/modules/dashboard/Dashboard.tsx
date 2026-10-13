@@ -15,13 +15,8 @@ type ModuleCard = {
 const modules: ModuleCard[] = [
   {
     path: '/portal/usuarios',
-<<<<<<< ours
-    title: 'Usuarios',
-    description: 'Gestión de personal, perfiles, roles y permisos de módulos.',
-=======
     title: 'Usuarios y permisos',
     description: 'Altas, roles, módulos habilitados y cambios de acceso.',
->>>>>>> theirs
     code: 'US',
     icon: 'users',
     group: 'talento',
@@ -265,111 +260,6 @@ export default function Dashboard() {
     .filter((group) => group.modules.length > 0);
 
   const userName = `${user?.nombre || ''} ${user?.apellido || ''}`.trim();
-<<<<<<< ours
-  const firstName = userName ? userName.split(' ')[0] : 'Equipo';
-
-  const commandHighlights = [
-    {
-      label: 'Prioridad',
-      title: isAdmin ? 'Operación administrativa' : 'Tu jornada laboral',
-      detail: isAdmin
-        ? 'Revisa asistencia, usuarios y solicitudes antes de cerrar el día.'
-        : 'Consulta asistencia, documentos y solicitudes desde una vista clara.',
-      metric: isAdmin ? 'Admin' : 'Empleado',
-      path: isAdmin ? '/portal/asistencia' : '/portal/documentacion',
-      icon: isAdmin ? 'attendance' : 'documents',
-    },
-    {
-      label: 'Flujo recomendado',
-      title: 'Documentar antes de escalar',
-      detail: 'Max puede ayudarte a ordenar contexto antes de crear tickets o revisar módulos.',
-      metric: 'Max',
-      path: '/portal/soporte',
-      icon: 'spark',
-    },
-    {
-      label: 'Control semanal',
-      title: 'Ausencias y calendario',
-      detail: 'Ten a la mano vacaciones, incapacidades y agenda laboral sin perder navegación.',
-      metric: 'Agenda',
-      path: '/portal/calendario',
-      icon: 'calendar',
-    },
-  ] satisfies Array<{
-    label: string;
-    title: string;
-    detail: string;
-    metric: string;
-    path: string;
-    icon: SmartRhIconName;
-  }>;
-
-  const systemChecks = [
-    'Base transaccional activa',
-    'Archivos protegidos en S3',
-    'Portal, app móvil y asistencia conectados',
-    isAdmin ? 'Analítica y ML disponibles' : 'Vista personal protegida',
-  ];
-
-  const quickLinks = [
-    { label: 'Documentación', path: '/portal/documentacion', icon: 'documents' },
-    { label: 'Asistencia', path: '/portal/asistencia', icon: 'attendance' },
-    { label: 'Vacaciones', path: '/portal/vacaciones', icon: 'vacation' },
-    ...(isAdmin
-      ? [
-          { label: 'Incapacidades', path: '/portal/incapacidades', icon: 'health' as const },
-          { label: 'Analítica', path: '/portal/dashboard-analitico', icon: 'chart' as const },
-          { label: 'ETL', path: '/portal/etl', icon: 'data' as const },
-        ]
-      : []),
-  ] satisfies Array<{
-    label: string;
-    path: string;
-    icon: SmartRhIconName;
-  }>;
-
-  return (
-    <div className="enterprise-dashboard">
-      <section className="enterprise-hero">
-        <div className="enterprise-hero-copy">
-          <span className="enterprise-chip">Centro operativo</span>
-          <h1>{`Hola, ${firstName}`}</h1>
-          <p>
-            Tu tablero combina operación, documentos y soporte en una lectura
-            más clara: qué revisar, a dónde entrar y qué dejar listo antes de
-            cambiar de módulo.
-          </p>
-
-          <div className="enterprise-hero-actions">
-            <Link to={isAdmin ? '/portal/usuarios' : '/portal/asistencia'} className="enterprise-primary-action">
-              <SmartRhIcon name={isAdmin ? 'users' : 'attendance'} />
-              <span>{isAdmin ? 'Gestionar usuarios' : 'Ir a asistencia'}</span>
-            </Link>
-
-            <Link
-              to={isAdmin ? '/portal/dashboard-analitico' : '/portal/documentacion'}
-              className="enterprise-secondary-action"
-            >
-              <SmartRhIcon name={isAdmin ? 'chart' : 'documents'} />
-              <span>{isAdmin ? 'Ver analítica' : 'Ver documentos'}</span>
-            </Link>
-          </div>
-
-          <div className="enterprise-hero-brief" aria-label="Resumen operativo">
-            <div>
-              <span>Modo</span>
-              <strong>{isAdmin ? 'Administración' : 'Empleado'}</strong>
-            </div>
-            <div>
-              <span>Módulos</span>
-              <strong>{visibleModules.length}</strong>
-            </div>
-            <div>
-              <span>Asistente</span>
-              <strong>Max listo</strong>
-            </div>
-          </div>
-=======
   const firstName = userName.split(' ')[0] || 'Usuario';
   const workRail = isAdmin ? adminWorkRail : employeeWorkRail;
   const todayLabel = new Intl.DateTimeFormat('es-MX', {
@@ -397,7 +287,6 @@ export default function Dashboard() {
               {isAdmin ? 'Gestionar usuarios' : 'Consultar vacaciones'}
             </Link>
           </div>
->>>>>>> theirs
         </div>
 
         <div className="srh-hero-brief">
@@ -406,14 +295,6 @@ export default function Dashboard() {
             <strong>{isAdmin ? 'Qué revisar primero' : 'Accesos principales'}</strong>
           </div>
 
-<<<<<<< ours
-          <div className="enterprise-profile-note">
-            <SmartRhIcon name="check" />
-            <p>
-              Recomendación: atiende primero asistencia/documentos, después
-              soporte o analítica si el caso necesita seguimiento.
-            </p>
-=======
           <div className="srh-brief-list">
             {focusItems.map((item) => (
               <Link key={item.title} to={item.path}>
@@ -424,37 +305,10 @@ export default function Dashboard() {
                 </div>
               </Link>
             ))}
->>>>>>> theirs
           </div>
         </div>
       </section>
 
-<<<<<<< ours
-      <section className="enterprise-command-strip" aria-label="Información importante">
-        {commandHighlights.map((item) => (
-          <Link to={item.path} className="enterprise-command-card" key={item.title}>
-            <div className="enterprise-command-icon">
-              <SmartRhIcon name={item.icon} />
-            </div>
-            <div>
-              <span>{item.label}</span>
-              <h3>{item.title}</h3>
-              <p>{item.detail}</p>
-            </div>
-            <strong>{item.metric}</strong>
-          </Link>
-        ))}
-      </section>
-
-      <section className="enterprise-kpi-grid">
-        {kpis.map((item) => (
-          <article key={item.label} className={`enterprise-kpi-card ${item.accent}`}>
-            <span>{item.label}</span>
-            <strong>{item.value}</strong>
-            <p>{item.detail}</p>
-          </article>
-        ))}
-=======
       <section className="srh-dashboard-strip" aria-label="Información rápida">
         <article>
           <span>Vista activa</span>
@@ -471,7 +325,6 @@ export default function Dashboard() {
           <strong>Max</strong>
           <p>Ayuda con pasos, contexto y tickets.</p>
         </article>
->>>>>>> theirs
       </section>
 
       <section className="srh-work-board">
@@ -504,17 +357,6 @@ export default function Dashboard() {
           <h2>Menos ruido, más decisión</h2>
         </div>
 
-<<<<<<< ours
-                      <span className="enterprise-module-arrow">
-                        <SmartRhIcon name="send" />
-                      </span>
-                    </Link>
-                  ))}
-                </div>
-              </section>
-            ))}
-          </div>
-=======
         <div className="srh-workflow-cards">
           <article>
             <b>01</b>
@@ -531,44 +373,9 @@ export default function Dashboard() {
             <strong>Deja seguimiento</strong>
             <p>Guarda el cambio o usa Max para levantar un ticket con el contexto mínimo.</p>
           </article>
->>>>>>> theirs
         </div>
       </section>
 
-<<<<<<< ours
-        <aside className="enterprise-side-panel">
-          <div className="enterprise-side-card">
-            <span className="enterprise-side-label">Estado del sistema</span>
-            <h3>Operación conectada</h3>
-            <p>
-              Lectura corta del estado general para no llenar el tablero de
-              ruido técnico, pero mantener confianza operativa.
-            </p>
-
-            <div className="enterprise-system-list">
-              {systemChecks.map((item) => (
-                <div key={item}>
-                  <span />
-                  <strong>{item}</strong>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="enterprise-side-card">
-            <span className="enterprise-side-label">Accesos rápidos</span>
-
-            <div className="enterprise-quick-links">
-              {quickLinks.map((item) => (
-                <Link to={item.path} key={item.path}>
-                  <SmartRhIcon name={item.icon} />
-                  <span>{item.label}</span>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </aside>
-=======
       <section className="srh-module-catalog">
         <div className="srh-section-title">
           <span>Módulos SMART RH</span>
@@ -604,7 +411,6 @@ export default function Dashboard() {
             </section>
           ))}
         </div>
->>>>>>> theirs
       </section>
     </div>
   );

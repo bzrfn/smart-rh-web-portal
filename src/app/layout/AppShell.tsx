@@ -578,47 +578,6 @@ export default function AppShell() {
         </div>
       </header>
 
-<<<<<<< ours
-      <section className="top-nav-shell">
-        <button
-          className={`top-nav-trigger ${navigationOpen ? 'is-open' : ''}`}
-          type="button"
-          onClick={() => setNavigationOpen((value) => !value)}
-          aria-expanded={navigationOpen}
-        >
-          <span className="top-nav-trigger-icon">
-            <SmartRhIcon name={activeItem.icon} />
-          </span>
-          <div>
-            <small>Navegación SMART RH</small>
-            <strong>{activeItem.label}</strong>
-          </div>
-          <em>{navItems.length} módulos</em>
-          <SmartRhIcon className="top-nav-trigger-chevron" name="chevronDown" />
-        </button>
-
-        <nav className={`top-nav ${navigationOpen ? 'is-open' : ''}`}>
-          {navItems.map((item) => (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={`top-nav-item ${
-                isActive(item.path) ? 'active' : ''
-              }`}
-              onClick={() => setNavigationOpen(false)}
-            >
-              <span>
-                <SmartRhIcon name={item.icon} />
-              </span>
-              <div>
-                <strong>{item.label}</strong>
-                <small>{item.description || 'Inicio operativo'}</small>
-              </div>
-            </Link>
-          ))}
-        </nav>
-      </section>
-=======
       {navigationOpen ? (
         <button
           className="portal-nav-backdrop"
@@ -682,7 +641,6 @@ export default function AppShell() {
           ))}
         </div>
       </aside>
->>>>>>> theirs
 
       <main className="top-shell-main">
         <Outlet />

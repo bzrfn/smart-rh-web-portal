@@ -237,26 +237,6 @@ export default function LandingPage() {
           </div>
         </a>
 
-<<<<<<< ours
-        <button
-          className={`public-menu-trigger ${publicMenuOpen ? 'is-open' : ''}`}
-          type="button"
-          onClick={() => setPublicMenuOpen((value) => !value)}
-          aria-expanded={publicMenuOpen}
-        >
-          <span>Explorar SMART RH</span>
-          <SmartRhIcon name="chevronDown" />
-        </button>
-
-        <nav className={`public-nav public-nav-premium ${publicMenuOpen ? 'is-open' : ''}`}>
-          <a href="#inicio" onClick={() => setPublicMenuOpen(false)}>{t.nav.home}</a>
-          <a href="#nosotros" onClick={() => setPublicMenuOpen(false)}>{t.nav.about}</a>
-          <a href="#servicios" onClick={() => setPublicMenuOpen(false)}>{t.nav.services}</a>
-          <a href="#historia" onClick={() => setPublicMenuOpen(false)}>{t.nav.story}</a>
-          <a href="#valores" onClick={() => setPublicMenuOpen(false)}>{t.nav.values}</a>
-          <a href="#contacto" onClick={() => setPublicMenuOpen(false)}>{t.nav.contact}</a>
-        </nav>
-=======
         <div className="public-menu-shell">
           <button
             className={`public-menu-trigger ${publicMenuOpen ? 'is-open' : ''}`}
@@ -298,7 +278,6 @@ export default function LandingPage() {
             </nav>
           ) : null}
         </div>
->>>>>>> theirs
 
         <div className="public-actions public-actions-premium">
           <label className="public-language public-language-premium">
