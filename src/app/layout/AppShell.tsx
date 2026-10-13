@@ -1,13 +1,14 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 import ProtectedImage from '../../components/ProtectedImage';
 import AsistenteSmartRh from '../../modules/chatbot/AsistenteSmartRh';
+import SmartRhIcon, { SmartRhIconName } from '../../components/SmartRhIcon';
 
 type NavItem = {
   path: string;
   label: string;
-  icon: string;
+  icon: SmartRhIconName;
   description: string;
   adminOnly?: boolean;
 };
@@ -18,15 +19,35 @@ export default function AppShell() {
   const { user, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
+  const headerActionsRef = useRef<HTMLDivElement | null>(null);
 
   const [theme, setTheme] = useState(
     () => localStorage.getItem('smart_rh_theme') || 'light'
   );
+  const [profileOpen, setProfileOpen] = useState(false);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [quickOpen, setQuickOpen] = useState(false);
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
     localStorage.setItem('smart_rh_theme', theme);
   }, [theme]);
+
+  useEffect(() => {
+    const handlePointerDown = (event: PointerEvent) => {
+      if (!headerActionsRef.current?.contains(event.target as Node)) {
+        setProfileOpen(false);
+        setNotificationsOpen(false);
+        setQuickOpen(false);
+      }
+    };
+
+    document.addEventListener('pointerdown', handlePointerDown);
+
+    return () => {
+      document.removeEventListener('pointerdown', handlePointerDown);
+    };
+  }, []);
 
   /*
     Protección directa del layout privado:
@@ -65,76 +86,76 @@ export default function AppShell() {
       {
         path: '/portal',
         label: 'Dashboard',
-        icon: '▦',
+        icon: 'home',
         description: '',
       },
       {
         path: '/portal/usuarios',
         label: 'Usuarios',
-        icon: 'US',
+        icon: 'users',
         description: 'Personal y accesos',
       },
       {
         path: '/portal/asistencia',
         label: 'Asistencia',
-        icon: 'AS',
+        icon: 'attendance',
         description: 'Registros laborales',
       },
       {
         path: '/portal/calendario',
         label: 'Calendario',
-        icon: 'CL',
+        icon: 'calendar',
         description: 'Agenda laboral',
       },
       {
         path: '/portal/documentacion',
         label: 'Documentos',
-        icon: 'DC',
+        icon: 'documents',
         description: 'Expediente digital',
       },
       {
         path: '/portal/contratos',
         label: 'Contratos',
-        icon: 'CT',
+        icon: 'contracts',
         description: 'Gestión contractual',
       },
       {
         path: '/portal/nomina',
         label: 'Nómina',
-        icon: 'NM',
+        icon: 'payroll',
         description: 'Pagos y periodos',
       },
       {
         path: '/portal/vacaciones',
         label: 'Vacaciones',
-        icon: 'VC',
+        icon: 'vacation',
         description: 'Solicitudes y saldos',
       },
       {
         path: '/portal/incapacidades',
         label: 'Incapacidades',
-        icon: 'IN',
+        icon: 'health',
         description: 'Solicitudes médicas',
         adminOnly: true,
       },
       {
         path: '/portal/soporte',
         label: 'Soporte',
-        icon: 'SP',
+        icon: 'support',
         description: 'Tickets e incidencias',
         adminOnly: true,
       },
       {
         path: '/portal/analisis-supervisado',
         label: 'ML',
-        icon: 'ML',
+        icon: 'chart',
         description: 'Predicción supervisada',
         adminOnly: true,
       },
       {
         path: '/portal/etl',
         label: 'ETL',
-        icon: 'ETL',
+        icon: 'data',
         description: 'Análisis de datos',
         adminOnly: true,
       },
@@ -151,6 +172,53 @@ export default function AppShell() {
       navItems[0]
     );
   }, [location.pathname, navItems]);
+
+  const quickActions = useMemo(
+    () => [
+      {
+        path: '/portal/calendario',
+        label: 'Calendario',
+        detail: 'Agenda laboral',
+        icon: 'calendar' as const,
+      },
+      {
+        path: '/portal/documentacion',
+        label: 'Documentos',
+        detail: 'Expediente digital',
+        icon: 'documents' as const,
+      },
+      {
+        path: '/portal/vacaciones',
+        label: 'Vacaciones',
+        detail: 'Saldos y solicitudes',
+        icon: 'vacation' as const,
+      },
+    ],
+    []
+  );
+
+  const notificationItems = useMemo(
+    () => [
+      {
+        title: 'Revisión operativa',
+        detail: location.pathname === '/portal/asistencia'
+          ? 'Estás dentro de asistencia.'
+          : 'Revisa asistencia pendiente cuando termines tu flujo actual.',
+        path: '/portal/asistencia',
+      },
+      {
+        title: 'Documentación',
+        detail: 'Mantén expediente, contratos y credencial al día.',
+        path: '/portal/documentacion',
+      },
+      {
+        title: 'Max disponible',
+        detail: 'Puedes pedirle contexto de cualquier módulo desde el botón flotante.',
+        path: '/portal',
+      },
+    ],
+    [location.pathname]
+  );
 
   const userInitials = useMemo(() => {
     const nombre = user?.nombre?.[0] || 'S';
@@ -196,8 +264,115 @@ export default function AppShell() {
           <p>{activeItem?.description || ''}</p>
         </div>
 
-        <div className="top-user-area">
-          <div className="top-user-card">
+        <div className="top-user-area" ref={headerActionsRef}>
+          <div className="top-quick-actions" aria-label="Accesos rápidos">
+            <Link
+              to="/portal/calendario"
+              className="top-icon-btn"
+              aria-label="Abrir calendario"
+              title="Calendario"
+            >
+              <SmartRhIcon name="calendar" />
+            </Link>
+
+            <button
+              className={`top-icon-btn ${notificationsOpen ? 'is-active' : ''}`}
+              type="button"
+              aria-label="Abrir notificaciones"
+              title="Notificaciones"
+              onClick={() => {
+                setNotificationsOpen((value) => !value);
+                setQuickOpen(false);
+                setProfileOpen(false);
+              }}
+            >
+              <SmartRhIcon name="bell" />
+            </button>
+
+            <button
+              className="top-icon-btn"
+              type="button"
+              aria-label={theme === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
+              title={theme === 'dark' ? 'Modo claro' : 'Modo oscuro'}
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            >
+              <SmartRhIcon name={theme === 'dark' ? 'sun' : 'moon'} />
+            </button>
+
+            <button
+              className={`top-icon-btn ${quickOpen ? 'is-active' : ''}`}
+              type="button"
+              aria-label="Abrir más accesos"
+              title="Más accesos"
+              onClick={() => {
+                setQuickOpen((value) => !value);
+                setNotificationsOpen(false);
+                setProfileOpen(false);
+              }}
+            >
+              <SmartRhIcon name="spark" />
+            </button>
+          </div>
+
+          {notificationsOpen ? (
+            <div className="top-popover top-popover-notifications">
+              <div className="top-popover-header">
+                <span>Notificaciones</span>
+                <strong>Centro rápido</strong>
+              </div>
+              <div className="top-popover-list">
+                {notificationItems.map((item) => (
+                  <Link
+                    key={item.title}
+                    to={item.path}
+                    className="top-popover-item"
+                    onClick={() => setNotificationsOpen(false)}
+                  >
+                    <span />
+                    <div>
+                      <strong>{item.title}</strong>
+                      <p>{item.detail}</p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          ) : null}
+
+          {quickOpen ? (
+            <div className="top-popover top-popover-quick">
+              <div className="top-popover-header">
+                <span>Accesos</span>
+                <strong>Trabajo frecuente</strong>
+              </div>
+              <div className="top-popover-stair">
+                {quickActions.map((item) => (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    className="top-stair-action"
+                    onClick={() => setQuickOpen(false)}
+                  >
+                    <SmartRhIcon name={item.icon} />
+                    <div>
+                      <strong>{item.label}</strong>
+                      <small>{item.detail}</small>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          ) : null}
+
+          <button
+            className={`top-user-card ${profileOpen ? 'is-active' : ''}`}
+            type="button"
+            onClick={() => {
+              setProfileOpen((value) => !value);
+              setNotificationsOpen(false);
+              setQuickOpen(false);
+            }}
+          >
             <div className="top-user-avatar">
               {user.foto_perfil_url ? (
                 <ProtectedImage
@@ -214,25 +389,52 @@ export default function AppShell() {
               <strong>{user.nombre || 'Usuario'}</strong>
               <small>{user.role || 'empleado'}</small>
             </div>
-          </div>
 
-          <button
-            className="top-theme-btn"
-            type="button"
-            onClick={() =>
-              setTheme(theme === 'dark' ? 'light' : 'dark')
-            }
-          >
-            {theme === 'dark' ? 'Claro' : 'Oscuro'}
+            <SmartRhIcon className="top-user-chevron" name="chevronDown" />
           </button>
 
-          <button
-            className="top-logout-btn"
-            type="button"
-            onClick={handleLogout}
-          >
-            Salir
-          </button>
+          {profileOpen ? (
+            <div className="top-popover top-popover-profile">
+              <div className="top-profile-summary">
+                <div className="top-user-avatar">
+                  {user.foto_perfil_url ? (
+                    <ProtectedImage
+                      src={user.foto_perfil_url}
+                      alt="Foto de perfil"
+                      fallback={<span>{userInitials}</span>}
+                    />
+                  ) : (
+                    <span>{userInitials}</span>
+                  )}
+                </div>
+                <div>
+                  <span>Bienvenido</span>
+                  <strong>{`${user.nombre || ''} ${user.apellido || ''}`.trim() || 'Usuario SMART RH'}</strong>
+                  <p>{user.correo}</p>
+                </div>
+              </div>
+
+              <div className="top-profile-links">
+                <Link to="/portal/documentacion" onClick={() => setProfileOpen(false)}>
+                  <SmartRhIcon name="documents" />
+                  <span>Mi expediente</span>
+                </Link>
+                <Link to="/portal/asistencia" onClick={() => setProfileOpen(false)}>
+                  <SmartRhIcon name="attendance" />
+                  <span>Asistencia</span>
+                </Link>
+              </div>
+
+              <button
+                className="top-logout-btn"
+                type="button"
+                onClick={handleLogout}
+              >
+                <SmartRhIcon name="logout" />
+                <span>Cerrar sesión</span>
+              </button>
+            </div>
+          ) : null}
         </div>
       </header>
 
@@ -245,7 +447,9 @@ export default function AppShell() {
               isActive(item.path) ? 'active' : ''
             }`}
           >
-            <span>{item.icon}</span>
+            <span>
+              <SmartRhIcon name={item.icon} />
+            </span>
             <strong>{item.label}</strong>
           </Link>
         ))}

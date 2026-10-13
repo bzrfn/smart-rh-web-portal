@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { api, setAuthToken } from '../../services/api';
 import { useAuth } from '../../app/auth/AuthContext';
+import PasswordField from '../../components/PasswordField';
 
 export default function Register() {
   const { setAuth } = useAuth();
@@ -196,8 +197,13 @@ export default function Register() {
             <label className="auth-label">Correo</label>
             <input className="auth-input" type="email" value={correo} onChange={(e) => setCorreo(e.target.value)} placeholder="usuario@empresa.com" />
 
-            <label className="auth-label">Contraseña</label>
-            <input className="auth-input" type="password" value={contrasena} onChange={(e) => setContrasena(e.target.value)} placeholder="••••••••" />
+            <PasswordField
+              label="Contraseña"
+              value={contrasena}
+              onChange={(e) => setContrasena(e.target.value)}
+              placeholder="••••••••"
+              autoComplete="new-password"
+            />
 
             <label className="auth-label">Teléfono</label>
             <input className="auth-input" value={telefono} onChange={(e) => setTelefono(e.target.value)} placeholder="Ej. 55 1234 5678" />

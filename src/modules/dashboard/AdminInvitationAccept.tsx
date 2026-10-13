@@ -11,6 +11,7 @@ import {
 import {
   api,
 } from '../../services/api';
+import PasswordField from '../../components/PasswordField';
 
 
 export default function AdminInvitationAccept() {
@@ -229,39 +230,33 @@ export default function AdminInvitationAccept() {
 
         {!success && (
           <div className="form-grid">
-            <label className="form-label">
-              Contraseña
-              <input
-                type="password"
-                autoComplete="new-password"
-                value={contrasena}
-                onChange={
-                  (
-                    event
-                  ) =>
-                    setContrasena(
-                      event.target.value
-                    )
-                }
-              />
-            </label>
+            <PasswordField
+              label="Contraseña"
+              autoComplete="new-password"
+              value={contrasena}
+              onChange={
+                (
+                  event
+                ) =>
+                  setContrasena(
+                    event.target.value
+                  )
+              }
+            />
 
-            <label className="form-label">
-              Confirmar contraseña
-              <input
-                type="password"
-                autoComplete="new-password"
-                value={confirmar}
-                onChange={
-                  (
-                    event
-                  ) =>
-                    setConfirmar(
-                      event.target.value
-                    )
-                }
-              />
-            </label>
+            <PasswordField
+              label="Confirmar contraseña"
+              autoComplete="new-password"
+              value={confirmar}
+              onChange={
+                (
+                  event
+                ) =>
+                  setConfirmar(
+                    event.target.value
+                  )
+              }
+            />
 
             <button
               className="btn"

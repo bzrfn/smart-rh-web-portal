@@ -12,6 +12,7 @@ import {
 import {
   api,
 } from '../../services/api';
+import PasswordField from '../../components/PasswordField';
 
 
 type LocationState = {
@@ -325,13 +326,8 @@ export default function AdminLogin() {
               autoFocus
             />
 
-            <label className="auth-label">
-              Contraseña
-            </label>
-
-            <input
-              className="auth-input"
-              type="password"
+            <PasswordField
+              label="Contraseña"
               value={contrasena}
               onChange={
                 (

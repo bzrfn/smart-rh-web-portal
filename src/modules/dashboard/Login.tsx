@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { api, setAuthToken } from '../../services/api';
 import { useAuth } from '../../app/auth/AuthContext';
+import PasswordField from '../../components/PasswordField';
 
 export default function Login() {
   const { setAuth } = useAuth();
@@ -184,10 +185,8 @@ export default function Login() {
               autoComplete="username"
             />
 
-            <label className="auth-label">Contraseña</label>
-            <input
-              className="auth-input"
-              type="password"
+            <PasswordField
+              label="Contraseña"
               value={contrasena}
               onChange={(e) => setContrasena(e.target.value)}
               placeholder="Contraseña"

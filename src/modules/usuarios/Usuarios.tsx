@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { api } from '../../services/api';
 import { useAuth } from '../../app/auth/AuthContext';
+import PasswordField from '../../components/PasswordField';
 
 type User = {
   id: number;
@@ -869,14 +870,12 @@ export default function Usuarios() {
               </label>
 
               {!editingId && form.rol_id !== '1' && (
-                <label className="form-label">
-                  Contraseña
-                  <input
-                    type="password"
-                    value={form.contrasena}
-                    onChange={(e) => updateForm('contrasena', e.target.value)}
-                  />
-                </label>
+                <PasswordField
+                  label="Contraseña"
+                  value={form.contrasena}
+                  onChange={(e) => updateForm('contrasena', e.target.value)}
+                  autoComplete="new-password"
+                />
               )}
 
               <label className="form-label">

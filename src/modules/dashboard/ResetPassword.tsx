@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { api } from '../../services/api';
+import PasswordField from '../../components/PasswordField';
 
 type LocationState = {
   correo?: string;
@@ -155,20 +156,16 @@ export default function ResetPassword() {
               maxLength={6}
             />
 
-            <label className="auth-label">Nueva contraseña</label>
-            <input
-              className="auth-input"
-              type="password"
+            <PasswordField
+              label="Nueva contraseña"
               value={nuevaContrasena}
               onChange={(e) => setNuevaContrasena(e.target.value)}
               placeholder="••••••••"
               autoComplete="new-password"
             />
 
-            <label className="auth-label">Confirmar contraseña</label>
-            <input
-              className="auth-input"
-              type="password"
+            <PasswordField
+              label="Confirmar contraseña"
               value={confirmarContrasena}
               onChange={(e) => setConfirmarContrasena(e.target.value)}
               placeholder="••••••••"

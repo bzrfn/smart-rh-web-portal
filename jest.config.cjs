@@ -15,6 +15,7 @@ module.exports = {
 
   moduleNameMapper: {
     '\\.(css|less|scss|sass)$': '<rootDir>/src/tests/styleMock.cjs',
+    '\\.(svg|png|jpg|jpeg|webp)$': '<rootDir>/src/tests/fileMock.cjs',
   },
 
   setupFilesAfterEnv: [
