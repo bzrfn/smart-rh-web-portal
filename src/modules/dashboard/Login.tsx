@@ -120,18 +120,18 @@ export default function Login() {
           <h1 className="auth-showcase-title">SMART RH</h1>
 
           <p className="auth-showcase-text">
-            Plataforma centralizada para la gestión de usuarios, asistencia, contratos,
-            nómina, vacaciones, documentación, soporte y análisis empresarial.
+            Una entrada limpia al ecosistema SMART RH: portal, asistencia,
+            documentos, solicitudes, soporte y análisis desde un mismo flujo.
           </p>
 
           <div className="auth-showcase-points">
             <div className="auth-showcase-point">
               <span className="auth-showcase-dot" />
               <div>
-                <h3>Acceso con 2FA</h3>
+                <h3>Trabajo diario</h3>
                 <p>
-                  Al iniciar sesión recibirás un código de un solo uso en tu correo
-                  para completar el acceso.
+                  Entra a asistencia, documentos, vacaciones e incapacidades sin
+                  perder el contexto de tu jornada.
                 </p>
               </div>
             </div>
@@ -139,10 +139,10 @@ export default function Login() {
             <div className="auth-showcase-point">
               <span className="auth-showcase-dot" />
               <div>
-                <h3>Control administrativo</h3>
+                <h3>Gestión administrativa</h3>
                 <p>
-                  Administra permisos, aprobaciones, documentos y módulos con trazabilidad
-                  operativa.
+                  Administra usuarios, permisos, solicitudes y soporte con módulos
+                  claros para cada responsabilidad.
                 </p>
               </div>
             </div>
@@ -150,9 +150,10 @@ export default function Login() {
             <div className="auth-showcase-point">
               <span className="auth-showcase-dot" />
               <div>
-                <h3>Seguridad empresarial</h3>
+                <h3>Max integrado</h3>
                 <p>
-                  La cuenta se valida con correo confirmado y códigos temporales de acceso.
+                  Usa el asistente para resolver dudas, ordenar contexto y preparar
+                  tickets cuando el caso lo necesite.
                 </p>
               </div>
             </div>
@@ -176,7 +177,7 @@ export default function Login() {
             </div>
 
             <p className="auth-description">
-              Ingresa tus credenciales. Después recibirás un código de acceso en tu correo.
+              Ingresa tus credenciales para continuar al portal de SMART RH.
             </p>
 
             <label className="auth-label">Correo</label>
@@ -197,7 +198,7 @@ export default function Login() {
             />
 
             <button className="auth-submit" type="submit" disabled={loading}>
-              <span>{loading ? 'Validando...' : 'Enviar código de acceso'}</span>
+              <span>{loading ? 'Validando...' : 'Entrar al portal'}</span>
               <span className="auth-submit-icon">→</span>
             </button>
 

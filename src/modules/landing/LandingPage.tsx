@@ -77,6 +77,7 @@ export default function LandingPage() {
 
   const [language, setLanguage] = useState<LandingLanguage>(getInitialLanguage);
   const [theme, setTheme] = useState(getInitialTheme);
+  const [publicMenuOpen, setPublicMenuOpen] = useState(false);
 
   const [contactName, setContactName] = useState('');
   const [contactEmail, setContactEmail] = useState('');
@@ -88,6 +89,29 @@ export default function LandingPage() {
 
   const t = useMemo(() => landingTranslations[language], [language]);
   const contactText = useMemo(() => contactMessages[language], [language]);
+  const publicHighlights = useMemo(
+    () => [
+      {
+        label: 'Operación',
+        title: 'Portal + App móvil',
+        detail: 'Asistencia, documentos, vacaciones y soporte en una misma experiencia.',
+        icon: 'attendance' as const,
+      },
+      {
+        label: 'Inteligencia',
+        title: 'Max con contexto',
+        detail: 'El asistente ayuda a resolver dudas y preparar tickets con información útil.',
+        icon: 'spark' as const,
+      },
+      {
+        label: 'Control',
+        title: 'Datos y auditoría',
+        detail: 'ETL, analítica y seguimiento para decisiones de Recursos Humanos.',
+        icon: 'chart' as const,
+      },
+    ],
+    []
+  );
 
   /*
     Protección de sesión:
@@ -213,13 +237,23 @@ export default function LandingPage() {
           </div>
         </a>
 
-        <nav className="public-nav public-nav-premium">
-          <a href="#inicio">{t.nav.home}</a>
-          <a href="#nosotros">{t.nav.about}</a>
-          <a href="#servicios">{t.nav.services}</a>
-          <a href="#historia">{t.nav.story}</a>
-          <a href="#valores">{t.nav.values}</a>
-          <a href="#contacto">{t.nav.contact}</a>
+        <button
+          className={`public-menu-trigger ${publicMenuOpen ? 'is-open' : ''}`}
+          type="button"
+          onClick={() => setPublicMenuOpen((value) => !value)}
+          aria-expanded={publicMenuOpen}
+        >
+          <span>Explorar SMART RH</span>
+          <SmartRhIcon name="chevronDown" />
+        </button>
+
+        <nav className={`public-nav public-nav-premium ${publicMenuOpen ? 'is-open' : ''}`}>
+          <a href="#inicio" onClick={() => setPublicMenuOpen(false)}>{t.nav.home}</a>
+          <a href="#nosotros" onClick={() => setPublicMenuOpen(false)}>{t.nav.about}</a>
+          <a href="#servicios" onClick={() => setPublicMenuOpen(false)}>{t.nav.services}</a>
+          <a href="#historia" onClick={() => setPublicMenuOpen(false)}>{t.nav.story}</a>
+          <a href="#valores" onClick={() => setPublicMenuOpen(false)}>{t.nav.values}</a>
+          <a href="#contacto" onClick={() => setPublicMenuOpen(false)}>{t.nav.contact}</a>
         </nav>
 
         <div className="public-actions public-actions-premium">
@@ -285,6 +319,19 @@ export default function LandingPage() {
                 <span>Análisis de datos</span>
               </div>
             </div>
+
+            <div className="public-hero-carousel" aria-label="Información clave de SMART RH">
+              {publicHighlights.map((item) => (
+                <article key={item.title}>
+                  <span>
+                    <SmartRhIcon name={item.icon} />
+                    {item.label}
+                  </span>
+                  <strong>{item.title}</strong>
+                  <p>{item.detail}</p>
+                </article>
+              ))}
+            </div>
           </div>
 
           <aside className="public-hero-panel public-hero-panel-premium">
@@ -329,6 +376,21 @@ export default function LandingPage() {
                     {item}
                   </div>
                 ))}
+              </div>
+
+              <div className="public-panel-flow">
+                <div>
+                  <span>01</span>
+                  <strong>Registrar</strong>
+                </div>
+                <div>
+                  <span>02</span>
+                  <strong>Validar</strong>
+                </div>
+                <div>
+                  <span>03</span>
+                  <strong>Resolver</strong>
+                </div>
               </div>
             </div>
           </aside>

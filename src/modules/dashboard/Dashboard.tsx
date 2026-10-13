@@ -215,37 +215,108 @@ export default function Dashboard() {
   ];
 
   const userName = `${user?.nombre || ''} ${user?.apellido || ''}`.trim();
+  const firstName = userName ? userName.split(' ')[0] : 'Equipo';
+
+  const commandHighlights = [
+    {
+      label: 'Prioridad',
+      title: isAdmin ? 'Operación administrativa' : 'Tu jornada laboral',
+      detail: isAdmin
+        ? 'Revisa asistencia, usuarios y solicitudes antes de cerrar el día.'
+        : 'Consulta asistencia, documentos y solicitudes desde una vista clara.',
+      metric: isAdmin ? 'Admin' : 'Empleado',
+      path: isAdmin ? '/portal/asistencia' : '/portal/documentacion',
+      icon: isAdmin ? 'attendance' : 'documents',
+    },
+    {
+      label: 'Flujo recomendado',
+      title: 'Documentar antes de escalar',
+      detail: 'Max puede ayudarte a ordenar contexto antes de crear tickets o revisar módulos.',
+      metric: 'Max',
+      path: '/portal/soporte',
+      icon: 'spark',
+    },
+    {
+      label: 'Control semanal',
+      title: 'Ausencias y calendario',
+      detail: 'Ten a la mano vacaciones, incapacidades y agenda laboral sin perder navegación.',
+      metric: 'Agenda',
+      path: '/portal/calendario',
+      icon: 'calendar',
+    },
+  ] satisfies Array<{
+    label: string;
+    title: string;
+    detail: string;
+    metric: string;
+    path: string;
+    icon: SmartRhIconName;
+  }>;
+
+  const systemChecks = [
+    'Base transaccional activa',
+    'Archivos protegidos en S3',
+    'Portal, app móvil y asistencia conectados',
+    isAdmin ? 'Analítica y ML disponibles' : 'Vista personal protegida',
+  ];
+
+  const quickLinks = [
+    { label: 'Documentación', path: '/portal/documentacion', icon: 'documents' },
+    { label: 'Asistencia', path: '/portal/asistencia', icon: 'attendance' },
+    { label: 'Vacaciones', path: '/portal/vacaciones', icon: 'vacation' },
+    ...(isAdmin
+      ? [
+          { label: 'Incapacidades', path: '/portal/incapacidades', icon: 'health' as const },
+          { label: 'Analítica', path: '/portal/dashboard-analitico', icon: 'chart' as const },
+          { label: 'ETL', path: '/portal/etl', icon: 'data' as const },
+        ]
+      : []),
+  ] satisfies Array<{
+    label: string;
+    path: string;
+    icon: SmartRhIconName;
+  }>;
 
   return (
     <div className="enterprise-dashboard">
       <section className="enterprise-hero">
         <div className="enterprise-hero-copy">
           <span className="enterprise-chip">Centro operativo</span>
-          <h1>{userName ? `Hola, ${userName.split(' ')[0]}` : 'Bienvenido a SMART RH'}</h1>
+          <h1>{`Hola, ${firstName}`}</h1>
           <p>
-            Una vista limpia para moverte entre operación diaria, documentos,
-            administración y analítica sin perder el contexto de tu sesión.
+            Tu tablero combina operación, documentos y soporte en una lectura
+            más clara: qué revisar, a dónde entrar y qué dejar listo antes de
+            cambiar de módulo.
           </p>
 
           <div className="enterprise-hero-actions">
             <Link to={isAdmin ? '/portal/usuarios' : '/portal/asistencia'} className="enterprise-primary-action">
-              {isAdmin ? 'Gestionar usuarios' : 'Ir a asistencia'}
+              <SmartRhIcon name={isAdmin ? 'users' : 'attendance'} />
+              <span>{isAdmin ? 'Gestionar usuarios' : 'Ir a asistencia'}</span>
             </Link>
 
             <Link
               to={isAdmin ? '/portal/dashboard-analitico' : '/portal/documentacion'}
               className="enterprise-secondary-action"
             >
-              {isAdmin ? 'Ver dashboard analítico' : 'Ver documentos'}
+              <SmartRhIcon name={isAdmin ? 'chart' : 'documents'} />
+              <span>{isAdmin ? 'Ver analítica' : 'Ver documentos'}</span>
             </Link>
           </div>
 
-          <div className="enterprise-hero-trail" aria-label="Flujo recomendado">
-            <span>Hoy</span>
-            <i />
-            <span>Revisar pendientes</span>
-            <i />
-            <span>Resolver con Max</span>
+          <div className="enterprise-hero-brief" aria-label="Resumen operativo">
+            <div>
+              <span>Modo</span>
+              <strong>{isAdmin ? 'Administración' : 'Empleado'}</strong>
+            </div>
+            <div>
+              <span>Módulos</span>
+              <strong>{visibleModules.length}</strong>
+            </div>
+            <div>
+              <span>Asistente</span>
+              <strong>Max listo</strong>
+            </div>
           </div>
         </div>
 
@@ -271,13 +342,29 @@ export default function Dashboard() {
           </div>
 
           <div className="enterprise-profile-note">
-            <SmartRhIcon name="spark" />
+            <SmartRhIcon name="check" />
             <p>
-              Max conserva el contexto reciente del portal para ayudarte a resolver
-              dudas sin repetir el caso desde cero.
+              Recomendación: atiende primero asistencia/documentos, después
+              soporte o analítica si el caso necesita seguimiento.
             </p>
           </div>
         </div>
+      </section>
+
+      <section className="enterprise-command-strip" aria-label="Información importante">
+        {commandHighlights.map((item) => (
+          <Link to={item.path} className="enterprise-command-card" key={item.title}>
+            <div className="enterprise-command-icon">
+              <SmartRhIcon name={item.icon} />
+            </div>
+            <div>
+              <span>{item.label}</span>
+              <h3>{item.title}</h3>
+              <p>{item.detail}</p>
+            </div>
+            <strong>{item.metric}</strong>
+          </Link>
+        ))}
       </section>
 
       <section className="enterprise-kpi-grid">
@@ -329,7 +416,9 @@ export default function Dashboard() {
                         <p>{module.description}</p>
                       </div>
 
-                      <span className="enterprise-module-arrow">→</span>
+                      <span className="enterprise-module-arrow">
+                        <SmartRhIcon name="send" />
+                      </span>
                     </Link>
                   ))}
                 </div>
@@ -341,42 +430,19 @@ export default function Dashboard() {
         <aside className="enterprise-side-panel">
           <div className="enterprise-side-card">
             <span className="enterprise-side-label">Estado del sistema</span>
-            <h3>Operación estable</h3>
+            <h3>Operación conectada</h3>
             <p>
-              El portal integra base transaccional, auditoría, notificaciones,
-              documentación laboral, soporte, procesos ETL, dashboards visuales y
-              análisis de datos.
+              Lectura corta del estado general para no llenar el tablero de
+              ruido técnico, pero mantener confianza operativa.
             </p>
 
-            <div className="enterprise-health-list">
-              <div>
-                <span />
-                MySQL operativo
-              </div>
-              <div>
-                <span />
-                MongoDB operativo
-              </div>
-              <div>
-                <span />
-                Archivos y documentos
-              </div>
-              <div>
-                <span />
-                Portal + App móvil + Wear OS
-              </div>
-              {isAdmin && (
-                <div>
+            <div className="enterprise-system-list">
+              {systemChecks.map((item) => (
+                <div key={item}>
                   <span />
-                  Dashboard analítico
+                  <strong>{item}</strong>
                 </div>
-              )}
-              {isAdmin && (
-                <div>
-                  <span />
-                  ML supervisado + K-means
-                </div>
-              )}
+              ))}
             </div>
           </div>
 
@@ -384,14 +450,12 @@ export default function Dashboard() {
             <span className="enterprise-side-label">Accesos rápidos</span>
 
             <div className="enterprise-quick-links">
-              <Link to="/portal/documentacion">Documentación</Link>
-              <Link to="/portal/asistencia">Asistencia</Link>
-              <Link to="/portal/vacaciones">Vacaciones</Link>
-              {isAdmin && <Link to="/portal/incapacidades">Incapacidades</Link>}
-              {isAdmin && <Link to="/portal/dashboard-analitico">Dashboard analítico</Link>}
-              {isAdmin && <Link to="/portal/etl">Proceso ETL</Link>}
-              {isAdmin && <Link to="/portal/analisis-supervisado">Análisis supervisado</Link>}
-              {isAdmin && <Link to="/portal/analisis-kmeans">K-means</Link>}
+              {quickLinks.map((item) => (
+                <Link to={item.path} key={item.path}>
+                  <SmartRhIcon name={item.icon} />
+                  <span>{item.label}</span>
+                </Link>
+              ))}
             </div>
           </div>
         </aside>

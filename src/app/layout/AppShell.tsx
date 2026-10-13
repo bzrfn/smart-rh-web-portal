@@ -26,7 +26,9 @@ export default function AppShell() {
   );
   const [profileOpen, setProfileOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [calendarOpen, setCalendarOpen] = useState(false);
   const [quickOpen, setQuickOpen] = useState(false);
+  const [navigationOpen, setNavigationOpen] = useState(false);
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
@@ -38,6 +40,7 @@ export default function AppShell() {
       if (!headerActionsRef.current?.contains(event.target as Node)) {
         setProfileOpen(false);
         setNotificationsOpen(false);
+        setCalendarOpen(false);
         setQuickOpen(false);
       }
     };
@@ -220,6 +223,35 @@ export default function AppShell() {
     [location.pathname]
   );
 
+  const calendarItems = useMemo(
+    () => [
+      {
+        label: 'Hoy',
+        title: 'Seguimiento de asistencia',
+        detail: 'Confirma registros pendientes y jornadas del día.',
+        path: '/portal/asistencia',
+        icon: 'attendance' as const,
+      },
+      {
+        label: 'Semana',
+        title: 'Ausencias y vacaciones',
+        detail: 'Revisa solicitudes próximas antes de cierre operativo.',
+        path: '/portal/vacaciones',
+        icon: 'vacation' as const,
+      },
+      {
+        label: 'Control',
+        title: 'Incapacidades',
+        detail: user?.role === 'admin'
+          ? 'Valida comprobantes y casos médicos pendientes.'
+          : 'Consulta el estado de tus solicitudes registradas.',
+        path: '/portal/incapacidades',
+        icon: 'health' as const,
+      },
+    ],
+    [user?.role]
+  );
+
   const userInitials = useMemo(() => {
     const nombre = user?.nombre?.[0] || 'S';
     const apellido = user?.apellido?.[0] || 'R';
@@ -267,13 +299,28 @@ export default function AppShell() {
         <div className="top-user-area" ref={headerActionsRef}>
           <div className="top-quick-actions" aria-label="Accesos rápidos">
             <Link
-              to="/portal/calendario"
+              to="/portal"
               className="top-icon-btn"
-              aria-label="Abrir calendario"
+              aria-label="Ir al inicio"
+              title="Inicio"
+            >
+              <SmartRhIcon name="home" />
+            </Link>
+
+            <button
+              className={`top-icon-btn ${calendarOpen ? 'is-active' : ''}`}
+              type="button"
+              aria-label="Abrir calendario rápido"
               title="Calendario"
+              onClick={() => {
+                setCalendarOpen((value) => !value);
+                setNotificationsOpen(false);
+                setQuickOpen(false);
+                setProfileOpen(false);
+              }}
             >
               <SmartRhIcon name="calendar" />
-            </Link>
+            </button>
 
             <button
               className={`top-icon-btn ${notificationsOpen ? 'is-active' : ''}`}
@@ -282,6 +329,7 @@ export default function AppShell() {
               title="Notificaciones"
               onClick={() => {
                 setNotificationsOpen((value) => !value);
+                setCalendarOpen(false);
                 setQuickOpen(false);
                 setProfileOpen(false);
               }}
@@ -306,6 +354,7 @@ export default function AppShell() {
               title="Más accesos"
               onClick={() => {
                 setQuickOpen((value) => !value);
+                setCalendarOpen(false);
                 setNotificationsOpen(false);
                 setProfileOpen(false);
               }}
@@ -313,6 +362,49 @@ export default function AppShell() {
               <SmartRhIcon name="spark" />
             </button>
           </div>
+
+          {calendarOpen ? (
+            <div className="top-popover top-popover-calendar">
+              <div className="top-popover-header">
+                <span>Calendario</span>
+                <strong>Agenda breve</strong>
+              </div>
+
+              <div className="top-calendar-card">
+                <div>
+                  <span>{new Date().toLocaleDateString('es-MX', { weekday: 'long' })}</span>
+                  <strong>{new Date().toLocaleDateString('es-MX', { day: '2-digit', month: 'short' })}</strong>
+                </div>
+                <small>Resumen operativo</small>
+              </div>
+
+              <div className="top-popover-list">
+                {calendarItems.map((item) => (
+                  <Link
+                    key={item.title}
+                    to={item.path}
+                    className="top-calendar-item"
+                    onClick={() => setCalendarOpen(false)}
+                  >
+                    <SmartRhIcon name={item.icon} />
+                    <div>
+                      <span>{item.label}</span>
+                      <strong>{item.title}</strong>
+                      <p>{item.detail}</p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+
+              <Link
+                to="/portal/calendario"
+                className="top-calendar-full-link"
+                onClick={() => setCalendarOpen(false)}
+              >
+                Abrir calendario completo
+              </Link>
+            </div>
+          ) : null}
 
           {notificationsOpen ? (
             <div className="top-popover top-popover-notifications">
@@ -369,6 +461,7 @@ export default function AppShell() {
             type="button"
             onClick={() => {
               setProfileOpen((value) => !value);
+              setCalendarOpen(false);
               setNotificationsOpen(false);
               setQuickOpen(false);
             }}
@@ -438,22 +531,45 @@ export default function AppShell() {
         </div>
       </header>
 
-      <nav className="top-nav">
-        {navItems.map((item) => (
-          <Link
-            key={item.path}
-            to={item.path}
-            className={`top-nav-item ${
-              isActive(item.path) ? 'active' : ''
-            }`}
-          >
-            <span>
-              <SmartRhIcon name={item.icon} />
-            </span>
-            <strong>{item.label}</strong>
-          </Link>
-        ))}
-      </nav>
+      <section className="top-nav-shell">
+        <button
+          className={`top-nav-trigger ${navigationOpen ? 'is-open' : ''}`}
+          type="button"
+          onClick={() => setNavigationOpen((value) => !value)}
+          aria-expanded={navigationOpen}
+        >
+          <span className="top-nav-trigger-icon">
+            <SmartRhIcon name={activeItem.icon} />
+          </span>
+          <div>
+            <small>Navegación SMART RH</small>
+            <strong>{activeItem.label}</strong>
+          </div>
+          <em>{navItems.length} módulos</em>
+          <SmartRhIcon className="top-nav-trigger-chevron" name="chevronDown" />
+        </button>
+
+        <nav className={`top-nav ${navigationOpen ? 'is-open' : ''}`}>
+          {navItems.map((item) => (
+            <Link
+              key={item.path}
+              to={item.path}
+              className={`top-nav-item ${
+                isActive(item.path) ? 'active' : ''
+              }`}
+              onClick={() => setNavigationOpen(false)}
+            >
+              <span>
+                <SmartRhIcon name={item.icon} />
+              </span>
+              <div>
+                <strong>{item.label}</strong>
+                <small>{item.description || 'Inicio operativo'}</small>
+              </div>
+            </Link>
+          ))}
+        </nav>
+      </section>
 
       <main className="top-shell-main">
         <Outlet />
