@@ -2,6 +2,7 @@ import { FormEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { api } from '../../services/api';
 import { useAuth } from '../../app/auth/AuthContext';
+import SmartRhIcon from '../../components/SmartRhIcon';
 import {
   landingLanguages,
   landingTranslations,
@@ -235,8 +236,9 @@ export default function LandingPage() {
           </label>
 
           <button className="public-theme-btn" type="button" onClick={toggleTheme}>
-            <span>{theme === 'dark' ? '☀️' : '🌙'}</span>
-            {theme === 'dark' ? '' : ''}
+            <span>
+              <SmartRhIcon name={theme === 'dark' ? 'sun' : 'moon'} />
+            </span>
           </button>
 
           <Link to="/admin/acceso" className="public-login-btn public-login-btn-premium">

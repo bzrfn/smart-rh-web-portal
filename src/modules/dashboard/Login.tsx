@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { api, setAuthToken } from '../../services/api';
 import { useAuth } from '../../app/auth/AuthContext';
 import PasswordField from '../../components/PasswordField';
+import SmartRhIcon from '../../components/SmartRhIcon';
 
 export default function Login() {
   const { setAuth } = useAuth();
@@ -97,7 +98,9 @@ export default function Login() {
   return (
     <div className="auth-page auth-page-premium">
       <button className="auth-theme-toggle" type="button" onClick={toggleTheme}>
-        <span className="auth-theme-toggle-icon">{theme === 'dark' ? '☀️' : '🌙'}</span>
+        <span className="auth-theme-toggle-icon">
+          <SmartRhIcon name={theme === 'dark' ? 'sun' : 'moon'} />
+        </span>
         <span>{theme === 'dark' ? 'Modo claro' : 'Modo oscuro'}</span>
       </button>
 

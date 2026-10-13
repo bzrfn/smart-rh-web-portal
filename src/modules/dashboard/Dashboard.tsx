@@ -15,7 +15,7 @@ type ModuleCard = {
 
 const modules: ModuleCard[] = [
   {
-    path: '/usuarios',
+    path: '/portal/usuarios',
     title: 'Usuarios',
     description: 'Gestión de personal, perfiles, roles y permisos de módulos.',
     code: 'US',
@@ -24,7 +24,7 @@ const modules: ModuleCard[] = [
     accent: 'blue',
   },
   {
-    path: '/asistencia',
+    path: '/portal/asistencia',
     title: 'Asistencia',
     description: 'Registros laborales, entradas, salidas y control operativo.',
     code: 'AS',
@@ -33,7 +33,7 @@ const modules: ModuleCard[] = [
     accent: 'teal',
   },
   {
-    path: '/calendario',
+    path: '/portal/calendario',
     title: 'Calendario laboral',
     description: 'Vista mensual de asistencia, vacaciones e incapacidades.',
     code: 'CL',
@@ -51,7 +51,7 @@ const modules: ModuleCard[] = [
     accent: 'teal',
   },
   {
-    path: '/documentacion',
+    path: '/portal/documentacion',
     title: 'Documentación',
     description: 'Foto de perfil, contrato PDF, credencial y expediente digital.',
     code: 'DC',
@@ -60,7 +60,7 @@ const modules: ModuleCard[] = [
     accent: 'blue',
   },
   {
-    path: '/contratos',
+    path: '/portal/contratos',
     title: 'Contratos',
     description: 'Información contractual, vigencia y documentos asociados.',
     code: 'CT',
@@ -69,7 +69,7 @@ const modules: ModuleCard[] = [
     accent: 'blue',
   },
   {
-    path: '/nomina',
+    path: '/portal/nomina',
     title: 'Nómina',
     description: 'Pagos, periodos, registros y datos económicos del empleado.',
     code: 'NM',
@@ -78,7 +78,7 @@ const modules: ModuleCard[] = [
     accent: 'teal',
   },
   {
-    path: '/vacaciones',
+    path: '/portal/vacaciones',
     title: 'Vacaciones',
     description: 'Solicitudes, días disponibles y seguimiento administrativo.',
     code: 'VC',
@@ -87,7 +87,7 @@ const modules: ModuleCard[] = [
     accent: 'gold',
   },
   {
-    path: '/incapacidades',
+    path: '/portal/incapacidades',
     title: 'Incapacidades',
     description: 'Solicitudes médicas, comprobantes, revisión y seguimiento administrativo.',
     code: 'IN',
@@ -97,7 +97,7 @@ const modules: ModuleCard[] = [
     adminOnly: true,
   },
   {
-    path: '/soporte',
+    path: '/portal/soporte',
     title: 'Soporte',
     description: 'Tickets, incidencias, respuestas administrativas y seguimiento.',
     code: 'SP',
@@ -107,7 +107,7 @@ const modules: ModuleCard[] = [
     adminOnly: true,
   },
   {
-    path: '/etl',
+    path: '/portal/etl',
     title: 'Proceso ETL',
     description: 'Extracción, transformación, carga, análisis y reportes de datos.',
     code: 'ETL',
@@ -117,7 +117,7 @@ const modules: ModuleCard[] = [
     adminOnly: true,
   },
   {
-    path: '/dashboard-analitico',
+    path: '/portal/dashboard-analitico',
     title: 'Dashboard analítico',
     description:
       'Visualización de datos con gráficas de asistencia, nómina, vacaciones, contratos y K-means.',
@@ -128,7 +128,7 @@ const modules: ModuleCard[] = [
     adminOnly: true,
   },
   {
-    path: '/analisis-supervisado',
+    path: '/portal/analisis-supervisado',
     title: 'Análisis supervisado',
     description: 'Predicción y evaluación con modelos de Machine Learning.',
     code: 'ML',
@@ -138,7 +138,7 @@ const modules: ModuleCard[] = [
     adminOnly: true,
   },
   {
-    path: '/analisis-kmeans',
+    path: '/portal/analisis-kmeans',
     title: 'K-means',
     description:
       'Agrupación no supervisada de empleados con método del codo e índice de silueta.',
@@ -228,12 +228,12 @@ export default function Dashboard() {
           </p>
 
           <div className="enterprise-hero-actions">
-            <Link to={isAdmin ? '/usuarios' : '/asistencia'} className="enterprise-primary-action">
+            <Link to={isAdmin ? '/portal/usuarios' : '/portal/asistencia'} className="enterprise-primary-action">
               {isAdmin ? 'Gestionar usuarios' : 'Ir a asistencia'}
             </Link>
 
             <Link
-              to={isAdmin ? '/dashboard-analitico' : '/documentacion'}
+              to={isAdmin ? '/portal/dashboard-analitico' : '/portal/documentacion'}
               className="enterprise-secondary-action"
             >
               {isAdmin ? 'Ver dashboard analítico' : 'Ver documentos'}
@@ -384,14 +384,14 @@ export default function Dashboard() {
             <span className="enterprise-side-label">Accesos rápidos</span>
 
             <div className="enterprise-quick-links">
-              <Link to="/documentacion">Documentación</Link>
-              <Link to="/asistencia">Asistencia</Link>
-              <Link to="/vacaciones">Vacaciones</Link>
-              {isAdmin && <Link to="/incapacidades">Incapacidades</Link>}
-              {isAdmin && <Link to="/dashboard-analitico">Dashboard analítico</Link>}
-              {isAdmin && <Link to="/etl">Proceso ETL</Link>}
-              {isAdmin && <Link to="/analisis-supervisado">Análisis supervisado</Link>}
-              {isAdmin && <Link to="/analisis-kmeans">K-means</Link>}
+              <Link to="/portal/documentacion">Documentación</Link>
+              <Link to="/portal/asistencia">Asistencia</Link>
+              <Link to="/portal/vacaciones">Vacaciones</Link>
+              {isAdmin && <Link to="/portal/incapacidades">Incapacidades</Link>}
+              {isAdmin && <Link to="/portal/dashboard-analitico">Dashboard analítico</Link>}
+              {isAdmin && <Link to="/portal/etl">Proceso ETL</Link>}
+              {isAdmin && <Link to="/portal/analisis-supervisado">Análisis supervisado</Link>}
+              {isAdmin && <Link to="/portal/analisis-kmeans">K-means</Link>}
             </div>
           </div>
         </aside>
