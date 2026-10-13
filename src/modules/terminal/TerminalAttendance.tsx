@@ -16,6 +16,8 @@ import {
   setTerminalSessionMemory,
 } from '../../services/terminalSessionMemory';
 
+import SmartRhIcon from '../../components/SmartRhIcon';
+
 import {
   useTerminalTheme,
 } from './terminalTheme';
@@ -1121,10 +1123,14 @@ export default function TerminalAttendance() {
             }
           >
             <span className="terminal-theme-toggle-icon">
-              {theme ===
-                'dark'
-                ? '☀'
-                : '◐'}
+              <SmartRhIcon
+                name={
+                  theme ===
+                    'dark'
+                    ? 'sun'
+                    : 'moon'
+                }
+              />
             </span>
 
             {theme ===

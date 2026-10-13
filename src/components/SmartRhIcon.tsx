@@ -16,6 +16,7 @@ export type SmartRhIconName =
   | 'health'
   | 'home'
   | 'logout'
+  | 'menu'
   | 'moon'
   | 'payroll'
   | 'plus'
@@ -47,6 +48,7 @@ const PATHS: Record<SmartRhIconName, string[]> = {
   health: ['M12 21s-8-4.9-8-11a4.5 4.5 0 0 1 8-2.7A4.5 4.5 0 0 1 20 10c0 6.1-8 11-8 11z'],
   home: ['M3 11l9-8 9 8', 'M5 10v10h14V10', 'M9 20v-6h6v6'],
   logout: ['M10 17l5-5-5-5', 'M15 12H3', 'M13 5h6v14h-6'],
+  menu: ['M4 7h16', 'M4 12h16', 'M4 17h16'],
   moon: ['M20 15.5A8.5 8.5 0 0 1 8.5 4a7 7 0 1 0 11.5 11.5z'],
   payroll: ['M4 7h16v10H4z', 'M8 11h.01', 'M16 13h.01', 'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6'],
   plus: ['M12 5v14', 'M5 12h14'],

@@ -176,6 +176,44 @@ export default function AppShell() {
     );
   }, [location.pathname, navItems]);
 
+  const navGroups = useMemo(
+    () => [
+      {
+        title: 'Inicio',
+        detail: 'Tablero principal',
+        items: navItems.filter((item) => item.path === '/portal'),
+      },
+      {
+        title: 'Operación diaria',
+        detail: 'Asistencia, agenda y ausencias',
+        items: navItems.filter((item) =>
+          [
+            '/portal/usuarios',
+            '/portal/asistencia',
+            '/portal/calendario',
+            '/portal/vacaciones',
+            '/portal/incapacidades',
+          ].includes(item.path)
+        ),
+      },
+      {
+        title: 'Expediente laboral',
+        detail: 'Documentos, contratos y nómina',
+        items: navItems.filter((item) =>
+          ['/portal/documentacion', '/portal/contratos', '/portal/nomina'].includes(item.path)
+        ),
+      },
+      {
+        title: 'Seguimiento',
+        detail: 'Soporte, analítica y datos',
+        items: navItems.filter((item) =>
+          ['/portal/soporte', '/portal/analisis-supervisado', '/portal/etl'].includes(item.path)
+        ),
+      },
+    ].filter((group) => group.items.length > 0),
+    [navItems]
+  );
+
   const quickActions = useMemo(
     () => [
       {
@@ -280,6 +318,15 @@ export default function AppShell() {
     <div className="top-shell">
       <header className="top-shell-header">
         <div className="top-brand">
+          <button
+            className="top-menu-trigger"
+            type="button"
+            aria-label="Abrir navegación"
+            onClick={() => setNavigationOpen(true)}
+          >
+            <SmartRhIcon name="menu" />
+          </button>
+
           <Link to="/portal" className="top-logo">
             SRH
           </Link>
@@ -531,6 +578,7 @@ export default function AppShell() {
         </div>
       </header>
 
+<<<<<<< ours
       <section className="top-nav-shell">
         <button
           className={`top-nav-trigger ${navigationOpen ? 'is-open' : ''}`}
@@ -570,6 +618,71 @@ export default function AppShell() {
           ))}
         </nav>
       </section>
+=======
+      {navigationOpen ? (
+        <button
+          className="portal-nav-backdrop"
+          type="button"
+          aria-label="Cerrar navegación"
+          onClick={() => setNavigationOpen(false)}
+        />
+      ) : null}
+
+      <aside className={`portal-side-nav ${navigationOpen ? 'is-open' : ''}`} aria-hidden={!navigationOpen}>
+        <div className="portal-side-nav-head">
+          <div className="top-logo">SRH</div>
+          <div>
+            <span>Navegación</span>
+            <strong>SMART RH</strong>
+          </div>
+          <button
+            type="button"
+            aria-label="Cerrar navegación"
+            onClick={() => setNavigationOpen(false)}
+          >
+            <SmartRhIcon name="close" />
+          </button>
+        </div>
+
+        <div className="portal-side-nav-current">
+          <SmartRhIcon name={activeItem.icon} />
+          <div>
+            <span>Estás en</span>
+            <strong>{activeItem.label}</strong>
+          </div>
+        </div>
+
+        <div className="portal-side-nav-groups">
+          {navGroups.map((group) => (
+            <section key={group.title}>
+              <div className="portal-nav-group-title">
+                <strong>{group.title}</strong>
+                <span>{group.detail}</span>
+              </div>
+
+              <div className="portal-side-nav-list">
+                {group.items.map((item) => (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    className={`portal-side-nav-item ${isActive(item.path) ? 'active' : ''}`}
+                    onClick={() => setNavigationOpen(false)}
+                  >
+                    <span>
+                      <SmartRhIcon name={item.icon} />
+                    </span>
+                    <div>
+                      <strong>{item.label}</strong>
+                      {item.description ? <small>{item.description}</small> : null}
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </section>
+          ))}
+        </div>
+      </aside>
+>>>>>>> theirs
 
       <main className="top-shell-main">
         <Outlet />

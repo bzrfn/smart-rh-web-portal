@@ -8,176 +8,255 @@ type ModuleCard = {
   description: string;
   code: string;
   icon: SmartRhIconName;
-  group: 'trabajo' | 'documentos' | 'administracion' | 'analitica';
-  accent: 'blue' | 'teal' | 'gold' | 'danger';
+  group: 'operacion' | 'talento' | 'documentos' | 'analitica';
   adminOnly?: boolean;
 };
 
 const modules: ModuleCard[] = [
   {
     path: '/portal/usuarios',
+<<<<<<< ours
     title: 'Usuarios',
     description: 'Gestión de personal, perfiles, roles y permisos de módulos.',
+=======
+    title: 'Usuarios y permisos',
+    description: 'Altas, roles, módulos habilitados y cambios de acceso.',
+>>>>>>> theirs
     code: 'US',
     icon: 'users',
-    group: 'administracion',
-    accent: 'blue',
+    group: 'talento',
   },
   {
     path: '/portal/asistencia',
     title: 'Asistencia',
-    description: 'Registros laborales, entradas, salidas y control operativo.',
+    description: 'Registros, pendientes y validación de jornadas.',
     code: 'AS',
     icon: 'attendance',
-    group: 'trabajo',
-    accent: 'teal',
+    group: 'operacion',
   },
   {
     path: '/portal/calendario',
     title: 'Calendario laboral',
-    description: 'Vista mensual de asistencia, vacaciones e incapacidades.',
+    description: 'Agenda de asistencia, vacaciones e incapacidades.',
     code: 'CL',
     icon: 'calendar',
-    group: 'trabajo',
-    accent: 'blue',
+    group: 'operacion',
   },
   {
     path: '/portal/terminal-autorizacion',
-    title: 'Autorizar Terminal',
-    description: 'Aprueba o rechaza solicitudes de acceso de la terminal de asistencia.',
-    code: 'AT',
+    title: 'Terminal QR',
+    description: 'Autoriza el acceso a la terminal de asistencia.',
+    code: 'QR',
     icon: 'check',
-    group: 'administracion',
-    accent: 'teal',
+    group: 'operacion',
   },
   {
     path: '/portal/documentacion',
     title: 'Documentación',
-    description: 'Foto de perfil, contrato PDF, credencial y expediente digital.',
+    description: 'Expediente digital, credencial y archivos laborales.',
     code: 'DC',
     icon: 'documents',
     group: 'documentos',
-    accent: 'blue',
   },
   {
     path: '/portal/contratos',
     title: 'Contratos',
-    description: 'Información contractual, vigencia y documentos asociados.',
+    description: 'Información contractual, vigencia y comprobantes.',
     code: 'CT',
     icon: 'contracts',
     group: 'documentos',
-    accent: 'blue',
   },
   {
     path: '/portal/nomina',
     title: 'Nómina',
-    description: 'Pagos, periodos, registros y datos económicos del empleado.',
+    description: 'Periodos, pagos y registros económicos del empleado.',
     code: 'NM',
     icon: 'payroll',
     group: 'documentos',
-    accent: 'teal',
   },
   {
     path: '/portal/vacaciones',
     title: 'Vacaciones',
-    description: 'Solicitudes, días disponibles y seguimiento administrativo.',
+    description: 'Saldos, solicitudes y seguimiento de descansos.',
     code: 'VC',
     icon: 'vacation',
-    group: 'trabajo',
-    accent: 'gold',
+    group: 'operacion',
   },
   {
     path: '/portal/incapacidades',
     title: 'Incapacidades',
-    description: 'Solicitudes médicas, comprobantes, revisión y seguimiento administrativo.',
+    description: 'Comprobantes, revisión y decisión administrativa.',
     code: 'IN',
     icon: 'health',
-    group: 'trabajo',
-    accent: 'danger',
+    group: 'operacion',
     adminOnly: true,
   },
   {
     path: '/portal/soporte',
     title: 'Soporte',
-    description: 'Tickets, incidencias, respuestas administrativas y seguimiento.',
+    description: 'Tickets, incidencias y seguimiento con contexto.',
     code: 'SP',
     icon: 'support',
-    group: 'administracion',
-    accent: 'teal',
+    group: 'talento',
     adminOnly: true,
   },
   {
     path: '/portal/etl',
     title: 'Proceso ETL',
-    description: 'Extracción, transformación, carga, análisis y reportes de datos.',
+    description: 'Carga, limpieza y preparación de información.',
     code: 'ETL',
     icon: 'data',
     group: 'analitica',
-    accent: 'blue',
     adminOnly: true,
   },
   {
     path: '/portal/dashboard-analitico',
     title: 'Dashboard analítico',
-    description:
-      'Visualización de datos con gráficas de asistencia, nómina, vacaciones, contratos y K-means.',
+    description: 'Gráficas para revisión administrativa y seguimiento.',
     code: 'DA',
     icon: 'chart',
     group: 'analitica',
-    accent: 'gold',
     adminOnly: true,
   },
   {
     path: '/portal/analisis-supervisado',
     title: 'Análisis supervisado',
-    description: 'Predicción y evaluación con modelos de Machine Learning.',
+    description: 'Predicción y evaluación con modelos de ML.',
     code: 'ML',
     icon: 'chart',
     group: 'analitica',
-    accent: 'blue',
     adminOnly: true,
   },
   {
     path: '/portal/analisis-kmeans',
     title: 'K-means',
-    description:
-      'Agrupación no supervisada de empleados con método del codo e índice de silueta.',
+    description: 'Agrupación de empleados para análisis exploratorio.',
     code: 'KM',
     icon: 'data',
     group: 'analitica',
-    accent: 'teal',
     adminOnly: true,
   },
 ];
 
 const moduleGroups = [
   {
-    id: 'trabajo',
-    label: 'Trabajo diario',
-    description: 'Asistencia, agenda, ausencias y salud laboral.',
+    id: 'operacion',
+    label: 'Operación diaria',
+    description: 'Asistencia, calendario, ausencias y terminal QR.',
+  },
+  {
+    id: 'talento',
+    label: 'Administración de talento',
+    description: 'Usuarios, permisos y seguimiento de incidencias.',
   },
   {
     id: 'documentos',
-    label: 'Documentos y cuenta',
-    description: 'Expediente, contratos, nómina y credenciales.',
-  },
-  {
-    id: 'administracion',
-    label: 'Administración',
-    description: 'Usuarios, permisos, soporte y autorizaciones.',
+    label: 'Expediente y pagos',
+    description: 'Documentos laborales, contratos y nómina.',
   },
   {
     id: 'analitica',
-    label: 'Inteligencia de datos',
-    description: 'ETL, dashboards y análisis inteligente.',
+    label: 'Información y análisis',
+    description: 'Reportes, ETL y módulos de inteligencia.',
   },
 ] as const;
+
+const adminFocus = [
+  {
+    title: 'Pendientes operativos',
+    detail: 'Asistencia, incapacidades y autorizaciones que requieren revisión.',
+    path: '/portal/asistencia',
+    icon: 'attendance' as const,
+  },
+  {
+    title: 'Gestión de usuarios',
+    detail: 'Roles, permisos y módulos asignados a cada colaborador.',
+    path: '/portal/usuarios',
+    icon: 'users' as const,
+  },
+  {
+    title: 'Documentación laboral',
+    detail: 'Contratos, credenciales y expedientes listos para consulta.',
+    path: '/portal/documentacion',
+    icon: 'documents' as const,
+  },
+];
+
+const employeeFocus = [
+  {
+    title: 'Mi asistencia',
+    detail: 'Consulta registros y seguimiento de tu jornada.',
+    path: '/portal/asistencia',
+    icon: 'attendance' as const,
+  },
+  {
+    title: 'Mis documentos',
+    detail: 'Credencial, contrato y expediente personal.',
+    path: '/portal/documentacion',
+    icon: 'documents' as const,
+  },
+  {
+    title: 'Vacaciones',
+    detail: 'Revisa tu saldo y solicitudes disponibles.',
+    path: '/portal/vacaciones',
+    icon: 'vacation' as const,
+  },
+];
+
+const adminWorkRail = [
+  {
+    label: 'Primero',
+    title: 'Asistencia pendiente',
+    detail: 'Valida registros con evidencia antes de aprobar o rechazar.',
+    path: '/portal/asistencia',
+    icon: 'attendance' as const,
+  },
+  {
+    label: 'Después',
+    title: 'Solicitudes sensibles',
+    detail: 'Incapacidades, vacaciones y cambios de permisos requieren contexto.',
+    path: '/portal/incapacidades',
+    icon: 'health' as const,
+  },
+  {
+    label: 'Cierre',
+    title: 'Soporte con contexto',
+    detail: 'Cuando un caso no queda resuelto, Max puede preparar el ticket.',
+    path: '/portal/soporte',
+    icon: 'support' as const,
+  },
+];
+
+const employeeWorkRail = [
+  {
+    label: 'Inicio',
+    title: 'Mi expediente',
+    detail: 'Consulta credencial, contrato y documentos disponibles.',
+    path: '/portal/documentacion',
+    icon: 'documents' as const,
+  },
+  {
+    label: 'Jornada',
+    title: 'Asistencia',
+    detail: 'Revisa registros y pendientes relacionados con tu día laboral.',
+    path: '/portal/asistencia',
+    icon: 'attendance' as const,
+  },
+  {
+    label: 'Planeación',
+    title: 'Vacaciones',
+    detail: 'Consulta saldo y seguimiento de solicitudes.',
+    path: '/portal/vacaciones',
+    icon: 'vacation' as const,
+  },
+];
 
 export default function Dashboard() {
   const { user } = useAuth();
   const isAdmin = user?.role === 'admin';
 
   const visibleModules = modules.filter((item) => !item.adminOnly || isAdmin);
+  const focusItems = isAdmin ? adminFocus : employeeFocus;
   const groupedModules = moduleGroups
     .map((group) => ({
       ...group,
@@ -185,36 +264,8 @@ export default function Dashboard() {
     }))
     .filter((group) => group.modules.length > 0);
 
-  const kpis = [
-    {
-      label: 'Modelo de datos',
-      value: 'Seguro',
-      detail: 'Portal web conectado',
-      accent: 'blue',
-    },
-    {
-      label: 'Módulos activos',
-      value: String(visibleModules.length),
-      detail: 'Disponibles en portal',
-      accent: 'teal',
-    },
-    {
-      label: 'Analítica',
-      value: isAdmin ? 'Visual + ML' : 'Operación',
-      detail: isAdmin
-        ? 'Dashboard, supervisado y K-means'
-        : 'Vista de usuario',
-      accent: 'gold',
-    },
-    {
-      label: 'Soporte',
-      value: isAdmin ? 'Admin' : 'Usuario',
-      detail: 'Seguimiento operativo',
-      accent: 'blue',
-    },
-  ];
-
   const userName = `${user?.nombre || ''} ${user?.apellido || ''}`.trim();
+<<<<<<< ours
   const firstName = userName ? userName.split(' ')[0] : 'Equipo';
 
   const commandHighlights = [
@@ -318,39 +369,67 @@ export default function Dashboard() {
               <strong>Max listo</strong>
             </div>
           </div>
+=======
+  const firstName = userName.split(' ')[0] || 'Usuario';
+  const workRail = isAdmin ? adminWorkRail : employeeWorkRail;
+  const todayLabel = new Intl.DateTimeFormat('es-MX', {
+    weekday: 'long',
+    day: '2-digit',
+    month: 'long',
+  }).format(new Date());
+
+  return (
+    <div className="enterprise-dashboard srh-dashboard-v3">
+      <section className="srh-dashboard-hero">
+        <div className="srh-hero-copy">
+          <span className="srh-kicker">Panel de trabajo</span>
+          <h1>{isAdmin ? `Hola, ${firstName}` : `Bienvenido, ${firstName}`}</h1>
+          <p>
+            Una vista pensada para trabajar: prioridades claras, módulos organizados por
+            flujo de Recursos Humanos y accesos rápidos sin perder contexto.
+          </p>
+
+          <div className="srh-hero-actions">
+            <Link to={isAdmin ? '/portal/asistencia' : '/portal/documentacion'} className="srh-primary-action">
+              {isAdmin ? 'Revisar operación' : 'Ver mi expediente'}
+            </Link>
+            <Link to={isAdmin ? '/portal/usuarios' : '/portal/vacaciones'} className="srh-secondary-action">
+              {isAdmin ? 'Gestionar usuarios' : 'Consultar vacaciones'}
+            </Link>
+          </div>
+>>>>>>> theirs
         </div>
 
-        <div className="enterprise-profile-card">
-          <div className="enterprise-profile-top">
-            <span className="enterprise-profile-role">{user?.role}</span>
-            <span className="enterprise-profile-status">Sesión activa</span>
+        <div className="srh-hero-brief">
+          <div className="srh-brief-head">
+            <span>{isAdmin ? 'Prioridad admin' : 'Resumen personal'}</span>
+            <strong>{isAdmin ? 'Qué revisar primero' : 'Accesos principales'}</strong>
           </div>
 
-          <h2>{userName || 'Usuario SMART RH'}</h2>
-          <p>{user?.correo}</p>
-
-          <div className="enterprise-profile-grid">
-            <div>
-              <span>Portal</span>
-              <strong>Web</strong>
-            </div>
-
-            <div>
-              <span>Acceso</span>
-              <strong>{isAdmin ? 'Admin' : 'Empleado'}</strong>
-            </div>
-          </div>
-
+<<<<<<< ours
           <div className="enterprise-profile-note">
             <SmartRhIcon name="check" />
             <p>
               Recomendación: atiende primero asistencia/documentos, después
               soporte o analítica si el caso necesita seguimiento.
             </p>
+=======
+          <div className="srh-brief-list">
+            {focusItems.map((item) => (
+              <Link key={item.title} to={item.path}>
+                <SmartRhIcon name={item.icon} />
+                <div>
+                  <strong>{item.title}</strong>
+                  <span>{item.detail}</span>
+                </div>
+              </Link>
+            ))}
+>>>>>>> theirs
           </div>
         </div>
       </section>
 
+<<<<<<< ours
       <section className="enterprise-command-strip" aria-label="Información importante">
         {commandHighlights.map((item) => (
           <Link to={item.path} className="enterprise-command-card" key={item.title}>
@@ -375,47 +454,57 @@ export default function Dashboard() {
             <p>{item.detail}</p>
           </article>
         ))}
+=======
+      <section className="srh-dashboard-strip" aria-label="Información rápida">
+        <article>
+          <span>Vista activa</span>
+          <strong>{isAdmin ? 'Administrador' : 'Empleado'}</strong>
+          <p>La navegación se adapta a tus permisos.</p>
+        </article>
+        <article>
+          <span>Hoy</span>
+          <strong>{todayLabel}</strong>
+          <p>Usa esta pantalla como punto de entrada a tu jornada.</p>
+        </article>
+        <article>
+          <span>Asistente</span>
+          <strong>Max</strong>
+          <p>Ayuda con pasos, contexto y tickets.</p>
+        </article>
+>>>>>>> theirs
       </section>
 
-      <section className="enterprise-layout-grid">
-        <div className="enterprise-main-panel">
-          <div className="enterprise-section-header">
-            <div>
-              <span>Módulos del sistema</span>
-              <h2>Centro de operación</h2>
-            </div>
+      <section className="srh-work-board">
+        <div className="srh-work-copy">
+          <span>Lectura rápida</span>
+          <h2>{isAdmin ? 'Qué conviene revisar antes de moverte de pantalla' : 'Tu día laboral en tres accesos'}</h2>
+          <p>
+            El portal ya no depende de una lista plana: cada acceso explica la acción,
+            el criterio de revisión y el siguiente punto lógico.
+          </p>
+        </div>
 
-            <p>{visibleModules.length} módulos disponibles</p>
-          </div>
+        <div className="srh-work-rail">
+          {workRail.map((item) => (
+            <Link key={item.title} to={item.path} className="srh-work-card">
+              <div>
+                <span>{item.label}</span>
+                <SmartRhIcon name={item.icon} />
+              </div>
+              <strong>{item.title}</strong>
+              <p>{item.detail}</p>
+            </Link>
+          ))}
+        </div>
+      </section>
 
-          <div className="enterprise-module-sections">
-            {groupedModules.map((group) => (
-              <section className="enterprise-module-section" key={group.id}>
-                <div className="enterprise-module-section-head">
-                  <div>
-                    <span>{group.label}</span>
-                    <p>{group.description}</p>
-                  </div>
-                  <strong>{group.modules.length}</strong>
-                </div>
+      <section className="srh-workflow-panel">
+        <div className="srh-section-title">
+          <span>Forma de trabajo</span>
+          <h2>Menos ruido, más decisión</h2>
+        </div>
 
-                <div className="enterprise-module-grid">
-                  {group.modules.map((module) => (
-                    <Link
-                      key={module.path}
-                      to={module.path}
-                      className={`enterprise-module-card ${module.accent}`}
-                    >
-                      <div className="enterprise-module-code">
-                        <SmartRhIcon name={module.icon} />
-                      </div>
-
-                      <div>
-                        <span>{module.code}</span>
-                        <h3>{module.title}</h3>
-                        <p>{module.description}</p>
-                      </div>
-
+<<<<<<< ours
                       <span className="enterprise-module-arrow">
                         <SmartRhIcon name="send" />
                       </span>
@@ -425,8 +514,28 @@ export default function Dashboard() {
               </section>
             ))}
           </div>
+=======
+        <div className="srh-workflow-cards">
+          <article>
+            <b>01</b>
+            <strong>Ubica el caso</strong>
+            <p>Empleado, fecha, documento o solicitud. Ese dato define el módulo correcto.</p>
+          </article>
+          <article>
+            <b>02</b>
+            <strong>Revisa evidencia</strong>
+            <p>Antes de aprobar, confirma comprobante, jornada, permiso o archivo asociado.</p>
+          </article>
+          <article>
+            <b>03</b>
+            <strong>Deja seguimiento</strong>
+            <p>Guarda el cambio o usa Max para levantar un ticket con el contexto mínimo.</p>
+          </article>
+>>>>>>> theirs
         </div>
+      </section>
 
+<<<<<<< ours
         <aside className="enterprise-side-panel">
           <div className="enterprise-side-card">
             <span className="enterprise-side-label">Estado del sistema</span>
@@ -459,6 +568,43 @@ export default function Dashboard() {
             </div>
           </div>
         </aside>
+=======
+      <section className="srh-module-catalog">
+        <div className="srh-section-title">
+          <span>Módulos SMART RH</span>
+          <h2>Accesos organizados por trabajo real</h2>
+        </div>
+
+        <div className="srh-module-groups">
+          {groupedModules.map((group) => (
+            <section className="srh-module-group" key={group.id}>
+              <div className="srh-module-group-head">
+                <div>
+                  <strong>{group.label}</strong>
+                  <span>{group.description}</span>
+                </div>
+                <b>{group.modules.length}</b>
+              </div>
+
+              <div className="srh-module-list">
+                {group.modules.map((module) => (
+                  <Link key={module.path} to={module.path} className="srh-module-row">
+                    <span className="srh-module-icon">
+                      <SmartRhIcon name={module.icon} />
+                    </span>
+                    <div>
+                      <small>{module.code}</small>
+                      <strong>{module.title}</strong>
+                      <p>{module.description}</p>
+                    </div>
+                    <span className="srh-module-open">Abrir</span>
+                  </Link>
+                ))}
+              </div>
+            </section>
+          ))}
+        </div>
+>>>>>>> theirs
       </section>
     </div>
   );

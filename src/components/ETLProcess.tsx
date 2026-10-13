@@ -31,7 +31,7 @@ import {
 import { useETL } from '../hooks/useETL';
 import './ETLProcess.css';
 
-const COLORS = ['#38bdf8', '#2dd4bf', '#0bf393', '#f59e0b', '#ef4444', '#8b5cf6'];
+const COLORS = ['#38bdf8', '#2dd4bf', '#0a57a4', '#f59e0b', '#ef4444', '#7dd3fc'];
 
 type ETLTab = 'resumen' | 'estadisticas' | 'analisis' | 'graficas';
 

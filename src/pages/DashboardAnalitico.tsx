@@ -32,7 +32,7 @@ import { api } from '../services/api';
    ========================================================= */
 
 type ThemeMode = 'dark' | 'light';
-type Accent = 'blue' | 'teal' | 'gold' | 'danger' | 'purple';
+type Accent = 'blue' | 'teal' | 'gold' | 'danger' | 'cyan';
 type ChartCategory = 'Operativa' | 'Administrativa' | 'Comparativa' | 'Machine Learning';
 
 type ChartItem = {
@@ -330,7 +330,7 @@ function getAccentColor(accent: Accent, colors: ThemeColors) {
   if (accent === 'teal') return colors.teal;
   if (accent === 'gold') return colors.gold;
   if (accent === 'danger') return colors.danger;
-  if (accent === 'purple') return colors.purple;
+  if (accent === 'cyan') return colors.cyanAccent;
 
   return colors.primary;
 }
@@ -556,7 +556,7 @@ export default function DashboardAnalitico() {
           title="Vacaciones"
           value={String(analytics.kpis.solicitudesVacaciones)}
           detail="Solicitudes registradas"
-          accent="purple"
+          accent="cyan"
           styles={styles}
           colors={colors}
         />
@@ -1054,7 +1054,7 @@ function Grafica03IncidenciasPorFecha({
 
   const colorLineaPendientes = colors.isDark ? '#FACC15' : '#B45309';
   const colorLineaRechazadas = colors.isDark ? '#F87171' : '#D64545';
-  const colorLineaIncidencias = colors.isDark ? '#A78BFA' : '#7C3AED';
+  const colorLineaIncidencias = colors.isDark ? '#7DD3FC' : '#0A57A4';
 
   const grosorLinea = 3;
   const radioPunto = 3;
@@ -1376,7 +1376,7 @@ function Grafica06DiasVacaciones({
   /*
     DISEÑO INDEPENDIENTE DE ESTA GRÁFICA
 
-    Para cambiar las barras moradas de días solicitados:
+    Para cambiar las barras de días solicitados:
     cambia colorBarraDiasVacaciones.
   */
   const altoGrafica = 370;
@@ -1384,7 +1384,7 @@ function Grafica06DiasVacaciones({
   const colorLineasCuadricula = colors.chartGrid;
   const colorTextoEjes = colors.chartAxis;
 
-  const colorBarraDiasVacaciones = colors.isDark ? '#876ed2' : '#7C3AED';
+  const colorBarraDiasVacaciones = colors.isDark ? '#7DD3FC' : '#0A57A4';
   const radioBarraHorizontal: [number, number, number, number] = [0, 14, 14, 0];
 
   const anchoEjeEmpleado = 150;
@@ -1403,7 +1403,7 @@ function Grafica06DiasVacaciones({
       'Presenta los empleados con mayor cantidad de días solicitados.',
     whyThisChart:
       'Se usa barra horizontal para comparar empleados y cantidades acumuladas.',
-    accent: 'purple',
+    accent: 'cyan',
   };
 
   return (
@@ -1794,7 +1794,7 @@ function Grafica10KMeansBarras({
   const colorCluster1 = colors.isDark ? '#38BDF8' : '#4f6173';
   const colorCluster2 = colors.isDark ? '#2DD4BF' : '#c13373';
   const colorCluster3 = colors.isDark ? '#FACC15' : '#2cb8ce';
-  const colorCluster4 = colors.isDark ? '#A78BFA' : '#7C3AED';
+  const colorCluster4 = colors.isDark ? '#7DD3FC' : '#0A57A4';
   const colorCluster5 = colors.isDark ? '#F87171' : '#D64545';
 
   const coloresClusters = [
@@ -1821,7 +1821,7 @@ function Grafica10KMeansBarras({
       'Presenta el número de empleados agrupados en cada clúster.',
     whyThisChart:
       'Se usa barras porque compara la cantidad de empleados por grupo.',
-    accent: 'purple',
+    accent: 'cyan',
   };
 
   return (
@@ -1921,7 +1921,7 @@ function Grafica11KMeansDona({
   const colorCluster1 = colors.isDark ? '#38BDF8' : '#0A57A4';
   const colorCluster2 = colors.isDark ? '#2DD4BF' : '#0F9F96';
   const colorCluster3 = colors.isDark ? '#FACC15' : '#B45309';
-  const colorCluster4 = colors.isDark ? '#A78BFA' : '#7C3AED';
+  const colorCluster4 = colors.isDark ? '#7DD3FC' : '#0A57A4';
   const colorCluster5 = colors.isDark ? '#F87171' : '#D64545';
 
   const coloresClusters = [
@@ -2472,7 +2472,7 @@ function getColors(isDark: boolean) {
     teal: isDark ? '#2DD4BF' : '#0F9F96',
     gold: isDark ? '#FACC15' : '#B45309',
     danger: isDark ? '#F87171' : '#D64545',
-    purple: isDark ? '#A78BFA' : '#7C3AED',
+    cyanAccent: isDark ? '#7DD3FC' : '#0A57A4',
 
     text: isDark ? '#F8FAFC' : '#0F172A',
     textSoft: isDark ? '#DDE7F3' : '#223044',

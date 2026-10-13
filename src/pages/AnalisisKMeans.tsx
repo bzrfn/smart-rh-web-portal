@@ -1798,8 +1798,8 @@ function getColors(isDark: boolean) {
       ? '0 18px 50px rgba(0,0,0,0.25)'
       : '0 18px 50px rgba(15,23,42,0.08)',
     clusterPalette: isDark
-      ? ['#38BDF8', '#2DD4BF', '#FACC15', '#A78BFA', '#F87171', '#60A5FA']
-      : ['#0A57A4', '#0F9F96', '#B45309', '#7C3AED', '#D64545', '#2563EB'],
+      ? ['#38BDF8', '#2DD4BF', '#FACC15', '#7DD3FC', '#F87171', '#60A5FA']
+      : ['#0A57A4', '#0F9F96', '#B45309', '#38BDF8', '#D64545', '#2563EB'],
   };
 }
 

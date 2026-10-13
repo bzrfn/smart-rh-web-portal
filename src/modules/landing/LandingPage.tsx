@@ -237,6 +237,7 @@ export default function LandingPage() {
           </div>
         </a>
 
+<<<<<<< ours
         <button
           className={`public-menu-trigger ${publicMenuOpen ? 'is-open' : ''}`}
           type="button"
@@ -255,6 +256,49 @@ export default function LandingPage() {
           <a href="#valores" onClick={() => setPublicMenuOpen(false)}>{t.nav.values}</a>
           <a href="#contacto" onClick={() => setPublicMenuOpen(false)}>{t.nav.contact}</a>
         </nav>
+=======
+        <div className="public-menu-shell">
+          <button
+            className={`public-menu-trigger ${publicMenuOpen ? 'is-open' : ''}`}
+            type="button"
+            onClick={() => setPublicMenuOpen((value) => !value)}
+            aria-expanded={publicMenuOpen}
+          >
+            <SmartRhIcon name="menu" />
+            <span>Explorar SMART RH</span>
+            <SmartRhIcon name="chevronDown" />
+          </button>
+
+          {publicMenuOpen ? (
+            <nav className="public-menu-dropdown" aria-label="Secciones de SMART RH">
+              <a href="#inicio" onClick={() => setPublicMenuOpen(false)}>
+                <strong>{t.nav.home}</strong>
+                <span>Vista general del producto</span>
+              </a>
+              <a href="#nosotros" onClick={() => setPublicMenuOpen(false)}>
+                <strong>{t.nav.about}</strong>
+                <span>Qué resuelve SMART RH</span>
+              </a>
+              <a href="#servicios" onClick={() => setPublicMenuOpen(false)}>
+                <strong>{t.nav.services}</strong>
+                <span>Módulos del ecosistema</span>
+              </a>
+              <a href="#historia" onClick={() => setPublicMenuOpen(false)}>
+                <strong>{t.nav.story}</strong>
+                <span>Origen y enfoque del sistema</span>
+              </a>
+              <a href="#valores" onClick={() => setPublicMenuOpen(false)}>
+                <strong>{t.nav.values}</strong>
+                <span>Principios de operación</span>
+              </a>
+              <a href="#contacto" onClick={() => setPublicMenuOpen(false)}>
+                <strong>{t.nav.contact}</strong>
+                <span>Solicitar información</span>
+              </a>
+            </nav>
+          ) : null}
+        </div>
+>>>>>>> theirs
 
         <div className="public-actions public-actions-premium">
           <label className="public-language public-language-premium">
