@@ -74,10 +74,12 @@ export default function LandingPage() {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
   const secureLandingHandled = useRef(false);
+  const publicMenuRef = useRef<HTMLDivElement | null>(null);
 
   const [language, setLanguage] = useState<LandingLanguage>(getInitialLanguage);
   const [theme, setTheme] = useState(getInitialTheme);
   const [publicMenuOpen, setPublicMenuOpen] = useState(false);
+  const [activeStory, setActiveStory] = useState(0);
 
   const [contactName, setContactName] = useState('');
   const [contactEmail, setContactEmail] = useState('');
@@ -89,6 +91,35 @@ export default function LandingPage() {
 
   const t = useMemo(() => landingTranslations[language], [language]);
   const contactText = useMemo(() => contactMessages[language], [language]);
+  const landingStories = useMemo(
+    () => [
+      {
+        label: 'Operación diaria',
+        title: 'Asistencia, permisos y ausencias sin listas sueltas',
+        detail:
+          'La plataforma ordena cada revisión por empleado, fecha, evidencia y siguiente acción.',
+        stat: '01',
+        accent: 'Jornadas y solicitudes',
+      },
+      {
+        label: 'Expediente laboral',
+        title: 'Documentos, contratos y nómina en una misma lectura',
+        detail:
+          'Cada archivo vive dentro del expediente digital, con acceso por rol y seguimiento administrativo.',
+        stat: '02',
+        accent: 'Expediente conectado',
+      },
+      {
+        label: 'Max integrado',
+        title: 'Soporte con contexto para cerrar casos más rápido',
+        detail:
+          'Max ayuda a ubicar el módulo correcto, resumir el caso y preparar tickets cuando hace falta.',
+        stat: '03',
+        accent: 'Asistente operativo',
+      },
+    ],
+    []
+  );
   const publicHighlights = useMemo(
     () => [
       {
@@ -166,6 +197,28 @@ export default function LandingPage() {
     document.documentElement.dataset.theme = theme;
   }, [theme]);
 
+  useEffect(() => {
+    const intervalId = window.setInterval(() => {
+      setActiveStory((current) => (current + 1) % landingStories.length);
+    }, 5200);
+
+    return () => window.clearInterval(intervalId);
+  }, [landingStories.length]);
+
+  useEffect(() => {
+    const handlePointerDown = (event: PointerEvent) => {
+      if (!publicMenuRef.current?.contains(event.target as Node)) {
+        setPublicMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('pointerdown', handlePointerDown);
+
+    return () => {
+      document.removeEventListener('pointerdown', handlePointerDown);
+    };
+  }, []);
+
   const changeLanguage = (value: string) => {
     const next = value as LandingLanguage;
 
@@ -237,7 +290,7 @@ export default function LandingPage() {
           </div>
         </a>
 
-        <div className="public-menu-shell">
+        <div className="public-menu-shell" ref={publicMenuRef}>
           <button
             className={`public-menu-trigger ${publicMenuOpen ? 'is-open' : ''}`}
             type="button"
@@ -305,8 +358,8 @@ export default function LandingPage() {
       </header>
 
       <main>
-        <section id="inicio" className="public-hero public-hero-premium">
-          <div className="public-hero-copy public-hero-copy-premium">
+        <section id="inicio" className="public-hero public-hero-premium srh-public-command">
+          <div className="public-hero-copy public-hero-copy-premium srh-public-hero-copy">
             <span className="public-eyebrow">{t.hero.badge}</span>
 
             <h1>
@@ -342,8 +395,37 @@ export default function LandingPage() {
                 <span>Análisis de datos</span>
               </div>
             </div>
+          </div>
 
-            <div className="public-hero-carousel" aria-label="Información clave de SMART RH">
+          <aside className="public-hero-panel public-hero-panel-premium srh-public-carousel-panel">
+            <div className="srh-carousel-header">
+              <span>SMART RH en operación</span>
+              <strong>{landingStories[activeStory].accent}</strong>
+            </div>
+
+            <div className="srh-carousel-stage">
+              <span>{landingStories[activeStory].stat}</span>
+              <small>{landingStories[activeStory].label}</small>
+              <h2>{landingStories[activeStory].title}</h2>
+              <p>{landingStories[activeStory].detail}</p>
+            </div>
+
+            <div className="srh-carousel-controls" aria-label="Cambiar información destacada">
+              {landingStories.map((item, index) => (
+                <button
+                  key={item.title}
+                  type="button"
+                  className={index === activeStory ? 'is-active' : ''}
+                  aria-label={`Ver ${item.label}`}
+                  onClick={() => setActiveStory(index)}
+                >
+                  <span />
+                  {item.label}
+                </button>
+              ))}
+            </div>
+
+            <div className="public-hero-carousel srh-public-proof" aria-label="Información clave de SMART RH">
               {publicHighlights.map((item) => (
                 <article key={item.title}>
                   <span>
@@ -354,67 +436,6 @@ export default function LandingPage() {
                   <p>{item.detail}</p>
                 </article>
               ))}
-            </div>
-          </div>
-
-          <aside className="public-hero-panel public-hero-panel-premium">
-            <div className="public-panel-glow" />
-
-            <div className="public-hero-panel-top">
-              <span>SMART RH</span>
-              <strong>LIVE</strong>
-            </div>
-
-            <div className="public-dashboard-preview">
-              <div className="public-preview-header">
-                <div>
-                  <small>{t.hero.panelSubtitle}</small>
-                  <h2>{t.hero.panelTitle}</h2>
-                </div>
-
-                <div className="public-preview-icon">RH</div>
-              </div>
-
-              <div className="public-preview-metrics">
-                <div>
-                  <span>100%</span>
-                  <small>Control</small>
-                </div>
-
-                <div>
-                  <span>24/7</span>
-                  <small>Acceso</small>
-                </div>
-
-                <div>
-                  <span>360°</span>
-                  <small>Gestión</small>
-                </div>
-              </div>
-
-              <div className="public-panel-list">
-                {t.hero.panelItems.map((item) => (
-                  <div key={item}>
-                    <span />
-                    {item}
-                  </div>
-                ))}
-              </div>
-
-              <div className="public-panel-flow">
-                <div>
-                  <span>01</span>
-                  <strong>Registrar</strong>
-                </div>
-                <div>
-                  <span>02</span>
-                  <strong>Validar</strong>
-                </div>
-                <div>
-                  <span>03</span>
-                  <strong>Resolver</strong>
-                </div>
-              </div>
             </div>
           </aside>
         </section>

@@ -290,6 +290,27 @@ export default function AppShell() {
     [user?.role]
   );
 
+  const miniCalendar = useMemo(() => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth();
+    const firstDay = new Date(year, month, 1);
+    const startOffset = (firstDay.getDay() + 6) % 7;
+    const startDate = new Date(year, month, 1 - startOffset);
+
+    return Array.from({ length: 35 }, (_, index) => {
+      const date = new Date(startDate);
+      date.setDate(startDate.getDate() + index);
+
+      return {
+        key: date.toISOString(),
+        day: date.getDate(),
+        muted: date.getMonth() !== month,
+        today: date.toDateString() === today.toDateString(),
+      };
+    });
+  }, []);
+
   const userInitials = useMemo(() => {
     const nombre = user?.nombre?.[0] || 'S';
     const apellido = user?.apellido?.[0] || 'R';
@@ -414,15 +435,24 @@ export default function AppShell() {
             <div className="top-popover top-popover-calendar">
               <div className="top-popover-header">
                 <span>Calendario</span>
-                <strong>Agenda breve</strong>
+                <strong>{new Date().toLocaleDateString('es-MX', { month: 'long', year: 'numeric' })}</strong>
               </div>
 
-              <div className="top-calendar-card">
-                <div>
-                  <span>{new Date().toLocaleDateString('es-MX', { weekday: 'long' })}</span>
-                  <strong>{new Date().toLocaleDateString('es-MX', { day: '2-digit', month: 'short' })}</strong>
-                </div>
-                <small>Resumen operativo</small>
+              <div className="top-mini-calendar" aria-label="Mini calendario">
+                {['L', 'M', 'M', 'J', 'V', 'S', 'D'].map((day, index) => (
+                  <span key={`${day}-${index}`} className="top-mini-calendar-dayname">
+                    {day}
+                  </span>
+                ))}
+
+                {miniCalendar.map((date) => (
+                  <span
+                    key={date.key}
+                    className={`top-mini-calendar-date ${date.muted ? 'is-muted' : ''} ${date.today ? 'is-today' : ''}`}
+                  >
+                    {date.day}
+                  </span>
+                ))}
               </div>
 
               <div className="top-popover-list">
@@ -625,7 +655,6 @@ export default function AppShell() {
                     key={item.path}
                     to={item.path}
                     className={`portal-side-nav-item ${isActive(item.path) ? 'active' : ''}`}
-                    onClick={() => setNavigationOpen(false)}
                   >
                     <span>
                       <SmartRhIcon name={item.icon} />

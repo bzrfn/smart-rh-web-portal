@@ -1129,6 +1129,204 @@
   }
 }
 
+/* SMART RH terminal executive polish */
+.terminal-experience,
+.terminal-approval-page {
+  background:
+    radial-gradient(circle at 10% -8%, rgba(56, 189, 248, 0.16), transparent 30%),
+    radial-gradient(circle at 92% 0%, rgba(34, 184, 176, 0.14), transparent 28%),
+    linear-gradient(180deg, #F4F7FB, #EAF2FA) !important;
+  color: #0F172A !important;
+}
+
+.terminal-theme-dark,
+:root[data-theme='dark'] .terminal-approval-page {
+  background:
+    radial-gradient(circle at 10% -8%, rgba(56, 189, 248, 0.15), transparent 30%),
+    radial-gradient(circle at 92% 0%, rgba(45, 212, 191, 0.12), transparent 28%),
+    linear-gradient(180deg, #07111F, #0B1728) !important;
+  color: #F8FAFC !important;
+}
+
+.terminal-destination-page {
+  min-height: 100vh !important;
+  display: grid !important;
+  place-items: center !important;
+  padding: clamp(22px, 4vw, 48px) !important;
+}
+
+.terminal-destination-shell {
+  width: min(1120px, 100%) !important;
+  gap: 16px !important;
+}
+
+.terminal-brand-header,
+.terminal-destination-account,
+.terminal-destination-card,
+.terminal-approval-card,
+.terminal-loading-card {
+  border: 1px solid rgba(10, 87, 164, 0.15) !important;
+  background: rgba(255, 255, 255, 0.92) !important;
+  color: #0F172A !important;
+  box-shadow: 0 24px 70px rgba(10, 87, 164, 0.13) !important;
+  backdrop-filter: blur(22px) saturate(1.15) !important;
+}
+
+.terminal-theme-dark .terminal-brand-header,
+.terminal-theme-dark .terminal-destination-account,
+.terminal-theme-dark .terminal-destination-card,
+.terminal-theme-dark .terminal-loading-card,
+:root[data-theme='dark'] .terminal-approval-card {
+  border-color: rgba(125, 211, 252, 0.22) !important;
+  background: rgba(15, 27, 45, 0.92) !important;
+  color: #F8FAFC !important;
+  box-shadow: 0 30px 86px rgba(0, 0, 0, 0.38) !important;
+}
+
+.terminal-brand-header {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  align-items: start !important;
+  gap: 24px !important;
+  padding: clamp(24px, 4vw, 38px) !important;
+  border-radius: 32px !important;
+}
+
+.terminal-brand-kicker,
+.terminal-section-eyebrow {
+  width: fit-content !important;
+  max-width: 100% !important;
+  min-height: 34px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  padding: 0 12px !important;
+  border: 1px solid rgba(10, 87, 164, 0.16) !important;
+  border-radius: 999px !important;
+  color: #0A57A4 !important;
+  background: rgba(10, 87, 164, 0.08) !important;
+  letter-spacing: 0.12em !important;
+}
+
+.terminal-theme-dark .terminal-brand-kicker,
+.terminal-theme-dark .terminal-section-eyebrow,
+:root[data-theme='dark'] .terminal-section-eyebrow {
+  color: #7DD3FC !important;
+  border-color: rgba(125, 211, 252, 0.22) !important;
+  background: rgba(56, 189, 248, 0.12) !important;
+}
+
+.terminal-brand-header h1,
+.terminal-approval-header h1 {
+  color: inherit !important;
+  font-size: clamp(2.2rem, 4vw, 4.6rem) !important;
+  line-height: 0.95 !important;
+  letter-spacing: -0.06em !important;
+}
+
+.terminal-brand-header p,
+.terminal-approval-header p,
+.terminal-destination-copy > span,
+.terminal-destination-copy small {
+  color: #607184 !important;
+  line-height: 1.65 !important;
+}
+
+.terminal-theme-dark .terminal-brand-header p,
+.terminal-theme-dark .terminal-destination-copy > span,
+.terminal-theme-dark .terminal-destination-copy small,
+:root[data-theme='dark'] .terminal-approval-header p {
+  color: #A6B8CA !important;
+}
+
+.terminal-secure-pill,
+.terminal-theme-toggle,
+.terminal-theme-toggle-compact {
+  color: #0F172A !important;
+  border-color: rgba(10, 87, 164, 0.15) !important;
+  background: rgba(255, 255, 255, 0.68) !important;
+}
+
+.terminal-theme-dark .terminal-secure-pill,
+.terminal-theme-dark .terminal-theme-toggle,
+.terminal-theme-dark .terminal-theme-toggle-compact {
+  color: #F8FAFC !important;
+  border-color: rgba(125, 211, 252, 0.22) !important;
+  background: rgba(255, 255, 255, 0.07) !important;
+}
+
+.terminal-selector-theme-row {
+  margin: 0 !important;
+  justify-content: flex-end !important;
+}
+
+.terminal-destination-account {
+  padding: 16px 18px !important;
+  border-radius: 22px !important;
+}
+
+.terminal-destination-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 14px !important;
+}
+
+.terminal-destination-card {
+  min-height: 180px !important;
+  border-radius: 28px !important;
+  padding: 20px !important;
+}
+
+.terminal-destination-icon {
+  width: 58px !important;
+  height: 58px !important;
+  border-radius: 20px !important;
+  color: #0A57A4 !important;
+  background: rgba(10, 87, 164, 0.1) !important;
+}
+
+.terminal-destination-card-primary {
+  color: #FFFFFF !important;
+  background:
+    radial-gradient(circle at 88% 12%, rgba(34, 184, 176, 0.38), transparent 38%),
+    linear-gradient(135deg, #0A57A4, #084785) !important;
+}
+
+.terminal-destination-card-primary .terminal-destination-icon,
+.terminal-destination-card-primary .terminal-destination-arrow {
+  color: #FFFFFF !important;
+  background: rgba(255, 255, 255, 0.16) !important;
+}
+
+.terminal-destination-card-primary .terminal-destination-copy strong,
+.terminal-destination-card-primary .terminal-destination-copy > span,
+.terminal-destination-card-primary .terminal-destination-copy small {
+  color: #FFFFFF !important;
+}
+
+.terminal-approval-page {
+  min-height: 100vh !important;
+  padding: clamp(22px, 4vw, 48px) !important;
+}
+
+.terminal-approval-card {
+  width: min(760px, 100%) !important;
+  padding: clamp(26px, 5vw, 46px) !important;
+  border-radius: 34px !important;
+}
+
+.terminal-approval-actions button,
+.terminal-approval-actions a {
+  min-height: 48px !important;
+  border-radius: 999px !important;
+}
+
+@media (max-width: 760px) {
+  .terminal-brand-header,
+  .terminal-destination-grid,
+  .terminal-approval-actions {
+    grid-template-columns: 1fr !important;
+  }
+}
+
 /* SMART RH terminal/admin destination redesign */
 .terminal-experience {
   --terminal-blue: #0f67b1;
