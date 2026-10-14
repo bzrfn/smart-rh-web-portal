@@ -585,9 +585,9 @@ export default function AppShell() {
               </div>
 
               <div className="top-profile-links">
-                <Link to="/portal/terminal-autorizacion" onClick={() => setProfileOpen(false)}>
+                <Link to="/admin/destino" onClick={() => setProfileOpen(false)}>
                   <SmartRhIcon name="qr" />
-                  <span>Terminal QR</span>
+                  <span>Portal o terminal QR</span>
                 </Link>
               </div>
 

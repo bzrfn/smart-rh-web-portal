@@ -1564,3 +1564,39 @@
     grid-template-columns: 1fr !important;
   }
 }
+
+/* SMART RH terminal/destination v7 dark-mode contrast lock */
+.terminal-theme-dark.terminal-destination-page,
+.terminal-theme-dark .terminal-destination-shell,
+.terminal-theme-dark .terminal-brand-header,
+.terminal-theme-dark .terminal-destination-account,
+.terminal-theme-dark .terminal-destination-card {
+  color: #f8fbff !important;
+}
+
+.terminal-theme-dark .terminal-brand-header h1,
+.terminal-theme-dark .terminal-destination-account strong,
+.terminal-theme-dark .terminal-destination-copy strong {
+  color: #ffffff !important;
+  opacity: 1 !important;
+}
+
+.terminal-theme-dark .terminal-brand-header p,
+.terminal-theme-dark .terminal-destination-account span,
+.terminal-theme-dark .terminal-destination-copy > span,
+.terminal-theme-dark .terminal-destination-copy small {
+  color: #bfd4e5 !important;
+  opacity: 1 !important;
+}
+
+.terminal-theme-dark .terminal-destination-card:not(.terminal-destination-card-primary) {
+  background:
+    linear-gradient(135deg, rgba(142, 210, 255, 0.09), rgba(49, 221, 212, 0.05)),
+    rgba(12, 34, 54, 0.94) !important;
+  border-color: rgba(142, 210, 255, 0.18) !important;
+}
+
+.terminal-theme-dark .terminal-destination-account {
+  background: rgba(12, 34, 54, 0.9) !important;
+  border-color: rgba(142, 210, 255, 0.18) !important;
+}

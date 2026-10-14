@@ -262,6 +262,20 @@ const employeeReviewNotes = [
   },
 ];
 
+function getModuleAction(group: ModuleCard['group']) {
+  if (group === 'gestion') return 'Gestionar';
+  if (group === 'analitica') return 'Analizar';
+  if (group === 'expediente') return 'Consultar';
+  return 'Revisar';
+}
+
+function getModuleMode(group: ModuleCard['group']) {
+  if (group === 'gestion') return 'Permisos y seguimiento';
+  if (group === 'analitica') return 'Lectura ejecutiva';
+  if (group === 'expediente') return 'Archivo laboral';
+  return 'Operación del día';
+}
+
 export default function Dashboard() {
   const { user } = useAuth();
   const [activePriority, setActivePriority] = useState(0);
@@ -452,6 +466,7 @@ export default function Dashboard() {
         <div className="srh-section-heading">
           <span>Módulos</span>
           <h2>Accesos por flujo de trabajo</h2>
+          <p>Organizados por intención: primero revisas el tipo de caso, después entras al módulo correcto.</p>
         </div>
 
         <div className="srh-module-columns">
@@ -459,6 +474,7 @@ export default function Dashboard() {
             <section className="srh-module-column" key={group.id}>
               <div className="srh-module-column-head">
                 <div>
+                  <em>{getModuleMode(group.id)}</em>
                   <strong>{group.label}</strong>
                   <p>{group.description}</p>
                 </div>
@@ -469,12 +485,15 @@ export default function Dashboard() {
                 {group.modules.map((module) => (
                   <Link key={module.path} to={module.path} className="srh-module-pill">
                     <SmartRhIcon name={module.icon} />
-                    <div>
+                    <div className="srh-module-main">
                       <em>{module.cue}</em>
                       <strong>{module.title}</strong>
                       <span>{module.description}</span>
                     </div>
-                    <small>Abrir</small>
+                    <div className="srh-module-action">
+                      <small>{getModuleAction(module.group)}</small>
+                      <SmartRhIcon name="chevronDown" />
+                    </div>
                   </Link>
                 ))}
               </div>

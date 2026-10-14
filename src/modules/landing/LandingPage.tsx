@@ -74,8 +74,10 @@ export default function LandingPage() {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
   const secureLandingHandled = useRef(false);
+  const languageMenuRef = useRef<HTMLDivElement | null>(null);
 
   const [language, setLanguage] = useState<LandingLanguage>(getInitialLanguage);
+  const [languageOpen, setLanguageOpen] = useState(false);
   const [theme, setTheme] = useState(getInitialTheme);
   const [activeStory, setActiveStory] = useState(0);
 
@@ -89,6 +91,10 @@ export default function LandingPage() {
 
   const t = useMemo(() => landingTranslations[language], [language]);
   const contactText = useMemo(() => contactMessages[language], [language]);
+  const currentLanguage = useMemo(
+    () => landingLanguages.find((item) => item.code === language) || landingLanguages[0],
+    [language]
+  );
   const landingStories = useMemo(
     () => [
       {
@@ -203,6 +209,30 @@ export default function LandingPage() {
     return () => window.clearInterval(intervalId);
   }, [landingStories.length]);
 
+  useEffect(() => {
+    if (!languageOpen) return undefined;
+
+    const handlePointerDown = (event: PointerEvent) => {
+      if (!languageMenuRef.current?.contains(event.target as Node)) {
+        setLanguageOpen(false);
+      }
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setLanguageOpen(false);
+      }
+    };
+
+    document.addEventListener('pointerdown', handlePointerDown);
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('pointerdown', handlePointerDown);
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [languageOpen]);
+
   const changeLanguage = (value: string) => {
     const next = value as LandingLanguage;
 
@@ -283,17 +313,43 @@ export default function LandingPage() {
         </nav>
 
         <div className="public-actions public-actions-premium">
-          <label className="public-language public-language-premium">
-            <span>{t.languageLabel}</span>
+          <div
+            className="public-language public-language-premium public-language-menu"
+            ref={languageMenuRef}
+          >
+            <button
+              type="button"
+              className={`public-language-trigger ${languageOpen ? 'is-open' : ''}`}
+              aria-haspopup="listbox"
+              aria-expanded={languageOpen}
+              onClick={() => setLanguageOpen((value) => !value)}
+            >
+              <span>{currentLanguage.short}</span>
+              <strong>{currentLanguage.label}</strong>
+              <SmartRhIcon name="chevronDown" />
+            </button>
 
-            <select value={language} onChange={(event) => changeLanguage(event.target.value)}>
-              {landingLanguages.map((item) => (
-                <option key={item.code} value={item.code}>
-                  {item.short} · {item.label}
-                </option>
-              ))}
-            </select>
-          </label>
+            {languageOpen ? (
+              <div className="public-language-options" role="listbox">
+                {landingLanguages.map((item) => (
+                  <button
+                    key={item.code}
+                    type="button"
+                    role="option"
+                    aria-selected={item.code === language}
+                    className={item.code === language ? 'is-active' : ''}
+                    onClick={() => {
+                      changeLanguage(item.code);
+                      setLanguageOpen(false);
+                    }}
+                  >
+                    <span>{item.short}</span>
+                    <strong>{item.label}</strong>
+                  </button>
+                ))}
+              </div>
+            ) : null}
+          </div>
 
           <button className="public-theme-btn" type="button" onClick={toggleTheme}>
             <span>
