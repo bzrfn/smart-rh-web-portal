@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../app/auth/AuthContext';
 import SmartRhIcon, { SmartRhIconName } from '../../components/SmartRhIcon';
@@ -317,6 +317,18 @@ export default function Dashboard() {
   const workSignals = isAdmin ? adminSignals : employeeSignals;
   const reviewNotes = isAdmin ? adminReviewNotes : employeeReviewNotes;
 
+  useEffect(() => {
+    setActivePriority(0);
+  }, [isAdmin]);
+
+  useEffect(() => {
+    const intervalId = window.setInterval(() => {
+      setActivePriority((current) => (current + 1) % priorities.length);
+    }, 5200);
+
+    return () => window.clearInterval(intervalId);
+  }, [priorities.length]);
+
   return (
     <div className="srh-command-center">
       <section className="srh-command-hero">
@@ -371,16 +383,17 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div className="srh-priority-tabs">
+          <div className="srh-priority-dots" aria-label="Cambiar prioridad del carrusel">
             {priorities.map((item, index) => (
               <button
                 key={item.title}
                 className={index === activePriority ? 'is-active' : ''}
                 type="button"
+                aria-label={`Mostrar ${item.meta}`}
                 onClick={() => setActivePriority(index)}
               >
-                <span>{String(index + 1).padStart(2, '0')}</span>
-                {item.meta}
+                <span className="srh-priority-dot" aria-hidden="true" />
+                <span className="srh-priority-label">{item.meta}</span>
               </button>
             ))}
           </div>
