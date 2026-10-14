@@ -225,6 +225,7 @@ export default function AsistenteSmartRh() {
   const { user } = useAuth();
   const messagesRef = useRef<HTMLDivElement | null>(null);
   const panelRef = useRef<HTMLElement | null>(null);
+  const composerRef = useRef<HTMLTextAreaElement | null>(null);
   const floatingButtonRef = useRef<HTMLButtonElement | null>(null);
   const [open, setOpen] = useState(false);
   const [buttonPosition, setButtonPosition] = useState<FloatingPosition>(
@@ -426,6 +427,18 @@ export default function AsistenteSmartRh() {
         latestAssistant?.response?.requiere_escalamiento
     );
   }, [hasCreatedTicket, lastQuestion, messages]);
+
+  useEffect(() => {
+    const composer = composerRef.current;
+    if (!composer) return;
+
+    composer.style.height = '0px';
+    const nextHeight = Math.min(Math.max(composer.scrollHeight, 44), 140);
+    composer.style.height = `${nextHeight}px`;
+    if (composer.scrollHeight > nextHeight) {
+      composer.scrollTop = composer.scrollHeight;
+    }
+  }, [message, open]);
 
   async function loadSuggestions() {
     try {
@@ -903,7 +916,10 @@ export default function AsistenteSmartRh() {
                 title="Nuevo chat"
                 onClick={startNewChat}
               >
-                +
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 5v14" />
+                  <path d="M5 12h14" />
+                </svg>
               </button>
               <button
                 className={`max-tool-btn ${historyOpen ? 'is-active' : ''}`}
@@ -923,10 +939,12 @@ export default function AsistenteSmartRh() {
               </button>
             </div>
             <textarea
+              ref={composerRef}
               value={message}
               onChange={(event) => setMessage(event.target.value)}
-              placeholder="Preguntame..."
-              rows={2}
+              placeholder="Escribe tu mensaje para Max..."
+              aria-label="Mensaje para Max"
+              rows={1}
               onKeyDown={(event) => {
                 if (event.key === 'Enter' && !event.shiftKey) {
                   event.preventDefault();
