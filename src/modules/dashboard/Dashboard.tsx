@@ -25,32 +25,32 @@ const modules: ModuleCard[] = [
   {
     path: '/portal/asistencia',
     title: 'Asistencia',
-    description: 'Registros, pendientes, evidencia y validación de jornada.',
-    cue: 'Control diario',
+    description: 'Entradas, salidas, comentarios y casos pendientes de revisión.',
+    cue: 'Jornada diaria',
     icon: 'attendance',
     group: 'operacion',
   },
   {
     path: '/portal/calendario',
     title: 'Calendario',
-    description: 'Agenda laboral, ausencias, vacaciones e incapacidades.',
-    cue: 'Agenda',
+    description: 'Fechas laborales, descansos, vacaciones e incapacidades en un solo lugar.',
+    cue: 'Fechas clave',
     icon: 'calendar',
     group: 'operacion',
   },
   {
     path: '/portal/vacaciones',
     title: 'Vacaciones',
-    description: 'Saldos, solicitudes y seguimiento de descansos.',
-    cue: 'Solicitudes',
+    description: 'Días disponibles, solicitudes y seguimiento de descansos del personal.',
+    cue: 'Descansos',
     icon: 'vacation',
     group: 'operacion',
   },
   {
     path: '/portal/incapacidades',
     title: 'Incapacidades',
-    description: 'Comprobantes, revisión y decisión administrativa.',
-    cue: 'Evidencia',
+    description: 'Justificantes médicos, estado de revisión y decisión del área responsable.',
+    cue: 'Justificantes',
     icon: 'health',
     group: 'operacion',
     adminOnly: true,
@@ -58,67 +58,67 @@ const modules: ModuleCard[] = [
   {
     path: '/portal/documentacion',
     title: 'Documentos',
-    description: 'Expediente digital, credencial y archivos laborales.',
-    cue: 'Expediente',
+    description: 'Archivos del empleado, credencial y documentos laborales disponibles.',
+    cue: 'Archivos',
     icon: 'documents',
     group: 'expediente',
   },
   {
     path: '/portal/contratos',
     title: 'Contratos',
-    description: 'Vigencia contractual y documentación asociada.',
-    cue: 'Vigencia',
+    description: 'Contratos activos, fechas importantes y documentos relacionados.',
+    cue: 'Acuerdos',
     icon: 'contracts',
     group: 'expediente',
   },
   {
     path: '/portal/nomina',
     title: 'Nómina',
-    description: 'Periodos, comprobantes y registros económicos.',
-    cue: 'Periodos',
+    description: 'Recibos, periodos de pago y comprobantes disponibles para consulta.',
+    cue: 'Recibos',
     icon: 'payroll',
     group: 'expediente',
   },
   {
     path: '/portal/usuarios',
     title: 'Usuarios',
-    description: 'Altas, permisos, módulos y administración de acceso.',
-    cue: 'Permisos',
+    description: 'Personas registradas, permisos de acceso y módulos habilitados.',
+    cue: 'Personas',
     icon: 'users',
     group: 'gestion',
   },
   {
     path: '/portal/soporte',
     title: 'Soporte',
-    description: 'Tickets, incidencias y seguimiento con contexto.',
-    cue: 'Tickets',
+    description: 'Solicitudes de ayuda, dudas reportadas y seguimiento hasta cierre.',
+    cue: 'Ayuda',
     icon: 'support',
     group: 'gestion',
     adminOnly: true,
   },
   {
     path: '/portal/etl',
-    title: 'ETL',
-    description: 'Carga, limpieza y preparación de información.',
-    cue: 'Datos',
+    title: 'Datos',
+    description: 'Organiza información para que los reportes se mantengan claros y actualizados.',
+    cue: 'Preparación',
     icon: 'data',
     group: 'analitica',
     adminOnly: true,
   },
   {
     path: '/portal/dashboard-analitico',
-    title: 'Analítica',
-    description: 'Lecturas ejecutivas y gráficas de operación.',
-    cue: 'Lectura',
+    title: 'Reportes',
+    description: 'Gráficas e indicadores para entender el comportamiento de la operación.',
+    cue: 'Indicadores',
     icon: 'chart',
     group: 'analitica',
     adminOnly: true,
   },
   {
     path: '/portal/analisis-supervisado',
-    title: 'ML',
-    description: 'Modelos supervisados para evaluación y predicción.',
-    cue: 'Modelos',
+    title: 'Predicciones',
+    description: 'Señales que ayudan a anticipar riesgos o tendencias del personal.',
+    cue: 'Tendencias',
     icon: 'chart',
     group: 'analitica',
     adminOnly: true,
@@ -129,22 +129,22 @@ const moduleGroups = [
   {
     id: 'operacion',
     label: 'Operación diaria',
-    description: 'Jornada, agenda, ausencias y decisiones de asistencia.',
+    description: 'Lo que se revisa durante el día: asistencia, fechas y solicitudes.',
   },
   {
     id: 'expediente',
     label: 'Expediente laboral',
-    description: 'Documentos, contratos y comprobantes del empleado.',
+    description: 'Información laboral que debe estar disponible y ordenada.',
   },
   {
     id: 'gestion',
     label: 'Gestión interna',
-    description: 'Accesos, permisos, soporte y seguimiento administrativo.',
+    description: 'Herramientas para administrar personas, permisos y solicitudes de ayuda.',
   },
   {
     id: 'analitica',
-    label: 'Información',
-    description: 'Datos preparados para revisar tendencias y decisiones.',
+    label: 'Reportes y datos',
+    description: 'Lecturas claras para tomar decisiones sin revisar archivos sueltos.',
   },
 ] as const;
 
@@ -264,16 +264,16 @@ const employeeReviewNotes = [
 
 function getModuleAction(group: ModuleCard['group']) {
   if (group === 'gestion') return 'Gestionar';
-  if (group === 'analitica') return 'Analizar';
+  if (group === 'analitica') return 'Ver reporte';
   if (group === 'expediente') return 'Consultar';
   return 'Revisar';
 }
 
 function getModuleMode(group: ModuleCard['group']) {
-  if (group === 'gestion') return 'Permisos y seguimiento';
-  if (group === 'analitica') return 'Lectura ejecutiva';
-  if (group === 'expediente') return 'Archivo laboral';
-  return 'Operación del día';
+  if (group === 'gestion') return 'Administración';
+  if (group === 'analitica') return 'Reportes claros';
+  if (group === 'expediente') return 'Consulta laboral';
+  return 'Trabajo diario';
 }
 
 export default function Dashboard() {
@@ -465,8 +465,8 @@ export default function Dashboard() {
       <section className="srh-module-lab">
         <div className="srh-section-heading">
           <span>Módulos</span>
-          <h2>Accesos por flujo de trabajo</h2>
-          <p>Organizados por intención: primero revisas el tipo de caso, después entras al módulo correcto.</p>
+          <h2>Accesos organizados por necesidad</h2>
+          <p>Primero identifica qué necesitas revisar; después entra al apartado correspondiente sin depender de términos técnicos.</p>
         </div>
 
         <div className="srh-module-columns">

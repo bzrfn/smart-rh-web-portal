@@ -36,6 +36,21 @@ export default function AppShell() {
   }, [theme]);
 
   useEffect(() => {
+    if (!navigationOpen) return undefined;
+
+    const previousOverflow = document.body.style.overflow;
+    const previousOverscroll = document.body.style.overscrollBehavior;
+
+    document.body.style.overflow = 'hidden';
+    document.body.style.overscrollBehavior = 'none';
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.body.style.overscrollBehavior = previousOverscroll;
+    };
+  }, [navigationOpen]);
+
+  useEffect(() => {
     const handlePointerDown = (event: PointerEvent) => {
       if (!headerActionsRef.current?.contains(event.target as Node)) {
         setProfileOpen(false);
@@ -88,78 +103,78 @@ export default function AppShell() {
     const items: NavItem[] = [
       {
         path: '/portal',
-        label: 'Dashboard',
+        label: 'Inicio',
         icon: 'home',
-        description: '',
+        description: 'Resumen del día',
       },
       {
         path: '/portal/usuarios',
         label: 'Usuarios',
         icon: 'users',
-        description: 'Personal y accesos',
+        description: 'Personas y permisos',
       },
       {
         path: '/portal/asistencia',
         label: 'Asistencia',
         icon: 'attendance',
-        description: 'Registros laborales',
+        description: 'Entradas, salidas y pendientes',
       },
       {
         path: '/portal/calendario',
         label: 'Calendario',
         icon: 'calendar',
-        description: 'Agenda laboral',
+        description: 'Fechas y ausencias',
       },
       {
         path: '/portal/documentacion',
         label: 'Documentos',
         icon: 'documents',
-        description: 'Expediente digital',
+        description: 'Archivos del personal',
       },
       {
         path: '/portal/contratos',
         label: 'Contratos',
         icon: 'contracts',
-        description: 'Gestión contractual',
+        description: 'Acuerdos y vigencias',
       },
       {
         path: '/portal/nomina',
         label: 'Nómina',
         icon: 'payroll',
-        description: 'Pagos y periodos',
+        description: 'Recibos y periodos',
       },
       {
         path: '/portal/vacaciones',
         label: 'Vacaciones',
         icon: 'vacation',
-        description: 'Solicitudes y saldos',
+        description: 'Días disponibles y solicitudes',
       },
       {
         path: '/portal/incapacidades',
         label: 'Incapacidades',
         icon: 'health',
-        description: 'Solicitudes médicas',
+        description: 'Justificantes médicos',
         adminOnly: true,
       },
       {
         path: '/portal/soporte',
         label: 'Soporte',
         icon: 'support',
-        description: 'Tickets e incidencias',
+        description: 'Ayuda y seguimiento',
         adminOnly: true,
       },
       {
         path: '/portal/analisis-supervisado',
-        label: 'ML',
+        label: 'Predicciones',
         icon: 'chart',
-        description: 'Predicción supervisada',
+        description: 'Señales para decidir',
         adminOnly: true,
       },
       {
         path: '/portal/etl',
-        label: 'ETL',
+        label: 'Datos',
         icon: 'data',
-        description: 'Análisis de datos',
+        description: 'Información lista para reportes',
         adminOnly: true,
       },
     ];
@@ -180,12 +195,12 @@ export default function AppShell() {
     () => [
       {
         title: 'Inicio',
-        detail: 'Tablero principal',
+        detail: 'Resumen del día',
         items: navItems.filter((item) => item.path === '/portal'),
       },
       {
         title: 'Operación diaria',
-        detail: 'Asistencia, agenda y ausencias',
+        detail: 'Asistencia, fechas y solicitudes',
         items: navItems.filter((item) =>
           [
             '/portal/usuarios',
@@ -198,14 +213,14 @@ export default function AppShell() {
       },
       {
         title: 'Expediente laboral',
-        detail: 'Documentos, contratos y nómina',
+        detail: 'Archivos, contratos y recibos',
         items: navItems.filter((item) =>
           ['/portal/documentacion', '/portal/contratos', '/portal/nomina'].includes(item.path)
         ),
       },
       {
-        title: 'Seguimiento',
-        detail: 'Soporte, analítica y datos',
+        title: 'Reportes y apoyo',
+        detail: 'Soporte, datos y tendencias',
         items: navItems.filter((item) =>
           ['/portal/soporte', '/portal/analisis-supervisado', '/portal/etl'].includes(item.path)
         ),
@@ -219,19 +234,19 @@ export default function AppShell() {
       {
         path: '/portal/calendario',
         label: 'Calendario',
-        detail: 'Agenda laboral',
+        detail: 'Fechas importantes',
         icon: 'calendar' as const,
       },
       {
         path: '/portal/documentacion',
         label: 'Documentos',
-        detail: 'Expediente digital',
+        detail: 'Archivos laborales',
         icon: 'documents' as const,
       },
       {
         path: '/portal/vacaciones',
         label: 'Vacaciones',
-        detail: 'Saldos y solicitudes',
+        detail: 'Días y solicitudes',
         icon: 'vacation' as const,
       },
     ],
