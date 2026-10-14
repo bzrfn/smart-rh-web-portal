@@ -415,8 +415,13 @@ export default function AppShell() {
             <SmartRhIcon name="menu" />
           </button>
 
-          <Link to="/portal" className="top-logo">
-            SRH
+          <Link
+            to="/portal"
+            className="top-logo top-home-entry"
+            aria-label="Ir al inicio"
+            title="Inicio"
+          >
+            <SmartRhIcon name="home" />
           </Link>
 
           <div>
@@ -433,15 +438,6 @@ export default function AppShell() {
 
         <div className="top-user-area" ref={headerActionsRef}>
           <div className="top-quick-actions" aria-label="Accesos rápidos">
-            <Link
-              to="/portal"
-              className="top-icon-btn"
-              aria-label="Ir al inicio"
-              title="Inicio"
-            >
-              <SmartRhIcon name="home" />
-            </Link>
-
             <button
               className={`top-icon-btn ${calendarOpen ? 'is-active' : ''}`}
               type="button"
@@ -682,7 +678,15 @@ export default function AppShell() {
 
       <aside className={`portal-side-nav ${navigationOpen ? 'is-open' : ''}`} aria-hidden={!navigationOpen}>
         <div className="portal-side-nav-head">
-          <div className="top-logo">SRH</div>
+          <Link
+            to="/portal"
+            className="top-logo top-home-entry portal-side-home-entry"
+            aria-label="Ir al inicio"
+            title="Inicio"
+            onClick={() => setNavigationOpen(false)}
+          >
+            <SmartRhIcon name="home" />
+          </Link>
           <div>
             <span>Navegación</span>
             <strong>SMART RH</strong>
