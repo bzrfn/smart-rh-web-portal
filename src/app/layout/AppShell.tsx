@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 import ProtectedImage from '../../components/ProtectedImage';
@@ -20,6 +20,8 @@ export default function AppShell() {
   const location = useLocation();
   const navigate = useNavigate();
   const headerActionsRef = useRef<HTMLDivElement | null>(null);
+  const topShellRef = useRef<HTMLDivElement | null>(null);
+  const topShellMainRef = useRef<HTMLElement | null>(null);
 
   const [theme, setTheme] = useState(
     () => localStorage.getItem('smart_rh_theme') || 'light'
@@ -34,6 +36,56 @@ export default function AppShell() {
     document.documentElement.dataset.theme = theme;
     localStorage.setItem('smart_rh_theme', theme);
   }, [theme]);
+
+  useEffect(() => {
+    if (
+      typeof window === 'undefined' ||
+      !('scrollRestoration' in window.history)
+    ) {
+      return undefined;
+    }
+
+    const previousScrollRestoration = window.history.scrollRestoration;
+    window.history.scrollRestoration = 'manual';
+
+    return () => {
+      window.history.scrollRestoration = previousScrollRestoration;
+    };
+  }, []);
+
+  useLayoutEffect(() => {
+    if (typeof window === 'undefined') return undefined;
+
+    setProfileOpen(false);
+    setNotificationsOpen(false);
+    setCalendarOpen(false);
+    setQuickOpen(false);
+    setNavigationOpen(false);
+
+    const resetPortalScroll = () => {
+      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+      document.scrollingElement?.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+      topShellRef.current?.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+      topShellMainRef.current?.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    };
+
+    resetPortalScroll();
+
+    let timeoutId: number | undefined;
+    const frameId = window.requestAnimationFrame(() => {
+      resetPortalScroll();
+      timeoutId = window.setTimeout(resetPortalScroll, 90);
+    });
+
+    return () => {
+      window.cancelAnimationFrame(frameId);
+      if (timeoutId) {
+        window.clearTimeout(timeoutId);
+      }
+    };
+  }, [location.pathname]);
 
   useEffect(() => {
     if (!navigationOpen) return undefined;
@@ -351,7 +403,7 @@ export default function AppShell() {
   }
 
   return (
-    <div className="top-shell">
+    <div className="top-shell" ref={topShellRef}>
       <header className="top-shell-header">
         <div className="top-brand">
           <button
@@ -683,7 +735,7 @@ export default function AppShell() {
         </div>
       </aside>
 
-      <main className="top-shell-main">
+      <main className="top-shell-main" ref={topShellMainRef}>
         <Outlet />
       </main>
 
