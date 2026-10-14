@@ -130,31 +130,26 @@ const moduleGroups = [
     id: 'operacion',
     label: 'Operación diaria',
     description: 'Lo que se revisa durante el día: asistencia, fechas y solicitudes.',
-    icon: 'attendance',
   },
   {
     id: 'expediente',
     label: 'Expediente laboral',
     description: 'Información laboral que debe estar disponible y ordenada.',
-    icon: 'documents',
   },
   {
     id: 'gestion',
     label: 'Gestión interna',
     description: 'Herramientas para administrar personas, permisos y solicitudes de ayuda.',
-    icon: 'users',
   },
   {
     id: 'analitica',
     label: 'Reportes y datos',
     description: 'Lecturas claras para tomar decisiones sin revisar archivos sueltos.',
-    icon: 'chart',
   },
 ] as const satisfies ReadonlyArray<{
   id: ModuleCard['group'];
   label: string;
   description: string;
-  icon: SmartRhIconName;
 }>;
 
 const adminPriorities: PriorityCard[] = [
@@ -288,7 +283,9 @@ function getModuleMode(group: ModuleCard['group']) {
 export default function Dashboard() {
   const { user } = useAuth();
   const [activePriority, setActivePriority] = useState(0);
-  const [openModuleGroup, setOpenModuleGroup] = useState<ModuleCard['group'] | null>('operacion');
+  const [openModuleGroups, setOpenModuleGroups] = useState<ModuleCard['group'][]>(() =>
+    moduleGroups.map((group) => group.id)
+  );
   const isAdmin = user?.role === 'admin';
 
   const firstName = useMemo(() => {
@@ -494,7 +491,7 @@ export default function Dashboard() {
 
         <div className="srh-module-columns srh-module-accordion">
           {groupedModules.map((group) => {
-            const isOpen = openModuleGroup === group.id;
+            const isOpen = openModuleGroups.includes(group.id);
             const panelId = `module-group-${group.id}`;
 
             return (
@@ -504,22 +501,24 @@ export default function Dashboard() {
                   type="button"
                   aria-expanded={isOpen}
                   aria-controls={panelId}
-                  onClick={() => setOpenModuleGroup((current) => (current === group.id ? null : group.id))}
+                  onClick={() =>
+                    setOpenModuleGroups((current) =>
+                      current.includes(group.id)
+                        ? current.filter((item) => item !== group.id)
+                        : [...current, group.id]
+                    )
+                  }
                 >
-                  <span className="srh-module-group-icon" aria-hidden="true">
-                    <SmartRhIcon name={group.icon} />
-                  </span>
                   <span className="srh-module-group-copy">
                     <em>{getModuleMode(group.id)}</em>
                     <strong>{group.label}</strong>
                     <span>{group.description}</span>
                   </span>
-                  <span className="srh-module-group-count">
-                    <b>{group.modules.length}</b>
-                    <small>{group.modules.length === 1 ? 'acceso' : 'accesos'}</small>
-                  </span>
-                  <span className="srh-module-group-toggle" aria-hidden="true">
-                    <SmartRhIcon name="chevronDown" />
+                  <span className="srh-module-group-controls" aria-hidden="true">
+                    <span className="srh-module-group-count">{group.modules.length}</span>
+                    <span className="srh-module-group-toggle">
+                      <SmartRhIcon name="chevronDown" />
+                    </span>
                   </span>
                 </button>
 
