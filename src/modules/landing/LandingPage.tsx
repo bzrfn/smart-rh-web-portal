@@ -74,11 +74,9 @@ export default function LandingPage() {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
   const secureLandingHandled = useRef(false);
-  const publicMenuRef = useRef<HTMLDivElement | null>(null);
 
   const [language, setLanguage] = useState<LandingLanguage>(getInitialLanguage);
   const [theme, setTheme] = useState(getInitialTheme);
-  const [publicMenuOpen, setPublicMenuOpen] = useState(false);
   const [activeStory, setActiveStory] = useState(0);
 
   const [contactName, setContactName] = useState('');
@@ -205,20 +203,6 @@ export default function LandingPage() {
     return () => window.clearInterval(intervalId);
   }, [landingStories.length]);
 
-  useEffect(() => {
-    const handlePointerDown = (event: PointerEvent) => {
-      if (!publicMenuRef.current?.contains(event.target as Node)) {
-        setPublicMenuOpen(false);
-      }
-    };
-
-    document.addEventListener('pointerdown', handlePointerDown);
-
-    return () => {
-      document.removeEventListener('pointerdown', handlePointerDown);
-    };
-  }, []);
-
   const changeLanguage = (value: string) => {
     const next = value as LandingLanguage;
 
@@ -290,47 +274,13 @@ export default function LandingPage() {
           </div>
         </a>
 
-        <div className="public-menu-shell" ref={publicMenuRef}>
-          <button
-            className={`public-menu-trigger ${publicMenuOpen ? 'is-open' : ''}`}
-            type="button"
-            onClick={() => setPublicMenuOpen((value) => !value)}
-            aria-expanded={publicMenuOpen}
-          >
-            <SmartRhIcon name="menu" />
-            <span>Explorar SMART RH</span>
-            <SmartRhIcon name="chevronDown" />
-          </button>
-
-          {publicMenuOpen ? (
-            <nav className="public-menu-dropdown" aria-label="Secciones de SMART RH">
-              <a href="#inicio" onClick={() => setPublicMenuOpen(false)}>
-                <strong>{t.nav.home}</strong>
-                <span>Vista general del producto</span>
-              </a>
-              <a href="#nosotros" onClick={() => setPublicMenuOpen(false)}>
-                <strong>{t.nav.about}</strong>
-                <span>Qué resuelve SMART RH</span>
-              </a>
-              <a href="#servicios" onClick={() => setPublicMenuOpen(false)}>
-                <strong>{t.nav.services}</strong>
-                <span>Módulos del ecosistema</span>
-              </a>
-              <a href="#historia" onClick={() => setPublicMenuOpen(false)}>
-                <strong>{t.nav.story}</strong>
-                <span>Origen y enfoque del sistema</span>
-              </a>
-              <a href="#valores" onClick={() => setPublicMenuOpen(false)}>
-                <strong>{t.nav.values}</strong>
-                <span>Principios de operación</span>
-              </a>
-              <a href="#contacto" onClick={() => setPublicMenuOpen(false)}>
-                <strong>{t.nav.contact}</strong>
-                <span>Solicitar información</span>
-              </a>
-            </nav>
-          ) : null}
-        </div>
+        <nav className="public-persistent-nav" aria-label="Secciones de SMART RH">
+          <a href="#inicio">{t.nav.home}</a>
+          <a href="#nosotros">{t.nav.about}</a>
+          <a href="#servicios">{t.nav.services}</a>
+          <a href="#valores">{t.nav.values}</a>
+          <a href="#contacto">{t.nav.contact}</a>
+        </nav>
 
         <div className="public-actions public-actions-premium">
           <label className="public-language public-language-premium">
@@ -410,7 +360,7 @@ export default function LandingPage() {
               <p>{landingStories[activeStory].detail}</p>
             </div>
 
-            <div className="srh-carousel-controls" aria-label="Cambiar información destacada">
+            <div className="srh-carousel-dots" aria-label="Cambiar información destacada">
               {landingStories.map((item, index) => (
                 <button
                   key={item.title}
@@ -420,7 +370,6 @@ export default function LandingPage() {
                   onClick={() => setActiveStory(index)}
                 >
                   <span />
-                  {item.label}
                 </button>
               ))}
             </div>

@@ -20,6 +20,7 @@ export type SmartRhIconName =
   | 'moon'
   | 'payroll'
   | 'plus'
+  | 'qr'
   | 'send'
   | 'spark'
   | 'sun'
@@ -52,6 +53,7 @@ const PATHS: Record<SmartRhIconName, string[]> = {
   moon: ['M20 15.5A8.5 8.5 0 0 1 8.5 4a7 7 0 1 0 11.5 11.5z'],
   payroll: ['M4 7h16v10H4z', 'M8 11h.01', 'M16 13h.01', 'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6'],
   plus: ['M12 5v14', 'M5 12h14'],
+  qr: ['M4 4h6v6H4z', 'M14 4h6v6h-6z', 'M4 14h6v6H4z', 'M14 14h2', 'M18 14h2v2', 'M14 18h2v2', 'M18 18h2'],
   send: ['M4 12h14', 'M13 6l6 6-6 6'],
   spark: ['M12 2l1.7 6.3L20 10l-6.3 1.7L12 18l-1.7-6.3L4 10l6.3-1.7z'],
   sun: ['M12 4V2', 'M12 22v-2', 'M4.9 4.9 3.5 3.5', 'M20.5 20.5l-1.4-1.4', 'M4 12H2', 'M22 12h-2', 'M4.9 19.1l-1.4 1.4', 'M20.5 3.5l-1.4 1.4', 'M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8'],

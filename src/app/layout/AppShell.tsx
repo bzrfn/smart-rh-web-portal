@@ -585,13 +585,9 @@ export default function AppShell() {
               </div>
 
               <div className="top-profile-links">
-                <Link to="/portal/documentacion" onClick={() => setProfileOpen(false)}>
-                  <SmartRhIcon name="documents" />
-                  <span>Mi expediente</span>
-                </Link>
-                <Link to="/portal/asistencia" onClick={() => setProfileOpen(false)}>
-                  <SmartRhIcon name="attendance" />
-                  <span>Asistencia</span>
+                <Link to="/portal/terminal-autorizacion" onClick={() => setProfileOpen(false)}>
+                  <SmartRhIcon name="qr" />
+                  <span>Terminal QR</span>
                 </Link>
               </div>
 
@@ -655,6 +651,7 @@ export default function AppShell() {
                     key={item.path}
                     to={item.path}
                     className={`portal-side-nav-item ${isActive(item.path) ? 'active' : ''}`}
+                    onClick={() => setNavigationOpen(false)}
                   >
                     <span>
                       <SmartRhIcon name={item.icon} />

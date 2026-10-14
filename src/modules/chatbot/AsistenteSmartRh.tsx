@@ -224,6 +224,8 @@ function getWebTarget(target: string) {
 export default function AsistenteSmartRh() {
   const { user } = useAuth();
   const messagesRef = useRef<HTMLDivElement | null>(null);
+  const panelRef = useRef<HTMLElement | null>(null);
+  const floatingButtonRef = useRef<HTMLButtonElement | null>(null);
   const [open, setOpen] = useState(false);
   const [buttonPosition, setButtonPosition] = useState<FloatingPosition>(
     () => getInitialPosition()
@@ -463,15 +465,30 @@ export default function AsistenteSmartRh() {
   useEffect(() => {
     if (!open) return;
 
+    const handlePointerDown = (event: globalThis.PointerEvent) => {
+      const target = event.target as Node;
+
+      if (
+        panelRef.current?.contains(target) ||
+        floatingButtonRef.current?.contains(target)
+      ) {
+        return;
+      }
+
+      setOpen(false);
+    };
+
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         setOpen(false);
       }
     };
 
+    document.addEventListener('pointerdown', handlePointerDown);
     window.addEventListener('keydown', handleKeyDown);
 
     return () => {
+      document.removeEventListener('pointerdown', handlePointerDown);
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, [open]);
@@ -696,8 +713,11 @@ export default function AsistenteSmartRh() {
       {open ? (
         <section
           className="max-assistant-panel"
+          ref={panelRef}
           style={panelStyle}
           aria-label="Chat con Max"
+          onWheel={(event) => event.stopPropagation()}
+          onTouchMove={(event) => event.stopPropagation()}
         >
           <header className="max-assistant-header">
             <div className="max-avatar" aria-hidden="true">
@@ -942,6 +962,7 @@ export default function AsistenteSmartRh() {
       ) : null}
 
       <button
+        ref={floatingButtonRef}
         className={`max-floating-btn ${open ? 'is-hidden' : ''} ${
           dragState?.moved ? 'is-dragging' : ''
         }`}

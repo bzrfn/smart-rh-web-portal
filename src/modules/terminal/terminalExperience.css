@@ -1522,3 +1522,45 @@
     gap: 4px !important;
   }
 }
+
+/* SMART RH terminal destination v6 polish */
+.terminal-destination-header-actions {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 10px !important;
+  flex-wrap: wrap !important;
+}
+
+.terminal-selector-theme-row {
+  display: none !important;
+}
+
+.terminal-destination-account {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  gap: 16px !important;
+  padding: 18px 20px !important;
+  align-items: center !important;
+}
+
+.terminal-destination-account span,
+.terminal-destination-account strong {
+  display: block !important;
+  line-height: 1.2 !important;
+}
+
+.terminal-destination-account strong {
+  min-width: 0 !important;
+  overflow-wrap: anywhere !important;
+}
+
+.terminal-theme-toggle {
+  min-height: 44px !important;
+}
+
+@media (max-width: 760px) {
+  .terminal-destination-account {
+    grid-template-columns: 1fr !important;
+  }
+}

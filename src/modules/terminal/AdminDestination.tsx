@@ -293,45 +293,45 @@ export default function AdminDestination() {
             </p>
           </div>
 
-          <div className="terminal-secure-pill">
-            <span className="terminal-status-dot terminal-status-dot-online" />
-            Sesión administrativa segura
+          <div className="terminal-destination-header-actions">
+            <div className="terminal-secure-pill">
+              <span className="terminal-status-dot terminal-status-dot-online" />
+              Sesión administrativa segura
+            </div>
+
+            <button
+              type="button"
+              className="terminal-theme-toggle"
+              onClick={
+                toggleTheme
+              }
+              aria-label={
+                theme ===
+                  'dark'
+                  ? 'Cambiar a modo claro'
+                  : 'Cambiar a modo oscuro'
+              }
+            >
+              <span className="terminal-theme-toggle-icon">
+                <SmartRhIcon
+                  name={
+                    theme ===
+                      'dark'
+                      ? 'sun'
+                      : 'moon'
+                  }
+                />
+              </span>
+
+              <span>
+                {theme ===
+                  'dark'
+                  ? 'Modo claro'
+                  : 'Modo oscuro'}
+              </span>
+            </button>
           </div>
         </header>
-
-        <div className="terminal-selector-theme-row">
-          <button
-            type="button"
-            className="terminal-theme-toggle"
-            onClick={
-              toggleTheme
-            }
-            aria-label={
-              theme ===
-                'dark'
-                ? 'Cambiar a modo claro'
-                : 'Cambiar a modo oscuro'
-            }
-          >
-            <span className="terminal-theme-toggle-icon">
-              <SmartRhIcon
-                name={
-                  theme ===
-                    'dark'
-                    ? 'sun'
-                    : 'moon'
-                }
-              />
-            </span>
-
-            <span>
-              {theme ===
-                'dark'
-                ? 'Modo claro'
-                : 'Modo oscuro'}
-            </span>
-          </button>
-        </div>
 
         <div className="terminal-destination-account">
           <span>
