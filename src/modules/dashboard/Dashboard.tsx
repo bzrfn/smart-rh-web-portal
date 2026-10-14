@@ -273,13 +273,6 @@ function getModuleAction(group: ModuleCard['group']) {
   return 'Revisar';
 }
 
-function getModuleMode(group: ModuleCard['group']) {
-  if (group === 'gestion') return 'Administración';
-  if (group === 'analitica') return 'Reportes claros';
-  if (group === 'expediente') return 'Consulta laboral';
-  return 'Trabajo diario';
-}
-
 export default function Dashboard() {
   const { user } = useAuth();
   const [activePriority, setActivePriority] = useState(0);
@@ -510,12 +503,12 @@ export default function Dashboard() {
                   }
                 >
                   <span className="srh-module-group-copy">
-                    <em>{getModuleMode(group.id)}</em>
                     <strong>{group.label}</strong>
-                    <span>{group.description}</span>
+                    <span>
+                      {group.modules.length} {group.modules.length === 1 ? 'acceso disponible' : 'accesos disponibles'}
+                    </span>
                   </span>
                   <span className="srh-module-group-controls" aria-hidden="true">
-                    <span className="srh-module-group-count">{group.modules.length}</span>
                     <span className="srh-module-group-toggle">
                       <SmartRhIcon name="chevronDown" />
                     </span>
