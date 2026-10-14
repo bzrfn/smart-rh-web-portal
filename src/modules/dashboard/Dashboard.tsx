@@ -130,23 +130,32 @@ const moduleGroups = [
     id: 'operacion',
     label: 'Operación diaria',
     description: 'Lo que se revisa durante el día: asistencia, fechas y solicitudes.',
+    icon: 'attendance',
   },
   {
     id: 'expediente',
     label: 'Expediente laboral',
     description: 'Información laboral que debe estar disponible y ordenada.',
+    icon: 'documents',
   },
   {
     id: 'gestion',
     label: 'Gestión interna',
     description: 'Herramientas para administrar personas, permisos y solicitudes de ayuda.',
+    icon: 'users',
   },
   {
     id: 'analitica',
     label: 'Reportes y datos',
     description: 'Lecturas claras para tomar decisiones sin revisar archivos sueltos.',
+    icon: 'chart',
   },
-] as const;
+] as const satisfies ReadonlyArray<{
+  id: ModuleCard['group'];
+  label: string;
+  description: string;
+  icon: SmartRhIconName;
+}>;
 
 const adminPriorities: PriorityCard[] = [
   {
@@ -279,6 +288,7 @@ function getModuleMode(group: ModuleCard['group']) {
 export default function Dashboard() {
   const { user } = useAuth();
   const [activePriority, setActivePriority] = useState(0);
+  const [openModuleGroup, setOpenModuleGroup] = useState<ModuleCard['group'] | null>('operacion');
   const isAdmin = user?.role === 'admin';
 
   const firstName = useMemo(() => {
@@ -482,36 +492,69 @@ export default function Dashboard() {
           <p>Primero identifica qué necesitas revisar; después entra al apartado correspondiente sin depender de términos técnicos.</p>
         </div>
 
-        <div className="srh-module-columns">
-          {groupedModules.map((group) => (
-            <section className="srh-module-column" key={group.id}>
-              <div className="srh-module-column-head">
-                <div>
-                  <em>{getModuleMode(group.id)}</em>
-                  <strong>{group.label}</strong>
-                  <p>{group.description}</p>
-                </div>
-                <span>{group.modules.length}</span>
-              </div>
+        <div className="srh-module-columns srh-module-accordion">
+          {groupedModules.map((group) => {
+            const isOpen = openModuleGroup === group.id;
+            const panelId = `module-group-${group.id}`;
 
-              <div className="srh-module-pills">
-                {group.modules.map((module) => (
-                  <Link key={module.path} to={module.path} className="srh-module-pill">
-                    <SmartRhIcon name={module.icon} />
-                    <div className="srh-module-main">
-                      <em>{module.cue}</em>
-                      <strong>{module.title}</strong>
-                      <span>{module.description}</span>
+            return (
+              <section className={`srh-module-column${isOpen ? ' is-open' : ''}`} key={group.id}>
+                <button
+                  className="srh-module-column-head"
+                  type="button"
+                  aria-expanded={isOpen}
+                  aria-controls={panelId}
+                  onClick={() => setOpenModuleGroup((current) => (current === group.id ? null : group.id))}
+                >
+                  <span className="srh-module-group-icon" aria-hidden="true">
+                    <SmartRhIcon name={group.icon} />
+                  </span>
+                  <span className="srh-module-group-copy">
+                    <em>{getModuleMode(group.id)}</em>
+                    <strong>{group.label}</strong>
+                    <span>{group.description}</span>
+                  </span>
+                  <span className="srh-module-group-count">
+                    <b>{group.modules.length}</b>
+                    <small>{group.modules.length === 1 ? 'acceso' : 'accesos'}</small>
+                  </span>
+                  <span className="srh-module-group-toggle" aria-hidden="true">
+                    <SmartRhIcon name="chevronDown" />
+                  </span>
+                </button>
+
+                <div
+                  className="srh-module-collapse"
+                  id={panelId}
+                  aria-hidden={!isOpen}
+                >
+                  <div className="srh-module-collapse-inner">
+                    <div className="srh-module-pills">
+                      {group.modules.map((module) => (
+                        <Link
+                          key={module.path}
+                          to={module.path}
+                          className="srh-module-pill"
+                          tabIndex={isOpen ? 0 : -1}
+                        >
+                          <SmartRhIcon name={module.icon} />
+                          <div className="srh-module-main">
+                            <em>{module.cue}</em>
+                            <strong>{module.title}</strong>
+                            <span>{module.description}</span>
+                          </div>
+                          <div className="srh-module-action">
+                            <small>{getModuleAction(module.group)}</small>
+                            <SmartRhIcon name="chevronDown" />
+                          </div>
+                        </Link>
+                      ))}
                     </div>
-                    <div className="srh-module-action">
-                      <small>{getModuleAction(module.group)}</small>
-                      <SmartRhIcon name="chevronDown" />
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </section>
-          ))}
+                  </div>
+                </div>
+              </section>
+            );
+          })}
         </div>
       </section>
     </div>
