@@ -17422,7 +17422,7 @@ button[type='submit'],
 :root[data-theme='dark'] .terminal-destination-card-primary strong,
 :root[data-theme='dark'] .terminal-destination-card-primary span,
 :root[data-theme='dark'] .terminal-destination-card-primary small {
-  color: #06111F !important;
+  color: #FFFFFF !important;
 }
 
 .terminal-theme-toggle-icon svg {
@@ -20824,5 +20824,437 @@ button[type='submit'],
   .srh-module-accordion .srh-module-pill {
     height: 160px !important;
     min-height: 160px !important;
+  }
+}
+
+/* ==========================================================
+   SMART RH v18 · MODULE EXPERIENCE SYSTEM
+   Consistent surfaces, contrast and information hierarchy.
+   ========================================================== */
+
+.top-shell-main > .dashboard-page,
+.top-shell-main > .support-page,
+.top-shell-main > .calendar-page,
+.top-shell-main > .ml-page,
+.top-shell-main > .etl-page {
+  width: min(1580px, 100%) !important;
+  margin-inline: auto !important;
+}
+
+.dashboard-page,
+.support-page,
+.calendar-page,
+.ml-page {
+  gap: clamp(16px, 2vw, 24px) !important;
+}
+
+.module-card {
+  padding: clamp(22px, 2.7vw, 32px) !important;
+  overflow: clip !important;
+  border-radius: 28px !important;
+}
+
+.module-card-header {
+  min-width: 0 !important;
+  padding-bottom: 20px !important;
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  gap: 20px !important;
+  border-bottom: 1px solid var(--border) !important;
+}
+
+.module-card-header > div:first-child {
+  min-width: 0 !important;
+}
+
+.module-eyebrow,
+.dashboard-eyebrow,
+.support-eyebrow,
+.ml-eyebrow {
+  color: var(--teal) !important;
+  font-size: 0.72rem !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.12em !important;
+  line-height: 1.25 !important;
+  text-transform: uppercase !important;
+}
+
+.module-title {
+  margin-top: 6px !important;
+  color: var(--text) !important;
+  font-size: clamp(1.65rem, 2.2vw, 2.25rem) !important;
+  line-height: 1.08 !important;
+  letter-spacing: -0.035em !important;
+  text-wrap: balance !important;
+}
+
+.module-subtitle {
+  max-width: 74ch !important;
+  margin-top: 9px !important;
+  color: var(--text-muted) !important;
+  font-size: 0.95rem !important;
+  font-weight: 600 !important;
+  line-height: 1.62 !important;
+  text-wrap: pretty !important;
+}
+
+.module-hero-banner {
+  min-height: 148px !important;
+  margin-top: 22px !important;
+  padding: clamp(22px, 3vw, 30px) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 22px !important;
+  border: 1px solid rgba(10, 87, 164, 0.13) !important;
+  border-radius: 24px !important;
+  color: var(--text) !important;
+  background:
+    linear-gradient(115deg, rgba(10, 87, 164, 0.075), rgba(34, 184, 176, 0.07)),
+    var(--card) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.46) !important;
+}
+
+:root[data-theme='dark'] .module-hero-banner {
+  border-color: rgba(125, 211, 252, 0.14) !important;
+  background:
+    linear-gradient(115deg, rgba(56, 189, 248, 0.075), rgba(45, 212, 191, 0.055)),
+    var(--card) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.055) !important;
+}
+
+.module-hero-banner::after,
+.asistencia-summary-card::after,
+.kpi-card::after,
+.support-kpi-card::after {
+  display: none !important;
+  content: none !important;
+}
+
+.module-hero-copy {
+  min-width: 0 !important;
+}
+
+.module-hero-copy h3 {
+  margin: 0 !important;
+  color: var(--text) !important;
+  font-size: clamp(1.25rem, 1.8vw, 1.65rem) !important;
+  line-height: 1.2 !important;
+  letter-spacing: -0.025em !important;
+}
+
+.module-hero-copy p {
+  max-width: 72ch !important;
+  margin: 9px 0 0 !important;
+  color: var(--text-muted) !important;
+  line-height: 1.58 !important;
+}
+
+.module-hero-badge {
+  min-height: 40px !important;
+  flex: 0 0 auto !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  padding: 0 15px !important;
+  border: 1px solid rgba(10, 87, 164, 0.14) !important;
+  border-radius: 999px !important;
+  color: var(--primary) !important;
+  background: var(--primary-soft) !important;
+  box-shadow: none !important;
+  font-size: 0.78rem !important;
+  font-weight: 900 !important;
+  white-space: nowrap !important;
+}
+
+:root[data-theme='dark'] .module-hero-badge {
+  color: var(--cyan) !important;
+  border-color: rgba(125, 211, 252, 0.16) !important;
+  background: rgba(56, 189, 248, 0.08) !important;
+}
+
+.asistencia-summary-grid,
+.module-kpi-row,
+.kpi-grid {
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) !important;
+  gap: 14px !important;
+}
+
+.asistencia-summary-card,
+.module-kpi-card,
+.kpi-card {
+  min-height: 132px !important;
+  padding: 20px !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 22px !important;
+  background: var(--card-muted) !important;
+  box-shadow: var(--shadow-xs) !important;
+}
+
+.asistencia-summary-card strong,
+.module-kpi-value,
+.kpi-card strong {
+  color: var(--text) !important;
+  font-size: clamp(1.7rem, 2.2vw, 2.35rem) !important;
+  line-height: 1 !important;
+  letter-spacing: -0.04em !important;
+}
+
+.asistencia-summary-card span,
+.module-kpi-label,
+.kpi-card span {
+  color: var(--text-muted) !important;
+}
+
+.dashboard-card-accent {
+  width: 38px !important;
+  height: 4px !important;
+  margin-bottom: 16px !important;
+  border-radius: 999px !important;
+}
+
+.table-wrapper {
+  margin-top: 18px !important;
+  overflow-x: auto !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 22px !important;
+  background: var(--card) !important;
+  box-shadow: none !important;
+  overscroll-behavior: contain !important;
+}
+
+.smart-table {
+  width: 100% !important;
+  min-width: 760px !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+}
+
+.smart-table th {
+  padding: 14px 16px !important;
+  color: var(--text-muted) !important;
+  background: var(--card-muted) !important;
+  border-bottom: 1px solid var(--border) !important;
+  font-size: 0.7rem !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.09em !important;
+}
+
+.smart-table td {
+  padding: 15px 16px !important;
+  color: var(--text) !important;
+  background: var(--card) !important;
+  border-bottom-color: var(--border) !important;
+  vertical-align: middle !important;
+}
+
+.smart-table tbody tr:last-child td {
+  border-bottom: 0 !important;
+}
+
+.smart-table tbody tr:hover td {
+  background: color-mix(in srgb, var(--card) 90%, var(--teal) 10%) !important;
+}
+
+.smart-form-grid {
+  margin-top: 20px !important;
+  gap: 16px !important;
+}
+
+.smart-form-group {
+  min-width: 0 !important;
+  gap: 8px !important;
+}
+
+.smart-form-group label,
+.form-label {
+  color: var(--text) !important;
+  font-size: 0.82rem !important;
+  font-weight: 850 !important;
+}
+
+.smart-form-group input,
+.smart-form-group select,
+.smart-form-group textarea {
+  min-height: 48px !important;
+  border-radius: 14px !important;
+  background: var(--card-muted) !important;
+}
+
+.empty-state-card {
+  min-height: 180px !important;
+  padding: 30px !important;
+  display: grid !important;
+  place-content: center !important;
+  border-style: dashed !important;
+  color: var(--text-muted) !important;
+  text-align: center !important;
+  box-shadow: none !important;
+}
+
+/* Support now follows the selected portal theme instead of staying dark. */
+.support-hero {
+  min-height: 300px !important;
+  padding: clamp(28px, 4vw, 44px) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 28px !important;
+  color: var(--text) !important;
+  background:
+    radial-gradient(circle at 94% 10%, rgba(34, 184, 176, 0.16), transparent 30%),
+    linear-gradient(120deg, rgba(10, 87, 164, 0.065), transparent 52%),
+    var(--card) !important;
+  box-shadow: var(--shadow-soft) !important;
+}
+
+:root[data-theme='dark'] .support-hero {
+  background:
+    radial-gradient(circle at 94% 10%, rgba(45, 212, 191, 0.12), transparent 30%),
+    linear-gradient(120deg, rgba(56, 189, 248, 0.07), transparent 52%),
+    var(--card) !important;
+}
+
+.support-hero h2 {
+  color: var(--text) !important;
+  background: none !important;
+  -webkit-text-fill-color: currentColor !important;
+  font-size: clamp(2.25rem, 4vw, 3.75rem) !important;
+  letter-spacing: -0.055em !important;
+}
+
+.support-hero p,
+.support-hero-card small {
+  color: var(--text-muted) !important;
+  opacity: 1 !important;
+}
+
+.support-hero-card {
+  min-height: 210px !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 24px !important;
+  background: var(--card-muted) !important;
+}
+
+.support-hero-card strong {
+  color: var(--text) !important;
+}
+
+.support-kpi-card,
+.support-list-panel,
+.support-detail-panel,
+.support-detail-card > div,
+.support-description-card,
+.support-ticket-item,
+.support-empty {
+  color: var(--text) !important;
+  border-color: var(--border) !important;
+  background: var(--card) !important;
+}
+
+.support-kpi-card {
+  min-height: 136px !important;
+  border-radius: 22px !important;
+}
+
+.support-list-panel,
+.support-detail-panel {
+  border-radius: 26px !important;
+}
+
+.support-ticket-item:hover,
+.support-ticket-item.active {
+  border-color: rgba(34, 184, 176, 0.42) !important;
+  background: color-mix(in srgb, var(--card) 92%, var(--teal) 8%) !important;
+}
+
+.support-ticket-item h4,
+.support-section-header h3,
+.support-detail-card strong,
+.support-empty strong {
+  color: var(--text) !important;
+}
+
+.support-ticket-item p,
+.support-detail-card p,
+.support-description-card p,
+.support-empty p,
+.support-admin-form label,
+.support-ticket-meta span {
+  color: var(--text-muted) !important;
+}
+
+.calendar-hero,
+.calendar-month-card,
+.calendar-events-panel,
+.calendar-summary-card,
+.ml-hero,
+.ml-panel,
+.ml-kpi-card,
+.ml-model-card {
+  color: var(--text) !important;
+  border-color: var(--border) !important;
+  background: var(--card) !important;
+}
+
+.calendar-hero,
+.ml-hero {
+  border-radius: 28px !important;
+  box-shadow: var(--shadow-soft) !important;
+}
+
+.calendar-summary-card {
+  border-radius: 20px !important;
+  box-shadow: var(--shadow-xs) !important;
+}
+
+.calendar-summary-card.blue,
+.calendar-summary-card.teal,
+.calendar-summary-card.gold,
+.calendar-summary-card.danger {
+  background: var(--card-muted) !important;
+}
+
+.ml-tabs {
+  border-color: var(--border) !important;
+  background: var(--card-muted) !important;
+  box-shadow: none !important;
+}
+
+@media (max-width: 900px) {
+  .module-card-header,
+  .module-hero-banner,
+  .support-section-header {
+    align-items: stretch !important;
+    flex-direction: column !important;
+  }
+
+  .module-card-header .btn,
+  .module-card-header .btn-secondary,
+  .module-hero-badge {
+    width: fit-content !important;
+  }
+
+  .support-hero,
+  .support-workspace,
+  .calendar-layout {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .module-card,
+  .support-list-panel,
+  .support-detail-panel,
+  .calendar-hero,
+  .calendar-month-card,
+  .calendar-events-panel {
+    padding: 18px !important;
+    border-radius: 22px !important;
+  }
+
+  .module-card-header .btn,
+  .module-card-header .btn-secondary,
+  .module-hero-badge {
+    width: 100% !important;
+    justify-content: center !important;
   }
 }

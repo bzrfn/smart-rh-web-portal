@@ -36,12 +36,12 @@ describe(
       );
 
     test(
-      'QR usa ciclo máximo de 10 segundos',
+      'QR usa ciclo máximo de 20 segundos',
       () => {
         expect(
           normalizedTerminal
         ).toContain(
-          'const QR_CYCLE_MS = 10_000;'
+          'const QR_CYCLE_MS = 20_000;'
         );
 
         expect(
@@ -70,7 +70,7 @@ describe(
         expect(
           terminal
         ).toContain(
-          'Ciclo de 10 segundos · cambia al llegar a 00:00'
+          'Ciclo de 20 segundos · cambia al llegar a 00:00'
         );
       }
     );

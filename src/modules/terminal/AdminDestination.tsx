@@ -359,7 +359,7 @@ export default function AdminDestination() {
             }
           >
             <span className="terminal-destination-icon">
-              RH
+              <SmartRhIcon name="users" />
             </span>
 
             <span className="terminal-destination-copy">
@@ -378,7 +378,7 @@ export default function AdminDestination() {
             </span>
 
             <span className="terminal-destination-arrow">
-              →
+              <SmartRhIcon name="send" />
             </span>
           </button>
 
@@ -394,7 +394,7 @@ export default function AdminDestination() {
             }
           >
             <span className="terminal-destination-icon terminal-destination-icon-green">
-              QR
+              <SmartRhIcon name="qr" />
             </span>
 
             <span className="terminal-destination-copy">
@@ -415,7 +415,7 @@ export default function AdminDestination() {
             <span className="terminal-destination-arrow">
               {openingTerminal
                 ? '…'
-                : '→'}
+                : <SmartRhIcon name="send" />}
             </span>
           </button>
         </section>

@@ -1600,3 +1600,265 @@
   background: rgba(12, 34, 54, 0.9) !important;
   border-color: rgba(142, 210, 255, 0.18) !important;
 }
+
+/* ==========================================================
+   SMART RH · THEME ISOLATION + QR OPERATIVE REDESIGN
+   The terminal owns its theme independently from the portal.
+   ========================================================== */
+
+.terminal-theme-light.terminal-destination-page {
+  --terminal-ink: #0b1f33;
+  --terminal-muted: #536a7e;
+  --terminal-line: rgba(15, 103, 177, 0.16);
+  --terminal-card: rgba(255, 255, 255, 0.94);
+  color: var(--terminal-ink) !important;
+}
+
+.terminal-theme-light .terminal-brand-header,
+.terminal-theme-light .terminal-destination-account,
+.terminal-theme-light .terminal-destination-card {
+  color: var(--terminal-ink) !important;
+  border-color: var(--terminal-line) !important;
+  background-color: var(--terminal-card) !important;
+}
+
+.terminal-theme-light .terminal-brand-header h1,
+.terminal-theme-light .terminal-destination-account strong,
+.terminal-theme-light .terminal-destination-copy strong {
+  color: #0b1f33 !important;
+  -webkit-text-fill-color: currentColor !important;
+  opacity: 1 !important;
+}
+
+.terminal-theme-light .terminal-brand-header p,
+.terminal-theme-light .terminal-destination-account span,
+.terminal-theme-light .terminal-destination-copy > span,
+.terminal-theme-light .terminal-destination-copy small {
+  color: #536a7e !important;
+  -webkit-text-fill-color: currentColor !important;
+  opacity: 1 !important;
+}
+
+.terminal-theme-light.terminal-destination-page
+  .terminal-destination-card-primary,
+.terminal-theme-dark.terminal-destination-page
+  .terminal-destination-card-primary {
+  color: #ffffff !important;
+  border-color: rgba(76, 203, 211, 0.34) !important;
+  background:
+    radial-gradient(circle at 88% 12%, rgba(53, 213, 205, 0.32), transparent 34%),
+    linear-gradient(135deg, #0f67b1 0%, #0a4e89 58%, #0b5c69 100%) !important;
+}
+
+.terminal-theme-light.terminal-destination-page
+  .terminal-destination-card-primary *,
+.terminal-theme-dark.terminal-destination-page
+  .terminal-destination-card-primary * {
+  color: #ffffff !important;
+  -webkit-text-fill-color: currentColor !important;
+  opacity: 1 !important;
+}
+
+.terminal-theme-dark .terminal-destination-icon:not(.terminal-destination-icon-green),
+.terminal-theme-dark .terminal-destination-arrow {
+  color: #8edcff !important;
+  background: rgba(79, 180, 255, 0.12) !important;
+}
+
+.terminal-destination-icon svg,
+.terminal-destination-arrow svg {
+  width: 24px;
+  height: 24px;
+}
+
+.terminal-destination-arrow {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+}
+
+.terminal-active-layout {
+  grid-template-columns: minmax(520px, 1.35fr) minmax(300px, 0.65fr);
+  gap: 20px;
+}
+
+.terminal-qr-card,
+.terminal-control-card,
+.terminal-metric-card {
+  color: var(--terminal-text) !important;
+  border-color: var(--terminal-border) !important;
+  background: var(--terminal-surface) !important;
+}
+
+.terminal-qr-card::before {
+  display: none;
+}
+
+.terminal-qr-heading {
+  min-width: 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.terminal-qr-heading-icon {
+  width: 48px;
+  height: 48px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(15, 103, 177, 0.14);
+  border-radius: 16px;
+  color: #0f67b1;
+  background: rgba(15, 103, 177, 0.08);
+}
+
+.terminal-qr-heading-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.terminal-theme-dark .terminal-qr-heading-icon {
+  color: #67dcd5;
+  border-color: rgba(103, 220, 213, 0.22);
+  background: rgba(103, 220, 213, 0.1);
+}
+
+.terminal-qr-stage {
+  min-height: 0;
+  padding: clamp(24px, 4vw, 42px) 0 24px;
+}
+
+.terminal-qr-frame {
+  width: min(390px, 68vw);
+  padding: 24px;
+  border: 10px solid #ffffff;
+  border-radius: 34px;
+  background: #ffffff;
+  box-shadow:
+    0 0 0 1px rgba(15, 103, 177, 0.13),
+    0 26px 64px rgba(8, 67, 112, 0.16);
+}
+
+.terminal-theme-dark .terminal-qr-frame {
+  border-color: #ffffff;
+  box-shadow:
+    0 0 0 1px rgba(142, 220, 255, 0.24),
+    0 30px 74px rgba(0, 0, 0, 0.42);
+}
+
+.terminal-qr-cycle {
+  padding: 16px 18px;
+  display: grid;
+  gap: 10px;
+  border: 1px solid var(--terminal-border);
+  border-radius: 18px;
+  background: var(--terminal-surface-soft);
+}
+
+.terminal-qr-cycle-copy {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.terminal-qr-cycle-copy span {
+  color: var(--terminal-text-soft);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.terminal-qr-cycle-copy strong {
+  color: var(--terminal-text);
+  font-size: 1.28rem;
+  letter-spacing: -0.03em;
+}
+
+.terminal-qr-progress {
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(100, 116, 139, 0.16);
+}
+
+.terminal-qr-progress > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #0f67b1, #23c3bd);
+  transition: width 0.8s linear;
+}
+
+.terminal-qr-cycle small {
+  color: var(--terminal-text-soft);
+  line-height: 1.45;
+}
+
+.terminal-qr-caption {
+  margin-top: 18px;
+  color: var(--terminal-text-soft) !important;
+  border-top-color: var(--terminal-border) !important;
+}
+
+.terminal-qr-caption strong,
+.terminal-metric-card strong,
+.terminal-auto-refresh strong {
+  color: var(--terminal-text) !important;
+}
+
+.terminal-metric-card small,
+.terminal-auto-refresh small {
+  color: var(--terminal-text-soft) !important;
+}
+
+.terminal-theme-dark .terminal-qr-cycle,
+.terminal-theme-dark .terminal-auto-refresh {
+  border-color: rgba(142, 210, 255, 0.14);
+  background: rgba(255, 255, 255, 0.045);
+}
+
+@media (max-width: 980px) {
+  .terminal-active-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .terminal-control-column {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .terminal-control-card {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 650px) {
+  .terminal-control-column {
+    grid-template-columns: 1fr;
+  }
+
+  .terminal-control-card {
+    grid-column: auto;
+  }
+
+  .terminal-qr-heading {
+    align-items: center;
+  }
+
+  .terminal-qr-frame {
+    width: min(82vw, 350px);
+    padding: 18px;
+    border-width: 8px;
+    border-radius: 28px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .terminal-qr-progress > span {
+    transition: none;
+  }
+}

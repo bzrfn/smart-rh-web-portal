@@ -44,7 +44,7 @@ const DEFAULT_TERMINAL_ID =
   'terminal-asistencia-01';
 
 const QR_CYCLE_MS =
-  10_000;
+  20_000;
 
 
 type AccessStatus =
@@ -1052,6 +1052,21 @@ export default function TerminalAttendance() {
         )
       : '--:--';
 
+  const qrProgress =
+    qrExpiresAt
+      ? Math.max(
+          0,
+          Math.min(
+            100,
+            Math.round(
+              ((qrExpiresAt - now) /
+                QR_CYCLE_MS) *
+                100
+            )
+          )
+        )
+      : 0;
+
   const authorizationRemaining =
     authorizationExpiresAt
       ? countdown(
@@ -1365,7 +1380,12 @@ export default function TerminalAttendance() {
         <section className="terminal-active-layout">
           <article className="terminal-qr-card">
             <header className="terminal-qr-header">
-              <div>
+              <div className="terminal-qr-heading">
+                <span className="terminal-qr-heading-icon">
+                  <SmartRhIcon name="qr" />
+                </span>
+
+                <div>
                 <span className="terminal-section-eyebrow">
                   QR DINÁMICO ACTIVO
                 </span>
@@ -1375,8 +1395,9 @@ export default function TerminalAttendance() {
                 </h2>
 
                 <p>
-                  Utiliza la aplicación móvil SMART RH.
+                  Abre SMART RH en el teléfono y escanea el código.
                 </p>
+                </div>
               </div>
 
               <span className="terminal-live-badge">
@@ -1401,12 +1422,34 @@ export default function TerminalAttendance() {
                       : 'QR no disponible'}
                   </div>
                 )}
-
-                <i className="terminal-corner terminal-corner-tl" />
-                <i className="terminal-corner terminal-corner-tr" />
-                <i className="terminal-corner terminal-corner-bl" />
-                <i className="terminal-corner terminal-corner-br" />
               </div>
+            </div>
+
+            <div className="terminal-qr-cycle" aria-live="polite">
+              <div className="terminal-qr-cycle-copy">
+                <span>
+                  Renovación automática
+                </span>
+
+                <strong>
+                  {qrRemaining}
+                </strong>
+              </div>
+
+              <div
+                className="terminal-qr-progress"
+                role="progressbar"
+                aria-label="Vigencia restante del código QR"
+                aria-valuemin={0}
+                aria-valuemax={20}
+                aria-valuenow={Math.ceil((qrProgress / 100) * 20)}
+              >
+                <span style={{ width: `${qrProgress}%` }} />
+              </div>
+
+              <small>
+                Cada código permanece válido exactamente 20 segundos.
+              </small>
             </div>
 
             <footer className="terminal-qr-caption">
@@ -1431,7 +1474,7 @@ export default function TerminalAttendance() {
               </strong>
 
               <small>
-                Ciclo de 10 segundos · cambia al llegar a 00:00
+                Ciclo de 20 segundos · cambia al llegar a 00:00
               </small>
             </article>
 
