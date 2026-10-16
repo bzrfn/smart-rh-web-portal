@@ -104,8 +104,8 @@ export default function Asistencia() {
 
   if (user?.role === 'admin') {
     return (
-      <div className="dashboard-page">
-        <div className="module-card">
+      <div className="dashboard-page operation-page attendance-operation-page">
+        <div className="module-card operation-overview">
           <div className="module-card-header">
             <div>
               <p className="module-eyebrow">Operación</p>
@@ -117,7 +117,7 @@ export default function Asistencia() {
             </div>
           </div>
 
-          <div className="module-hero-banner">
+          <div className="module-hero-banner operation-brief">
             <div className="module-hero-copy">
               <h3>Control de trazabilidad operativa</h3>
               <p>
@@ -129,7 +129,7 @@ export default function Asistencia() {
             <div className="module-hero-badge">Gestión centralizada</div>
           </div>
 
-          <div className="asistencia-summary-grid">
+          <div className="asistencia-summary-grid operation-summary-grid">
             <div className="asistencia-summary-card">
               <div className="dashboard-card-accent teal" />
               <h3>Total</h3>
@@ -167,7 +167,7 @@ export default function Asistencia() {
 
         <Aprobaciones />
 
-        <div className="module-card">
+        <div className="module-card operation-queue-card attendance-history-card">
           <div className="module-card-header">
             <div>
               <p className="module-eyebrow">Historial</p>
@@ -190,8 +190,8 @@ export default function Asistencia() {
 
           {items.length > 0 && (
             <>
-              <div className="table-wrapper">
-                <table className="smart-table">
+              <div className="table-wrapper operation-table-wrapper attendance-table-wrapper">
+                <table className="smart-table operation-table">
                   <thead>
                     <tr>
                       <th>ID</th>
@@ -205,7 +205,7 @@ export default function Asistencia() {
                   </thead>
                   <tbody>
                     {paginatedItems.map((item) => (
-                      <tr key={item.id}>
+                      <tr key={item.id} className={`operation-row status-${item.estado}`}>
                         <td>{item.id}</td>
                         <td>
                           <div className="table-main-text">

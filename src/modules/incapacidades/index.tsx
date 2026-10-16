@@ -910,8 +910,8 @@ export default function Incapacidades() {
 
 
   return (
-    <div className="dashboard-page">
-      <div className="module-card">
+    <div className="dashboard-page operation-page incapacity-operation-page">
+      <div className="module-card operation-overview">
         <div className="module-card-header">
           <div>
             <p className="module-eyebrow">
@@ -931,7 +931,7 @@ export default function Incapacidades() {
           </div>
         </div>
 
-        <div className="module-hero-banner incap-hero-banner">
+        <div className="module-hero-banner incap-hero-banner operation-brief">
           <div className="module-hero-copy">
             <h3>
               Gestión de incapacidades médicas
@@ -950,7 +950,7 @@ export default function Incapacidades() {
           </div>
         </div>
 
-        <div className="asistencia-summary-grid">
+        <div className="asistencia-summary-grid operation-summary-grid">
           <div className="asistencia-summary-card">
             <div className="dashboard-card-accent blue" />
 
@@ -1001,7 +1001,7 @@ export default function Incapacidades() {
         </div>
       </div>
 
-      <div className="module-card incap-list-card">
+      <div className="module-card incap-list-card operation-queue-card">
         <div className="module-card-header">
           <div>
             <p className="module-eyebrow">
@@ -1018,8 +1018,8 @@ export default function Incapacidades() {
             </p>
           </div>
 
-          <label>
-            Estado
+          <label className="operation-select-field">
+            <span>Mostrar</span>
             {' '}
 
             <select
@@ -1088,8 +1088,8 @@ export default function Incapacidades() {
         {filteredItems.length >
           0 && (
           <>
-            <div className="table-wrapper">
-              <table className="smart-table">
+            <div className="table-wrapper operation-table-wrapper incapacity-table-wrapper">
+              <table className="smart-table operation-table">
                 <thead>
                   <tr>
                     <th>ID</th>
@@ -1106,7 +1106,7 @@ export default function Incapacidades() {
                 <tbody>
                   {pageItems.map(
                     (item) => (
-                      <tr key={item.id}>
+                      <tr key={item.id} className={`operation-row status-${item.estado}`}>
                         <td>
                           {item.id}
                         </td>

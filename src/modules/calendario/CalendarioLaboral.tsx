@@ -37,6 +37,7 @@ const EMPTY_RESUMEN: CalendarioResumen = {
 };
 
 const WEEKDAYS = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
+const AGENDA_PAGE_SIZE = 4;
 
 function startOfMonth(value: Date) {
   return new Date(value.getFullYear(), value.getMonth(), 1);
@@ -214,6 +215,7 @@ export default function CalendarioLaboral() {
   const [error, setError] = useState('');
   const [activeSummary, setActiveSummary] = useState<SummaryKey>('selection');
   const [selectedEvent, setSelectedEvent] = useState<CalendarioEvento | null>(null);
+  const [agendaPage, setAgendaPage] = useState(1);
 
   const range = useMemo(() => getMonthRange(currentMonth), [currentMonth]);
   const monthCells = useMemo(() => getMonthCells(currentMonth), [currentMonth]);
@@ -277,6 +279,20 @@ export default function CalendarioLaboral() {
     return eventos.filter((item) => item.tipo === activeSummary);
   }, [activeSummary, eventos, selectedEvents]);
 
+  const agendaPages = Math.max(1, Math.ceil(filteredEvents.length / AGENDA_PAGE_SIZE));
+  const agendaItems = useMemo(() => {
+    const start = (agendaPage - 1) * AGENDA_PAGE_SIZE;
+    return filteredEvents.slice(start, start + AGENDA_PAGE_SIZE);
+  }, [agendaPage, filteredEvents]);
+
+  useEffect(() => {
+    setAgendaPage(1);
+  }, [activeSummary, selectedDate, currentMonth]);
+
+  useEffect(() => {
+    if (agendaPage > agendaPages) setAgendaPage(agendaPages);
+  }, [agendaPage, agendaPages]);
+
   const moveMonth = (direction: number) => {
     const next = addMonths(currentMonth, direction);
     const today = new Date();
@@ -330,7 +346,7 @@ export default function CalendarioLaboral() {
         </div>
       </section>
 
-      <section className="calendar-summary-grid">
+      <section className="calendar-summary-grid operation-summary-rail" aria-label="Resumen del mes">
         <SummaryCard
           title="Eventos"
           value={resumen.total}
@@ -365,7 +381,7 @@ export default function CalendarioLaboral() {
         />
       </section>
 
-      <section className="calendar-layout">
+      <section className="calendar-layout operation-calendar-workspace">
         <div className="calendar-month-card">
           <div className="calendar-month-header">
             <button type="button" onClick={() => moveMonth(-1)}>
@@ -460,7 +476,7 @@ export default function CalendarioLaboral() {
           ) : null}
 
           <div className="calendar-event-list">
-            {filteredEvents.map((item) => (
+            {agendaItems.map((item) => (
               <button
                 key={`${item.id}-${activeSummary}`}
                 className={`calendar-event-card ${item.tipo}`}
@@ -485,6 +501,28 @@ export default function CalendarioLaboral() {
               </button>
             ))}
           </div>
+
+          {filteredEvents.length > AGENDA_PAGE_SIZE && (
+            <nav className="operation-pagination" aria-label="Páginas de agenda">
+              <button
+                type="button"
+                onClick={() => setAgendaPage((page) => Math.max(1, page - 1))}
+                disabled={agendaPage === 1}
+              >
+                Anterior
+              </button>
+              <span>
+                {agendaPage} de {agendaPages}
+              </span>
+              <button
+                type="button"
+                onClick={() => setAgendaPage((page) => Math.min(agendaPages, page + 1))}
+                disabled={agendaPage === agendaPages}
+              >
+                Siguiente
+              </button>
+            </nav>
+          )}
         </div>
       </section>
 

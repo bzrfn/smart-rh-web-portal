@@ -16,6 +16,8 @@ type Vacacion = {
   updated_at?: string;
 };
 
+type VacationFilter = 'todas' | Vacacion['estado'];
+
 const PAGE_SIZE = 5;
 
 export default function Vacaciones() {
@@ -24,6 +26,7 @@ export default function Vacaciones() {
   const [actionLoadingId, setActionLoadingId] = useState<number | null>(null);
   const [error, setError] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [filter, setFilter] = useState<VacationFilter>('todas');
 
   const summary = useMemo(() => {
     const pendientes = items.filter((i) => i.estado === 'pendiente').length;
@@ -38,12 +41,21 @@ export default function Vacaciones() {
     };
   }, [items]);
 
-  const totalPages = Math.max(1, Math.ceil(items.length / PAGE_SIZE));
+  const filteredItems = useMemo(
+    () => (filter === 'todas' ? items : items.filter((item) => item.estado === filter)),
+    [filter, items]
+  );
+
+  const totalPages = Math.max(1, Math.ceil(filteredItems.length / PAGE_SIZE));
 
   const paginatedItems = useMemo(() => {
     const start = (currentPage - 1) * PAGE_SIZE;
-    return items.slice(start, start + PAGE_SIZE);
-  }, [items, currentPage]);
+    return filteredItems.slice(start, start + PAGE_SIZE);
+  }, [filteredItems, currentPage]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filter]);
 
   const load = useCallback(async () => {
     try {
@@ -121,8 +133,8 @@ export default function Vacaciones() {
   };
 
   return (
-    <div className="dashboard-page">
-      <div className="module-card">
+    <div className="dashboard-page operation-page vacation-operation-page">
+      <div className="module-card operation-overview">
         <div className="module-card-header">
           <div>
             <p className="module-eyebrow">Administración</p>
@@ -134,7 +146,7 @@ export default function Vacaciones() {
           </div>
         </div>
 
-        <div className="module-hero-banner">
+        <div className="module-hero-banner operation-brief">
           <div className="module-hero-copy">
             <h3>Control de solicitudes y disponibilidad</h3>
             <p>
@@ -146,7 +158,7 @@ export default function Vacaciones() {
           <div className="module-hero-badge">Gestión de ausencias</div>
         </div>
 
-        <div className="asistencia-summary-grid">
+        <div className="asistencia-summary-grid operation-summary-grid">
           <div className="asistencia-summary-card">
             <div className="dashboard-card-accent blue" />
             <h3>Total</h3>
@@ -173,7 +185,7 @@ export default function Vacaciones() {
         </div>
       </div>
 
-      <div className="module-card">
+      <div className="module-card operation-queue-card">
         <div className="module-card-header">
           <div>
             <p className="module-eyebrow">Control administrativo</p>
@@ -185,20 +197,33 @@ export default function Vacaciones() {
           </div>
         </div>
 
-        {loading && <p className="module-info">Cargando solicitudes...</p>}
+        <div className="operation-filter-tabs" role="group" aria-label="Filtrar solicitudes">
+          {(['todas', 'pendiente', 'aprobada', 'rechazada'] as VacationFilter[]).map((value) => (
+            <button
+              key={value}
+              type="button"
+              className={filter === value ? 'active' : ''}
+              onClick={() => setFilter(value)}
+            >
+              {value === 'todas' ? 'Todas' : value === 'pendiente' ? 'Pendientes' : value === 'aprobada' ? 'Aprobadas' : 'Rechazadas'}
+            </button>
+          ))}
+        </div>
+
+        {loading && <p className="module-info">Cargando solicitudes…</p>}
         {error && <p className="module-error">{error}</p>}
 
-        {!loading && !error && items.length === 0 && (
+        {!loading && !error && filteredItems.length === 0 && (
           <div className="empty-state-card">
             <h3>Sin solicitudes</h3>
             <p>No hay solicitudes de vacaciones registradas por el momento.</p>
           </div>
         )}
 
-        {items.length > 0 && (
+        {filteredItems.length > 0 && (
           <>
-            <div className="table-wrapper">
-              <table className="smart-table">
+            <div className="table-wrapper operation-table-wrapper vacation-table-wrapper">
+              <table className="smart-table operation-table">
                 <thead>
                   <tr>
                     <th>ID</th>
@@ -213,7 +238,7 @@ export default function Vacaciones() {
 
                 <tbody>
                   {paginatedItems.map((v) => (
-                    <tr key={v.id}>
+                    <tr key={v.id} className={`operation-row status-${v.estado}`}>
                       <td>{v.id}</td>
 
                       <td>

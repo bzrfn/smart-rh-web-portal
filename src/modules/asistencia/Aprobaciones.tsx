@@ -919,7 +919,7 @@ export default function Aprobaciones() {
 
 
   return (
-    <div className="module-card">
+    <div className="module-card operation-queue-card attendance-review-card">
       <div className="module-card-header">
         <div>
           <p className="module-eyebrow">
@@ -935,6 +935,16 @@ export default function Aprobaciones() {
             impacten el historial general del sistema.
           </p>
         </div>
+      </div>
+
+      <div className="operation-queue-intro">
+        <div>
+          <span>Cola de revisión</span>
+          <strong>Decide con el contexto completo</strong>
+        </div>
+        <p>
+          Compara horario, duración y estado antes de aprobar. El historial conserva cada decisión administrativa.
+        </p>
       </div>
 
       <div className="module-kpi-row asistencia-review-kpi-row">
@@ -997,8 +1007,8 @@ export default function Aprobaciones() {
 
       {items.length > 0 && (
         <>
-          <div className="table-wrapper">
-            <table className="smart-table">
+          <div className="table-wrapper operation-table-wrapper attendance-review-table-wrapper">
+            <table className="smart-table operation-table">
               <thead>
                 <tr>
                   <th>ID</th>
@@ -1015,7 +1025,7 @@ export default function Aprobaciones() {
               <tbody>
                 {paginatedItems.map(
                   (a) => (
-                    <tr key={a.id}>
+                    <tr key={a.id} className={`operation-row status-${a.estado}`}>
                       <td>
                         {a.id}
                       </td>

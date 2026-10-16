@@ -1035,7 +1035,13 @@ export default function TerminalAttendance() {
         return;
       }
 
-      await document.documentElement.requestFullscreen();
+      const terminalSurface = document.querySelector('.terminal-experience');
+
+      if (!terminalSurface) {
+        throw new Error('Terminal no disponible');
+      }
+
+      await terminalSurface.requestFullscreen();
 
     } catch {
       setError(

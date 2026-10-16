@@ -1077,6 +1077,110 @@
   color: #0f172a;
 }
 
+/* SMART RH · QR kiosk: composición estable en ventana y pantalla completa */
+.terminal-experience:fullscreen {
+  width: 100vw !important;
+  height: 100dvh !important;
+  min-height: 100dvh !important;
+  overflow: hidden !important;
+}
+
+.terminal-experience:fullscreen .terminal-topbar {
+  min-height: 72px !important;
+  padding: 10px clamp(18px, 2vw, 30px) !important;
+}
+
+.terminal-experience:fullscreen .terminal-active-layout {
+  height: calc(100dvh - 96px) !important;
+  min-height: 0 !important;
+  padding: 14px clamp(18px, 2vw, 30px) 20px !important;
+  grid-template-columns: minmax(0, 1fr) minmax(270px, 340px) !important;
+  align-items: stretch !important;
+  gap: 16px !important;
+  overflow: hidden !important;
+}
+
+.terminal-experience:fullscreen .terminal-qr-card {
+  min-height: 0 !important;
+  padding: clamp(16px, 2vh, 24px) !important;
+  display: grid !important;
+  grid-template-rows: auto minmax(0, 1fr) auto auto !important;
+  overflow: hidden !important;
+}
+
+.terminal-experience:fullscreen .terminal-qr-header h2 {
+  font-size: clamp(1.45rem, 2.2vw, 2rem) !important;
+}
+
+.terminal-experience:fullscreen .terminal-qr-header p {
+  margin-top: 4px !important;
+}
+
+.terminal-experience:fullscreen .terminal-qr-stage {
+  min-height: 0 !important;
+  padding: 10px 0 !important;
+  display: grid !important;
+  place-items: center !important;
+}
+
+.terminal-experience:fullscreen .terminal-qr-frame {
+  width: min(46dvh, 34vw, 430px) !important;
+  height: min(46dvh, 34vw, 430px) !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+}
+
+.terminal-experience:fullscreen .terminal-qr-cycle {
+  padding: 12px 14px !important;
+}
+
+.terminal-experience:fullscreen .terminal-qr-caption {
+  padding-top: 10px !important;
+}
+
+.terminal-experience:fullscreen .terminal-control-column {
+  min-height: 0 !important;
+  display: grid !important;
+  grid-template-rows: repeat(3, minmax(92px, auto)) minmax(0, 1fr) !important;
+  gap: 10px !important;
+  overflow: hidden !important;
+}
+
+.terminal-experience:fullscreen .terminal-metric-card,
+.terminal-experience:fullscreen .terminal-control-card {
+  padding: 14px 16px !important;
+  border-radius: 18px !important;
+}
+
+.terminal-experience:fullscreen .terminal-control-card {
+  min-height: 0 !important;
+  overflow: auto !important;
+  overscroll-behavior: contain !important;
+}
+
+@media (max-width: 920px), (max-height: 720px) {
+  .terminal-experience:fullscreen {
+    overflow: auto !important;
+  }
+
+  .terminal-experience:fullscreen .terminal-active-layout {
+    height: auto !important;
+    min-height: calc(100dvh - 80px) !important;
+    grid-template-columns: 1fr !important;
+    overflow: visible !important;
+  }
+
+  .terminal-experience:fullscreen .terminal-control-column {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    grid-template-rows: auto auto !important;
+    overflow: visible !important;
+  }
+
+  .terminal-experience:fullscreen .terminal-control-card {
+    grid-column: 1 / -1 !important;
+  }
+}
+
 :root[data-theme='dark'] .terminal-approval-card {
   color: #0f172a;
   border-color: #e2e8f0;
