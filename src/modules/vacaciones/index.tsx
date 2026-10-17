@@ -226,11 +226,9 @@ export default function Vacaciones() {
               <table className="smart-table operation-table">
                 <thead>
                   <tr>
-                    <th>ID</th>
                     <th>Empleado</th>
-                    <th>Fechas</th>
-                    <th>Días solicitados</th>
-                    <th>Saldo al registrar</th>
+                    <th>Periodo solicitado</th>
+                    <th>Resumen</th>
                     <th>Estado</th>
                     <th>Acciones</th>
                   </tr>
@@ -239,37 +237,41 @@ export default function Vacaciones() {
                 <tbody>
                   {paginatedItems.map((v) => (
                     <tr key={v.id} className={`operation-row status-${v.estado}`}>
-                      <td>{v.id}</td>
-
-                      <td>
-                        <div className="table-main-text">
-                          {v.nombre} {v.apellido}
+                      <td data-label="Empleado" className="operation-person-cell">
+                        <div className="operation-person">
+                          <span className="operation-person-avatar" aria-hidden="true">
+                            {v.nombre?.charAt(0)}{v.apellido?.charAt(0)}
+                          </span>
+                          <div>
+                            <div className="table-main-text">
+                              {v.nombre} {v.apellido}
+                            </div>
+                            <div className="table-secondary-text">{v.correo}</div>
+                          </div>
                         </div>
-                        <div className="table-secondary-text">{v.correo}</div>
                       </td>
 
-                      <td>
-                        <div className="table-main-text">
+                      <td data-label="Periodo solicitado">
+                        <div className="operation-date-line">
                           {formatDateDisplay(v.fecha_inicio)} →{' '}
                           {formatDateDisplay(v.fecha_fin)}
                         </div>
                       </td>
 
-                      <td>
-                        <div className="table-main-text">{v.dias_solicitados}</div>
+                      <td data-label="Resumen">
+                        <div className="operation-request-summary">
+                          <span><strong>{v.dias_solicitados}</strong> días solicitados</span>
+                          <span><strong>{v.dias_disponibles}</strong> disponibles al registrar</span>
+                        </div>
                       </td>
 
-                      <td>
-                        <div className="table-main-text">{v.dias_disponibles}</div>
-                      </td>
-
-                      <td>
+                      <td data-label="Estado">
                         <span className={`status-pill ${mapEstadoClass(v.estado)}`}>
                           {v.estado}
                         </span>
                       </td>
 
-                      <td>
+                      <td data-label="Acciones">
                         {v.estado === 'pendiente' ? (
                           <div className="table-actions">
                             <button

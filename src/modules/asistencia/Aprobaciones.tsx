@@ -937,16 +937,6 @@ export default function Aprobaciones() {
         </div>
       </div>
 
-      <div className="operation-queue-intro">
-        <div>
-          <span>Cola de revisión</span>
-          <strong>Decide con el contexto completo</strong>
-        </div>
-        <p>
-          Compara horario, duración y estado antes de aprobar. El historial conserva cada decisión administrativa.
-        </p>
-      </div>
-
       <div className="module-kpi-row asistencia-review-kpi-row">
         <div className="module-kpi-card">
           <span className="module-kpi-label">
@@ -1011,11 +1001,8 @@ export default function Aprobaciones() {
             <table className="smart-table operation-table">
               <thead>
                 <tr>
-                  <th>ID</th>
                   <th>Empleado</th>
-                  <th>Fecha</th>
-                  <th>Entrada</th>
-                  <th>Salida</th>
+                  <th>Jornada registrada</th>
                   <th>Duración</th>
                   <th>Estado</th>
                   <th>Acciones</th>
@@ -1026,36 +1013,35 @@ export default function Aprobaciones() {
                 {paginatedItems.map(
                   (a) => (
                     <tr key={a.id} className={`operation-row status-${a.estado}`}>
-                      <td>
-                        {a.id}
-                      </td>
+                      <td data-label="Empleado" className="operation-person-cell">
+                        <div className="operation-person">
+                          <span className="operation-person-avatar" aria-hidden="true">
+                            {a.nombre?.charAt(0)}{a.apellido?.charAt(0)}
+                          </span>
+                          <div>
+                            <div className="table-main-text">
+                              {a.nombre}{' '}
+                              {a.apellido}
+                            </div>
 
-                      <td>
-                        <div className="table-main-text">
-                          {a.nombre}{' '}
-                          {a.apellido}
+                            <div className="table-secondary-text">
+                              {a.correo}
+                            </div>
+                          </div>
                         </div>
+                      </td>
 
-                        <div className="table-secondary-text">
-                          {a.correo}
+                      <td data-label="Jornada registrada">
+                        <div className="operation-date-line">
+                          {formatAttendanceDate(a.fecha)}
+                        </div>
+                        <div className="operation-time-line">
+                          <span>Entrada <strong>{a.hora_entrada || 'Sin dato'}</strong></span>
+                          <span>Salida <strong>{a.hora_salida || 'Sin dato'}</strong></span>
                         </div>
                       </td>
 
-                      <td>
-                        {formatAttendanceDate(a.fecha)}
-                      </td>
-
-                      <td>
-                        {a.hora_entrada ||
-                          'Sin dato'}
-                      </td>
-
-                      <td>
-                        {a.hora_salida ||
-                          'Sin dato'}
-                      </td>
-
-                      <td>
+                      <td data-label="Duración">
                         <div className="table-main-text">
                           {formatDurationSeconds(
                             a.duracion_registrada_segundos
@@ -1070,7 +1056,7 @@ export default function Aprobaciones() {
                         </div>
                       </td>
 
-                      <td>
+                      <td data-label="Estado">
                         <span className="status-pill admin">
                           {formatEstadoLabel(
                             a.estado
@@ -1078,7 +1064,7 @@ export default function Aprobaciones() {
                         </span>
                       </td>
 
-                      <td>
+                      <td data-label="Acciones">
                         <div className="table-actions">
                           {a.estado === 'INVALIDA_PENDIENTE_REVISION' ? (
                             <>

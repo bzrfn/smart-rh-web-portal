@@ -2709,6 +2709,270 @@
     max-width: 100%;
   }
 }
+
+/* ===== Operación diaria · tablas de casos y agenda estable ===== */
+.operation-table-wrapper {
+  margin-top: 18px !important;
+  padding: 8px 12px 12px !important;
+  overflow-x: auto !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 22px !important;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--card-muted) 92%, var(--primary) 8%), var(--card-muted)) !important;
+}
+
+.operation-table {
+  min-width: 820px !important;
+  border-collapse: separate !important;
+  border-spacing: 0 10px !important;
+}
+
+.operation-table thead th {
+  padding: 10px 16px 5px !important;
+  color: var(--text-muted) !important;
+  font-size: 0.68rem !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.085em !important;
+  text-transform: uppercase !important;
+}
+
+.operation-table tbody tr {
+  filter: drop-shadow(0 8px 14px rgba(15, 35, 58, 0.045));
+}
+
+.operation-table tbody td {
+  min-height: 76px !important;
+  padding: 14px 16px !important;
+  vertical-align: middle !important;
+  border-top: 1px solid var(--border) !important;
+  border-bottom: 1px solid var(--border) !important;
+  background: var(--card) !important;
+}
+
+.operation-table tbody td:first-child {
+  border-left: 1px solid var(--border) !important;
+  border-radius: 16px 0 0 16px !important;
+  box-shadow: inset 4px 0 0 color-mix(in srgb, var(--primary) 78%, var(--teal) 22%) !important;
+}
+
+.operation-table tbody td:last-child {
+  border-right: 1px solid var(--border) !important;
+  border-radius: 0 16px 16px 0 !important;
+}
+
+.operation-table tbody tr:hover td {
+  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--border) 60%, var(--primary) 40%) !important;
+  background: color-mix(in srgb, var(--card) 96%, var(--primary) 4%) !important;
+}
+
+.operation-person {
+  min-width: 220px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.operation-person-avatar {
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  display: grid;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--primary) 22%, var(--border) 78%);
+  border-radius: 13px;
+  color: var(--primary);
+  background: color-mix(in srgb, var(--card) 84%, var(--primary) 16%);
+  font-size: 0.75rem;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+}
+
+.operation-date-line {
+  color: var(--text) !important;
+  font-size: 0.88rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.operation-time-line,
+.operation-request-summary {
+  margin-top: 7px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.operation-time-line span,
+.operation-request-summary span {
+  padding: 5px 8px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  color: var(--text-muted);
+  background: var(--card-muted);
+  font-size: 0.72rem;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.operation-time-line strong,
+.operation-request-summary strong {
+  color: var(--text);
+  font-weight: 850;
+}
+
+.operation-evidence-cell {
+  min-width: 190px;
+  display: grid;
+  justify-items: start;
+  gap: 8px;
+}
+
+.operation-proof-btn {
+  color: var(--primary) !important;
+  border-color: color-mix(in srgb, var(--primary) 24%, var(--border) 76%) !important;
+  background: color-mix(in srgb, var(--card) 90%, var(--primary) 10%) !important;
+}
+
+.operation-table .table-actions {
+  min-width: 150px;
+  justify-content: flex-start;
+}
+
+.operation-calendar-workspace .calendar-month-card,
+.operation-calendar-workspace .calendar-events-panel {
+  height: 630px !important;
+  min-height: 630px !important;
+  max-height: 630px !important;
+  overflow: hidden !important;
+}
+
+.operation-calendar-workspace .calendar-events-panel {
+  display: grid !important;
+  grid-template-rows: auto auto minmax(0, 1fr) auto !important;
+}
+
+.calendar-agenda-count {
+  margin: 4px 0 0;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 650;
+}
+
+.operation-calendar-workspace .calendar-event-list {
+  min-height: 0 !important;
+  overflow: hidden !important;
+  display: grid !important;
+  grid-template-rows: repeat(4, minmax(0, 1fr)) !important;
+  align-content: stretch !important;
+}
+
+.operation-calendar-workspace .calendar-event-card {
+  min-height: 0 !important;
+  height: 100% !important;
+}
+
+.calendar-agenda-pagination {
+  min-height: 53px !important;
+  margin-top: 8px !important;
+  padding-top: 10px !important;
+}
+
+@media (max-width: 1120px) {
+  .operation-calendar-workspace .calendar-month-card,
+  .operation-calendar-workspace .calendar-events-panel {
+    height: auto !important;
+    min-height: 590px !important;
+    max-height: none !important;
+  }
+
+  .operation-calendar-workspace .calendar-events-panel {
+    height: 620px !important;
+    max-height: 620px !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .operation-table-wrapper {
+    padding: 10px !important;
+    overflow: visible !important;
+  }
+
+  .operation-table {
+    min-width: 0 !important;
+    display: block !important;
+    border-spacing: 0 !important;
+  }
+
+  .operation-table thead {
+    display: none !important;
+  }
+
+  .operation-table tbody {
+    display: grid !important;
+    gap: 12px !important;
+  }
+
+  .operation-table tbody tr {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    overflow: hidden !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 18px !important;
+    background: var(--card) !important;
+    box-shadow: inset 4px 0 0 var(--primary), 0 10px 22px rgba(15, 35, 58, 0.06) !important;
+  }
+
+  .operation-table tbody td,
+  .operation-table tbody td:first-child,
+  .operation-table tbody td:last-child {
+    min-height: 0 !important;
+    padding: 13px 15px !important;
+    display: grid !important;
+    align-content: start !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: transparent !important;
+  }
+
+  .operation-table tbody td::before {
+    content: attr(data-label);
+    margin-bottom: 7px;
+    color: var(--text-muted);
+    font-size: 0.65rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .operation-table .operation-person-cell {
+    grid-column: 1 / -1;
+    border-bottom: 1px solid var(--border) !important;
+  }
+
+  .operation-table tbody td:last-child {
+    grid-column: 1 / -1;
+    border-top: 1px solid var(--border) !important;
+  }
+}
+
+@media (max-width: 620px) {
+  .operation-table tbody tr {
+    grid-template-columns: 1fr !important;
+  }
+
+  .operation-table tbody td,
+  .operation-table tbody td:last-child,
+  .operation-table .operation-person-cell {
+    grid-column: auto !important;
+  }
+
+  .operation-calendar-workspace .calendar-events-panel {
+    height: 660px !important;
+    min-height: 660px !important;
+  }
+}
 .file-input-premium input[type='file'] {
   max-width: 240px;
   padding: 10px;

@@ -194,30 +194,37 @@ export default function Asistencia() {
                 <table className="smart-table operation-table">
                   <thead>
                     <tr>
-                      <th>ID</th>
                       <th>Empleado</th>
-                      <th>Fecha</th>
-                      <th>Entrada</th>
-                      <th>Salida</th>
-                        <th>Duración</th>
-                        <th>Estado</th>
+                      <th>Jornada registrada</th>
+                      <th>Duración</th>
+                      <th>Estado</th>
                     </tr>
                   </thead>
                   <tbody>
                     {paginatedItems.map((item) => (
                       <tr key={item.id} className={`operation-row status-${item.estado}`}>
-                        <td>{item.id}</td>
-                        <td>
-                          <div className="table-main-text">
-                            {item.nombre} {item.apellido}
+                        <td data-label="Empleado" className="operation-person-cell">
+                          <div className="operation-person">
+                            <span className="operation-person-avatar" aria-hidden="true">
+                              {item.nombre?.charAt(0)}{item.apellido?.charAt(0)}
+                            </span>
+                            <div>
+                              <div className="table-main-text">
+                                {item.nombre} {item.apellido}
+                              </div>
+                              <div className="table-secondary-text">{item.correo}</div>
+                            </div>
                           </div>
-                          <div className="table-secondary-text">{item.correo}</div>
                         </td>
-                        <td>{formatAttendanceDate(item.fecha)}</td>
-                        <td>{item.hora_entrada || 'Sin dato'}</td>
-                        <td>{item.hora_salida || 'Sin dato'}</td>
+                        <td data-label="Jornada registrada">
+                          <div className="operation-date-line">{formatAttendanceDate(item.fecha)}</div>
+                          <div className="operation-time-line">
+                            <span>Entrada <strong>{item.hora_entrada || 'Sin dato'}</strong></span>
+                            <span>Salida <strong>{item.hora_salida || 'Sin dato'}</strong></span>
+                          </div>
+                        </td>
 
-                          <td>
+                          <td data-label="Duración">
                             <div className="table-main-text">
                               {formatDurationSeconds(
                                 item.duracion_registrada_segundos
@@ -232,7 +239,7 @@ export default function Asistencia() {
                             </div>
                           </td>
 
-                          <td>
+                          <td data-label="Estado">
                           <span className={`status-pill ${mapEstadoClass(item.estado)}`}>
                             {formatEstadoLabel(item.estado)}
                           </span>

@@ -449,6 +449,9 @@ export default function CalendarioLaboral() {
                   ? formatDate(selectedDate)
                   : formatMonthTitle(currentMonth)}
               </h2>
+              <p className="calendar-agenda-count">
+                {filteredEvents.length} {filteredEvents.length === 1 ? 'registro' : 'registros'} en esta vista
+              </p>
             </div>
 
             {selectedDate && activeSummary === 'selection' ? (
@@ -502,8 +505,7 @@ export default function CalendarioLaboral() {
             ))}
           </div>
 
-          {filteredEvents.length > AGENDA_PAGE_SIZE && (
-            <nav className="operation-pagination" aria-label="Páginas de agenda">
+          <nav className="operation-pagination calendar-agenda-pagination" aria-label="Páginas de agenda">
               <button
                 type="button"
                 onClick={() => setAgendaPage((page) => Math.max(1, page - 1))}
@@ -521,8 +523,7 @@ export default function CalendarioLaboral() {
               >
                 Siguiente
               </button>
-            </nav>
-          )}
+          </nav>
         </div>
       </section>
 

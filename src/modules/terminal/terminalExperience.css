@@ -1966,3 +1966,154 @@
     transition: none;
   }
 }
+
+/* QR fullscreen v3: conserva toda la interfaz dentro del viewport */
+.terminal-experience:fullscreen {
+  width: 100vw !important;
+  height: 100dvh !important;
+  min-height: 0 !important;
+  padding: 12px clamp(14px, 2vw, 28px) !important;
+  display: grid !important;
+  grid-template-rows: 66px 74px minmax(0, 1fr) !important;
+  gap: 10px !important;
+  overflow: hidden !important;
+  background: var(--terminal-bg) !important;
+}
+
+.terminal-experience:fullscreen .terminal-topbar {
+  min-height: 0 !important;
+  height: 66px !important;
+  padding: 8px 14px !important;
+  border-radius: 20px !important;
+}
+
+.terminal-experience:fullscreen .terminal-brand h1 {
+  font-size: clamp(1.45rem, 2vw, 2rem) !important;
+}
+
+.terminal-experience:fullscreen .terminal-logo-mark {
+  width: 44px !important;
+  height: 44px !important;
+}
+
+.terminal-experience:fullscreen .terminal-clock-panel {
+  min-height: 0 !important;
+  height: 74px !important;
+  margin: 0 !important;
+  gap: 10px !important;
+}
+
+.terminal-experience:fullscreen .terminal-clock-panel article {
+  min-height: 0 !important;
+  padding: 11px 15px !important;
+  border-radius: 16px !important;
+}
+
+.terminal-experience:fullscreen .terminal-clock-panel strong {
+  font-size: clamp(0.95rem, 1.25vw, 1.25rem) !important;
+}
+
+.terminal-experience:fullscreen .terminal-active-layout {
+  width: 100% !important;
+  height: auto !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 320px) !important;
+  align-items: stretch !important;
+  gap: 12px !important;
+  overflow: hidden !important;
+}
+
+.terminal-experience:fullscreen .terminal-qr-card {
+  min-height: 0 !important;
+  height: 100% !important;
+  padding: 14px 18px !important;
+  grid-template-rows: auto minmax(0, 1fr) auto !important;
+  gap: 8px !important;
+}
+
+.terminal-experience:fullscreen .terminal-qr-header h2 {
+  font-size: clamp(1.25rem, 1.8vw, 1.7rem) !important;
+}
+
+.terminal-experience:fullscreen .terminal-qr-header p {
+  display: none !important;
+}
+
+.terminal-experience:fullscreen .terminal-qr-stage {
+  min-height: 0 !important;
+  padding: 2px 0 !important;
+}
+
+.terminal-experience:fullscreen .terminal-qr-frame {
+  width: min(40dvh, 30vw, 360px) !important;
+  height: min(40dvh, 30vw, 360px) !important;
+  padding: clamp(14px, 1.6vh, 20px) !important;
+  border-width: 7px !important;
+}
+
+.terminal-experience:fullscreen .terminal-qr-cycle {
+  padding: 9px 12px !important;
+  gap: 6px !important;
+  border-radius: 14px !important;
+}
+
+.terminal-experience:fullscreen .terminal-qr-cycle small,
+.terminal-experience:fullscreen .terminal-qr-caption {
+  display: none !important;
+}
+
+.terminal-experience:fullscreen .terminal-control-column {
+  min-height: 0 !important;
+  height: 100% !important;
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  grid-template-rows: repeat(3, auto) minmax(0, 1fr) !important;
+  gap: 8px !important;
+  overflow: hidden !important;
+}
+
+.terminal-experience:fullscreen .terminal-metric-card,
+.terminal-experience:fullscreen .terminal-control-card {
+  min-height: 0 !important;
+  padding: 10px 13px !important;
+  border-radius: 15px !important;
+}
+
+.terminal-experience:fullscreen .terminal-metric-card strong {
+  margin: 3px 0 !important;
+  font-size: clamp(1rem, 1.5vw, 1.45rem) !important;
+}
+
+.terminal-experience:fullscreen .terminal-control-card {
+  display: grid !important;
+  align-content: start !important;
+  gap: 7px !important;
+  overflow: hidden !important;
+}
+
+.terminal-experience:fullscreen .terminal-control-card button {
+  min-height: 38px !important;
+}
+
+.terminal-experience:fullscreen .terminal-auto-refresh {
+  margin-top: 0 !important;
+  padding: 8px 10px !important;
+}
+
+.terminal-experience:fullscreen .terminal-footer {
+  display: none !important;
+}
+
+@media (max-width: 920px) {
+  .terminal-experience:fullscreen {
+    grid-template-rows: auto auto minmax(0, 1fr) !important;
+    overflow: auto !important;
+  }
+
+  .terminal-experience:fullscreen .terminal-active-layout {
+    height: auto !important;
+    grid-template-columns: 1fr !important;
+    overflow: visible !important;
+  }
+}

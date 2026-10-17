@@ -1018,37 +1018,25 @@ export default function Incapacidades() {
             </p>
           </div>
 
-          <label className="operation-select-field">
-            <span>Mostrar</span>
-            {' '}
+        </div>
 
-            <select
-              value={filtro}
-              onChange={
-                (event) =>
-                  setFiltro(
-                    event.target
-                      .value as EstadoFiltro
-                  )
-              }
+        <div className="operation-filter-tabs" role="group" aria-label="Filtrar incapacidades">
+          {(['todos', 'pendiente', 'aprobada', 'rechazada'] as EstadoFiltro[]).map((value) => (
+            <button
+              key={value}
+              type="button"
+              className={filtro === value ? 'active' : ''}
+              onClick={() => setFiltro(value)}
             >
-              <option value="todos">
-                Todos
-              </option>
-
-              <option value="pendiente">
-                Pendientes
-              </option>
-
-              <option value="aprobada">
-                Aprobadas
-              </option>
-
-              <option value="rechazada">
-                Rechazadas
-              </option>
-            </select>
-          </label>
+              {value === 'todos'
+                ? 'Todas'
+                : value === 'pendiente'
+                  ? 'Pendientes'
+                  : value === 'aprobada'
+                    ? 'Aprobadas'
+                    : 'Rechazadas'}
+            </button>
+          ))}
         </div>
 
         {loading && (
@@ -1092,12 +1080,9 @@ export default function Incapacidades() {
               <table className="smart-table operation-table">
                 <thead>
                   <tr>
-                    <th>ID</th>
                     <th>Empleado</th>
                     <th>Periodo</th>
-                    <th>Días</th>
-                    <th>Comprobante</th>
-                    <th>Validación automática</th>
+                    <th>Comprobante y validación</th>
                     <th>Estado</th>
                     <th>Acciones</th>
                   </tr>
@@ -1107,78 +1092,56 @@ export default function Incapacidades() {
                   {pageItems.map(
                     (item) => (
                       <tr key={item.id} className={`operation-row status-${item.estado}`}>
-                        <td>
-                          {item.id}
-                        </td>
-
-                        <td>
-                          <div className="table-main-text">
-                            {employeeName(
-                              item
-                            )}
-                          </div>
-
-                          <div className="table-secondary-text">
-                            {item.usuario_correo ||
-                              `Usuario ${item.usuario_id}`}
-                          </div>
-                        </td>
-
-                        <td>
-                          {formatDate(
-                            item.fecha_inicio
-                          )}
-                          {' → '}
-                          {formatDate(
-                            item.fecha_fin
-                          )}
-                        </td>
-
-                        <td>
-                          {item.dias_calculados}
-                        </td>
-
-                        <td>
-                          {item.comprobante_key ? (
-                            <button
-                              type="button"
-                              className="action-btn"
-                              onClick={
-                                () =>
-                                  openProof(
-                                    item
-                                  )
-                              }
-                            >
-                              Ver comprobante
-                            </button>
-                          ) : (
-                            <span className="table-secondary-text">
-                              Sin archivo
+                        <td data-label="Empleado" className="operation-person-cell">
+                          <div className="operation-person">
+                            <span className="operation-person-avatar" aria-hidden="true">
+                              {(item.usuario_nombre || 'U').charAt(0)}
+                              {(item.usuario_apellido || '').charAt(0)}
                             </span>
-                          )}
+                            <div>
+                              <div className="table-main-text">
+                                {employeeName(item)}
+                              </div>
+
+                              <div className="table-secondary-text">
+                                {item.usuario_correo || 'Correo no disponible'}
+                              </div>
+                            </div>
+                          </div>
                         </td>
 
-                        <td>
-                          <span
-                            className={
-                              `status-pill ${validationStatusClass(
-                                item.validacion_automatica
-                              )}`
-                            }
-                            title={
-                              validationDescription(
-                                item.validacion_automatica
-                              )
-                            }
-                          >
-                            {validationLabel(
-                              item.validacion_automatica
+                        <td data-label="Periodo">
+                          <div className="operation-date-line">
+                            {formatDate(item.fecha_inicio)} → {formatDate(item.fecha_fin)}
+                          </div>
+                          <div className="table-secondary-text">
+                            {item.dias_calculados} {item.dias_calculados === 1 ? 'día registrado' : 'días registrados'}
+                          </div>
+                        </td>
+
+                        <td data-label="Comprobante y validación">
+                          <div className="operation-evidence-cell">
+                            {item.comprobante_key ? (
+                              <button
+                                type="button"
+                                className="action-btn operation-proof-btn"
+                                onClick={() => openProof(item)}
+                              >
+                                Ver comprobante
+                              </button>
+                            ) : (
+                              <span className="table-secondary-text">Sin archivo</span>
                             )}
-                          </span>
+                            <span
+                              className={`status-pill ${validationStatusClass(item.validacion_automatica)}`}
+                              title={validationDescription(item.validacion_automatica)}
+                            >
+                              {validationLabel(item.validacion_automatica)}
+                            </span>
+                          </div>
                         </td>
 
-                        <td>
+                        <td data-label="Estado">
                           <span
                             className={
                               `status-pill ${statusClass(
@@ -1192,7 +1155,7 @@ export default function Incapacidades() {
                           </span>
                         </td>
 
-                        <td>
+                        <td data-label="Acciones">
                           <button
                             type="button"
                             className="action-btn"
