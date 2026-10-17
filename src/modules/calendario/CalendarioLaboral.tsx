@@ -350,7 +350,7 @@ export default function CalendarioLaboral() {
         <SummaryCard
           title="Eventos"
           value={resumen.total}
-          detail="Resumen mensual"
+          detail="Total del mes"
           tone="blue"
           active={activeSummary === 'all'}
           onClick={() => setActiveSummary('all')}
@@ -366,7 +366,7 @@ export default function CalendarioLaboral() {
         <SummaryCard
           title="Vacaciones"
           value={resumen.vacacion}
-          detail="Periodos aprobados o pendientes"
+          detail="Periodos del mes"
           tone="gold"
           active={activeSummary === 'vacacion'}
           onClick={() => setActiveSummary('vacacion')}
@@ -374,7 +374,7 @@ export default function CalendarioLaboral() {
         <SummaryCard
           title="Incapacidades"
           value={resumen.incapacidad}
-          detail="Casos médicos del mes"
+          detail="Casos del mes"
           tone="danger"
           active={activeSummary === 'incapacidad'}
           onClick={() => setActiveSummary('incapacidad')}

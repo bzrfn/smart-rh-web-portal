@@ -1096,7 +1096,11 @@ export default function TerminalAttendance() {
 
   return (
     <main
-      className={`terminal-experience terminal-theme-${theme}`}
+      className={`terminal-experience terminal-theme-${theme} ${
+        active
+          ? 'terminal-experience-active'
+          : 'terminal-experience-inactive'
+      }`}
     >
       <header className="terminal-topbar">
         <div className="terminal-brand">
