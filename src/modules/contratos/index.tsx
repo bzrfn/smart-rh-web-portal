@@ -45,6 +45,8 @@ type EditState = {
   estado: 'activo' | 'inactivo' | 'finalizado';
 };
 
+type ContractFilter = 'todos' | Contrato['estado'];
+
 const PAGE_SIZE = 5;
 
 export default function Contratos() {
@@ -60,6 +62,7 @@ export default function Contratos() {
   const [changingEstadoId, setChangingEstadoId] = useState<number | null>(null);
   const [error, setError] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [activeFilter, setActiveFilter] = useState<ContractFilter>('todos');
 
   const [form, setForm] = useState<FormState>({
     usuario_id: '',
@@ -88,12 +91,21 @@ export default function Contratos() {
     };
   }, [items]);
 
-  const totalPages = Math.max(1, Math.ceil(items.length / PAGE_SIZE));
+  const filteredItems = useMemo(() => {
+    if (activeFilter === 'todos') return items;
+    return items.filter((item) => item.estado === activeFilter);
+  }, [activeFilter, items]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredItems.length / PAGE_SIZE));
 
   const paginatedItems = useMemo(() => {
     const start = (currentPage - 1) * PAGE_SIZE;
-    return items.slice(start, start + PAGE_SIZE);
-  }, [items, currentPage]);
+    return filteredItems.slice(start, start + PAGE_SIZE);
+  }, [filteredItems, currentPage]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeFilter]);
 
   const filteredUsers = useMemo(() => {
     const q = userSearch.trim().toLowerCase();
@@ -325,28 +337,28 @@ export default function Contratos() {
   };
 
   return (
-    <div className="dashboard-page">
-      <div className="module-card">
+    <div className="dashboard-page record-page contract-page">
+      <div className="module-card record-overview">
         <div className="module-card-header">
           <div>
-            <p className="module-eyebrow">Administración</p>
+            <p className="module-eyebrow">Expediente laboral</p>
             <h2 className="module-title">Contratos</h2>
-            <p className="module-subtitle">Registra, corrige y administra los contratos del personal.</p>
+            <p className="module-subtitle">Consulta vigencias, registra acuerdos y conserva cada contrato listo para revisión.</p>
           </div>
         </div>
 
-        <div className="module-hero-banner">
+        <div className="module-hero-banner record-brief">
           <div className="module-hero-copy">
-            <h3>Control contractual centralizado</h3>
+            <h3>Contratos claros, vigencias bajo control</h3>
             <p>
-              Gestiona tipo de contrato, salario, vigencia y estado del vínculo laboral desde un único flujo administrativo.
+              Revisa quién tiene contrato activo, identifica cierres pendientes y realiza cambios sin perder el contexto del empleado.
             </p>
           </div>
 
-          <div className="module-hero-badge">Gestión contractual</div>
+          <div className="module-hero-badge">{summary.activos} activos</div>
         </div>
 
-        <div className="asistencia-summary-grid">
+        <div className="asistencia-summary-grid operation-summary-grid record-summary-grid">
           <div className="asistencia-summary-card">
             <div className="dashboard-card-accent blue" />
             <h3>Total</h3>
@@ -373,20 +385,20 @@ export default function Contratos() {
         </div>
       </div>
 
-      <div className="module-card">
+      <div className="module-card record-form-card">
         <div className="module-card-header">
           <div>
-            <p className="module-eyebrow">Alta</p>
+            <p className="module-eyebrow">Nuevo acuerdo</p>
             <h2 className="module-title">Registrar contrato</h2>
             <p className="module-subtitle">
-              Selecciona un usuario y captura la información contractual correspondiente.
+              Primero elige a la persona y después completa las condiciones del contrato.
             </p>
           </div>
         </div>
 
         {error && <p className="module-error">{error}</p>}
 
-        <form className="smart-form-grid" onSubmit={onSubmit}>
+        <form className="smart-form-grid record-form-grid" onSubmit={onSubmit}>
           <div className="smart-form-group smart-form-group-full">
             <label>Buscar usuario</label>
 
@@ -406,7 +418,7 @@ export default function Contratos() {
 
             {selectedUser && (
               <div className="selected-user-chip">
-                Seleccionado: {selectedUser.nombre} {selectedUser.apellido} ({selectedUser.correo})
+                <span><strong>{selectedUser.nombre} {selectedUser.apellido}</strong>{selectedUser.correo}</span>
                 <button type="button" className="inline-clear-btn" onClick={clearSelectedUser}>
                   Cambiar
                 </button>
@@ -427,7 +439,7 @@ export default function Contratos() {
                     <div>
                       <strong>
                         {selectedUserLatestContrato
-                          ? `Contrato #${selectedUserLatestContrato.id}`
+                          ? 'Contrato más reciente'
                           : 'Sin contrato registrado'}
                       </strong>
                       <span>
@@ -478,10 +490,10 @@ export default function Contratos() {
               value={form.tipo_contrato}
               onChange={(e) => handleChange('tipo_contrato', e.target.value as FormState['tipo_contrato'])}
             >
-              <option value="indefinido">indefinido</option>
-              <option value="temporal">temporal</option>
-              <option value="practicante">practicante</option>
-              <option value="honorarios">honorarios</option>
+              <option value="indefinido">Indefinido</option>
+              <option value="temporal">Temporal</option>
+              <option value="practicante">Practicante</option>
+              <option value="honorarios">Honorarios</option>
             </select>
           </div>
 
@@ -499,9 +511,9 @@ export default function Contratos() {
           <div className="smart-form-group">
             <label>Estado</label>
             <select value={form.estado} onChange={(e) => handleChange('estado', e.target.value as FormState['estado'])}>
-              <option value="activo">activo</option>
-              <option value="inactivo">inactivo</option>
-              <option value="finalizado">finalizado</option>
+              <option value="activo">Activo</option>
+              <option value="inactivo">Inactivo</option>
+              <option value="finalizado">Finalizado</option>
             </select>
           </div>
 
@@ -524,11 +536,11 @@ export default function Contratos() {
       </div>
 
       {edit.id && (
-        <div className="module-card">
+        <div className="module-card record-edit-card">
           <div className="module-card-header">
             <div>
               <p className="module-eyebrow">Edición</p>
-              <h2 className="module-title">Editar contrato #{edit.id}</h2>
+              <h2 className="module-title">Editar contrato seleccionado</h2>
               <p className="module-subtitle">Ajusta tipo, salario, fechas y estado del contrato seleccionado.</p>
             </div>
           </div>
@@ -584,31 +596,48 @@ export default function Contratos() {
         </div>
       )}
 
-      <div className="module-card">
+      <div className="module-card record-history-card">
         <div className="module-card-header">
           <div>
             <p className="module-eyebrow">Historial</p>
-            <h2 className="module-title">Listado de contratos</h2>
-            <p className="module-subtitle">Consulta los contratos más recientes y opera cambios desde la misma tabla.</p>
+            <h2 className="module-title">Historial de contratos</h2>
+            <p className="module-subtitle">Filtra por estado, revisa vigencias y abre el documento sin salir del listado.</p>
           </div>
+        </div>
+
+        <div className="operation-filter-tabs record-filter-tabs" aria-label="Filtrar contratos por estado">
+          {([
+            ['todos', 'Todos', summary.total],
+            ['activo', 'Activos', summary.activos],
+            ['inactivo', 'Inactivos', summary.inactivos],
+            ['finalizado', 'Finalizados', summary.finalizados],
+          ] as const).map(([key, label, count]) => (
+            <button
+              key={key}
+              type="button"
+              className={activeFilter === key ? 'active' : ''}
+              onClick={() => setActiveFilter(key)}
+            >
+              {label}<span>{count}</span>
+            </button>
+          ))}
         </div>
 
         {loading && <p className="module-info">Cargando contratos...</p>}
 
-        {!loading && items.length === 0 && (
+        {!loading && filteredItems.length === 0 && (
           <div className="empty-state-card">
             <h3>Sin registros</h3>
             <p>No hay contratos registrados por el momento.</p>
           </div>
         )}
 
-        {items.length > 0 && (
+        {filteredItems.length > 0 && (
           <>
-            <div className="table-wrapper">
-              <table className="smart-table">
+            <div className="table-wrapper operation-table-wrapper record-table-wrapper">
+              <table className="smart-table operation-table record-table">
                 <thead>
                   <tr>
-                    <th>ID</th>
                     <th>Empleado</th>
                     <th>Tipo</th>
                     <th>Salario</th>
@@ -621,37 +650,39 @@ export default function Contratos() {
                 <tbody>
                   {paginatedItems.map((item) => (
                     <tr key={item.id}>
-                      <td>{item.id}</td>
-
-                      <td>
-                        <div className="table-main-text">
-                          {item.nombre} {item.apellido}
+                      <td data-label="Empleado" className="operation-person-cell">
+                        <div className="operation-person">
+                          <span className="operation-person-avatar">{getInitials(item.nombre, item.apellido)}</span>
+                          <div>
+                            <div className="table-main-text">{item.nombre} {item.apellido}</div>
+                            <div className="table-secondary-text">{item.correo}</div>
+                          </div>
                         </div>
-                        <div className="table-secondary-text">{item.correo}</div>
                       </td>
 
-                      <td>
-                        <div className="table-main-text">{item.tipo_contrato}</div>
+                      <td data-label="Tipo">
+                        <div className="record-type-cell">{formatLabel(item.tipo_contrato)}</div>
                       </td>
 
-                      <td>
-                        <div className="table-main-text">${Number(item.salario_base).toFixed(2)}</div>
+                      <td data-label="Salario">
+                        <div className="table-main-text">{formatCurrency(item.salario_base)}</div>
+                        <div className="table-secondary-text">Salario base</div>
                       </td>
 
-                      <td>
-                        <div className="table-main-text">
+                      <td data-label="Vigencia">
+                        <div className="record-date-range">
                           {formatDateDisplay(item.fecha_inicio)} →{' '}
                           {item.fecha_fin ? formatDateDisplay(item.fecha_fin) : 'Sin fecha fin'}
                         </div>
                       </td>
 
-                      <td>
+                      <td data-label="Estado">
                         <span className={`status-pill ${mapEstadoClass(item.estado)}`}>
                           {item.estado}
                         </span>
                       </td>
 
-                      <td>
+                      <td data-label="Acciones">
                         <div className="table-actions">
                           <button className="btn btn-small" type="button" onClick={() => startEdit(item)}>
                             Editar
@@ -729,6 +760,18 @@ function formatDateInput(value?: string | null) {
 function formatDateDisplay(value?: string | null) {
   if (!value) return '';
   return String(value).slice(0, 10);
+}
+
+function getInitials(nombre: string, apellido: string) {
+  return `${nombre?.[0] || ''}${apellido?.[0] || ''}`.toUpperCase() || 'RH';
+}
+
+function formatLabel(value: string) {
+  return value.charAt(0).toUpperCase() + value.slice(1);
+}
+
+function formatCurrency(value: number) {
+  return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(Number(value || 0));
 }
 
 function mapEstadoClass(estado: Contrato['estado']) {

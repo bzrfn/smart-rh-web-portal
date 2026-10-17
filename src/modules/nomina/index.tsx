@@ -47,6 +47,8 @@ type EditState = {
   periodo_fin: string;
 };
 
+type PayrollFilter = 'todos' | Nomina['estado'];
+
 const PAGE_SIZE = 5;
 
 export default function Nomina() {
@@ -62,6 +64,7 @@ export default function Nomina() {
   const [changingEstadoId, setChangingEstadoId] = useState<number | null>(null);
   const [error, setError] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [activeFilter, setActiveFilter] = useState<PayrollFilter>('todos');
 
   const [form, setForm] = useState<FormState>({
     usuario_id: '',
@@ -96,12 +99,21 @@ export default function Nomina() {
     };
   }, [items]);
 
-  const totalPages = Math.max(1, Math.ceil(items.length / PAGE_SIZE));
+  const filteredItems = useMemo(() => {
+    if (activeFilter === 'todos') return items;
+    return items.filter((item) => item.estado === activeFilter);
+  }, [activeFilter, items]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredItems.length / PAGE_SIZE));
 
   const paginatedItems = useMemo(() => {
     const start = (currentPage - 1) * PAGE_SIZE;
-    return items.slice(start, start + PAGE_SIZE);
-  }, [items, currentPage]);
+    return filteredItems.slice(start, start + PAGE_SIZE);
+  }, [filteredItems, currentPage]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeFilter]);
 
   const filteredUsers = useMemo(() => {
     const q = userSearch.trim().toLowerCase();
@@ -309,31 +321,30 @@ export default function Nomina() {
   };
 
   return (
-    <div className="dashboard-page">
-      <div className="module-card">
+    <div className="dashboard-page record-page payroll-page">
+      <div className="module-card record-overview">
         <div className="module-card-header">
           <div>
-            <p className="module-eyebrow">Administración</p>
+            <p className="module-eyebrow">Expediente laboral</p>
             <h2 className="module-title">Nómina</h2>
             <p className="module-subtitle">
-              Registra, corrige y administra los periodos de nómina del personal.
+              Revisa periodos, confirma pagos y conserva el historial económico del personal en orden.
             </p>
           </div>
         </div>
 
-        <div className="module-hero-banner">
+        <div className="module-hero-banner record-brief">
           <div className="module-hero-copy">
-            <h3>Control financiero operativo</h3>
+            <h3>Pagos organizados por persona y periodo</h3>
             <p>
-              Gestiona los importes base, bonos, deducciones y estatus de pago desde un
-              mismo flujo administrativo.
+              Identifica pendientes, valida importes y actualiza el estado de cada pago desde un mismo flujo.
             </p>
           </div>
 
-          <div className="module-hero-badge">Gestión de pagos</div>
+          <div className="module-hero-badge">{summary.pendientes} pendientes</div>
         </div>
 
-        <div className="asistencia-summary-grid">
+        <div className="asistencia-summary-grid operation-summary-grid record-summary-grid">
           <div className="asistencia-summary-card">
             <div className="dashboard-card-accent blue" />
             <h3>Total</h3>
@@ -355,25 +366,25 @@ export default function Nomina() {
           <div className="asistencia-summary-card">
             <div className="dashboard-card-accent teal" />
             <h3>Total acumulado</h3>
-            <p>${summary.totalNominas.toFixed(2)}</p>
+            <p>{formatCurrency(summary.totalNominas)}</p>
           </div>
         </div>
       </div>
 
-      <div className="module-card">
+      <div className="module-card record-form-card">
         <div className="module-card-header">
           <div>
-            <p className="module-eyebrow">Alta</p>
+            <p className="module-eyebrow">Nuevo periodo</p>
             <h2 className="module-title">Registrar nómina</h2>
             <p className="module-subtitle">
-              Selecciona un usuario y captura el periodo de nómina correspondiente.
+              Elige a la persona, registra los importes y define el periodo que estás procesando.
             </p>
           </div>
         </div>
 
         {error && <p className="module-error">{error}</p>}
 
-        <form className="smart-form-grid" onSubmit={onSubmit}>
+        <form className="smart-form-grid record-form-grid" onSubmit={onSubmit}>
           <div className="smart-form-group smart-form-group-full">
             <label>Buscar usuario</label>
 
@@ -393,7 +404,7 @@ export default function Nomina() {
 
             {selectedUser && (
               <div className="selected-user-chip">
-                Seleccionado: {selectedUser.nombre} {selectedUser.apellido} ({selectedUser.correo})
+                <span><strong>{selectedUser.nombre} {selectedUser.apellido}</strong>{selectedUser.correo}</span>
                 <button type="button" className="inline-clear-btn" onClick={clearSelectedUser}>
                   Cambiar
                 </button>
@@ -458,8 +469,8 @@ export default function Nomina() {
               value={form.estado}
               onChange={(e) => handleChange('estado', e.target.value as 'pendiente' | 'pagado')}
             >
-              <option value="pendiente">pendiente</option>
-              <option value="pagado">pagado</option>
+              <option value="pendiente">Pendiente</option>
+              <option value="pagado">Pagado</option>
             </select>
           </div>
 
@@ -490,11 +501,11 @@ export default function Nomina() {
       </div>
 
       {edit.id && (
-        <div className="module-card">
+        <div className="module-card record-edit-card">
           <div className="module-card-header">
             <div>
               <p className="module-eyebrow">Edición</p>
-              <h2 className="module-title">Editar nómina #{edit.id}</h2>
+              <h2 className="module-title">Editar nómina seleccionada</h2>
               <p className="module-subtitle">
                 Ajusta importes, estado y periodo para corregir el registro seleccionado.
               </p>
@@ -574,33 +585,49 @@ export default function Nomina() {
         </div>
       )}
 
-      <div className="module-card">
+      <div className="module-card record-history-card">
         <div className="module-card-header">
           <div>
             <p className="module-eyebrow">Historial</p>
-            <h2 className="module-title">Listado de nóminas</h2>
+            <h2 className="module-title">Historial de nómina</h2>
             <p className="module-subtitle">
-              Consulta los registros más recientes y opera cambios desde la misma tabla.
+              Filtra pagos pendientes o completados y revisa el desglose sin perder el contexto del empleado.
             </p>
           </div>
         </div>
 
+        <div className="operation-filter-tabs record-filter-tabs" aria-label="Filtrar nómina por estado">
+          {([
+            ['todos', 'Todas', summary.total],
+            ['pendiente', 'Pendientes', summary.pendientes],
+            ['pagado', 'Pagadas', summary.pagadas],
+          ] as const).map(([key, label, count]) => (
+            <button
+              key={key}
+              type="button"
+              className={activeFilter === key ? 'active' : ''}
+              onClick={() => setActiveFilter(key)}
+            >
+              {label}<span>{count}</span>
+            </button>
+          ))}
+        </div>
+
         {loading && <p className="module-info">Cargando nóminas...</p>}
 
-        {!loading && items.length === 0 && (
+        {!loading && filteredItems.length === 0 && (
           <div className="empty-state-card">
             <h3>Sin registros</h3>
             <p>No hay nóminas registradas por el momento.</p>
           </div>
         )}
 
-        {items.length > 0 && (
+        {filteredItems.length > 0 && (
           <>
-            <div className="table-wrapper">
-              <table className="smart-table">
+            <div className="table-wrapper operation-table-wrapper record-table-wrapper">
+              <table className="smart-table operation-table record-table">
                 <thead>
                   <tr>
-                    <th>ID</th>
                     <th>Empleado</th>
                     <th>Periodo</th>
                     <th>Importes</th>
@@ -611,39 +638,38 @@ export default function Nomina() {
                 <tbody>
                   {paginatedItems.map((item) => (
                     <tr key={item.id}>
-                      <td>{item.id}</td>
-
-                      <td>
-                        <div className="table-main-text">
-                          {item.nombre} {item.apellido}
+                      <td data-label="Empleado" className="operation-person-cell">
+                        <div className="operation-person">
+                          <span className="operation-person-avatar">{getInitials(item.nombre, item.apellido)}</span>
+                          <div>
+                            <div className="table-main-text">{item.nombre} {item.apellido}</div>
+                            <div className="table-secondary-text">{item.correo}</div>
+                          </div>
                         </div>
-                        <div className="table-secondary-text">{item.correo}</div>
                       </td>
 
-                      <td>
-                        <div className="table-main-text">
+                      <td data-label="Periodo">
+                        <div className="record-date-range">
                           {formatDateDisplay(item.periodo_inicio)} → {formatDateDisplay(item.periodo_fin)}
                         </div>
                       </td>
 
-                      <td>
-                        <div className="table-main-text">
-                          Total: ${Number(item.total).toFixed(2)}
-                        </div>
-                        <div className="table-secondary-text">
-                          Base: ${Number(item.salario_base).toFixed(2)} | Bonos: $
-                          {Number(item.bonos).toFixed(2)} | Deducciones: $
-                          {Number(item.deducciones).toFixed(2)}
+                      <td data-label="Importes">
+                        <div className="payroll-total">{formatCurrency(item.total)}</div>
+                        <div className="payroll-breakdown">
+                          <span>Base <strong>{formatCurrency(item.salario_base)}</strong></span>
+                          <span>Bonos <strong>+{formatCurrency(item.bonos)}</strong></span>
+                          <span>Deducciones <strong>-{formatCurrency(item.deducciones)}</strong></span>
                         </div>
                       </td>
 
-                      <td>
+                      <td data-label="Estado">
                         <span className={`status-pill ${item.estado === 'pagado' ? 'active' : 'admin'}`}>
                           {item.estado}
                         </span>
                       </td>
 
-                      <td>
+                      <td data-label="Acciones">
                         <div className="table-actions">
                           <button className="btn btn-small" type="button" onClick={() => startEdit(item)}>
                             Editar
@@ -707,4 +733,12 @@ function formatDateInput(value?: string) {
 function formatDateDisplay(value?: string) {
   if (!value) return '';
   return String(value).slice(0, 10);
+}
+
+function getInitials(nombre: string, apellido: string) {
+  return `${nombre?.[0] || ''}${apellido?.[0] || ''}`.toUpperCase() || 'RH';
+}
+
+function formatCurrency(value: number) {
+  return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(Number(value || 0));
 }

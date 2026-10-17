@@ -96,6 +96,10 @@ export default function DocumentacionEmpleado() {
     const conCredencial = users.filter((u) => Boolean(u.credencial_url)).length;
     const sinCredencial = total - conCredencial;
     const activos = users.filter((u) => u.activo === true || Number(u.activo) === 1).length;
+    const completos = users.filter((u) => {
+      const contrato = contratosByUserId.get(u.id);
+      return Boolean(u.foto_perfil_url && contrato?.contrato_pdf_url && u.credencial_url);
+    }).length;
 
     return {
       total,
@@ -106,6 +110,7 @@ export default function DocumentacionEmpleado() {
       sinContrato,
       conCredencial,
       sinCredencial,
+      completos,
     };
   }, [users, contratosByUserId]);
 
@@ -285,25 +290,32 @@ export default function DocumentacionEmpleado() {
   ];
 
   return (
-    <div className="module-card document-page">
-      <div className="module-card-header">
+    <div className="module-card document-page record-page document-record-page">
+      <div className="module-card-header record-document-header">
         <div>
           <p className="module-eyebrow">Expediente digital</p>
-          <h2 className="module-title">Documentación del empleado</h2>
+          <h2 className="module-title">Documentos del personal</h2>
           <p className="module-subtitle">
-            Administra foto de perfil, contrato PDF y credencial digital desde una sección centralizada.
+            Selecciona a una persona, revisa qué archivos faltan y completa su expediente desde un solo lugar.
           </p>
         </div>
       </div>
 
       {message && <p className="module-info document-alert">{message}</p>}
 
+      <div className="record-document-summary" aria-label="Resumen de expedientes">
+        <div><span>Personal activo</span><strong>{employeeStats.activos}</strong><small>personas disponibles</small></div>
+        <div><span>Expedientes completos</span><strong>{employeeStats.completos}</strong><small>con foto, contrato y credencial</small></div>
+        <div><span>Por completar</span><strong>{Math.max(0, employeeStats.total - employeeStats.completos)}</strong><small>requieren al menos un archivo</small></div>
+      </div>
+
       <div className="document-grid document-grid-premium">
         <section className="document-panel document-panel-premium">
           <div className="document-section-header">
             <div>
-              <h3>Empleado</h3>
-              <p>Busca, filtra y selecciona empleados sin depender de listas extensas.</p>
+              <p className="record-step">Paso 1</p>
+              <h3>Selecciona a la persona</h3>
+              <p>Busca por nombre o correo y confirma que estás trabajando con el expediente correcto.</p>
             </div>
           </div>
 
@@ -324,7 +336,7 @@ export default function DocumentacionEmpleado() {
               </div>
 
               <div className="employee-selected-info">
-                <strong>{selected ? getUserName(selected) : 'Sin empleado seleccionado'}</strong>
+                <strong>{selected ? getUserName(selected) : 'Selecciona una persona'}</strong>
                 <span>{selected?.correo || 'Selecciona un empleado para administrar documentación'}</span>
               </div>
 
@@ -443,7 +455,7 @@ export default function DocumentacionEmpleado() {
             </div>
           </div>
 
-          <div className="profile-preview profile-preview-premium">
+          <div className="profile-preview profile-preview-premium record-identity-card">
             {selected?.foto_perfil_url ? (
               <ProtectedImage
                 src={selected.foto_perfil_url}
@@ -461,46 +473,47 @@ export default function DocumentacionEmpleado() {
             <div>
               <h3>{selected ? getUserName(selected) : 'Selecciona un empleado'}</h3>
               <p>{selected?.correo}</p>
-              <p>{getUserRole(selected)}</p>
+              <p>{getUserRole(selected)} · Expediente laboral</p>
             </div>
           </div>
 
           <label className="file-input file-input-premium">
             <div>
-              <strong>Foto de perfil</strong>
-              <span>{filename || 'PNG, JPG o WEBP recomendado'}</span>
+              <strong>{filename ? 'Archivo listo para guardar' : 'Actualizar foto de perfil'}</strong>
+              <span>{filename || 'Selecciona una imagen PNG, JPG o WEBP'}</span>
             </div>
 
             <input type="file" accept="image/*" onChange={(e) => onFileChange(e.target.files?.[0])} />
           </label>
 
           <button className="btn" type="button" disabled={loading || !fotoBase64} onClick={uploadPhoto}>
-            {loading ? 'Procesando...' : 'Guardar foto de perfil'}
+            {loading ? 'Procesando...' : 'Guardar nueva foto'}
           </button>
         </section>
 
         <section className="document-panel document-panel-premium">
           <div className="document-section-header">
             <div>
-              <h3>Documentos automáticos</h3>
-              <p>Genera documentos desde el backend y conserva trazabilidad en MongoDB.</p>
+              <p className="record-step">Paso 2</p>
+              <h3>Completa el expediente</h3>
+              <p>Genera o abre los documentos de la persona seleccionada y revisa su disponibilidad.</p>
             </div>
           </div>
 
           <div className="document-actions document-actions-premium">
             <button className="btn" type="button" disabled={loading || !selectedId} onClick={generateContrato}>
-              Generar nuevo contrato PDF
+              Generar contrato PDF
             </button>
 
             <button className="btn btn-secondary" type="button" disabled={loading || !selectedId} onClick={generateCredencial}>
-              Generar nueva credencial
+              Generar credencial digital
             </button>
           </div>
 
           <div className="generated-docs-card">
             <div className="generated-docs-header">
-              <h3>Documentos generados</h3>
-              <p>Archivos disponibles para consulta del empleado seleccionado.</p>
+              <h3>Archivos del expediente</h3>
+              <p>{selected ? `Disponibilidad actual de ${getUserName(selected)}.` : 'Selecciona a una persona para consultar sus archivos.'}</p>
             </div>
 
             <div className="generated-docs-list">
