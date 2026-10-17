@@ -38,6 +38,7 @@ const EMPTY_RESUMEN: CalendarioResumen = {
 
 const WEEKDAYS = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
 const AGENDA_PAGE_SIZE = 4;
+const DAY_AGENDA_PAGE_SIZE = 3;
 
 function startOfMonth(value: Date) {
   return new Date(value.getFullYear(), value.getMonth(), 1);
@@ -88,22 +89,26 @@ function getMonthRange(monthDate: Date) {
 
 function getMonthCells(monthDate: Date) {
   const first = startOfMonth(monthDate);
-  const last = new Date(monthDate.getFullYear(), monthDate.getMonth() + 1, 0);
   const firstMondayIndex = (first.getDay() + 6) % 7;
-  const totalCells = Math.ceil((firstMondayIndex + last.getDate()) / 7) * 7;
+  const gridStart = new Date(
+    monthDate.getFullYear(),
+    monthDate.getMonth(),
+    1 - firstMondayIndex
+  );
 
-  return Array.from({ length: totalCells }, (_, index) => {
-    const day = index - firstMondayIndex + 1;
-
-    if (day < 1 || day > last.getDate()) {
-      return null;
-    }
-
-    const date = new Date(monthDate.getFullYear(), monthDate.getMonth(), day);
+  return Array.from({ length: 42 }, (_, index) => {
+    const date = new Date(
+      gridStart.getFullYear(),
+      gridStart.getMonth(),
+      gridStart.getDate() + index
+    );
 
     return {
-      day,
+      day: date.getDate(),
       date: toApiDate(date),
+      inCurrentMonth:
+        date.getFullYear() === monthDate.getFullYear() &&
+        date.getMonth() === monthDate.getMonth(),
     };
   });
 }
@@ -279,11 +284,15 @@ export default function CalendarioLaboral() {
     return eventos.filter((item) => item.tipo === activeSummary);
   }, [activeSummary, eventos, selectedEvents]);
 
-  const agendaPages = Math.max(1, Math.ceil(filteredEvents.length / AGENDA_PAGE_SIZE));
+  const agendaPageSize =
+    activeSummary === 'selection'
+      ? DAY_AGENDA_PAGE_SIZE
+      : AGENDA_PAGE_SIZE;
+  const agendaPages = Math.max(1, Math.ceil(filteredEvents.length / agendaPageSize));
   const agendaItems = useMemo(() => {
-    const start = (agendaPage - 1) * AGENDA_PAGE_SIZE;
-    return filteredEvents.slice(start, start + AGENDA_PAGE_SIZE);
-  }, [agendaPage, filteredEvents]);
+    const start = (agendaPage - 1) * agendaPageSize;
+    return filteredEvents.slice(start, start + agendaPageSize);
+  }, [agendaPage, agendaPageSize, filteredEvents]);
 
   useEffect(() => {
     setAgendaPage(1);
@@ -418,11 +427,7 @@ export default function CalendarioLaboral() {
           </div>
 
           <div className="calendar-grid">
-            {monthCells.map((cell, index) => {
-              if (!cell) {
-                return <span key={`empty-${index}`} className="calendar-day empty" />;
-              }
-
+            {monthCells.map((cell) => {
               const count = eventsByDate[cell.date]?.length || 0;
               const isSelected = selectedDate === cell.date;
               const isToday = todayKey === cell.date;
@@ -434,10 +439,15 @@ export default function CalendarioLaboral() {
                     'calendar-day',
                     isSelected ? 'selected' : '',
                     isToday ? 'today' : '',
+                    !cell.inCurrentMonth ? 'outside-month' : '',
                   ]
                     .filter(Boolean)
                     .join(' ')}
                   onClick={() => {
+                    if (!cell.inCurrentMonth) {
+                      const adjacentDate = parseApiDate(cell.date);
+                      if (adjacentDate) setCurrentMonth(startOfMonth(adjacentDate));
+                    }
                     setSelectedDate(cell.date);
                     setActiveSummary('selection');
                   }}
@@ -489,7 +499,9 @@ export default function CalendarioLaboral() {
             </div>
           ) : null}
 
-          <div className="calendar-event-list">
+          <div
+            className={`calendar-event-list calendar-event-list-${agendaPageSize}`}
+          >
             {agendaItems.map((item) => (
               <button
                 key={`${item.id}-${activeSummary}`}

@@ -40,6 +40,16 @@ describe('SMART RH calendar and QR viewport boundary', () => {
     expect(styles).toContain('grid-auto-rows: minmax(68px, 1fr) !important;');
   });
 
+  test('selected-day agenda paginates independently and calendar keeps a complete grid', () => {
+    expect(calendar).toContain('const DAY_AGENDA_PAGE_SIZE = 3;');
+    expect(calendar).toContain("activeSummary === 'selection'");
+    expect(calendar).toContain('calendar-event-list-${agendaPageSize}');
+    expect(calendar).toContain('Array.from({ length: 42 }');
+    expect(calendar).toContain("!cell.inCurrentMonth ? 'outside-month' : ''");
+    expect(styles).toContain('.calendar-event-list.calendar-event-list-3');
+    expect(styles).toContain('.calendar-day.selected::before');
+  });
+
   test('active QR terminal is constrained to the visible viewport', () => {
     expect(terminal).toContain("'terminal-experience-active'");
     expect(terminalStyles).toContain('.terminal-experience-active');
