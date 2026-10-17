@@ -61,7 +61,44 @@ const categorias = [
   'Otro',
 ];
 
-const TICKETS_PER_PAGE = 6;
+const WEEKDAYS = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
+const TICKETS_PER_PAGE = 5;
+
+function startOfMonth(value: Date) {
+  return new Date(value.getFullYear(), value.getMonth(), 1);
+}
+
+function addMonths(value: Date, months: number) {
+  return new Date(value.getFullYear(), value.getMonth() + months, 1);
+}
+
+function toDateKey(value: Date) {
+  const year = value.getFullYear();
+  const month = String(value.getMonth() + 1).padStart(2, '0');
+  const day = String(value.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+function ticketDateKey(value?: string) {
+  if (!value) return '';
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? '' : toDateKey(date);
+}
+
+function getMonthCells(monthDate: Date) {
+  const first = startOfMonth(monthDate);
+  const firstMondayIndex = (first.getDay() + 6) % 7;
+  const gridStart = new Date(monthDate.getFullYear(), monthDate.getMonth(), 1 - firstMondayIndex);
+
+  return Array.from({ length: 42 }, (_, index) => {
+    const date = new Date(gridStart.getFullYear(), gridStart.getMonth(), gridStart.getDate() + index);
+    return {
+      day: date.getDate(),
+      date: toDateKey(date),
+      inCurrentMonth: date.getMonth() === monthDate.getMonth() && date.getFullYear() === monthDate.getFullYear(),
+    };
+  });
+}
 
 function estadoLabel(estado: TicketEstado) {
   const map: Record<TicketEstado, string> = {
@@ -119,8 +156,20 @@ export default function Soporte() {
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [currentMonth, setCurrentMonth] = useState(() => startOfMonth(new Date()));
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
-  const filteredTickets = useMemo(() => tickets, [tickets]);
+  const monthCells = useMemo(() => getMonthCells(currentMonth), [currentMonth]);
+  const todayKey = useMemo(() => toDateKey(new Date()), []);
+  const ticketCountByDate = useMemo(() => tickets.reduce<Record<string, number>>((acc, ticket) => {
+    const key = ticketDateKey(ticket.createdAt);
+    if (key) acc[key] = (acc[key] || 0) + 1;
+    return acc;
+  }, {}), [tickets]);
+  const filteredTickets = useMemo(
+    () => selectedDate ? tickets.filter((ticket) => ticketDateKey(ticket.createdAt) === selectedDate) : tickets,
+    [selectedDate, tickets]
+  );
   const totalPages = Math.max(1, Math.ceil(filteredTickets.length / TICKETS_PER_PAGE));
   const paginatedTickets = useMemo(() => {
     const start = (currentPage - 1) * TICKETS_PER_PAGE;
@@ -129,7 +178,7 @@ export default function Soporte() {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [estado, categoria, prioridad, search]);
+  }, [estado, categoria, prioridad, search, selectedDate]);
 
   useEffect(() => {
     if (currentPage > totalPages) setCurrentPage(totalPages);
@@ -220,6 +269,17 @@ export default function Soporte() {
     loadTickets();
   }
 
+  function moveMonth(direction: number) {
+    setCurrentMonth((month) => addMonths(month, direction));
+    setSelectedDate(null);
+  }
+
+  function goToday() {
+    const today = new Date();
+    setCurrentMonth(startOfMonth(today));
+    setSelectedDate(toDateKey(today));
+  }
+
   return (
     <div className="support-page">
       <section className="support-hero">
@@ -267,14 +327,65 @@ export default function Soporte() {
         </div>
       </section>
 
-      <section className="support-workspace support-workspace-single">
+      <section className="support-workspace support-calendar-workspace">
+        <aside className="calendar-month-card support-calendar-card">
+          <div className="calendar-month-header">
+            <button className="calendar-month-arrow" type="button" onClick={() => moveMonth(-1)} aria-label="Mes anterior">‹</button>
+            <div>
+              <span className="support-eyebrow">Calendario de reportes</span>
+              <h2>{currentMonth.toLocaleDateString('es-MX', { month: 'long', year: 'numeric' })}</h2>
+            </div>
+            <div className="calendar-month-actions">
+              <button className="calendar-today-btn" type="button" onClick={goToday}>Hoy</button>
+              <button className="calendar-month-arrow" type="button" onClick={() => moveMonth(1)} aria-label="Mes siguiente">›</button>
+            </div>
+          </div>
+
+          <div className="calendar-week-row">
+            {WEEKDAYS.map((day, index) => <span key={`${day}-${index}`}>{day}</span>)}
+          </div>
+
+          <div className="calendar-grid">
+            {monthCells.map((cell) => {
+              const count = ticketCountByDate[cell.date] || 0;
+              return (
+                <button
+                  key={cell.date}
+                  className={[
+                    'calendar-day',
+                    selectedDate === cell.date ? 'selected' : '',
+                    todayKey === cell.date ? 'today' : '',
+                    !cell.inCurrentMonth ? 'outside-month' : '',
+                  ].filter(Boolean).join(' ')}
+                  type="button"
+                  onClick={() => {
+                    if (!cell.inCurrentMonth) {
+                      const [year, month] = cell.date.split('-').map(Number);
+                      setCurrentMonth(new Date(year, month - 1, 1));
+                    }
+                    setSelectedDate(cell.date);
+                  }}
+                >
+                  <strong>{cell.day}</strong>
+                  {count > 0 && <span>{count}</span>}
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="support-calendar-footer">
+            <span><i /> Los días con número tienen reportes</span>
+            {selectedDate && <button type="button" onClick={() => setSelectedDate(null)}>Ver todos</button>}
+          </div>
+        </aside>
+
         <div className="support-list-panel">
           <div className="support-section-header">
             <div>
               <p className="support-eyebrow">Bandeja de tickets</p>
-              <h3>Incidencias recibidas</h3>
+              <h3>{selectedDate ? `Reportes del ${new Date(`${selectedDate}T12:00:00`).toLocaleDateString('es-MX', { day: '2-digit', month: 'long' })}` : 'Incidencias recibidas'}</h3>
             </div>
-
+            {selectedDate && <button className="btn btn-small btn-secondary" type="button" onClick={() => setSelectedDate(null)}>Quitar fecha</button>}
           </div>
 
           <form className="support-filters" onSubmit={submitSearch}>

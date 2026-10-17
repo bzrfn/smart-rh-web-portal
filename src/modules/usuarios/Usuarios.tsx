@@ -37,18 +37,7 @@ type UserForm = {
   dias_vacaciones_disponibles: string;
 };
 
-type PermissionFilter =
-  | 'todos'
-  | 'activos'
-  | 'inactivos'
-  | 'con_asistencia'
-  | 'sin_asistencia'
-  | 'con_contratos'
-  | 'sin_contratos'
-  | 'con_nomina'
-  | 'sin_nomina'
-  | 'con_vacaciones'
-  | 'sin_vacaciones';
+type PermissionFilter = 'todos' | 'activos' | 'inactivos';
 
 type RoleFilter = 'todos' | 'admin' | 'empleado';
 type StatusFilter = 'todos' | 'activos' | 'inactivos';
@@ -74,7 +63,7 @@ const EMPTY_FORM: UserForm = {
   dias_vacaciones_disponibles: '12',
 };
 
-const PAGE_SIZE_OPTIONS = [10, 25, 50];
+const PAGE_SIZE_OPTIONS = [5, 10, 25];
 
 function normalizeDate(value?: string | null) {
   if (!value) return '';
@@ -137,7 +126,7 @@ export default function Usuarios() {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('todos');
   const [vacationFilter, setVacationFilter] = useState<VacationFilter>('todos');
   const [usersPage, setUsersPage] = useState(1);
-  const [usersPageSize, setUsersPageSize] = useState(10);
+  const [usersPageSize, setUsersPageSize] = useState(5);
 
   const isAdmin = user?.role === 'admin';
   const canLoad = Boolean(token) && isAdmin;
@@ -186,29 +175,19 @@ export default function Usuarios() {
     const query = normalizeText(permissionSearch.trim());
 
     return empleados.filter((u) => {
-      const permisos = permisosMap[u.id] ?? DEFAULT_PERMISOS;
-
       if (permissionFilter === 'activos' && !isActiveUser(u)) return false;
       if (permissionFilter === 'inactivos' && isActiveUser(u)) return false;
-      if (permissionFilter === 'con_asistencia' && !permisos.asistencia) return false;
-      if (permissionFilter === 'sin_asistencia' && permisos.asistencia) return false;
-      if (permissionFilter === 'con_contratos' && !permisos.contratos) return false;
-      if (permissionFilter === 'sin_contratos' && permisos.contratos) return false;
-      if (permissionFilter === 'con_nomina' && !permisos.nomina) return false;
-      if (permissionFilter === 'sin_nomina' && permisos.nomina) return false;
-      if (permissionFilter === 'con_vacaciones' && !permisos.vacaciones) return false;
-      if (permissionFilter === 'sin_vacaciones' && permisos.vacaciones) return false;
-
       if (!query) return true;
 
       const text = normalizeText(`${u.nombre} ${u.apellido} ${u.correo} ${u.role}`);
       return text.includes(query);
     });
-  }, [empleados, permisosMap, permissionSearch, permissionFilter]);
+  }, [empleados, permissionSearch, permissionFilter]);
 
+  const hasPermissionQuery = permissionSearch.trim().length >= 2;
   const visiblePermisosUsers = useMemo(
-    () => filteredPermisosUsers.slice(0, permissionSearch.trim() ? 24 : 8),
-    [filteredPermisosUsers, permissionSearch]
+    () => (hasPermissionQuery ? filteredPermisosUsers.slice(0, 5) : []),
+    [filteredPermisosUsers, hasPermissionQuery]
   );
 
   const filteredUsers = useMemo(() => {
@@ -669,7 +648,7 @@ export default function Usuarios() {
 
         {showPermissions && (
           <>
-            <div className="users-filter-panel">
+            <div className="users-filter-panel permission-search-panel">
               <div className="users-filter-grid users-permission-search-grid">
                 <label className="users-filter-control">
                   <span>Buscar empleado</span>
@@ -682,69 +661,66 @@ export default function Usuarios() {
                 </label>
 
                 <label className="users-filter-control">
-                  <span>Filtro de permisos</span>
+                  <span>Estado del empleado</span>
                   <select value={permissionFilter} onChange={(e) => setPermissionFilter(e.target.value as PermissionFilter)}>
                     <option value="todos">Todos los empleados</option>
                     <option value="activos">Solo activos</option>
                     <option value="inactivos">Solo inactivos</option>
-                    <option value="con_asistencia">Con asistencia</option>
-                    <option value="sin_asistencia">Sin asistencia</option>
-                    <option value="con_contratos">Con contratos</option>
-                    <option value="sin_contratos">Sin contratos</option>
-                    <option value="con_nomina">Con nómina</option>
-                    <option value="sin_nomina">Sin nómina</option>
-                    <option value="con_vacaciones">Con vacaciones</option>
-                    <option value="sin_vacaciones">Sin vacaciones</option>
                   </select>
                 </label>
 
               </div>
 
               <div className="users-filter-summary">
-                <span>{filteredPermisosUsers.length} empleado(s) encontrados</span>
-                <span>{permissionSearch.trim() ? 'Resultados de búsqueda' : 'Busca a una persona para administrar su acceso'}</span>
+                <span>{empleados.length} empleados administrables</span>
+                <span>{hasPermissionQuery ? `${filteredPermisosUsers.length} coincidencia(s)` : 'Escribe al menos 2 letras para buscar'}</span>
               </div>
             </div>
 
-            <div className="permission-command-bar">
-              <div className="permission-command-copy">
+            <details className="permission-bulk-disclosure">
+              <summary>
                 <span className="permission-command-icon">A</span>
-                <div>
-                  <strong>Acceso general</strong>
-                  <small>Aplica una acción al grupo filtrado.</small>
+                <span><strong>Acción general por módulo</strong><small>Úsala solo cuando necesites cambiar el acceso de todo el grupo filtrado.</small></span>
+                <em>Configurar</em>
+              </summary>
+              <div className="permission-command-bar">
+                <label className="permission-command-select">
+                  <span>Módulo</span>
+                  <select value={bulkPermissionTarget} onChange={(event) => setBulkPermissionTarget(event.target.value as BulkPermissionTarget)}>
+                    <option value="asistencia">Asistencia · {permissionStats.conAsistencia} con acceso</option>
+                    <option value="contratos">Contratos · {permissionStats.conContratos} con acceso</option>
+                    <option value="nomina">Nómina · {permissionStats.conNomina} con acceso</option>
+                    <option value="vacaciones">Vacaciones · {permissionStats.conVacaciones} con acceso</option>
+                    <option value="todos">Todos los módulos</option>
+                  </select>
+                </label>
+                <div className="permission-command-actions">
+                  <button
+                    className="bulk-action-btn"
+                    type="button"
+                    disabled={isBulkSaving}
+                    onClick={() => bulkUpdatePermisos(bulkPermissionTarget === 'todos' ? ['asistencia', 'contratos', 'nomina', 'vacaciones'] : [bulkPermissionTarget], true)}
+                  >
+                    Activar
+                  </button>
+                  <button
+                    className="bulk-action-btn danger"
+                    type="button"
+                    disabled={isBulkSaving}
+                    onClick={() => bulkUpdatePermisos(bulkPermissionTarget === 'todos' ? ['asistencia', 'contratos', 'nomina', 'vacaciones'] : [bulkPermissionTarget], false)}
+                  >
+                    Desactivar
+                  </button>
                 </div>
               </div>
-              <label className="permission-command-select">
-                <span>Módulo</span>
-                <select value={bulkPermissionTarget} onChange={(event) => setBulkPermissionTarget(event.target.value as BulkPermissionTarget)}>
-                  <option value="asistencia">Asistencia · {permissionStats.conAsistencia} con acceso</option>
-                  <option value="contratos">Contratos · {permissionStats.conContratos} con acceso</option>
-                  <option value="nomina">Nómina · {permissionStats.conNomina} con acceso</option>
-                  <option value="vacaciones">Vacaciones · {permissionStats.conVacaciones} con acceso</option>
-                  <option value="todos">Todos los módulos</option>
-                </select>
-              </label>
-              <div className="permission-command-actions">
-                <button
-                  className="bulk-action-btn"
-                  type="button"
-                  disabled={isBulkSaving}
-                  onClick={() => bulkUpdatePermisos(bulkPermissionTarget === 'todos' ? ['asistencia', 'contratos', 'nomina', 'vacaciones'] : [bulkPermissionTarget], true)}
-                >
-                  Activar
-                </button>
-                <button
-                  className="bulk-action-btn danger"
-                  type="button"
-                  disabled={isBulkSaving}
-                  onClick={() => bulkUpdatePermisos(bulkPermissionTarget === 'todos' ? ['asistencia', 'contratos', 'nomina', 'vacaciones'] : [bulkPermissionTarget], false)}
-                >
-                  Desactivar
-                </button>
-              </div>
-            </div>
+            </details>
 
-            {filteredPermisosUsers.length > 0 ? (
+            {!hasPermissionQuery ? (
+              <div className="permission-search-empty">
+                <span>⌕</span>
+                <div><strong>Busca a la persona que necesitas</strong><p>La lista aparece únicamente al escribir un nombre o correo. Así puedes editar accesos sin revisar cientos de registros.</p></div>
+              </div>
+            ) : filteredPermisosUsers.length > 0 ? (
               <div className="permission-results-shell">
                 <div className="permission-user-list">
                       {visiblePermisosUsers.map((u) => {
@@ -779,7 +755,7 @@ export default function Usuarios() {
                 </div>
                 {filteredPermisosUsers.length > visiblePermisosUsers.length && (
                   <p className="permission-search-hint">
-                    Se muestran {visiblePermisosUsers.length} de {filteredPermisosUsers.length}. Escribe un nombre o correo para encontrar a la persona exacta.
+                    Se muestran las primeras {visiblePermisosUsers.length} coincidencias. Agrega apellido o correo para precisar la búsqueda.
                   </p>
                 )}
               </div>

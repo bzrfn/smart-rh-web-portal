@@ -1,0 +1,392 @@
+/* Gestión interna v3 — progressive permissions, five-row users and calendar support. */
+
+.users-permissions-card .permission-search-panel {
+  padding: 14px !important;
+  border-radius: 18px !important;
+}
+
+.users-permissions-card .users-permission-search-grid {
+  grid-template-columns: minmax(320px, 1.45fr) minmax(210px, 0.55fr) !important;
+  gap: 12px !important;
+}
+
+.permission-bulk-disclosure {
+  margin: 12px 0 !important;
+  overflow: hidden !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 16px !important;
+  background: var(--card) !important;
+}
+
+.permission-bulk-disclosure > summary {
+  min-height: 64px !important;
+  padding: 10px 13px !important;
+  display: grid !important;
+  grid-template-columns: 36px minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  gap: 11px !important;
+  cursor: pointer !important;
+  list-style: none !important;
+}
+
+.permission-bulk-disclosure > summary::-webkit-details-marker { display: none !important; }
+
+.permission-bulk-disclosure > summary > span:nth-child(2) {
+  min-width: 0 !important;
+  display: grid !important;
+  gap: 3px !important;
+}
+
+.permission-bulk-disclosure > summary strong {
+  color: var(--text) !important;
+  font-size: 0.84rem !important;
+}
+
+.permission-bulk-disclosure > summary small {
+  color: var(--text-muted) !important;
+  font-size: 0.7rem !important;
+  line-height: 1.35 !important;
+}
+
+.permission-bulk-disclosure > summary em {
+  padding: 7px 11px !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 999px !important;
+  color: var(--primary) !important;
+  background: var(--card-muted) !important;
+  font-size: 0.68rem !important;
+  font-style: normal !important;
+  font-weight: 850 !important;
+}
+
+.permission-bulk-disclosure[open] > summary {
+  border-bottom: 1px solid var(--border) !important;
+  background: color-mix(in srgb, var(--card) 94%, var(--primary) 6%) !important;
+}
+
+.users-permissions-card .permission-bulk-disclosure .permission-command-bar {
+  margin: 0 !important;
+  padding: 13px !important;
+  grid-template-columns: minmax(260px, 1fr) auto !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: var(--card-muted) !important;
+}
+
+.permission-search-empty {
+  min-height: 116px !important;
+  padding: 20px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 13px !important;
+  border: 1px dashed var(--border-strong) !important;
+  border-radius: 18px !important;
+  color: var(--text-muted) !important;
+  background: var(--card-muted) !important;
+  text-align: left !important;
+}
+
+.permission-search-empty > span {
+  width: 42px !important;
+  height: 42px !important;
+  display: grid !important;
+  place-items: center !important;
+  flex: 0 0 auto !important;
+  border-radius: 13px !important;
+  color: var(--primary) !important;
+  background: var(--primary-soft) !important;
+  font-size: 1.35rem !important;
+}
+
+.permission-search-empty > div { max-width: 560px !important; }
+.permission-search-empty strong { color: var(--text) !important; font-size: 0.88rem !important; }
+.permission-search-empty p { margin: 4px 0 0 !important; font-size: 0.74rem !important; line-height: 1.5 !important; }
+
+.users-permissions-card .permission-results-shell { padding: 7px !important; }
+.users-permissions-card .permission-user-list { max-height: none !important; overflow: visible !important; }
+
+.users-crud-card .table-wrapper {
+  max-height: none !important;
+  overflow-x: auto !important;
+  overflow-y: visible !important;
+}
+
+.users-crud-card .smart-table td { padding-block: 13px !important; }
+.users-crud-card .users-pagination { margin-top: 14px !important; }
+
+.smart-modal:has(.users-modal-form) {
+  width: min(100%, 1080px) !important;
+}
+
+.smart-modal .users-modal-form {
+  gap: 22px !important;
+  padding: 4px !important;
+}
+
+.smart-modal .users-modal-form .users-form-section {
+  padding: 22px !important;
+  display: grid !important;
+  gap: 18px !important;
+  border-radius: 20px !important;
+}
+
+.smart-modal .users-modal-form .users-form-section-title {
+  margin: 0 !important;
+  padding-bottom: 14px !important;
+  border-bottom: 1px solid var(--border) !important;
+}
+
+.smart-modal .users-modal-form .users-form-section .form-grid {
+  gap: 17px 15px !important;
+}
+
+.smart-modal .users-modal-form .form-label {
+  gap: 9px !important;
+}
+
+.smart-modal .users-modal-form input,
+.smart-modal .users-modal-form select {
+  min-height: 48px !important;
+  padding-inline: 14px !important;
+}
+
+.smart-modal .users-modal-form .users-form-actions {
+  margin-top: 2px !important;
+  padding-top: 20px !important;
+  gap: 10px !important;
+}
+
+.support-calendar-workspace {
+  display: grid !important;
+  grid-template-columns: minmax(410px, 0.82fr) minmax(560px, 1.18fr) !important;
+  align-items: stretch !important;
+  gap: 14px !important;
+}
+
+.support-calendar-card,
+.support-calendar-workspace .support-list-panel {
+  min-width: 0 !important;
+  height: 620px !important;
+  min-height: 620px !important;
+  max-height: 620px !important;
+  padding: 18px !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 22px !important;
+  color: var(--text) !important;
+  background: var(--card) !important;
+  box-shadow: var(--shadow-xs) !important;
+}
+
+.support-calendar-card {
+  display: grid !important;
+  grid-template-rows: auto auto minmax(0, 1fr) auto !important;
+}
+
+.support-calendar-card .calendar-month-header {
+  min-height: 62px !important;
+  margin-bottom: 12px !important;
+  padding-bottom: 12px !important;
+  display: grid !important;
+  grid-template-columns: 38px minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  gap: 10px !important;
+  border-bottom: 1px solid var(--border) !important;
+}
+
+.support-calendar-card .calendar-month-header h2 {
+  margin: 3px 0 0 !important;
+  color: var(--text) !important;
+  font-size: 1.08rem !important;
+  text-transform: capitalize !important;
+}
+
+.support-calendar-card .calendar-month-actions { display: flex !important; align-items: center !important; gap: 6px !important; }
+.support-calendar-card .calendar-month-arrow,
+.support-calendar-card .calendar-today-btn {
+  min-height: 36px !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 10px !important;
+  color: var(--primary) !important;
+  background: var(--card-muted) !important;
+  box-shadow: none !important;
+  font-weight: 850 !important;
+}
+.support-calendar-card .calendar-month-arrow { width: 36px !important; padding: 0 !important; font-size: 1.2rem !important; }
+.support-calendar-card .calendar-today-btn { padding: 0 10px !important; font-size: 0.7rem !important; }
+
+.support-calendar-card .calendar-week-row,
+.support-calendar-card .calendar-grid {
+  display: grid !important;
+  grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+  gap: 5px !important;
+}
+
+.support-calendar-card .calendar-week-row { margin-bottom: 6px !important; }
+.support-calendar-card .calendar-week-row span {
+  color: var(--text-muted) !important;
+  font-size: 0.62rem !important;
+  font-weight: 900 !important;
+  text-align: center !important;
+}
+
+.support-calendar-card .calendar-grid {
+  min-height: 0 !important;
+  grid-template-rows: repeat(6, minmax(0, 1fr)) !important;
+}
+
+.support-calendar-card .calendar-day {
+  min-width: 0 !important;
+  min-height: 0 !important;
+  padding: 5px !important;
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 10px !important;
+  color: var(--text) !important;
+  background: var(--card-muted) !important;
+  box-shadow: none !important;
+}
+
+.support-calendar-card .calendar-day strong { font-size: 0.7rem !important; }
+.support-calendar-card .calendar-day > span {
+  min-width: 18px !important;
+  height: 18px !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 999px !important;
+  color: var(--primary) !important;
+  background: var(--primary-soft) !important;
+  font-size: 0.58rem !important;
+  font-weight: 900 !important;
+}
+.support-calendar-card .calendar-day.outside-month { opacity: 0.35 !important; }
+.support-calendar-card .calendar-day.today { border-color: color-mix(in srgb, var(--primary) 50%, var(--border)) !important; }
+.support-calendar-card .calendar-day.selected {
+  border-color: var(--primary) !important;
+  color: #fff !important;
+  background: #0a57a4 !important;
+}
+.support-calendar-card .calendar-day.selected > span { color: #0a57a4 !important; background: #fff !important; }
+
+.support-calendar-footer {
+  min-height: 42px !important;
+  padding-top: 10px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 10px !important;
+  color: var(--text-muted) !important;
+  font-size: 0.66rem !important;
+}
+.support-calendar-footer > span { display: flex !important; align-items: center !important; gap: 7px !important; }
+.support-calendar-footer i { width: 7px !important; height: 7px !important; border-radius: 999px !important; background: #0a57a4 !important; }
+.support-calendar-footer button { border: 0 !important; color: var(--primary) !important; background: transparent !important; font-weight: 850 !important; cursor: pointer !important; }
+
+.support-calendar-workspace .support-list-panel {
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+}
+
+.support-calendar-workspace .support-section-header { flex: 0 0 auto !important; }
+.support-calendar-workspace .support-filters {
+  flex: 0 0 auto !important;
+  grid-template-columns: minmax(190px, 1fr) repeat(3, minmax(115px, 0.55fr)) auto !important;
+}
+.support-calendar-workspace .support-ticket-list {
+  min-height: 0 !important;
+  flex: 1 1 auto !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain !important;
+  padding-right: 3px !important;
+}
+.support-calendar-workspace .support-ticket-item {
+  min-height: 70px !important;
+  padding: 9px 10px !important;
+  grid-template-columns: 96px minmax(150px, 0.72fr) minmax(210px, 1.15fr) minmax(170px, 0.8fr) !important;
+}
+.support-calendar-workspace .support-pagination { flex: 0 0 auto !important; }
+
+/* Reuse the restrained action colors already approved in the closed modules. */
+:root[data-theme='dark'] .users-permissions-card .btn,
+:root[data-theme='dark'] .users-crud-card .btn,
+:root[data-theme='dark'] .smart-modal:has(.users-modal-form) .btn,
+:root[data-theme='dark'] .support-page .btn,
+:root[data-theme='dark'] .users-permissions-card .bulk-action-btn:not(.danger) {
+  color: #7dd3fc !important;
+  border: 1px solid rgba(125, 211, 252, 0.30) !important;
+  background: rgba(56, 189, 248, 0.18) !important;
+  box-shadow: none !important;
+}
+
+:root[data-theme='dark'] .users-permissions-card .bulk-action-btn.danger,
+:root[data-theme='dark'] .users-crud-card .smart-action-danger {
+  color: #f87171 !important;
+  border: 1px solid rgba(248, 113, 113, 0.18) !important;
+  background: rgba(220, 38, 38, 0.16) !important;
+  box-shadow: none !important;
+}
+
+:root[data-theme='dark'] .permission-bulk-disclosure,
+:root[data-theme='dark'] .permission-search-empty,
+:root[data-theme='dark'] .support-calendar-card {
+  background: #0f1b2d !important;
+}
+
+:root[data-theme='dark'] .users-permissions-card .switch input:checked + .slider {
+  background: #397f78 !important;
+}
+
+:root[data-theme='dark'] .users-crud-card .status-pill.active,
+:root[data-theme='dark'] .users-crud-card .role-pill.empleado {
+  color: #8fc9c3 !important;
+  border-color: rgba(143, 201, 195, 0.24) !important;
+  background: rgba(57, 127, 120, 0.18) !important;
+}
+
+:root[data-theme='dark'] .permission-bulk-disclosure > summary em,
+:root[data-theme='dark'] .support-calendar-card .calendar-month-arrow,
+:root[data-theme='dark'] .support-calendar-card .calendar-today-btn,
+:root[data-theme='dark'] .support-calendar-card .calendar-day {
+  color: #b9c8d9 !important;
+  background: #132238 !important;
+}
+
+:root[data-theme='dark'] .support-calendar-card .calendar-day.selected {
+  color: #f8fafc !important;
+  border-color: #3979b8 !important;
+  background: #174f86 !important;
+}
+
+@media (max-width: 1180px) {
+  .support-calendar-workspace { grid-template-columns: 1fr !important; }
+  .support-calendar-card,
+  .support-calendar-workspace .support-list-panel { height: auto !important; min-height: 560px !important; max-height: none !important; }
+  .support-calendar-card .calendar-grid { min-height: 390px !important; }
+}
+
+@media (max-width: 900px) {
+  .users-permissions-card .permission-bulk-disclosure .permission-command-bar { grid-template-columns: 1fr !important; }
+  .support-calendar-workspace .support-filters { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  .support-calendar-workspace .support-ticket-item {
+    grid-template-columns: 100px minmax(160px, 0.8fr) minmax(220px, 1.2fr) !important;
+    grid-template-areas: 'state title meta' 'state description meta' !important;
+  }
+}
+
+@media (max-width: 720px) {
+  .users-permissions-card .users-permission-search-grid,
+  .permission-bulk-disclosure > summary,
+  .support-calendar-workspace .support-filters { grid-template-columns: 1fr !important; }
+  .permission-bulk-disclosure > summary em { width: fit-content !important; }
+  .permission-search-empty { align-items: flex-start !important; }
+  .support-calendar-card,
+  .support-calendar-workspace .support-list-panel { min-height: 0 !important; padding: 14px !important; }
+  .support-calendar-card .calendar-grid { min-height: 330px !important; }
+  .support-calendar-workspace .support-ticket-item {
+    grid-template-columns: 1fr !important;
+    grid-template-areas: 'state' 'title' 'description' 'meta' !important;
+  }
+}
