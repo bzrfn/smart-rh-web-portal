@@ -62,7 +62,7 @@ const categorias = [
 ];
 
 const WEEKDAYS = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
-const TICKETS_PER_PAGE = 5;
+const TICKETS_PER_PAGE = 4;
 
 function startOfMonth(value: Date) {
   return new Date(value.getFullYear(), value.getMonth(), 1);
@@ -389,38 +389,50 @@ export default function Soporte() {
           </div>
 
           <form className="support-filters" onSubmit={submitSearch}>
-            <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Buscar por título, descripción o categoría..."
-            />
+            <label className="support-filter-control support-filter-search">
+              <span>Buscar ticket</span>
+              <input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Título, descripción o categoría"
+              />
+            </label>
 
-            <select value={estado} onChange={(e) => setEstado(e.target.value)}>
-              {estados.map((item) => (
-                <option key={item.value} value={item.value}>
-                  {item.label}
-                </option>
-              ))}
-            </select>
+            <label className="support-filter-control">
+              <span>Estado</span>
+              <select value={estado} onChange={(e) => setEstado(e.target.value)}>
+                {estados.map((item) => (
+                  <option key={item.value} value={item.value}>
+                    {item.label}
+                  </option>
+                ))}
+              </select>
+            </label>
 
-            <select value={categoria} onChange={(e) => setCategoria(e.target.value)}>
-              {categorias.map((item) => (
-                <option key={item} value={item}>
-                  {item === 'todas' ? 'Todas las categorías' : item}
-                </option>
-              ))}
-            </select>
+            <label className="support-filter-control">
+              <span>Categoría</span>
+              <select value={categoria} onChange={(e) => setCategoria(e.target.value)}>
+                {categorias.map((item) => (
+                  <option key={item} value={item}>
+                    {item === 'todas' ? 'Todas las categorías' : item}
+                  </option>
+                ))}
+              </select>
+            </label>
 
-            <select value={prioridad} onChange={(e) => setPrioridad(e.target.value)}>
-              {prioridades.map((item) => (
-                <option key={item.value} value={item.value}>
-                  {item.label}
-                </option>
-              ))}
-            </select>
+            <label className="support-filter-control">
+              <span>Prioridad</span>
+              <select value={prioridad} onChange={(e) => setPrioridad(e.target.value)}>
+                {prioridades.map((item) => (
+                  <option key={item.value} value={item.value}>
+                    {item.label}
+                  </option>
+                ))}
+              </select>
+            </label>
 
-            <button className="btn" type="submit">
-              Buscar
+            <button className="btn support-filter-submit" type="submit">
+              Aplicar filtros
             </button>
           </form>
 
@@ -448,8 +460,10 @@ export default function Soporte() {
                     </span>
                   </div>
 
-                  <h4>{ticket.titulo}</h4>
-                  <p>{ticket.descripcion}</p>
+                  <div className="support-ticket-copy">
+                    <h4>{ticket.titulo}</h4>
+                    <p>{ticket.descripcion}</p>
+                  </div>
 
                   <div className="support-ticket-meta">
                     <span>{ticket.categoria}</span>

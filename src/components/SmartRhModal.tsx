@@ -1,4 +1,5 @@
 import { ReactNode, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 
 type SmartRhModalProps = {
   open: boolean;
@@ -40,7 +41,7 @@ export default function SmartRhModal({
 
   if (!open) return null;
 
-  return (
+  return createPortal(
     <div
       className="smart-modal-backdrop"
       onMouseDown={(event) => {
@@ -73,6 +74,7 @@ export default function SmartRhModal({
 
         <div className="smart-modal-body">{children}</div>
       </section>
-    </div>
+    </div>,
+    document.body
   );
 }

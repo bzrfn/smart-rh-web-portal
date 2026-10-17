@@ -801,12 +801,14 @@ export default function Usuarios() {
               </label>
 
               {!editingId && form.rol_id !== '1' && (
-                <PasswordField
-                  label="Contraseña"
-                  value={form.contrasena}
-                  onChange={(e) => updateForm('contrasena', e.target.value)}
-                  autoComplete="new-password"
-                />
+                <div className="users-password-field">
+                  <PasswordField
+                    label="Contraseña"
+                    value={form.contrasena}
+                    onChange={(e) => updateForm('contrasena', e.target.value)}
+                    autoComplete="new-password"
+                  />
+                </div>
               )}
 
               <label className="form-label">

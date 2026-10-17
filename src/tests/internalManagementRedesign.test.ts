@@ -13,12 +13,15 @@ describe('Gestión interna visual contract', () => {
   const styles = read('app/styles.css');
   const compactStyles = read('app/gestionInternaV2.css');
   const finalStyles = read('app/gestionInternaV3.css');
+  const repairStyles = read('app/gestionInternaV4.css');
 
   test('shared modal locks background scroll and supports outside click and Escape', () => {
     expect(modal).toContain("document.body.style.overflow = 'hidden'");
     expect(modal).toContain("event.key === 'Escape'");
     expect(modal).toContain('event.target === event.currentTarget');
     expect(modal).toContain('aria-modal="true"');
+    expect(modal).toContain('createPortal');
+    expect(modal).toContain('document.body');
   });
 
   test('users permissions reveal results only after a focused search', () => {
@@ -51,10 +54,12 @@ describe('Gestión interna visual contract', () => {
     expect(users).toContain('useState(5)');
     expect(finalStyles).toContain('.smart-modal .users-modal-form');
     expect(finalStyles).toContain('gap: 22px !important');
+    expect(users).toContain('users-password-field');
+    expect(repairStyles).toContain('z-index: 2147483600 !important');
   });
 
   test('support combines the ticket inbox with a monthly calendar', () => {
-    expect(support).toContain('const TICKETS_PER_PAGE = 5');
+    expect(support).toContain('const TICKETS_PER_PAGE = 4');
     expect(support).toContain('paginatedTickets.map');
     expect(support).toContain('support-calendar-workspace');
     expect(support).toContain('support-calendar-card');
@@ -63,6 +68,8 @@ describe('Gestión interna visual contract', () => {
     expect(support).toContain('support-pagination');
     expect(support).toContain('support-hero-status');
     expect(support).toContain('<SmartRhModal');
+    expect(support).toContain('support-filter-control');
+    expect(support).toContain('support-ticket-copy');
     expect(support).not.toContain('>\n              Actualizar\n            </button>');
     expect(support).not.toContain('<div className="support-detail-panel">');
   });
@@ -75,6 +82,7 @@ describe('Gestión interna visual contract', () => {
     expect(compactStyles).toContain(".smart-modal:has(.users-modal-form)");
     expect(finalStyles).toContain('.support-calendar-workspace');
     expect(finalStyles).toContain('.permission-bulk-disclosure');
+    expect(repairStyles).toContain('.support-filter-submit');
   });
 
   test('closed operation and employee-record modules use the same modal system', () => {

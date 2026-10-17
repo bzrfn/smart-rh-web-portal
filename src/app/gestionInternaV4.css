@@ -1,0 +1,253 @@
+/* Gestión interna v4 — modal layering and legible support inbox. */
+
+.smart-modal-backdrop {
+  z-index: 2147483600 !important;
+  isolation: isolate !important;
+  padding: clamp(18px, 3vh, 34px) clamp(16px, 3vw, 34px) !important;
+}
+
+.smart-modal:has(.users-modal-form) {
+  width: min(1120px, 100%) !important;
+  max-height: calc(100dvh - clamp(36px, 6vh, 68px)) !important;
+}
+
+.smart-modal .users-modal-form .users-password-field {
+  min-width: 0 !important;
+  margin: 0 0 14px !important;
+}
+
+.smart-modal .users-modal-form .users-password-field .auth-password-field {
+  display: grid !important;
+  gap: 9px !important;
+}
+
+.smart-modal .users-modal-form .users-password-field .auth-label {
+  margin: 0 !important;
+  color: var(--text) !important;
+  font-size: 0.8rem !important;
+  font-weight: 800 !important;
+}
+
+.smart-modal .users-modal-form .users-password-field .auth-password-control {
+  min-width: 0 !important;
+}
+
+.support-calendar-workspace {
+  grid-template-columns: minmax(390px, 0.78fr) minmax(620px, 1.22fr) !important;
+}
+
+.support-calendar-card,
+.support-calendar-workspace .support-list-panel {
+  height: 700px !important;
+  min-height: 700px !important;
+  max-height: 700px !important;
+}
+
+.support-calendar-workspace .support-list-panel {
+  gap: 14px !important;
+}
+
+.support-calendar-workspace .support-filters {
+  margin: 0 !important;
+  padding: 14px !important;
+  display: grid !important;
+  grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 18px !important;
+  background: var(--card-muted) !important;
+}
+
+.support-calendar-workspace .support-filter-control {
+  min-width: 0 !important;
+  display: grid !important;
+  grid-column: span 2 !important;
+  gap: 6px !important;
+}
+
+.support-calendar-workspace .support-filter-search {
+  grid-column: 1 / span 4 !important;
+}
+
+.support-calendar-workspace .support-filter-control > span {
+  padding-inline: 2px !important;
+  color: var(--text-muted) !important;
+  font-size: 0.62rem !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+}
+
+.support-calendar-workspace .support-filter-control input,
+.support-calendar-workspace .support-filter-control select {
+  width: 100% !important;
+  min-width: 0 !important;
+  height: 43px !important;
+  margin: 0 !important;
+  padding: 0 38px 0 12px !important;
+  overflow: hidden !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 12px !important;
+  color: var(--text) !important;
+  background-color: var(--card) !important;
+  box-shadow: none !important;
+  font-size: 0.76rem !important;
+  font-weight: 750 !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.support-calendar-workspace .support-filter-control input {
+  padding-right: 12px !important;
+}
+
+.support-calendar-workspace .support-filter-control select {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--text-muted) 50%),
+    linear-gradient(135deg, var(--text-muted) 50%, transparent 50%) !important;
+  background-position:
+    calc(100% - 17px) 18px,
+    calc(100% - 12px) 18px !important;
+  background-size: 5px 5px, 5px 5px !important;
+  background-repeat: no-repeat !important;
+  cursor: pointer !important;
+}
+
+.support-calendar-workspace .support-filter-control input:focus,
+.support-calendar-workspace .support-filter-control select:focus {
+  outline: none !important;
+  border-color: color-mix(in srgb, var(--primary) 65%, var(--border)) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 14%, transparent) !important;
+}
+
+.support-calendar-workspace .support-filter-submit {
+  grid-column: 5 / span 2 !important;
+  align-self: end !important;
+  width: 100% !important;
+  min-height: 43px !important;
+  margin: 0 !important;
+  border-radius: 12px !important;
+  white-space: nowrap !important;
+}
+
+.support-calendar-workspace .support-ticket-list {
+  display: grid !important;
+  align-content: start !important;
+  gap: 9px !important;
+  overflow-y: auto !important;
+  scrollbar-gutter: stable !important;
+}
+
+.support-calendar-workspace .support-ticket-item {
+  min-width: 0 !important;
+  min-height: 98px !important;
+  padding: 12px 14px !important;
+  display: grid !important;
+  grid-template-columns: 102px minmax(0, 1fr) !important;
+  grid-template-areas:
+    'state copy'
+    'meta meta' !important;
+  align-items: center !important;
+  gap: 8px 14px !important;
+  overflow: hidden !important;
+  border-radius: 16px !important;
+}
+
+.support-calendar-workspace .support-ticket-top {
+  grid-area: state !important;
+  min-width: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  justify-content: center !important;
+  gap: 6px !important;
+}
+
+.support-calendar-workspace .support-ticket-copy {
+  grid-area: copy !important;
+  min-width: 0 !important;
+  display: grid !important;
+  grid-template-columns: minmax(150px, 0.65fr) minmax(220px, 1fr) !important;
+  align-items: center !important;
+  gap: 14px !important;
+}
+
+.support-calendar-workspace .support-ticket-copy h4,
+.support-calendar-workspace .support-ticket-copy p {
+  min-width: 0 !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.support-calendar-workspace .support-ticket-copy h4 {
+  color: var(--text) !important;
+  font-size: 0.78rem !important;
+  line-height: 1.28 !important;
+  white-space: normal !important;
+}
+
+.support-calendar-workspace .support-ticket-copy p {
+  display: -webkit-box !important;
+  color: var(--text-muted) !important;
+  font-size: 0.7rem !important;
+  line-height: 1.38 !important;
+  white-space: normal !important;
+  -webkit-box-orient: vertical !important;
+  -webkit-line-clamp: 2 !important;
+}
+
+.support-calendar-workspace .support-ticket-meta {
+  grid-area: meta !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding-top: 8px !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  justify-content: flex-start !important;
+  gap: 6px !important;
+  border-top: 1px solid var(--border) !important;
+}
+
+.support-calendar-workspace .support-ticket-meta span {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+  color: var(--text-muted) !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+:root[data-theme='dark'] .support-calendar-workspace .support-filters,
+:root[data-theme='dark'] .support-calendar-workspace .support-filter-control input,
+:root[data-theme='dark'] .support-calendar-workspace .support-filter-control select {
+  background-color: #132238 !important;
+}
+
+@media (max-width: 1180px) {
+  .support-calendar-workspace { grid-template-columns: 1fr !important; }
+  .support-calendar-card,
+  .support-calendar-workspace .support-list-panel {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+  }
+  .support-calendar-workspace .support-ticket-list { max-height: 520px !important; }
+}
+
+@media (max-width: 760px) {
+  .smart-modal-backdrop { align-items: end !important; padding: 10px !important; }
+  .support-calendar-workspace .support-filter-control,
+  .support-calendar-workspace .support-filter-search,
+  .support-calendar-workspace .support-filter-submit {
+    grid-column: 1 / -1 !important;
+  }
+  .support-calendar-workspace .support-ticket-item {
+    grid-template-columns: 1fr !important;
+    grid-template-areas: 'state' 'copy' 'meta' !important;
+  }
+  .support-calendar-workspace .support-ticket-top { flex-direction: row !important; }
+  .support-calendar-workspace .support-ticket-copy { grid-template-columns: 1fr !important; gap: 5px !important; }
+}
