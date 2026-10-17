@@ -14,6 +14,7 @@ describe('Gestión interna visual contract', () => {
   const compactStyles = read('app/gestionInternaV2.css');
   const finalStyles = read('app/gestionInternaV3.css');
   const repairStyles = read('app/gestionInternaV4.css');
+  const finalAlignmentStyles = read('app/gestionInternaV5.css');
 
   test('shared modal locks background scroll and supports outside click and Escape', () => {
     expect(modal).toContain("document.body.style.overflow = 'hidden'");
@@ -56,6 +57,8 @@ describe('Gestión interna visual contract', () => {
     expect(finalStyles).toContain('gap: 22px !important');
     expect(users).toContain('users-password-field');
     expect(repairStyles).toContain('z-index: 2147483600 !important');
+    expect(finalAlignmentStyles).toContain('grid-template-columns: repeat(3, minmax(0, 1fr)) !important');
+    expect(finalAlignmentStyles).toContain('overflow: visible !important');
   });
 
   test('support combines the ticket inbox with a monthly calendar', () => {
@@ -70,6 +73,7 @@ describe('Gestión interna visual contract', () => {
     expect(support).toContain('<SmartRhModal');
     expect(support).toContain('support-filter-control');
     expect(support).toContain('support-ticket-copy');
+    expect(finalAlignmentStyles).toContain('height: 43px !important');
     expect(support).not.toContain('>\n              Actualizar\n            </button>');
     expect(support).not.toContain('<div className="support-detail-panel">');
   });

@@ -6,6 +6,7 @@ import './app/styles.css';
 import './app/gestionInternaV2.css';
 import './app/gestionInternaV3.css';
 import './app/gestionInternaV4.css';
+import './app/gestionInternaV5.css';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
