@@ -134,7 +134,7 @@ describe(
       () => {
         const index =
           dashboard.indexOf(
-            "path: '/incapacidades'"
+            "path: '/portal/incapacidades'"
           );
 
         expect(
@@ -161,11 +161,6 @@ describe(
           'adminOnly: true'
         );
 
-        expect(
-          dashboard
-        ).toContain(
-          '{isAdmin && <Link to="/incapacidades">Incapacidades</Link>}'
-        );
       }
     );
 

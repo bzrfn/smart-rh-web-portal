@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { api } from '../../services/api';
 import { openProtectedResource } from '../../services/protectedMedia';
 import CurrencyInput from '../../components/CurrencyInput';
+import SmartRhModal from '../../components/SmartRhModal';
 
 type Contrato = {
   id: number;
@@ -559,15 +560,15 @@ export default function Contratos() {
       </div>
 
       {edit.id && (
-        <div className="module-card record-edit-card">
-          <div className="module-card-header">
-            <div>
-              <p className="module-eyebrow">Edición</p>
-              <h2 className="module-title">Editar contrato seleccionado</h2>
-              <p className="module-subtitle">Ajusta tipo, salario, fechas y estado del contrato seleccionado.</p>
-            </div>
-          </div>
-
+        <SmartRhModal
+          open={Boolean(edit.id)}
+          onClose={cancelEdit}
+          eyebrow="Expediente laboral"
+          title="Editar contrato"
+          description="Ajusta las condiciones del acuerdo sin perder el contexto del historial."
+          size="medium"
+          busy={savingEdit}
+        >
           <div className="smart-form-grid">
             <div className="smart-form-group">
               <label>Tipo de contrato</label>
@@ -616,7 +617,7 @@ export default function Contratos() {
               </button>
             </div>
           </div>
-        </div>
+        </SmartRhModal>
       )}
 
       <div className="module-card record-history-card">

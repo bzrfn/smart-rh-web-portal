@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { api } from '../../services/api';
 import CurrencyInput from '../../components/CurrencyInput';
+import SmartRhModal from '../../components/SmartRhModal';
 
 type Nomina = {
   id: number;
@@ -565,17 +566,15 @@ export default function Nomina() {
       </div>
 
       {edit.id && (
-        <div className="module-card record-edit-card">
-          <div className="module-card-header">
-            <div>
-              <p className="module-eyebrow">Edición</p>
-              <h2 className="module-title">Editar nómina seleccionada</h2>
-              <p className="module-subtitle">
-                Ajusta importes, estado y periodo para corregir el registro seleccionado.
-              </p>
-            </div>
-          </div>
-
+        <SmartRhModal
+          open={Boolean(edit.id)}
+          onClose={cancelEdit}
+          eyebrow="Expediente laboral"
+          title="Editar nómina"
+          description="Corrige importes, estado y periodo dentro de una ventana enfocada."
+          size="medium"
+          busy={savingEdit}
+        >
           <div className="smart-form-grid">
             <div className="smart-form-group">
               <label>Salario base</label>
@@ -643,7 +642,7 @@ export default function Nomina() {
               </button>
             </div>
           </div>
-        </div>
+        </SmartRhModal>
       )}
 
       <div className="module-card record-history-card">

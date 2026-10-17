@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { api } from '../../services/api';
+import SmartRhModal from '../../components/SmartRhModal';
 
 type TicketEstado = 'abierto' | 'en_revision' | 'resuelto' | 'cerrado';
 type TicketPrioridad = 'baja' | 'media' | 'alta';
@@ -60,6 +61,8 @@ const categorias = [
   'Otro',
 ];
 
+const TICKETS_PER_PAGE = 5;
+
 function estadoLabel(estado: TicketEstado) {
   const map: Record<TicketEstado, string> = {
     abierto: 'Abierto',
@@ -115,8 +118,22 @@ export default function Soporte() {
 
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const filteredTickets = useMemo(() => tickets, [tickets]);
+  const totalPages = Math.max(1, Math.ceil(filteredTickets.length / TICKETS_PER_PAGE));
+  const paginatedTickets = useMemo(() => {
+    const start = (currentPage - 1) * TICKETS_PER_PAGE;
+    return filteredTickets.slice(start, start + TICKETS_PER_PAGE);
+  }, [currentPage, filteredTickets]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [estado, categoria, prioridad, search]);
+
+  useEffect(() => {
+    if (currentPage > totalPages) setCurrentPage(totalPages);
+  }, [currentPage, totalPages]);
 
   async function loadResumen() {
     const { data } = await api.get('/soporte/admin/resumen');
@@ -172,6 +189,12 @@ export default function Soporte() {
     setRespuestaAdmin(ticket.respuesta_admin || '');
     setEstadoEdit(ticket.estado);
     setPrioridadEdit(ticket.prioridad);
+  }
+
+  function closeTicket() {
+    if (saving) return;
+    setSelectedTicket(null);
+    setRespuestaAdmin('');
   }
 
   async function saveTicket() {
@@ -242,7 +265,7 @@ export default function Soporte() {
         </div>
       </section>
 
-      <section className="support-workspace">
+      <section className="support-workspace support-workspace-single">
         <div className="support-list-panel">
           <div className="support-section-header">
             <div>
@@ -298,7 +321,7 @@ export default function Soporte() {
                 <p>Consultando incidencias registradas.</p>
               </div>
             ) : filteredTickets.length > 0 ? (
-              filteredTickets.map((ticket) => (
+              paginatedTickets.map((ticket) => (
                 <button
                   type="button"
                   key={ticket._id}
@@ -332,15 +355,34 @@ export default function Soporte() {
               </div>
             )}
           </div>
-        </div>
 
-        <div className="support-detail-panel">
-          {selectedTicket ? (
-            <>
+          {filteredTickets.length > 0 && (
+            <div className="support-pagination">
+              <span>{filteredTickets.length} tickets · Página {currentPage} de {totalPages}</span>
+              <div>
+                <button className="btn btn-small btn-secondary" type="button" disabled={currentPage <= 1} onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}>Anterior</button>
+                <button className="btn btn-small btn-secondary" type="button" disabled={currentPage >= totalPages} onClick={() => setCurrentPage((page) => Math.min(totalPages, page + 1))}>Siguiente</button>
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
+
+      <SmartRhModal
+        open={Boolean(selectedTicket)}
+        onClose={closeTicket}
+        eyebrow="Seguimiento de soporte"
+        title={selectedTicket?.titulo || 'Detalle del ticket'}
+        description="Revisa el caso, actualiza su prioridad y deja una respuesta clara para el empleado."
+        size="wide"
+        busy={saving}
+      >
+          {selectedTicket && (
+            <div className="support-detail-modal-content">
               <div className="support-section-header">
                 <div>
                   <p className="support-eyebrow">Detalle del ticket</p>
-                  <h3>{selectedTicket.titulo}</h3>
+                  <h3>{getEmployeeName(selectedTicket)}</h3>
                 </div>
 
                 <span className={`support-status ${selectedTicket.estado}`}>
@@ -397,22 +439,13 @@ export default function Soporte() {
                   />
                 </label>
 
-                <button className="btn" type="button" onClick={saveTicket} disabled={saving}>
+                <button className="btn smart-action-correct" type="button" onClick={saveTicket} disabled={saving}>
                   {saving ? 'Guardando...' : 'Guardar cambios'}
                 </button>
               </div>
-            </>
-          ) : (
-            <div className="support-empty support-empty-large">
-              <strong>Selecciona un ticket</strong>
-              <p>
-                El detalle de la incidencia aparecerá aquí para actualizar estado, prioridad
-                y respuesta administrativa.
-              </p>
             </div>
           )}
-        </div>
-      </section>
+      </SmartRhModal>
     </div>
   );
 }

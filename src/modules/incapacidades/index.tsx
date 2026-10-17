@@ -13,6 +13,8 @@ import {
   openProtectedResource,
 } from '../../services/protectedMedia';
 
+import SmartRhModal from '../../components/SmartRhModal';
+
 
 type EstadoIncapacidad =
   | 'pendiente'
@@ -1287,51 +1289,16 @@ export default function Incapacidades() {
       </div>
 
       {selected && (
-        <div
-          id="incapacidad-review-detail"
-          className="module-card incap-detail-card"
-          style={{
-            scrollMarginTop:
-              '96px',
-          }}
+        <SmartRhModal
+          open={Boolean(selected)}
+          onClose={() => { setSelected(null); setObservaciones(''); }}
+          eyebrow="Expediente médico"
+          title={`Incapacidad de ${employeeName(selected)}`}
+          description="Consulta el comprobante, la validación automática y la resolución administrativa."
+          size="wide"
+          busy={reviewing}
         >
-          <div className="module-card-header">
-            <div>
-              <p className="module-eyebrow">
-                Expediente médico
-              </p>
-
-              <h2 className="module-title">
-                Incapacidad #{selected.id}
-              </h2>
-
-              <p className="module-subtitle">
-                {employeeName(
-                  selected
-                )}
-              </p>
-            </div>
-
-            <button
-              type="button"
-              className="btn btn-secondary"
-              disabled={reviewing}
-              onClick={
-                () => {
-                  setSelected(
-                    null
-                  );
-
-                  setObservaciones(
-                    ''
-                  );
-                }
-              }
-            >
-              Cerrar
-            </button>
-          </div>
-
+          <div id="incapacidad-review-detail" className="incap-detail-card smart-modal-detail-stack">
           <div className="asistencia-summary-grid">
             <div className="asistencia-summary-card">
               <h3>Periodo</h3>
@@ -1645,7 +1612,8 @@ export default function Incapacidades() {
               </p>
             </div>
           )}
-        </div>
+          </div>
+        </SmartRhModal>
       )}
     </div>
   );

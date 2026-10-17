@@ -16,6 +16,9 @@ const navigationFile =
 const dashboardFile =
   'src/modules/dashboard/Dashboard.tsx';
 
+const shellFile =
+  'src/app/layout/AppShell.tsx';
+
 describe(
   'Cambio #1 - aprobacion administrativa del terminal',
   () => {
@@ -163,23 +166,23 @@ describe(
     );
 
     test(
-      'dashboard administrativo expone acceso a autorizacion',
+      'el menú administrativo expone el selector de portal o terminal',
       () => {
-        const dashboard =
+        const shell =
           read(
-            dashboardFile
+            shellFile
           );
 
         expect(
-          dashboard
+          shell
         ).toContain(
-          '/portal/terminal-autorizacion'
+          '/admin/destino'
         );
 
         expect(
-          dashboard
+          shell
         ).toMatch(
-          /Autorizar Terminal/i
+          /Portal o terminal QR/i
         );
       }
     );

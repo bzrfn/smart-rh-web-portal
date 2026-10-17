@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { api } from '../../services/api';
 import { useAuth } from '../../app/auth/AuthContext';
 import PasswordField from '../../components/PasswordField';
+import SmartRhModal from '../../components/SmartRhModal';
 
 type User = {
   id: number;
@@ -117,6 +118,7 @@ export default function Usuarios() {
   const [editingId, setEditingId] = useState<number | null>(null);
 
   const [showCrud, setShowCrud] = useState(false);
+  const [showUserForm, setShowUserForm] = useState(false);
   const [showPermissions, setShowPermissions] = useState(true);
 
   const [loadingUsers, setLoadingUsers] = useState(false);
@@ -324,6 +326,7 @@ export default function Usuarios() {
 
   function startEdit(u: User) {
     setShowCrud(true);
+    setShowUserForm(true);
     setEditingId(u.id);
     setForm({
       nombre: u.nombre || '',
@@ -373,6 +376,7 @@ export default function Usuarios() {
         );
 
         resetForm();
+        setShowUserForm(false);
         setMessage(
           data?.message ||
           'Invitación administrativa enviada correctamente.'
@@ -416,6 +420,7 @@ export default function Usuarios() {
         );
 
         resetForm();
+        setShowUserForm(false);
         setMessage('Usuario actualizado correctamente.');
       } else {
         await api.post(
@@ -425,6 +430,7 @@ export default function Usuarios() {
         );
 
         resetForm();
+        setShowUserForm(false);
         setMessage('Empleado creado correctamente.');
         await loadUsers();
       }
@@ -619,7 +625,7 @@ export default function Usuarios() {
           </div>
 
           <button className="btn" type="button" onClick={() => setShowCrud((prev) => !prev)}>
-            {showCrud ? 'Ocultar CRUD usuarios' : 'Mostrar CRUD usuarios'}
+            {showCrud ? 'Ocultar gestión de usuarios' : 'Gestionar usuarios'}
           </button>
         </div>
 
@@ -720,82 +726,51 @@ export default function Usuarios() {
                 </div>
               </div>
 
-              <div className="bulk-permissions-grid">
-                <button className="bulk-action-btn" disabled={isBulkSaving} onClick={() => bulkUpdatePermisos(['asistencia'], true)}>
-                  Activar asistencia
-                </button>
-                <button className="bulk-action-btn danger" disabled={isBulkSaving} onClick={() => bulkUpdatePermisos(['asistencia'], false)}>
-                  Desactivar asistencia
-                </button>
+              <div className="permission-module-grid">
+                {([
+                  ['asistencia', 'Asistencia', 'Registro y revisión de jornadas', permissionStats.conAsistencia],
+                  ['contratos', 'Contratos', 'Consulta de documentos laborales', permissionStats.conContratos],
+                  ['nomina', 'Nómina', 'Consulta de pagos y periodos', permissionStats.conNomina],
+                  ['vacaciones', 'Vacaciones', 'Solicitud y seguimiento de días', permissionStats.conVacaciones],
+                ] as [keyof Permisos, string, string, number][]).map(([key, label, description, enabled]) => (
+                  <article className="permission-module-card" key={key}>
+                    <div className="permission-module-card-heading">
+                      <span>{label.charAt(0)}</span>
+                      <div><strong>{label}</strong><small>{description}</small></div>
+                    </div>
+                    <p><strong>{enabled}</strong> de {permissionStats.total} empleados con acceso</p>
+                    <div className="permission-module-actions">
+                      <button className="bulk-action-btn" disabled={isBulkSaving} onClick={() => bulkUpdatePermisos([key], true)}>Activar</button>
+                      <button className="bulk-action-btn danger" disabled={isBulkSaving} onClick={() => bulkUpdatePermisos([key], false)}>Desactivar</button>
+                    </div>
+                  </article>
+                ))}
+              </div>
 
-                <button className="bulk-action-btn" disabled={isBulkSaving} onClick={() => bulkUpdatePermisos(['contratos'], true)}>
-                  Activar contratos
-                </button>
-                <button className="bulk-action-btn danger" disabled={isBulkSaving} onClick={() => bulkUpdatePermisos(['contratos'], false)}>
-                  Desactivar contratos
-                </button>
-
-                <button className="bulk-action-btn" disabled={isBulkSaving} onClick={() => bulkUpdatePermisos(['nomina'], true)}>
-                  Activar nómina
-                </button>
-                <button className="bulk-action-btn danger" disabled={isBulkSaving} onClick={() => bulkUpdatePermisos(['nomina'], false)}>
-                  Desactivar nómina
-                </button>
-
-                <button className="bulk-action-btn" disabled={isBulkSaving} onClick={() => bulkUpdatePermisos(['vacaciones'], true)}>
-                  Activar vacaciones
-                </button>
-                <button className="bulk-action-btn danger" disabled={isBulkSaving} onClick={() => bulkUpdatePermisos(['vacaciones'], false)}>
-                  Desactivar vacaciones
-                </button>
-
-                <button
-                  className="bulk-action-btn all"
-                  disabled={isBulkSaving}
-                  onClick={() => bulkUpdatePermisos(['asistencia', 'contratos', 'nomina', 'vacaciones'], true)}
-                >
-                  Activar todos los módulos
-                </button>
-
-                <button
-                  className="bulk-action-btn danger all"
-                  disabled={isBulkSaving}
-                  onClick={() => bulkUpdatePermisos(['asistencia', 'contratos', 'nomina', 'vacaciones'], false)}
-                >
-                  Desactivar todos los módulos
-                </button>
+              <div className="permission-all-actions">
+                <div><strong>Acceso completo</strong><span>Aplica los cuatro módulos al grupo filtrado.</span></div>
+                <button className="bulk-action-btn" disabled={isBulkSaving} onClick={() => bulkUpdatePermisos(['asistencia', 'contratos', 'nomina', 'vacaciones'], true)}>Activar todo</button>
+                <button className="bulk-action-btn danger" disabled={isBulkSaving} onClick={() => bulkUpdatePermisos(['asistencia', 'contratos', 'nomina', 'vacaciones'], false)}>Desactivar todo</button>
               </div>
             </div>
 
             {empleados.length > 0 ? (
               <>
-                <div className="table-wrapper">
-                  <table className="smart-table">
-                    <thead>
-                      <tr>
-                        <th>Empleado</th>
-                        <th>Asistencia</th>
-                        <th>Contratos</th>
-                        <th>Nómina</th>
-                        <th>Vacaciones</th>
-                      </tr>
-                    </thead>
-
-                    <tbody>
+                <div className="permission-user-list">
                       {paginatedPermisosUsers.map((u) => {
                         const permisos = permisosMap[u.id] ?? DEFAULT_PERMISOS;
 
                         return (
-                          <tr key={u.id}>
-                            <td>
-                              <div className="table-main-text">
-                                {u.nombre} {u.apellido}
-                              </div>
-                              <div className="table-secondary-text">{u.correo}</div>
-                            </td>
-
+                          <article className="permission-user-card" key={u.id}>
+                            <div className="permission-user-identity">
+                              <span className="permission-user-avatar">{`${u.nombre?.charAt(0) || ''}${u.apellido?.charAt(0) || ''}`.toUpperCase()}</span>
+                              <div><strong>{u.nombre} {u.apellido}</strong><small>{u.correo}</small></div>
+                              <em className={isActiveUser(u) ? 'active' : 'inactive'}>{isActiveUser(u) ? 'Activo' : 'Inactivo'}</em>
+                            </div>
+                            <div className="permission-user-modules">
                             {(['asistencia', 'contratos', 'nomina', 'vacaciones'] as (keyof Permisos)[]).map((modulo) => (
-                              <td key={modulo}>
+                              <div className="permission-toggle" key={modulo}>
+                                <span>{modulo === 'nomina' ? 'Nómina' : modulo.charAt(0).toUpperCase() + modulo.slice(1)}</span>
                                 <label className="switch">
                                   <input
                                     type="checkbox"
@@ -805,13 +780,12 @@ export default function Usuarios() {
                                   />
                                   <span className="slider" />
                                 </label>
-                              </td>
+                              </div>
                             ))}
-                          </tr>
+                            </div>
+                          </article>
                         );
                       })}
-                    </tbody>
-                  </table>
                 </div>
 
                 <div className="users-pagination">
@@ -850,8 +824,18 @@ export default function Usuarios() {
 
       {showCrud && (
         <>
-          <div className="document-panel">
-            <h3>{editingId ? 'Editar usuario' : 'Crear nuevo usuario'}</h3>
+          <SmartRhModal
+            open={showUserForm}
+            onClose={() => { resetForm(); setShowUserForm(false); }}
+            eyebrow={editingId ? 'Edición de personal' : 'Alta de personal'}
+            title={editingId ? 'Editar usuario' : 'Crear nuevo usuario'}
+            description="Organiza la información de acceso, contacto y relación laboral en un solo flujo."
+            size="wide"
+            busy={savingKey === 'user-form'}
+          >
+            <div className="users-modal-form">
+            <section className="users-form-section">
+              <div className="users-form-section-title"><span>01</span><div><strong>Identidad y acceso</strong><small>Datos con los que la persona será identificada en SMART RH.</small></div></div>
 
             <div className="form-grid">
               <label className="form-label">
@@ -904,6 +888,12 @@ export default function Usuarios() {
                   establecerá personalmente su contraseña.
                 </p>
               )}
+            </div>
+            </section>
+
+            <section className="users-form-section">
+              <div className="users-form-section-title"><span>02</span><div><strong>Contacto</strong><small>Información para comunicación y expediente interno.</small></div></div>
+              <div className="form-grid">
 
               <label className="form-label">
                 Teléfono
@@ -914,6 +904,12 @@ export default function Usuarios() {
                 Dirección
                 <input value={form.direccion} onChange={(e) => updateForm('direccion', e.target.value)} />
               </label>
+              </div>
+            </section>
+
+            <section className="users-form-section">
+              <div className="users-form-section-title"><span>03</span><div><strong>Relación laboral</strong><small>Fecha de ingreso y saldo inicial de vacaciones.</small></div></div>
+              <div className="form-grid">
 
               <label className="form-label">
                 Fecha de ingreso
@@ -934,6 +930,7 @@ export default function Usuarios() {
                 />
               </label>
             </div>
+            </section>
 
             <div className="users-form-actions">
               <button className="btn" type="button" disabled={savingKey === 'user-form'} onClick={saveUser}>
@@ -949,12 +946,13 @@ export default function Usuarios() {
               </button>
 
               {editingId && (
-                <button className="btn btn-secondary" type="button" onClick={resetForm}>
+                <button className="btn btn-secondary" type="button" onClick={() => { resetForm(); setShowUserForm(false); }}>
                   Cancelar edición
                 </button>
               )}
             </div>
-          </div>
+            </div>
+          </SmartRhModal>
 
           <div className="module-card users-crud-card">
             <div className="module-card-header">
@@ -965,6 +963,9 @@ export default function Usuarios() {
                   Filtra usuarios por nombre, rol, estado y días de vacaciones.
                 </p>
               </div>
+              <button className="btn" type="button" onClick={() => { resetForm(); setShowUserForm(true); }}>
+                Nuevo usuario
+              </button>
             </div>
 
             <div className="users-filter-panel">
@@ -974,7 +975,7 @@ export default function Usuarios() {
                   <input
                     type="search"
                     value={userSearch}
-                    placeholder="ID, nombre, correo, teléfono o dirección..."
+                    placeholder="Nombre, correo, teléfono o dirección..."
                     onChange={(e) => setUserSearch(e.target.value)}
                   />
                 </label>
@@ -1029,7 +1030,6 @@ export default function Usuarios() {
               <table className="smart-table">
                 <thead>
                   <tr>
-                    <th>ID</th>
                     <th>Usuario</th>
                     <th>Contacto</th>
                     <th>Rol</th>
@@ -1042,13 +1042,11 @@ export default function Usuarios() {
                 <tbody>
                   {paginatedUsers.map((u) => (
                     <tr key={u.id}>
-                      <td>{u.id}</td>
-
                       <td>
-                        <div className="table-main-text">
-                          {u.nombre} {u.apellido}
+                        <div className="users-table-person">
+                          <span>{`${u.nombre?.charAt(0) || ''}${u.apellido?.charAt(0) || ''}`.toUpperCase()}</span>
+                          <div><div className="table-main-text">{u.nombre} {u.apellido}</div><div className="table-secondary-text">{u.correo}</div></div>
                         </div>
-                        <div className="table-secondary-text">{u.correo}</div>
                         <div className="table-secondary-text">
                           Ingreso: {normalizeDate(u.fecha_ingreso) || 'No registrado'}
                         </div>
@@ -1092,7 +1090,7 @@ export default function Usuarios() {
 
                           <button
                             type="button"
-                            className="btn btn-small"
+                            className="btn btn-small smart-action-correct"
                             disabled={savingKey === `${u.id}-vacation-days`}
                             onClick={() => saveVacationDays(u.id)}
                           >
@@ -1103,13 +1101,13 @@ export default function Usuarios() {
 
                       <td>
                         <div className="users-row-actions">
-                          <button type="button" className="btn btn-small" onClick={() => startEdit(u)}>
+                          <button type="button" className="btn btn-small smart-action-correct" onClick={() => startEdit(u)}>
                             Editar
                           </button>
 
                           <button
                             type="button"
-                            className="btn btn-small btn-secondary"
+                            className="btn btn-small smart-action-danger"
                             disabled={savingKey === `${u.id}-delete`}
                             onClick={() => deleteUser(u.id)}
                           >
@@ -1122,7 +1120,7 @@ export default function Usuarios() {
 
                   {paginatedUsers.length === 0 && (
                     <tr>
-                      <td colSpan={7}>
+                      <td colSpan={6}>
                         <div className="empty-state-card">
                           <h3>Sin resultados</h3>
                           <p>No hay usuarios que coincidan con los filtros actuales.</p>
