@@ -3751,6 +3751,194 @@
   }
 }
 
+/* ============================================================
+   SMART RH · SELECTORES DE PERSONA Y ACCIONES COHERENTES
+   La referencia cromática es Operación diaria.
+   ============================================================ */
+
+.record-page .user-search-results {
+  max-height: 286px !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  padding: 6px !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 16px !important;
+  background: var(--card) !important;
+  box-shadow: 0 18px 42px rgba(15, 23, 42, 0.14) !important;
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--primary) 35%, transparent) transparent;
+}
+
+.record-page .user-search-item {
+  width: 100% !important;
+  min-height: 62px !important;
+  padding: 9px 10px !important;
+  display: grid !important;
+  grid-template-columns: 38px minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  gap: 11px !important;
+  border: 1px solid transparent !important;
+  border-radius: 12px !important;
+  background: transparent !important;
+  color: var(--text) !important;
+  text-align: left !important;
+  cursor: pointer !important;
+  transition: border-color 160ms ease, background 160ms ease, transform 160ms ease !important;
+}
+
+.record-page .user-search-item + .user-search-item {
+  margin-top: 3px !important;
+}
+
+.record-page .user-search-item:hover,
+.record-page .user-search-item:focus-visible {
+  border-color: color-mix(in srgb, var(--primary) 24%, var(--border)) !important;
+  background: color-mix(in srgb, var(--primary) 7%, var(--card)) !important;
+  transform: translateX(2px) !important;
+  outline: none !important;
+}
+
+.record-page .user-search-avatar {
+  width: 38px !important;
+  height: 38px !important;
+  display: grid !important;
+  place-items: center !important;
+  border: 1px solid color-mix(in srgb, var(--primary) 24%, var(--border)) !important;
+  border-radius: 12px !important;
+  background: color-mix(in srgb, var(--primary) 10%, var(--card)) !important;
+  color: var(--primary) !important;
+  font-size: 0.74rem !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.04em !important;
+}
+
+.record-page .user-search-copy {
+  min-width: 0 !important;
+  display: grid !important;
+  gap: 3px !important;
+}
+
+.record-page .user-search-name,
+.record-page .user-search-email {
+  display: block !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.record-page .user-search-name {
+  color: var(--text) !important;
+  font-size: 0.84rem !important;
+  font-weight: 850 !important;
+}
+
+.record-page .user-search-email {
+  color: var(--text-muted) !important;
+  font-size: 0.72rem !important;
+  font-weight: 650 !important;
+}
+
+.record-page .user-search-select {
+  padding: 6px 8px !important;
+  border-radius: 9px !important;
+  background: color-mix(in srgb, var(--primary) 8%, transparent) !important;
+  color: var(--primary) !important;
+  font-size: 0.67rem !important;
+  font-weight: 850 !important;
+}
+
+/* Los módulos administrativos heredan exactamente los tonos de Operación diaria. */
+:root[data-theme='dark'] .record-page .btn:not(.btn-secondary),
+:root[data-theme='dark'] .record-page .record-action-edit,
+:root[data-theme='dark'] .document-record-page .record-primary-action {
+  color: #7dd3fc !important;
+  border-color: rgba(125, 211, 252, 0.30) !important;
+  background: rgba(56, 189, 248, 0.18) !important;
+}
+
+:root[data-theme='dark'] .record-page .btn:not(.btn-secondary):hover,
+:root[data-theme='dark'] .record-page .record-action-edit:hover,
+:root[data-theme='dark'] .document-record-page .record-primary-action:hover {
+  color: #bae6fd !important;
+  border-color: rgba(125, 211, 252, 0.48) !important;
+  background: rgba(56, 189, 248, 0.29) !important;
+}
+
+:root[data-theme='dark'] .record-page .btn.btn-secondary,
+:root[data-theme='dark'] .record-page .record-action-view,
+:root[data-theme='dark'] .document-record-page .record-secondary-action {
+  color: #93c5fd !important;
+  border-color: rgba(96, 165, 250, 0.30) !important;
+  background: rgba(37, 99, 235, 0.19) !important;
+}
+
+:root[data-theme='dark'] .record-page .btn.btn-secondary:hover,
+:root[data-theme='dark'] .record-page .record-action-view:hover,
+:root[data-theme='dark'] .document-record-page .record-secondary-action:hover {
+  color: #dbeafe !important;
+  border-color: rgba(147, 197, 253, 0.48) !important;
+  background: rgba(37, 99, 235, 0.30) !important;
+}
+
+:root[data-theme='dark'] .record-page .record-action-state {
+  color: #5eead4 !important;
+  border-color: rgba(45, 212, 191, 0.20) !important;
+  background: rgba(13, 148, 136, 0.20) !important;
+}
+
+:root[data-theme='dark'] .record-page .record-action-state:hover {
+  color: #99f6e4 !important;
+  border-color: rgba(94, 234, 212, 0.40) !important;
+  background: rgba(13, 148, 136, 0.30) !important;
+}
+
+:root[data-theme='dark'] .record-page .user-search-results {
+  border-color: rgba(125, 211, 252, 0.16) !important;
+  background: #0d1b2e !important;
+  box-shadow: 0 22px 52px rgba(2, 8, 23, 0.46) !important;
+}
+
+:root[data-theme='dark'] .record-page .user-search-item {
+  background: transparent !important;
+  color: #e8f1fb !important;
+}
+
+:root[data-theme='dark'] .record-page .user-search-item:hover,
+:root[data-theme='dark'] .record-page .user-search-item:focus-visible {
+  border-color: rgba(125, 211, 252, 0.22) !important;
+  background: rgba(56, 189, 248, 0.09) !important;
+}
+
+:root[data-theme='dark'] .record-page .user-search-name {
+  color: #f1f7fd !important;
+}
+
+:root[data-theme='dark'] .record-page .user-search-email {
+  color: #9fb1c6 !important;
+}
+
+:root[data-theme='dark'] .record-page .user-search-avatar {
+  border-color: rgba(125, 211, 252, 0.22) !important;
+  background: rgba(56, 189, 248, 0.11) !important;
+  color: #7dd3fc !important;
+}
+
+:root[data-theme='dark'] .record-page .user-search-select {
+  background: rgba(56, 189, 248, 0.10) !important;
+  color: #7dd3fc !important;
+}
+
+@media (max-width: 560px) {
+  .record-page .user-search-item {
+    grid-template-columns: 36px minmax(0, 1fr) !important;
+  }
+
+  .record-page .user-search-select {
+    display: none !important;
+  }
+}
+
 /* Expediente laboral v3 · selector compacto y acciones alineadas */
 .document-record-page .employee-search-panel.open {
   position: relative !important;

@@ -461,10 +461,16 @@ export default function Nomina() {
                     className="user-search-item"
                     onClick={() => selectUser(user)}
                   >
-                    <span className="user-search-name">
-                      {user.nombre} {user.apellido}
+                    <span className="user-search-avatar" aria-hidden="true">
+                      {`${user.nombre?.charAt(0) ?? ''}${user.apellido?.charAt(0) ?? ''}`.toUpperCase()}
                     </span>
-                    <span className="user-search-email">{user.correo}</span>
+                    <span className="user-search-copy">
+                      <span className="user-search-name">
+                        {user.nombre} {user.apellido}
+                      </span>
+                      <span className="user-search-email">{user.correo}</span>
+                    </span>
+                    <span className="user-search-select">Seleccionar</span>
                   </button>
                 ))}
               </div>

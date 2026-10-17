@@ -79,8 +79,21 @@ describe('Expediente laboral visual contract', () => {
     expect(payroll).toContain('record-action-edit');
     expect(payroll).toContain('record-action-state');
     expect(styles).toContain(":root[data-theme='dark'] .record-page .record-action-state");
-    expect(styles).toContain('rgba(13, 148, 136, 0.19)');
-    expect(styles).toContain('rgba(14, 116, 144, 0.2)');
+    expect(styles).toContain('rgba(13, 148, 136, 0.20)');
+    expect(styles).toContain('rgba(56, 189, 248, 0.18)');
+    expect(styles).toContain('rgba(37, 99, 235, 0.19)');
+  });
+
+  test('employee pickers remain compact and legible in both themes', () => {
+    for (const source of [contracts, payroll]) {
+      expect(source).toContain('user-search-avatar');
+      expect(source).toContain('user-search-copy');
+      expect(source).toContain('user-search-select');
+    }
+    expect(styles).toContain("record-page .user-search-results");
+    expect(styles).toContain('max-height: 286px !important;');
+    expect(styles).toContain("background: #0d1b2e !important;");
+    expect(styles).toContain("color: #f1f7fd !important;");
   });
 
   test('shared styles cover responsive tables, forms, documents, and dark mode', () => {
