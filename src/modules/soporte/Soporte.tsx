@@ -61,7 +61,7 @@ const categorias = [
   'Otro',
 ];
 
-const TICKETS_PER_PAGE = 5;
+const TICKETS_PER_PAGE = 6;
 
 function estadoLabel(estado: TicketEstado) {
   const map: Record<TicketEstado, string> = {
@@ -232,10 +232,12 @@ export default function Soporte() {
           </p>
         </div>
 
-        <div className="support-hero-card">
-          <span>HELP</span>
-          <strong>Centro de soporte</strong>
-          <small>Tickets creados desde móvil y gestionados desde el portal.</small>
+        <div className="support-hero-status">
+          <span>{resumen.abiertos + resumen.en_revision}</span>
+          <div>
+            <strong>Casos por atender</strong>
+            <small>Abiertos y en seguimiento</small>
+          </div>
         </div>
       </section>
 
@@ -273,9 +275,6 @@ export default function Soporte() {
               <h3>Incidencias recibidas</h3>
             </div>
 
-            <button className="btn btn-secondary" type="button" onClick={reloadAll}>
-              Actualizar
-            </button>
           </div>
 
           <form className="support-filters" onSubmit={submitSearch}>

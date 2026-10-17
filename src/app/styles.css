@@ -3752,6 +3752,471 @@
 }
 
 /* ============================================================
+   SMART RH · GESTIÓN INTERNA V2
+   Compact permissions, balanced user workspace and ticket inbox.
+   ============================================================ */
+
+.users-overview-card { order: 0; }
+.users-crud-card { order: 1; }
+.users-permissions-card { order: 2; }
+
+.users-permission-search-grid {
+  grid-template-columns: minmax(280px, 1.6fr) minmax(220px, 0.8fr) !important;
+}
+
+.permission-command-bar {
+  margin: 14px 0 12px;
+  padding: 11px 12px;
+  display: grid;
+  grid-template-columns: minmax(190px, 0.8fr) minmax(280px, 1.2fr) auto;
+  align-items: end;
+  gap: 12px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--card-muted);
+}
+
+.permission-command-copy {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  align-self: center;
+}
+
+.permission-command-icon {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--primary) 24%, var(--border));
+  border-radius: 11px;
+  color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 9%, var(--card));
+  font-size: 0.72rem;
+  font-weight: 950;
+}
+
+.permission-command-copy > div {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.permission-command-copy strong { color: var(--text); font-size: 0.82rem; }
+.permission-command-copy small { color: var(--text-muted); font-size: 0.68rem; }
+
+.permission-command-select {
+  min-width: 0;
+  display: grid;
+  gap: 5px;
+  color: var(--text-muted);
+  font-size: 0.66rem;
+  font-weight: 850;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.permission-command-select select {
+  width: 100%;
+  min-height: 38px;
+  padding: 0 36px 0 11px;
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  color: var(--text);
+  background: var(--card);
+  font-size: 0.76rem;
+  font-weight: 750;
+}
+
+.permission-command-actions {
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  gap: 7px;
+}
+
+.permission-command-actions .bulk-action-btn {
+  min-height: 38px;
+  padding-inline: 14px;
+  border-radius: 11px;
+  font-size: 0.7rem;
+}
+
+.permission-results-shell {
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: var(--card-muted);
+}
+
+.permission-user-list { gap: 5px; }
+
+.permission-user-card {
+  min-height: 58px;
+  padding: 8px 10px;
+  grid-template-columns: minmax(230px, 0.78fr) minmax(430px, 1.22fr);
+  gap: 12px;
+  border-radius: 12px;
+  box-shadow: none;
+}
+
+.permission-user-card:hover { transform: none; }
+
+.permission-user-identity {
+  grid-template-columns: 34px minmax(0, 1fr) auto;
+  gap: 8px;
+}
+
+.permission-user-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+}
+
+.permission-user-modules { gap: 5px; }
+
+.permission-toggle {
+  min-height: 38px;
+  padding: 5px 7px;
+  border-radius: 9px;
+}
+
+.permission-search-hint {
+  margin: 8px 4px 2px;
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  line-height: 1.45;
+  text-align: center;
+}
+
+.smart-modal:has(.users-modal-form) {
+  width: min(100%, 1120px);
+}
+
+.users-modal-form {
+  grid-template-columns: minmax(0, 1.15fr) minmax(330px, 0.85fr);
+  grid-template-rows: auto auto 1fr;
+  align-items: start;
+  gap: 14px;
+}
+
+.users-modal-form .users-form-section {
+  padding: 18px;
+  border-radius: 18px;
+}
+
+.users-modal-form .users-form-section:nth-child(1) {
+  grid-column: 1;
+  grid-row: 1 / 3;
+}
+
+.users-modal-form .users-form-section:nth-child(2) {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.users-modal-form .users-form-section:nth-child(3) {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+.users-modal-form .users-form-section:first-child .form-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 13px;
+}
+
+.users-modal-form .users-form-section:nth-child(2) .form-grid,
+.users-modal-form .users-form-section:nth-child(3) .form-grid {
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.users-modal-form .form-label {
+  display: grid;
+  gap: 7px;
+  line-height: 1.25;
+}
+
+.users-modal-form input,
+.users-modal-form select {
+  min-height: 46px;
+  border-radius: 12px;
+}
+
+.users-modal-form .users-form-actions {
+  grid-column: 1 / -1;
+  margin-top: 0;
+  padding-top: 15px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 9px;
+  border-top: 1px solid var(--border);
+}
+
+.support-page {
+  gap: 14px !important;
+}
+
+.support-page .support-hero {
+  min-height: 0 !important;
+  padding: 22px 24px !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  border-radius: 22px !important;
+  box-shadow: var(--shadow-xs) !important;
+}
+
+.support-page .support-hero h2 {
+  margin-top: 3px !important;
+  font-size: clamp(1.8rem, 2.8vw, 2.55rem) !important;
+}
+
+.support-page .support-hero > div:first-child > p:last-child {
+  max-width: 76ch !important;
+  margin-top: 7px !important;
+  font-size: 0.84rem !important;
+  line-height: 1.5 !important;
+}
+
+.support-hero-status {
+  min-width: 220px;
+  padding: 11px 14px;
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  align-items: center;
+  gap: 11px;
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  background: var(--card-muted);
+}
+
+.support-hero-status > span {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  color: #fff;
+  background: linear-gradient(145deg, var(--primary), var(--teal));
+  font-size: 1.08rem;
+  font-weight: 950;
+}
+
+.support-hero-status > div { display: grid; gap: 2px; }
+.support-hero-status strong { color: var(--text); font-size: 0.8rem; }
+.support-hero-status small { color: var(--text-muted); font-size: 0.68rem; }
+
+.support-page .support-kpis {
+  gap: 1px !important;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: var(--border);
+}
+
+.support-page .support-kpi-card {
+  min-height: 78px !important;
+  padding: 13px 17px !important;
+  display: grid !important;
+  grid-template-columns: auto minmax(0, 1fr) !important;
+  grid-template-areas: 'value label' 'value description' !important;
+  align-content: center !important;
+  column-gap: 12px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+.support-page .support-kpi-card > span {
+  grid-area: label;
+  align-self: end;
+  font-size: 0.67rem !important;
+}
+
+.support-page .support-kpi-card > strong {
+  grid-area: value;
+  align-self: center;
+  min-width: 34px;
+  color: var(--text) !important;
+  font-size: 1.7rem !important;
+  line-height: 1 !important;
+}
+
+.support-page .support-kpi-card > p {
+  grid-area: description;
+  align-self: start;
+  margin: 2px 0 0 !important;
+  color: var(--text-muted) !important;
+  font-size: 0.68rem !important;
+}
+
+.support-workspace-single .support-list-panel {
+  padding: 18px !important;
+  border-radius: 22px !important;
+}
+
+.support-page .support-section-header {
+  margin-bottom: 14px !important;
+  padding-bottom: 13px !important;
+}
+
+.support-page .support-section-header h3 {
+  font-size: 1.15rem !important;
+}
+
+.support-page .support-filters {
+  grid-template-columns: minmax(260px, 1.4fr) minmax(140px, 0.55fr) minmax(180px, 0.75fr) minmax(140px, 0.55fr) auto !important;
+  gap: 8px !important;
+  margin-bottom: 12px !important;
+  padding: 10px !important;
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  background: var(--card-muted);
+}
+
+.support-page .support-filters input,
+.support-page .support-filters select,
+.support-page .support-filters .btn {
+  min-height: 40px !important;
+  border-radius: 10px !important;
+}
+
+.support-page .support-ticket-list {
+  grid-template-columns: 1fr !important;
+  gap: 6px !important;
+}
+
+.support-page .support-ticket-item {
+  min-height: 86px !important;
+  padding: 10px 12px !important;
+  display: grid !important;
+  grid-template-columns: 120px minmax(170px, 0.7fr) minmax(260px, 1.25fr) minmax(250px, 0.85fr) !important;
+  grid-template-areas: 'state title description meta' !important;
+  align-items: center !important;
+  gap: 13px !important;
+  border-radius: 13px !important;
+  text-align: left !important;
+}
+
+.support-page .support-ticket-top {
+  grid-area: state;
+  align-items: flex-start !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  gap: 5px !important;
+}
+
+.support-page .support-ticket-item h4 {
+  grid-area: title;
+  margin: 0 !important;
+  font-size: 0.82rem !important;
+  line-height: 1.3 !important;
+}
+
+.support-page .support-ticket-item > p {
+  grid-area: description;
+  margin: 0 !important;
+  font-size: 0.7rem !important;
+  line-height: 1.45 !important;
+  -webkit-line-clamp: 2 !important;
+}
+
+.support-page .support-ticket-meta {
+  grid-area: meta;
+  margin: 0 !important;
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: flex-end !important;
+  flex-wrap: wrap !important;
+  gap: 5px !important;
+}
+
+.support-page .support-ticket-meta span {
+  padding: 4px 6px !important;
+  font-size: 0.6rem !important;
+}
+
+.support-page .support-pagination {
+  margin-top: 10px;
+  padding-top: 10px;
+}
+
+:root[data-theme='dark'] .permission-command-bar,
+:root[data-theme='dark'] .permission-results-shell,
+:root[data-theme='dark'] .support-hero-status,
+:root[data-theme='dark'] .support-page .support-filters {
+  border-color: rgba(125, 211, 252, 0.12);
+  background: #0d1d31;
+}
+
+@media (max-width: 1180px) {
+  .support-page .support-ticket-item {
+    grid-template-columns: 112px minmax(180px, 0.8fr) minmax(280px, 1.2fr) !important;
+    grid-template-areas: 'state title meta' 'state description meta' !important;
+  }
+
+  .support-page .support-filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .support-page .support-filters .btn { grid-column: 2; }
+}
+
+@media (max-width: 900px) {
+  .permission-command-bar {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .permission-command-copy { grid-column: 1 / -1; }
+
+  .users-modal-form {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+  }
+
+  .users-modal-form .users-form-section:nth-child(1),
+  .users-modal-form .users-form-section:nth-child(2),
+  .users-modal-form .users-form-section:nth-child(3) {
+    grid-column: 1;
+    grid-row: auto;
+  }
+
+  .support-page .support-hero {
+    grid-template-columns: 1fr !important;
+  }
+
+  .support-hero-status { min-width: 0; width: fit-content; }
+  .support-page .support-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+}
+
+@media (max-width: 720px) {
+  .users-permission-search-grid,
+  .permission-command-bar,
+  .permission-user-card,
+  .permission-user-modules,
+  .users-modal-form .users-form-section:first-child .form-grid,
+  .support-page .support-filters,
+  .support-page .support-kpis {
+    grid-template-columns: 1fr !important;
+  }
+
+  .permission-command-copy,
+  .support-page .support-filters .btn { grid-column: auto; }
+
+  .permission-command-actions { grid-template-columns: 1fr 1fr; }
+
+  .support-page .support-ticket-item {
+    min-height: 0 !important;
+    grid-template-columns: 1fr !important;
+    grid-template-areas: 'state' 'title' 'description' 'meta' !important;
+  }
+
+  .support-page .support-ticket-top { flex-direction: row !important; justify-content: flex-start !important; }
+  .support-page .support-ticket-meta { justify-content: flex-start !important; }
+}
+
+/* ============================================================
    SMART RH · SELECTORES DE PERSONA Y ACCIONES COHERENTES
    La referencia cromática es Operación diaria.
    ============================================================ */

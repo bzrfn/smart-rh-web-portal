@@ -53,6 +53,7 @@ type PermissionFilter =
 type RoleFilter = 'todos' | 'admin' | 'empleado';
 type StatusFilter = 'todos' | 'activos' | 'inactivos';
 type VacationFilter = 'todos' | 'sin_dias' | 'menos_10' | '10_o_mas';
+type BulkPermissionTarget = keyof Permisos | 'todos';
 
 const DEFAULT_PERMISOS: Permisos = {
   asistencia: false,
@@ -129,8 +130,7 @@ export default function Usuarios() {
 
   const [permissionSearch, setPermissionSearch] = useState('');
   const [permissionFilter, setPermissionFilter] = useState<PermissionFilter>('todos');
-  const [permissionPage, setPermissionPage] = useState(1);
-  const [permissionPageSize, setPermissionPageSize] = useState(10);
+  const [bulkPermissionTarget, setBulkPermissionTarget] = useState<BulkPermissionTarget>('asistencia');
 
   const [userSearch, setUserSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState<RoleFilter>('todos');
@@ -206,8 +206,10 @@ export default function Usuarios() {
     });
   }, [empleados, permisosMap, permissionSearch, permissionFilter]);
 
-  const permissionTotalPages = getTotalPages(filteredPermisosUsers.length, permissionPageSize);
-  const paginatedPermisosUsers = paginate(filteredPermisosUsers, permissionPage, permissionPageSize);
+  const visiblePermisosUsers = useMemo(
+    () => filteredPermisosUsers.slice(0, permissionSearch.trim() ? 24 : 8),
+    [filteredPermisosUsers, permissionSearch]
+  );
 
   const filteredUsers = useMemo(() => {
     const query = normalizeText(userSearch.trim());
@@ -235,10 +237,6 @@ export default function Usuarios() {
 
   const usersTotalPages = getTotalPages(filteredUsers.length, usersPageSize);
   const paginatedUsers = paginate(filteredUsers, usersPage, usersPageSize);
-
-  useEffect(() => {
-    setPermissionPage(1);
-  }, [permissionSearch, permissionFilter, permissionPageSize]);
 
   useEffect(() => {
     setUsersPage(1);
@@ -596,7 +594,7 @@ export default function Usuarios() {
 
   if (!isAdmin) {
     return (
-      <div className="module-card">
+      <div className="module-card users-overview-card">
         <div className="module-card-header">
           <div>
             <p className="module-eyebrow">Administración</p>
@@ -672,7 +670,7 @@ export default function Usuarios() {
         {showPermissions && (
           <>
             <div className="users-filter-panel">
-              <div className="users-filter-grid">
+              <div className="users-filter-grid users-permission-search-grid">
                 <label className="users-filter-control">
                   <span>Buscar empleado</span>
                   <input
@@ -700,64 +698,56 @@ export default function Usuarios() {
                   </select>
                 </label>
 
-                <label className="users-filter-control">
-                  <span>Filas por página</span>
-                  <select value={permissionPageSize} onChange={(e) => setPermissionPageSize(Number(e.target.value))}>
-                    {PAGE_SIZE_OPTIONS.map((size) => (
-                      <option key={size} value={size}>
-                        {size} empleados
-                      </option>
-                    ))}
-                  </select>
-                </label>
               </div>
 
               <div className="users-filter-summary">
                 <span>{filteredPermisosUsers.length} empleado(s) encontrados</span>
-                <span>Mostrando página {permissionPage} de {permissionTotalPages}</span>
+                <span>{permissionSearch.trim() ? 'Resultados de búsqueda' : 'Busca a una persona para administrar su acceso'}</span>
               </div>
             </div>
 
-            <div className="bulk-permissions-panel">
-              <div className="bulk-permissions-header">
+            <div className="permission-command-bar">
+              <div className="permission-command-copy">
+                <span className="permission-command-icon">A</span>
                 <div>
-                  <h3>Acciones generales por módulo</h3>
-                  <p>Aplica cambios a todos los empleados que coincidan con los filtros actuales.</p>
+                  <strong>Acceso general</strong>
+                  <small>Aplica una acción al grupo filtrado.</small>
                 </div>
               </div>
-
-              <div className="permission-module-grid">
-                {([
-                  ['asistencia', 'Asistencia', 'Registro y revisión de jornadas', permissionStats.conAsistencia],
-                  ['contratos', 'Contratos', 'Consulta de documentos laborales', permissionStats.conContratos],
-                  ['nomina', 'Nómina', 'Consulta de pagos y periodos', permissionStats.conNomina],
-                  ['vacaciones', 'Vacaciones', 'Solicitud y seguimiento de días', permissionStats.conVacaciones],
-                ] as [keyof Permisos, string, string, number][]).map(([key, label, description, enabled]) => (
-                  <article className="permission-module-card" key={key}>
-                    <div className="permission-module-card-heading">
-                      <span>{label.charAt(0)}</span>
-                      <div><strong>{label}</strong><small>{description}</small></div>
-                    </div>
-                    <p><strong>{enabled}</strong> de {permissionStats.total} empleados con acceso</p>
-                    <div className="permission-module-actions">
-                      <button className="bulk-action-btn" disabled={isBulkSaving} onClick={() => bulkUpdatePermisos([key], true)}>Activar</button>
-                      <button className="bulk-action-btn danger" disabled={isBulkSaving} onClick={() => bulkUpdatePermisos([key], false)}>Desactivar</button>
-                    </div>
-                  </article>
-                ))}
-              </div>
-
-              <div className="permission-all-actions">
-                <div><strong>Acceso completo</strong><span>Aplica los cuatro módulos al grupo filtrado.</span></div>
-                <button className="bulk-action-btn" disabled={isBulkSaving} onClick={() => bulkUpdatePermisos(['asistencia', 'contratos', 'nomina', 'vacaciones'], true)}>Activar todo</button>
-                <button className="bulk-action-btn danger" disabled={isBulkSaving} onClick={() => bulkUpdatePermisos(['asistencia', 'contratos', 'nomina', 'vacaciones'], false)}>Desactivar todo</button>
+              <label className="permission-command-select">
+                <span>Módulo</span>
+                <select value={bulkPermissionTarget} onChange={(event) => setBulkPermissionTarget(event.target.value as BulkPermissionTarget)}>
+                  <option value="asistencia">Asistencia · {permissionStats.conAsistencia} con acceso</option>
+                  <option value="contratos">Contratos · {permissionStats.conContratos} con acceso</option>
+                  <option value="nomina">Nómina · {permissionStats.conNomina} con acceso</option>
+                  <option value="vacaciones">Vacaciones · {permissionStats.conVacaciones} con acceso</option>
+                  <option value="todos">Todos los módulos</option>
+                </select>
+              </label>
+              <div className="permission-command-actions">
+                <button
+                  className="bulk-action-btn"
+                  type="button"
+                  disabled={isBulkSaving}
+                  onClick={() => bulkUpdatePermisos(bulkPermissionTarget === 'todos' ? ['asistencia', 'contratos', 'nomina', 'vacaciones'] : [bulkPermissionTarget], true)}
+                >
+                  Activar
+                </button>
+                <button
+                  className="bulk-action-btn danger"
+                  type="button"
+                  disabled={isBulkSaving}
+                  onClick={() => bulkUpdatePermisos(bulkPermissionTarget === 'todos' ? ['asistencia', 'contratos', 'nomina', 'vacaciones'] : [bulkPermissionTarget], false)}
+                >
+                  Desactivar
+                </button>
               </div>
             </div>
 
-            {empleados.length > 0 ? (
-              <>
+            {filteredPermisosUsers.length > 0 ? (
+              <div className="permission-results-shell">
                 <div className="permission-user-list">
-                      {paginatedPermisosUsers.map((u) => {
+                      {visiblePermisosUsers.map((u) => {
                         const permisos = permisosMap[u.id] ?? DEFAULT_PERMISOS;
 
                         return (
@@ -787,31 +777,12 @@ export default function Usuarios() {
                         );
                       })}
                 </div>
-
-                <div className="users-pagination">
-                  <button
-                    className="btn btn-small btn-secondary"
-                    type="button"
-                    disabled={permissionPage <= 1}
-                    onClick={() => setPermissionPage((prev) => Math.max(1, prev - 1))}
-                  >
-                    Anterior
-                  </button>
-
-                  <span>
-                    Página {permissionPage} de {permissionTotalPages}
-                  </span>
-
-                  <button
-                    className="btn btn-small btn-secondary"
-                    type="button"
-                    disabled={permissionPage >= permissionTotalPages}
-                    onClick={() => setPermissionPage((prev) => Math.min(permissionTotalPages, prev + 1))}
-                  >
-                    Siguiente
-                  </button>
-                </div>
-              </>
+                {filteredPermisosUsers.length > visiblePermisosUsers.length && (
+                  <p className="permission-search-hint">
+                    Se muestran {visiblePermisosUsers.length} de {filteredPermisosUsers.length}. Escribe un nombre o correo para encontrar a la persona exacta.
+                  </p>
+                )}
+              </div>
             ) : (
               <div className="empty-state-card">
                 <h3>Sin empleados</h3>
