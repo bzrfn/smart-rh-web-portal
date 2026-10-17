@@ -367,21 +367,33 @@ export default function DocumentacionEmpleado() {
                 </span>
               </div>
 
-              <div className="employee-filter-row">
-                {filterOptions.map((filter) => (
-                  <button
-                    key={filter.key}
-                    type="button"
-                    className={`employee-filter-chip ${activeFilter === filter.key ? 'active' : ''}`}
-                    onClick={() => {
-                      setActiveFilter(filter.key);
-                      setPickerOpen(true);
-                    }}
-                  >
-                    {filter.label}
-                    <span>{filter.count}</span>
-                  </button>
-                ))}
+              <div className="employee-filter-board" aria-label="Filtros del expediente">
+                <div className="employee-filter-board-heading">
+                  <div>
+                    <strong>Vista del expediente</strong>
+                    <span>Elige qué personas necesitas revisar</span>
+                  </div>
+                  <span className="employee-active-filter">
+                    {filterOptions.find((filter) => filter.key === activeFilter)?.label}
+                  </span>
+                </div>
+
+                <div className="employee-filter-grid">
+                  {filterOptions.map((filter) => (
+                    <button
+                      key={filter.key}
+                      type="button"
+                      className={`employee-filter-card ${activeFilter === filter.key ? 'active' : ''}`}
+                      onClick={() => {
+                        setActiveFilter(filter.key);
+                        setPickerOpen(true);
+                      }}
+                    >
+                      <span>{filter.label}</span>
+                      <strong>{filter.count}</strong>
+                    </button>
+                  ))}
+                </div>
               </div>
 
               {pickerOpen && (

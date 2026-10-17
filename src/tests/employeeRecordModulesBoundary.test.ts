@@ -45,6 +45,29 @@ describe('Expediente laboral visual contract', () => {
     expect(documents).toContain('Paso 1');
     expect(documents).toContain('Paso 2');
     expect(documents).not.toContain('trazabilidad en MongoDB');
+    expect(documents).toContain('employee-filter-board');
+    expect(documents).toContain('employee-filter-grid');
+    expect(documents).not.toContain('employee-filter-row');
+  });
+
+  test('money is formatted and payroll reuses the contractual salary', () => {
+    const currencyInput = read('components/CurrencyInput.tsx');
+
+    expect(currencyInput).toContain("new Intl.NumberFormat('es-MX'");
+    expect(contracts).toContain("import CurrencyInput from '../../components/CurrencyInput'");
+    expect(payroll).toContain("api.get('/contratos')");
+    expect(payroll).toContain('readOnly={Boolean(selectedContract)}');
+    expect(payroll).toContain('Este importe se aplicará automáticamente a la nómina.');
+    expect(contracts).not.toContain('placeholder="Ej. 12000"');
+    expect(payroll).not.toContain('placeholder="Ej. 12000"');
+  });
+
+  test('table wrappers preserve horizontal access without trapping page scroll', () => {
+    expect(styles).toContain('.attendance-review-table-wrapper');
+    expect(styles).toContain('.vacation-table-wrapper');
+    expect(styles).toContain('.incapacity-table-wrapper');
+    expect(styles).toContain('overscroll-behavior: auto !important;');
+    expect(styles).toContain('touch-action: pan-x pan-y !important;');
   });
 
   test('shared styles cover responsive tables, forms, documents, and dark mode', () => {

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { api } from '../../services/api';
 import { openProtectedResource } from '../../services/protectedMedia';
+import CurrencyInput from '../../components/CurrencyInput';
 
 type Contrato = {
   id: number;
@@ -398,7 +399,9 @@ export default function Contratos() {
 
         {error && <p className="module-error">{error}</p>}
 
-        <form className="smart-form-grid record-form-grid" onSubmit={onSubmit}>
+        <form className="record-workflow-form" onSubmit={onSubmit}>
+          <section className="record-form-section record-person-section">
+            <div className="record-form-section-heading"><span>01</span><div><strong>Persona</strong><small>Selecciona el expediente que recibirá el contrato.</small></div></div>
           <div className="smart-form-group smart-form-group-full">
             <label>Buscar usuario</label>
 
@@ -484,6 +487,12 @@ export default function Contratos() {
             )}
           </div>
 
+          </section>
+
+          <section className="record-form-section record-terms-section">
+            <div className="record-form-section-heading"><span>02</span><div><strong>Condiciones</strong><small>Define vigencia, salario y estado del acuerdo.</small></div></div>
+            <div className="smart-form-grid record-form-grid">
+
           <div className="smart-form-group">
             <label>Tipo de contrato</label>
             <select
@@ -499,12 +508,11 @@ export default function Contratos() {
 
           <div className="smart-form-group">
             <label>Salario base</label>
-            <input
-              type="number"
-              step="0.01"
+            <CurrencyInput
               value={form.salario_base}
-              onChange={(e) => handleChange('salario_base', e.target.value)}
-              placeholder="Ej. 12000"
+              onChange={(value) => handleChange('salario_base', value)}
+              placeholder="12,000.00"
+              ariaLabel="Salario base en pesos mexicanos"
             />
           </div>
 
@@ -532,6 +540,15 @@ export default function Contratos() {
               {submitting ? 'Guardando...' : 'Registrar contrato'}
             </button>
           </div>
+            </div>
+          </section>
+
+          <aside className="record-live-summary">
+            <div><span>Persona</span><strong>{selectedUser ? `${selectedUser.nombre} ${selectedUser.apellido}` : 'Por seleccionar'}</strong></div>
+            <div><span>Tipo</span><strong>{formatLabel(form.tipo_contrato)}</strong></div>
+            <div><span>Salario contractual</span><strong>{form.salario_base ? formatCurrency(Number(form.salario_base)) : 'Por definir'}</strong></div>
+            <div><span>Vigencia</span><strong>{form.fecha_inicio ? `${formatDateDisplay(form.fecha_inicio)} → ${form.fecha_fin ? formatDateDisplay(form.fecha_fin) : 'Sin fecha fin'}` : 'Por definir'}</strong></div>
+          </aside>
         </form>
       </div>
 
@@ -561,7 +578,7 @@ export default function Contratos() {
 
             <div className="smart-form-group">
               <label>Salario base</label>
-              <input type="number" step="0.01" value={edit.salario_base} onChange={(e) => handleEditChange('salario_base', e.target.value)} />
+              <CurrencyInput value={edit.salario_base} onChange={(value) => handleEditChange('salario_base', value)} ariaLabel="Editar salario base" />
             </div>
 
             <div className="smart-form-group">

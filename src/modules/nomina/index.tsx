@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { api } from '../../services/api';
+import CurrencyInput from '../../components/CurrencyInput';
 
 type Nomina = {
   id: number;
@@ -25,6 +26,14 @@ type UserOption = {
   correo: string;
   role?: string;
   activo?: number;
+};
+
+type ContractOption = {
+  id: number;
+  usuario_id: number;
+  salario_base: number;
+  estado: 'activo' | 'inactivo' | 'finalizado';
+  fecha_inicio: string;
 };
 
 type FormState = {
@@ -54,6 +63,7 @@ const PAGE_SIZE = 5;
 export default function Nomina() {
   const [items, setItems] = useState<Nomina[]>([]);
   const [users, setUsers] = useState<UserOption[]>([]);
+  const [contracts, setContracts] = useState<ContractOption[]>([]);
   const [userSearch, setUserSearch] = useState('');
   const [showUserResults, setShowUserResults] = useState(false);
 
@@ -133,6 +143,18 @@ export default function Nomina() {
     return users.find((u) => String(u.id) === form.usuario_id) || null;
   }, [users, form.usuario_id]);
 
+  const selectedContract = useMemo(() => {
+    return contracts
+      .filter((contract) => String(contract.usuario_id) === form.usuario_id)
+      .sort((a, b) => {
+        if (a.estado === 'activo' && b.estado !== 'activo') return -1;
+        if (b.estado === 'activo' && a.estado !== 'activo') return 1;
+        return new Date(b.fecha_inicio).getTime() - new Date(a.fecha_inicio).getTime();
+      })[0] || null;
+  }, [contracts, form.usuario_id]);
+
+  const estimatedTotal = Math.max(0, Number(form.salario_base || 0) + Number(form.bonos || 0) - Number(form.deducciones || 0));
+
   const load = useCallback(async () => {
     try {
       setLoading(true);
@@ -163,10 +185,20 @@ export default function Nomina() {
     }
   }, []);
 
+  const loadContracts = useCallback(async () => {
+    try {
+      const { data } = await api.get('/contratos');
+      setContracts(Array.isArray(data?.contratos) ? data.contratos : []);
+    } catch {
+      setContracts([]);
+    }
+  }, []);
+
   useEffect(() => {
     load();
     loadUsers();
-  }, [load, loadUsers]);
+    loadContracts();
+  }, [load, loadUsers, loadContracts]);
 
   useEffect(() => {
     if (currentPage > totalPages) {
@@ -183,13 +215,20 @@ export default function Nomina() {
   };
 
   const selectUser = (user: UserOption) => {
-    setForm((prev) => ({ ...prev, usuario_id: String(user.id) }));
+    const contract = contracts
+      .filter((item) => item.usuario_id === user.id)
+      .sort((a, b) => {
+        if (a.estado === 'activo' && b.estado !== 'activo') return -1;
+        if (b.estado === 'activo' && a.estado !== 'activo') return 1;
+        return new Date(b.fecha_inicio).getTime() - new Date(a.fecha_inicio).getTime();
+      })[0];
+    setForm((prev) => ({ ...prev, usuario_id: String(user.id), salario_base: contract ? String(contract.salario_base) : '' }));
     setUserSearch(`${user.nombre} ${user.apellido} - ${user.correo}`);
     setShowUserResults(false);
   };
 
   const clearSelectedUser = () => {
-    setForm((prev) => ({ ...prev, usuario_id: '' }));
+    setForm((prev) => ({ ...prev, usuario_id: '', salario_base: '' }));
     setUserSearch('');
     setShowUserResults(true);
   };
@@ -384,7 +423,9 @@ export default function Nomina() {
 
         {error && <p className="module-error">{error}</p>}
 
-        <form className="smart-form-grid record-form-grid" onSubmit={onSubmit}>
+        <form className="record-workflow-form payroll-workflow-form" onSubmit={onSubmit}>
+          <section className="record-form-section record-person-section">
+            <div className="record-form-section-heading"><span>01</span><div><strong>Persona y contrato</strong><small>El salario se toma del contrato más reciente para evitar capturarlo dos veces.</small></div></div>
           <div className="smart-form-group smart-form-group-full">
             <label>Buscar usuario</label>
 
@@ -395,7 +436,7 @@ export default function Nomina() {
                 setUserSearch(e.target.value);
                 setShowUserResults(true);
                 if (form.usuario_id) {
-                  setForm((prev) => ({ ...prev, usuario_id: '' }));
+                  setForm((prev) => ({ ...prev, usuario_id: '', salario_base: '' }));
                 }
               }}
               onFocus={() => setShowUserResults(true)}
@@ -430,36 +471,44 @@ export default function Nomina() {
             )}
           </div>
 
+          {selectedUser && (
+            <div className={`contract-salary-source ${selectedContract ? 'available' : 'missing'}`}>
+              <div><span>Salario contractual</span><strong>{selectedContract ? formatCurrency(selectedContract.salario_base) : 'Sin contrato disponible'}</strong></div>
+              <p>{selectedContract ? 'Este importe se aplicará automáticamente a la nómina.' : 'Registra primero el contrato o captura una base sólo para este periodo.'}</p>
+            </div>
+          )}
+          </section>
+
+          <section className="record-form-section record-terms-section">
+            <div className="record-form-section-heading"><span>02</span><div><strong>Ajustes del periodo</strong><small>Completa bonos, deducciones, fechas y estado del pago.</small></div></div>
+            <div className="smart-form-grid record-form-grid">
+
           <div className="smart-form-group">
             <label>Salario base</label>
-            <input
-              type="number"
-              step="0.01"
+            <CurrencyInput
               value={form.salario_base}
-              onChange={(e) => handleChange('salario_base', e.target.value)}
-              placeholder="Ej. 12000"
+              onChange={(value) => handleChange('salario_base', value)}
+              placeholder="12,000.00"
+              readOnly={Boolean(selectedContract)}
+              ariaLabel="Salario base contractual"
             />
           </div>
 
           <div className="smart-form-group">
             <label>Deducciones</label>
-            <input
-              type="number"
-              step="0.01"
+            <CurrencyInput
               value={form.deducciones}
-              onChange={(e) => handleChange('deducciones', e.target.value)}
-              placeholder="0"
+              onChange={(value) => handleChange('deducciones', value)}
+              ariaLabel="Deducciones en pesos mexicanos"
             />
           </div>
 
           <div className="smart-form-group">
             <label>Bonos</label>
-            <input
-              type="number"
-              step="0.01"
+            <CurrencyInput
               value={form.bonos}
-              onChange={(e) => handleChange('bonos', e.target.value)}
-              placeholder="0"
+              onChange={(value) => handleChange('bonos', value)}
+              ariaLabel="Bonos en pesos mexicanos"
             />
           </div>
 
@@ -497,6 +546,15 @@ export default function Nomina() {
               {submitting ? 'Guardando...' : 'Registrar nómina'}
             </button>
           </div>
+            </div>
+          </section>
+
+          <aside className="record-live-summary payroll-live-summary">
+            <div><span>Base contractual</span><strong>{form.salario_base ? formatCurrency(Number(form.salario_base)) : 'Por definir'}</strong></div>
+            <div><span>Bonos</span><strong>+ {formatCurrency(Number(form.bonos || 0))}</strong></div>
+            <div><span>Deducciones</span><strong>- {formatCurrency(Number(form.deducciones || 0))}</strong></div>
+            <div className="record-live-total"><span>Total estimado</span><strong>{formatCurrency(estimatedTotal)}</strong></div>
+          </aside>
         </form>
       </div>
 
@@ -515,31 +573,28 @@ export default function Nomina() {
           <div className="smart-form-grid">
             <div className="smart-form-group">
               <label>Salario base</label>
-              <input
-                type="number"
-                step="0.01"
+              <CurrencyInput
                 value={edit.salario_base}
-                onChange={(e) => handleEditChange('salario_base', e.target.value)}
+                onChange={(value) => handleEditChange('salario_base', value)}
+                ariaLabel="Editar salario base de nómina"
               />
             </div>
 
             <div className="smart-form-group">
               <label>Deducciones</label>
-              <input
-                type="number"
-                step="0.01"
+              <CurrencyInput
                 value={edit.deducciones}
-                onChange={(e) => handleEditChange('deducciones', e.target.value)}
+                onChange={(value) => handleEditChange('deducciones', value)}
+                ariaLabel="Editar deducciones"
               />
             </div>
 
             <div className="smart-form-group">
               <label>Bonos</label>
-              <input
-                type="number"
-                step="0.01"
+              <CurrencyInput
                 value={edit.bonos}
-                onChange={(e) => handleEditChange('bonos', e.target.value)}
+                onChange={(value) => handleEditChange('bonos', value)}
+                ariaLabel="Editar bonos"
               />
             </div>
 
