@@ -336,14 +336,6 @@ export default function CalendarioLaboral() {
           </p>
         </div>
 
-        <div className="calendar-hero-actions">
-          <button className="calendar-soft-btn" onClick={goToday} type="button">
-            Ir a hoy
-          </button>
-          <button className="calendar-primary-btn" onClick={loadCalendario} type="button">
-            Actualizar
-          </button>
-        </div>
       </section>
 
       <section className="calendar-summary-grid operation-summary-rail" aria-label="Resumen del mes">
@@ -384,7 +376,12 @@ export default function CalendarioLaboral() {
       <section className="calendar-layout operation-calendar-workspace">
         <div className="calendar-month-card">
           <div className="calendar-month-header">
-            <button type="button" onClick={() => moveMonth(-1)}>
+            <button
+              className="calendar-month-arrow"
+              type="button"
+              onClick={() => moveMonth(-1)}
+              aria-label="Mes anterior"
+            >
               ‹
             </button>
 
@@ -395,9 +392,23 @@ export default function CalendarioLaboral() {
               </p>
             </div>
 
-            <button type="button" onClick={() => moveMonth(1)}>
-              ›
-            </button>
+            <div className="calendar-month-actions">
+              <button
+                className="calendar-today-btn"
+                onClick={goToday}
+                type="button"
+              >
+                Ir a hoy
+              </button>
+              <button
+                className="calendar-month-arrow"
+                type="button"
+                onClick={() => moveMonth(1)}
+                aria-label="Mes siguiente"
+              >
+                ›
+              </button>
+            </div>
           </div>
 
           <div className="calendar-week-row">

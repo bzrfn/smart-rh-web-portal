@@ -2710,6 +2710,194 @@
   }
 }
 
+/* Calendar v5 — larger month, readable agenda and integrated navigation */
+.calendar-page .calendar-hero {
+  align-items: center !important;
+}
+
+.calendar-page .operation-calendar-workspace {
+  grid-template-columns: minmax(560px, 1.14fr) minmax(430px, 0.86fr) !important;
+  gap: 18px !important;
+}
+
+.calendar-page .operation-calendar-workspace .calendar-month-card,
+.calendar-page .operation-calendar-workspace .calendar-events-panel {
+  height: 640px !important;
+  min-height: 640px !important;
+  max-height: 640px !important;
+}
+
+.calendar-page .calendar-month-header {
+  display: grid !important;
+  grid-template-columns: 48px minmax(0, 1fr) minmax(148px, auto) !important;
+  align-items: center !important;
+  gap: 14px !important;
+  margin-bottom: 20px !important;
+}
+
+.calendar-page .calendar-month-header > div:nth-child(2) {
+  min-width: 0 !important;
+}
+
+.calendar-page .calendar-month-header .calendar-month-arrow {
+  width: 46px !important;
+  height: 46px !important;
+  padding: 0 !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 14px !important;
+  font-size: 1.55rem !important;
+}
+
+.calendar-page .calendar-month-actions {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 8px !important;
+}
+
+.calendar-page .calendar-month-header .calendar-today-btn {
+  width: auto !important;
+  height: 40px !important;
+  padding: 0 14px !important;
+  border: 1px solid color-mix(in srgb, var(--primary) 18%, var(--border)) !important;
+  border-radius: 12px !important;
+  color: var(--primary) !important;
+  background: color-mix(in srgb, var(--card) 86%, var(--primary) 14%) !important;
+  font-size: 0.78rem !important;
+  font-weight: 850 !important;
+  white-space: nowrap !important;
+}
+
+.calendar-page .calendar-month-header .calendar-today-btn:hover {
+  transform: translateY(-1px) !important;
+  border-color: color-mix(in srgb, var(--primary) 38%, var(--border)) !important;
+  box-shadow: 0 8px 18px color-mix(in srgb, var(--primary) 12%, transparent) !important;
+}
+
+.calendar-page .calendar-grid {
+  gap: 8px !important;
+}
+
+.calendar-page .calendar-day {
+  min-height: 68px !important;
+  border-radius: 15px !important;
+}
+
+.calendar-page .operation-calendar-workspace .calendar-events-panel {
+  grid-template-rows: auto minmax(0, 1fr) auto !important;
+  gap: 12px !important;
+}
+
+.calendar-page .operation-calendar-workspace .calendar-event-list {
+  grid-template-rows: repeat(4, minmax(104px, 1fr)) !important;
+  gap: 9px !important;
+}
+
+.calendar-page .operation-calendar-workspace .calendar-event-card {
+  grid-template-columns: 42px minmax(0, 1fr) auto !important;
+  grid-template-rows: minmax(0, 1fr) !important;
+  min-height: 104px !important;
+  padding: 12px 13px !important;
+  gap: 11px !important;
+  align-items: center !important;
+  align-content: center !important;
+  overflow: hidden !important;
+}
+
+.calendar-page .operation-calendar-workspace .calendar-event-card > div {
+  min-width: 0 !important;
+  align-self: center !important;
+}
+
+.calendar-page .operation-calendar-workspace .calendar-event-code {
+  width: 42px !important;
+  height: 42px !important;
+  border-radius: 13px !important;
+}
+
+.calendar-page .operation-calendar-workspace .calendar-event-card small,
+.calendar-page .operation-calendar-workspace .calendar-event-card strong,
+.calendar-page .operation-calendar-workspace .calendar-event-card p,
+.calendar-page .operation-calendar-workspace .calendar-event-card em {
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.calendar-page .operation-calendar-workspace .calendar-event-card strong {
+  margin-top: 2px !important;
+  font-size: 0.88rem !important;
+}
+
+.calendar-page .operation-calendar-workspace .calendar-event-card p {
+  margin-top: 4px !important;
+  font-size: 0.75rem !important;
+}
+
+.calendar-page .operation-calendar-workspace .calendar-event-card em {
+  margin-top: 4px !important;
+  font-size: 0.7rem !important;
+}
+
+.calendar-page .operation-calendar-workspace .calendar-status-pill {
+  align-self: center !important;
+  max-width: 94px !important;
+  padding: 6px 9px !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  font-size: 0.68rem !important;
+}
+
+.calendar-page .calendar-agenda-pagination {
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+@media (max-width: 1240px) {
+  .calendar-page .operation-calendar-workspace {
+    grid-template-columns: 1fr !important;
+  }
+
+  .calendar-page .operation-calendar-workspace .calendar-month-card,
+  .calendar-page .operation-calendar-workspace .calendar-events-panel {
+    width: 100% !important;
+  }
+}
+
+@media (max-width: 700px) {
+  .calendar-page .calendar-month-header {
+    grid-template-columns: 44px minmax(0, 1fr) !important;
+  }
+
+  .calendar-page .calendar-month-actions {
+    grid-column: 1 / -1 !important;
+    justify-content: space-between !important;
+  }
+
+  .calendar-page .operation-calendar-workspace .calendar-month-card,
+  .calendar-page .operation-calendar-workspace .calendar-events-panel {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+  }
+
+  .calendar-page .operation-calendar-workspace .calendar-event-list {
+    grid-template-rows: none !important;
+  }
+
+  .calendar-page .operation-calendar-workspace .calendar-event-card {
+    grid-template-columns: 40px minmax(0, 1fr) !important;
+    grid-template-rows: auto auto !important;
+    min-height: 0 !important;
+  }
+
+  .calendar-page .operation-calendar-workspace .calendar-status-pill {
+    grid-column: 2 !important;
+    justify-self: start !important;
+  }
+}
+
 /* Calendar v4 — compact monthly overview and contained agenda pagination */
 .calendar-page .calendar-summary-grid.operation-summary-rail {
   gap: 10px !important;
@@ -22069,5 +22257,53 @@ button[type='submit'],
   .module-hero-badge {
     width: 100% !important;
     justify-content: center !important;
+  }
+}
+
+/* Calendar v5 final layout lock — keep after legacy module rules */
+@media (min-width: 1241px) {
+  .calendar-page .operation-calendar-workspace {
+    grid-template-columns: minmax(560px, 1.14fr) minmax(430px, 0.86fr) !important;
+  }
+}
+
+@media (min-width: 701px) {
+  .calendar-page .operation-calendar-workspace .calendar-month-card,
+  .calendar-page .operation-calendar-workspace .calendar-events-panel {
+    height: 640px !important;
+    min-height: 640px !important;
+    max-height: 640px !important;
+  }
+
+  .calendar-page .operation-calendar-workspace .calendar-month-card {
+    display: grid !important;
+    grid-template-rows: auto auto minmax(0, 1fr) !important;
+  }
+
+  .calendar-page .operation-calendar-workspace .calendar-grid {
+    min-height: 0 !important;
+    height: 100% !important;
+    grid-auto-rows: minmax(68px, 1fr) !important;
+  }
+
+  .calendar-page .calendar-day {
+    min-height: 68px !important;
+  }
+
+  .calendar-page .operation-calendar-workspace .calendar-event-list {
+    grid-template-rows: repeat(4, minmax(104px, 1fr)) !important;
+  }
+
+  .calendar-page .operation-calendar-workspace .calendar-event-card {
+    grid-template-columns: 42px minmax(0, 1fr) auto !important;
+    grid-template-rows: minmax(0, 1fr) !important;
+    min-height: 104px !important;
+    padding: 12px 13px !important;
+  }
+}
+
+@media (min-width: 701px) and (max-width: 1240px) {
+  .calendar-page .operation-calendar-workspace {
+    grid-template-columns: 1fr !important;
   }
 }

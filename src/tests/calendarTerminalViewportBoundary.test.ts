@@ -11,6 +11,10 @@ describe('SMART RH calendar and QR viewport boundary', () => {
     'src/modules/terminal/TerminalAttendance.tsx',
     'utf8'
   );
+  const calendar = fs.readFileSync(
+    'src/modules/calendario/CalendarioLaboral.tsx',
+    'utf8'
+  );
 
   test('calendar agenda reserves a visible row for pagination', () => {
     expect(styles).toContain(
@@ -26,6 +30,16 @@ describe('SMART RH calendar and QR viewport boundary', () => {
     expect(styles).toContain('grid-template-columns: 46px minmax(0, 1fr) !important;');
   });
 
+  test('month navigation owns the today action and agenda cards keep three columns', () => {
+    expect(calendar).toContain('className="calendar-month-actions"');
+    expect(calendar).toContain('className="calendar-today-btn"');
+    expect(calendar).not.toContain('>\n            Actualizar\n          </button>');
+    expect(styles).toContain(
+      'grid-template-columns: 42px minmax(0, 1fr) auto !important;'
+    );
+    expect(styles).toContain('grid-auto-rows: minmax(68px, 1fr) !important;');
+  });
+
   test('active QR terminal is constrained to the visible viewport', () => {
     expect(terminal).toContain("'terminal-experience-active'");
     expect(terminalStyles).toContain('.terminal-experience-active');
@@ -35,6 +49,9 @@ describe('SMART RH calendar and QR viewport boundary', () => {
     );
     expect(terminalStyles).toContain(
       '.terminal-experience-active:fullscreen .terminal-active-layout'
+    );
+    expect(terminalStyles).toContain(
+      'padding-top: max(22px, env(safe-area-inset-top, 0px)) !important;'
     );
   });
 });
