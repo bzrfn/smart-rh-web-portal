@@ -45,8 +45,10 @@ describe('Expediente laboral visual contract', () => {
     expect(documents).toContain('Paso 1');
     expect(documents).toContain('Paso 2');
     expect(documents).not.toContain('trazabilidad en MongoDB');
-    expect(documents).toContain('employee-filter-board');
-    expect(documents).toContain('employee-filter-grid');
+    expect(documents).toContain('employee-filter-trigger');
+    expect(documents).toContain('employee-filter-dropdown');
+    expect(documents).toContain('Ocultar lista');
+    expect(documents).toContain('setFilterMenuOpen(false)');
     expect(documents).not.toContain('employee-filter-row');
   });
 
@@ -68,6 +70,17 @@ describe('Expediente laboral visual contract', () => {
     expect(styles).toContain('.incapacity-table-wrapper');
     expect(styles).toContain('overscroll-behavior: auto !important;');
     expect(styles).toContain('touch-action: pan-x pan-y !important;');
+  });
+
+  test('dark record actions reuse the restrained semantic tones from daily operation', () => {
+    expect(contracts).toContain('record-action-edit');
+    expect(contracts).toContain('record-action-state');
+    expect(contracts).toContain('record-action-view');
+    expect(payroll).toContain('record-action-edit');
+    expect(payroll).toContain('record-action-state');
+    expect(styles).toContain(":root[data-theme='dark'] .record-page .record-action-state");
+    expect(styles).toContain('rgba(13, 148, 136, 0.19)');
+    expect(styles).toContain('rgba(14, 116, 144, 0.2)');
   });
 
   test('shared styles cover responsive tables, forms, documents, and dark mode', () => {

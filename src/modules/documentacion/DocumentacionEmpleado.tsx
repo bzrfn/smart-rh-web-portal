@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { api } from '../../services/api';
 import ProtectedImage from '../../components/ProtectedImage';
 import { openProtectedResource } from '../../services/protectedMedia';
@@ -61,6 +61,8 @@ export default function DocumentacionEmpleado() {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeFilter, setActiveFilter] = useState<EmployeeFilter>('todos');
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [filterMenuOpen, setFilterMenuOpen] = useState(false);
+  const filterMenuRef = useRef<HTMLDivElement>(null);
 
   const selected = users.find((u) => String(u.id) === selectedId);
 
@@ -180,12 +182,27 @@ export default function DocumentacionEmpleado() {
     setFilename('');
     setMessage('');
     setPickerOpen(false);
+    setFilterMenuOpen(false);
     setSearchTerm('');
   }, [selectedId]);
+
+  useEffect(() => {
+    if (!filterMenuOpen) return;
+
+    const closeFilterMenu = (event: PointerEvent) => {
+      if (!filterMenuRef.current?.contains(event.target as Node)) {
+        setFilterMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('pointerdown', closeFilterMenu);
+    return () => document.removeEventListener('pointerdown', closeFilterMenu);
+  }, [filterMenuOpen]);
 
   function selectEmployee(user: User) {
     setSelectedId(String(user.id));
     setPickerOpen(false);
+    setFilterMenuOpen(false);
     setSearchTerm('');
   }
 
@@ -343,14 +360,19 @@ export default function DocumentacionEmpleado() {
               <button
                 type="button"
                 className="employee-change-btn"
-                onClick={() => setPickerOpen((value) => !value)}
+                onClick={() => {
+                  setPickerOpen((value) => !value);
+                  setFilterMenuOpen(false);
+                }}
               >
                 {pickerOpen ? 'Cerrar' : 'Cambiar empleado'}
               </button>
             </div>
 
-            <div className={`employee-search-panel ${pickerOpen ? 'open' : ''}`}>
-              <div className="employee-search-box">
+            {pickerOpen && (
+            <div className="employee-search-panel open">
+              <div className="employee-search-toolbar">
+                <div className="employee-search-box">
                 <input
                   type="search"
                   value={searchTerm}
@@ -367,40 +389,49 @@ export default function DocumentacionEmpleado() {
                 </span>
               </div>
 
-              <div className="employee-filter-board" aria-label="Filtros del expediente">
-                <div className="employee-filter-board-heading">
-                  <div>
-                    <strong>Vista del expediente</strong>
-                    <span>Elige qué personas necesitas revisar</span>
-                  </div>
-                  <span className="employee-active-filter">
-                    {filterOptions.find((filter) => filter.key === activeFilter)?.label}
-                  </span>
-                </div>
+                <div ref={filterMenuRef} className={`employee-filter-select ${filterMenuOpen ? 'open' : ''}`}>
+                  <button
+                    type="button"
+                    className="employee-filter-trigger"
+                    aria-expanded={filterMenuOpen}
+                    onClick={() => setFilterMenuOpen((value) => !value)}
+                  >
+                    <span><small>Mostrar</small>{filterOptions.find((filter) => filter.key === activeFilter)?.label}</span>
+                    <strong>{filterOptions.find((filter) => filter.key === activeFilter)?.count}</strong>
+                    <i aria-hidden="true">⌄</i>
+                  </button>
 
-                <div className="employee-filter-grid">
-                  {filterOptions.map((filter) => (
-                    <button
-                      key={filter.key}
-                      type="button"
-                      className={`employee-filter-card ${activeFilter === filter.key ? 'active' : ''}`}
-                      onClick={() => {
-                        setActiveFilter(filter.key);
-                        setPickerOpen(true);
-                      }}
-                    >
-                      <span>{filter.label}</span>
-                      <strong>{filter.count}</strong>
-                    </button>
-                  ))}
+                  {filterMenuOpen && (
+                    <div className="employee-filter-dropdown" aria-label="Filtros del expediente">
+                      <div className="employee-filter-dropdown-heading">
+                        <strong>Filtrar expedientes</strong>
+                        <span>Selecciona una vista</span>
+                      </div>
+                      <div className="employee-filter-grid">
+                        {filterOptions.map((filter) => (
+                          <button
+                            key={filter.key}
+                            type="button"
+                            className={`employee-filter-card ${activeFilter === filter.key ? 'active' : ''}`}
+                            onClick={() => {
+                              setActiveFilter(filter.key);
+                              setFilterMenuOpen(false);
+                            }}
+                          >
+                            <span>{filter.label}</span>
+                            <strong>{filter.count}</strong>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
 
-              {pickerOpen && (
                 <div className="employee-results-panel">
                   <div className="employee-results-header">
-                    <strong>Resultados</strong>
-                    <span>Mostrando máximo 40 coincidencias</span>
+                    <div><strong>Resultados</strong><span>Mostrando máximo 40 coincidencias</span></div>
+                    <button type="button" onClick={() => { setPickerOpen(false); setFilterMenuOpen(false); }}>Ocultar lista</button>
                   </div>
 
                   {filteredUsers.length > 0 ? (
@@ -463,8 +494,8 @@ export default function DocumentacionEmpleado() {
                     </div>
                   )}
                 </div>
-              )}
             </div>
+            )}
           </div>
 
           <div className="profile-preview profile-preview-premium record-identity-card">
@@ -498,7 +529,7 @@ export default function DocumentacionEmpleado() {
             <input type="file" accept="image/*" onChange={(e) => onFileChange(e.target.files?.[0])} />
           </label>
 
-          <button className="btn" type="button" disabled={loading || !fotoBase64} onClick={uploadPhoto}>
+          <button className="btn record-primary-action" type="button" disabled={loading || !fotoBase64} onClick={uploadPhoto}>
             {loading ? 'Procesando...' : 'Guardar nueva foto'}
           </button>
         </section>
@@ -513,11 +544,11 @@ export default function DocumentacionEmpleado() {
           </div>
 
           <div className="document-actions document-actions-premium">
-            <button className="btn" type="button" disabled={loading || !selectedId} onClick={generateContrato}>
+            <button className="btn record-primary-action" type="button" disabled={loading || !selectedId} onClick={generateContrato}>
               Generar contrato PDF
             </button>
 
-            <button className="btn btn-secondary" type="button" disabled={loading || !selectedId} onClick={generateCredencial}>
+            <button className="btn btn-secondary record-secondary-action" type="button" disabled={loading || !selectedId} onClick={generateCredencial}>
               Generar credencial digital
             </button>
           </div>

@@ -726,12 +726,12 @@ export default function Nomina() {
 
                       <td data-label="Acciones">
                         <div className="table-actions">
-                          <button className="btn btn-small" type="button" onClick={() => startEdit(item)}>
+                          <button className="btn btn-small record-action-btn record-action-edit" type="button" onClick={() => startEdit(item)}>
                             Editar
                           </button>
 
                           <button
-                            className="btn btn-small"
+                            className="btn btn-small record-action-btn record-action-state"
                             type="button"
                             onClick={() => toggleEstado(item)}
                             disabled={changingEstadoId === item.id}

@@ -701,12 +701,12 @@ export default function Contratos() {
 
                       <td data-label="Acciones">
                         <div className="table-actions">
-                          <button className="btn btn-small" type="button" onClick={() => startEdit(item)}>
+                          <button className="btn btn-small record-action-btn record-action-edit" type="button" onClick={() => startEdit(item)}>
                             Editar
                           </button>
 
                           <button
-                            className="btn btn-small"
+                            className="btn btn-small record-action-btn record-action-state"
                             type="button"
                             onClick={() => toggleEstado(item)}
                             disabled={changingEstadoId === item.id}
@@ -722,7 +722,7 @@ export default function Contratos() {
 
                           {item.contrato_pdf_url && (
                             <button
-                              className="btn btn-small btn-secondary"
+                              className="btn btn-small btn-secondary record-action-btn record-action-view"
                               type="button"
                               onClick={() =>
                                 viewContrato(item.contrato_pdf_url || '')
