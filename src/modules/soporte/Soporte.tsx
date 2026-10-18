@@ -398,7 +398,7 @@ export default function Soporte() {
               />
             </label>
 
-            <label className="support-filter-control">
+            <label className="support-filter-control support-filter-state">
               <span>Estado</span>
               <select value={estado} onChange={(e) => setEstado(e.target.value)}>
                 {estados.map((item) => (
@@ -409,7 +409,7 @@ export default function Soporte() {
               </select>
             </label>
 
-            <label className="support-filter-control">
+            <label className="support-filter-control support-filter-category">
               <span>Categoría</span>
               <select value={categoria} onChange={(e) => setCategoria(e.target.value)}>
                 {categorias.map((item) => (
@@ -420,7 +420,7 @@ export default function Soporte() {
               </select>
             </label>
 
-            <label className="support-filter-control">
+            <label className="support-filter-control support-filter-priority">
               <span>Prioridad</span>
               <select value={prioridad} onChange={(e) => setPrioridad(e.target.value)}>
                 {prioridades.map((item) => (

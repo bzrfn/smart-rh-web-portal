@@ -66,7 +66,13 @@
   }
 
   .smart-modal .users-modal-form .users-password-field {
-    margin: 0 !important;
+    grid-column: 1 / -1 !important;
+    margin: 0 0 9px !important;
+  }
+
+  .smart-modal .users-modal-form .users-role-field {
+    grid-column: 1 / -1 !important;
+    margin-top: 2px !important;
   }
 
   .smart-modal .users-modal-form input,
@@ -96,6 +102,32 @@
 .support-calendar-workspace .support-filter-search,
 .support-calendar-workspace .support-filter-submit {
   grid-column: auto !important;
+  grid-row: 1 !important;
+}
+
+.support-calendar-workspace .support-filter-search {
+  grid-column: 1 !important;
+}
+
+.support-calendar-workspace .support-filter-state {
+  grid-column: 2 !important;
+}
+
+.support-calendar-workspace .support-filter-category {
+  grid-column: 3 !important;
+}
+
+.support-calendar-workspace .support-filter-priority {
+  grid-column: 4 !important;
+}
+
+.support-calendar-workspace .support-filter-submit {
+  grid-column: 5 !important;
+}
+
+.support-calendar-workspace .support-filters::after {
+  display: none !important;
+  content: none !important;
 }
 
 .support-calendar-workspace .support-filter-control {
@@ -121,5 +153,6 @@
   .support-calendar-workspace .support-filter-search,
   .support-calendar-workspace .support-filter-submit {
     grid-column: 1 !important;
+    grid-row: auto !important;
   }
 }

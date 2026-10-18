@@ -811,7 +811,7 @@ export default function Usuarios() {
                 </div>
               )}
 
-              <label className="form-label">
+              <label className="form-label users-role-field">
                 Rol
                 <select value={form.rol_id} onChange={(e) => updateForm('rol_id', e.target.value)}>
                   <option
