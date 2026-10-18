@@ -58,7 +58,8 @@ describe('Gestión interna visual contract', () => {
     expect(users).toContain('users-password-field');
     expect(repairStyles).toContain('z-index: 2147483600 !important');
     expect(finalAlignmentStyles).toContain('grid-template-columns: repeat(3, minmax(0, 1fr)) !important');
-    expect(finalAlignmentStyles).toContain('overflow: visible !important');
+    expect(finalAlignmentStyles).toContain('overflow: clip !important');
+    expect(finalAlignmentStyles).toContain('border-radius: 25px 25px 0 0 !important');
   });
 
   test('support combines the ticket inbox with a monthly calendar', () => {
@@ -74,6 +75,7 @@ describe('Gestión interna visual contract', () => {
     expect(support).toContain('support-filter-control');
     expect(support).toContain('support-ticket-copy');
     expect(finalAlignmentStyles).toContain('height: 43px !important');
+    expect(finalAlignmentStyles).not.toContain('@media (max-width: 980px)');
     expect(support).not.toContain('>\n              Actualizar\n            </button>');
     expect(support).not.toContain('<div className="support-detail-panel">');
   });

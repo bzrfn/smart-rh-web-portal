@@ -4,11 +4,12 @@
   .smart-modal:has(.users-modal-form) {
     width: min(1260px, calc(100vw - 68px)) !important;
     max-height: none !important;
-    overflow: visible !important;
+    overflow: clip !important;
   }
 
   .smart-modal:has(.users-modal-form) .smart-modal-header {
     padding: 20px 24px 17px !important;
+    border-radius: 25px 25px 0 0 !important;
   }
 
   .smart-modal:has(.users-modal-form) .smart-modal-body {
@@ -85,9 +86,9 @@
 
 .support-calendar-workspace .support-filters {
   grid-template-columns:
-    minmax(230px, 1.8fr)
-    repeat(3, minmax(118px, 1fr))
-    minmax(150px, 0.9fr) !important;
+    minmax(190px, 1.75fr)
+    repeat(3, minmax(94px, 1fr))
+    minmax(128px, 0.85fr) !important;
   align-items: end !important;
 }
 
@@ -108,18 +109,7 @@
   padding: 0 14px !important;
   align-self: end !important;
   line-height: 1 !important;
-}
-
-@media (max-width: 980px) and (min-width: 761px) {
-  .support-calendar-workspace .support-filters {
-    grid-template-columns: minmax(250px, 2fr) repeat(3, minmax(120px, 1fr)) !important;
-  }
-
-  .support-calendar-workspace .support-filter-submit {
-    grid-column: 1 / -1 !important;
-    width: min(220px, 100%) !important;
-    justify-self: end !important;
-  }
+  font-size: 0.74rem !important;
 }
 
 @media (max-width: 760px) {
