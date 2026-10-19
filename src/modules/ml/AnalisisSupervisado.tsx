@@ -16,6 +16,7 @@ import {
   ZAxis,
 } from 'recharts';
 import { api } from '../../services/api';
+import AnalyticsModuleNav from '../../components/AnalyticsModuleNav';
 
 type Riesgo = 'BAJO' | 'MEDIO' | 'ALTO';
 type RiskFilter = Riesgo | 'TODOS';
@@ -539,32 +540,34 @@ export default function AnalisisSupervisado() {
 
   return (
     <div className="ml-page ml-page-pro">
+      <AnalyticsModuleNav />
+
       <section className="ml-hero ml-hero-pro">
         <div>
-          <p className="ml-eyebrow">Machine Learning · SMART RH</p>
-          <h1>Análisis Supervisado</h1>
+          <p className="ml-eyebrow">Prevención y seguimiento</p>
+          <h1>Predicciones de personal</h1>
 
           <p>
-            Clasificación de riesgo laboral y predicción estimada de ausencias usando datos
-            de empleados reales del sistema. El modelo excluye cuentas administrativas
-            generales para evitar contaminar el dataset.
+            Identifica señales que pueden requerir seguimiento de Recursos Humanos y consulta
+            una estimación de ausencias. Los resultados orientan la revisión; no sustituyen
+            la evaluación de una persona responsable.
           </p>
 
           <div className="ml-hero-actions">
             <button type="button" onClick={ejecutarModelo} disabled={training}>
-              {training ? 'Ejecutando modelo...' : 'Ejecutar modelo'}
+              {training ? 'Analizando información...' : 'Generar predicciones'}
             </button>
 
             <button type="button" className="secondary" onClick={cargarPredicciones}>
-              Actualizar datos
+              Volver a consultar
             </button>
 
             <button type="button" className="secondary" onClick={() => exportarCSV('todo')}>
-              Exportar todo
+              Descargar resultados
             </button>
 
             <button type="button" className="secondary" onClick={() => exportarCSV('filtrado')}>
-              Exportar filtrados
+              Descargar vista actual
             </button>
           </div>
 
@@ -573,9 +576,9 @@ export default function AnalisisSupervisado() {
         </div>
 
         <div className="ml-model-card ml-model-card-pro">
-          <span>Modelo activo</span>
-          <strong>{resumen?.modelo_clasificacion || 'KNN'}</strong>
-          <p>Clasificación de riesgo laboral</p>
+          <span>Lectura disponible</span>
+          <strong>{resumen ? 'Resultados vigentes' : 'Sin ejecución reciente'}</strong>
+          <p>Señales preventivas para apoyar el seguimiento del personal</p>
 
           <div className="ml-model-meta">
             <div>
@@ -616,9 +619,9 @@ export default function AnalisisSupervisado() {
             </article>
 
             <article className="ml-kpi-card">
-              <span>Accuracy</span>
+              <span>Precisión del análisis</span>
               <strong>{formatNumber(evaluacion?.accuracy, 2)}%</strong>
-              <p>Precisión de clasificación del modelo supervisado.</p>
+              <p>Porcentaje de resultados que coincidieron con la evaluación esperada.</p>
             </article>
 
             <article className="ml-kpi-card">
@@ -634,13 +637,13 @@ export default function AnalisisSupervisado() {
             </article>
 
             <article className="ml-kpi-card">
-              <span>MAE</span>
+              <span>Margen de error promedio</span>
               <strong>{formatNumber(evaluacion?.mae, 4)}</strong>
               <p>Error absoluto medio en la estimación.</p>
             </article>
 
             <article className="ml-kpi-card">
-              <span>MSE</span>
+              <span>Errores de mayor impacto</span>
               <strong>{formatNumber(evaluacion?.mse, 4)}</strong>
               <p>Error cuadrático medio del modelo.</p>
             </article>
@@ -654,7 +657,7 @@ export default function AnalisisSupervisado() {
             <article className="ml-kpi-card">
               <span>Score promedio</span>
               <strong>{formatNumber(promedioScore, 1)}</strong>
-              <p>Promedio general del score de riesgo laboral.</p>
+              <p>Nivel preventivo promedio calculado para el personal.</p>
             </article>
           </section>
 
@@ -714,19 +717,19 @@ export default function AnalisisSupervisado() {
                     <div>
                       <span>Personal estable</span>
                       <strong>{resumen?.riesgo_bajo || 0}</strong>
-                      <small>{porcentajes.bajo}% del dataset</small>
+                      <small>{porcentajes.bajo}% de los registros</small>
                     </div>
 
                     <div>
                       <span>Atención preventiva</span>
                       <strong>{resumen?.riesgo_medio || 0}</strong>
-                      <small>{porcentajes.medio}% del dataset</small>
+                      <small>{porcentajes.medio}% de los registros</small>
                     </div>
 
                     <div>
                       <span>Atención crítica</span>
                       <strong>{resumen?.riesgo_alto || 0}</strong>
-                      <small>{porcentajes.alto}% del dataset</small>
+                      <small>{porcentajes.alto}% de los registros</small>
                     </div>
 
                     <div>
@@ -753,13 +756,13 @@ export default function AnalisisSupervisado() {
                     </div>
 
                     <div>
-                      <span>Error MAE</span>
+                      <span>Margen promedio</span>
                       <strong>{formatNumber(evaluacion?.mae, 4)}</strong>
                       <p>Mientras más bajo, mejor estimación.</p>
                     </div>
 
                     <div>
-                      <span>Error MSE</span>
+                      <span>Errores relevantes</span>
                       <strong>{formatNumber(evaluacion?.mse, 4)}</strong>
                       <p>Penaliza más los errores grandes.</p>
                     </div>
@@ -909,7 +912,7 @@ export default function AnalisisSupervisado() {
 
               <section className="ml-data-quality-grid">
                 <article className="ml-panel">
-                  <span className="ml-section-tag">Calidad del dataset</span>
+                  <span className="ml-section-tag">Calidad de la información</span>
                   <h3>Datos considerados</h3>
                   <p>
                     El análisis usa empleados reales registrados en SMART RH. Las cuentas
@@ -949,9 +952,9 @@ export default function AnalisisSupervisado() {
               <section className="ml-graph-intro">
                 <div>
                   <span className="ml-section-tag">Visualización analítica</span>
-                  <h2>Gráficas del modelo supervisado</h2>
+                  <h2>Gráficas de seguimiento preventivo</h2>
                   <p>
-                    Estas gráficas permiten interpretar el comportamiento del dataset, detectar
+                    Estas gráficas permiten interpretar la información disponible, detectar
                     concentración de riesgo, comparar roles y ubicar empleados con mayor
                     probabilidad de incidencia.
                   </p>
@@ -1179,8 +1182,8 @@ export default function AnalisisSupervisado() {
                   <div className="ml-chart-summary">
                     <strong>Qué significa:</strong>
                     <p>
-                      Separa empleados activos e inactivos dentro del dataset. Los inactivos
-                      pueden elevar el score y deben revisarse con cuidado en la interpretación.
+                      Separa empleados activos e inactivos. Los registros inactivos pueden
+                      aumentar el nivel preventivo y deben revisarse antes de tomar una decisión.
                     </p>
                   </div>
                 </article>
@@ -1188,8 +1191,8 @@ export default function AnalisisSupervisado() {
                 <article className="ml-panel ml-chart-card">
                   <div className="ml-panel-header">
                     <div>
-                      <span>Métricas del modelo</span>
-                      <h2>Accuracy, MAE y MSE</h2>
+                      <span>Calidad del cálculo</span>
+                      <h2>Precisión y margen de error</h2>
                     </div>
                   </div>
 
@@ -1208,8 +1211,8 @@ export default function AnalisisSupervisado() {
                   <div className="ml-chart-summary">
                     <strong>Qué significa:</strong>
                     <p>
-                      Resume el rendimiento del modelo. Accuracy indica precisión de
-                      clasificación; MAE y MSE muestran el error de estimación.
+                      Resume qué tan consistente fue el cálculo y cuánto se alejaron las
+                      estimaciones del resultado esperado. Un margen menor es preferible.
                     </p>
                   </div>
                 </article>
@@ -1262,7 +1265,7 @@ export default function AnalisisSupervisado() {
                   <option value="probabilidad_desc">Mayor probabilidad</option>
                   <option value="probabilidad_asc">Menor probabilidad</option>
                   <option value="ausencias_desc">Más ausencias</option>
-                  <option value="score_desc">Mayor score</option>
+                  <option value="score_desc">Mayor nivel preventivo</option>
                   <option value="nombre_asc">Nombre A-Z</option>
                 </select>
 
@@ -1280,7 +1283,7 @@ export default function AnalisisSupervisado() {
                     <tr>
                       <th>Empleado</th>
                       <th>Estado</th>
-                      <th>Score</th>
+                      <th>Nivel preventivo</th>
                       <th>Ausencias</th>
                       <th>Riesgo</th>
                       <th>Probabilidad</th>
@@ -1610,4 +1613,4 @@ export default function AnalisisSupervisado() {
       )}
     </div>
   );
-} 
+}

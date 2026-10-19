@@ -3751,6 +3751,301 @@
   }
 }
 
+/* =========================================================
+   SMART RH — REPORTES Y DATOS / EXPERIENCIA UNIFICADA
+   Datos -> Reportes -> Predicciones
+========================================================= */
+
+.analytics-module-nav {
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(220px, 0.72fr) minmax(0, 1.55fr);
+  align-items: center;
+  gap: 18px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  background: color-mix(in srgb, var(--card) 94%, var(--primary) 6%);
+  box-shadow: 0 14px 34px color-mix(in srgb, #07111f 9%, transparent);
+}
+
+.analytics-module-nav-copy {
+  min-width: 0;
+  padding: 4px 8px;
+  display: grid;
+  gap: 3px;
+}
+
+.analytics-module-nav-copy span {
+  color: var(--primary);
+  font-size: 0.7rem;
+  font-weight: 950;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.analytics-module-nav-copy strong {
+  color: var(--text);
+  font-size: 0.92rem;
+  line-height: 1.25;
+}
+
+.analytics-module-nav-links {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.analytics-module-nav-link {
+  min-width: 0;
+  min-height: 60px;
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  padding: 9px 11px;
+  border: 1px solid transparent;
+  border-radius: 16px;
+  color: var(--text-muted);
+  background: color-mix(in srgb, var(--card-muted) 92%, transparent);
+  text-decoration: none;
+  transition: border-color 0.18s ease, background 0.18s ease, transform 0.18s ease;
+}
+
+.analytics-module-nav-link:hover {
+  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--primary) 30%, var(--border));
+  background: color-mix(in srgb, var(--card) 88%, var(--primary) 12%);
+}
+
+.analytics-module-nav-link.is-active {
+  border-color: color-mix(in srgb, var(--primary) 42%, var(--border));
+  color: var(--text);
+  background: color-mix(in srgb, var(--card) 84%, var(--primary) 16%);
+  box-shadow: inset 3px 0 0 var(--primary);
+}
+
+.analytics-module-nav-icon {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 12%, var(--card));
+}
+
+.analytics-module-nav-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.analytics-module-nav-link > span:last-child {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.analytics-module-nav-link strong,
+.analytics-module-nav-link small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.analytics-module-nav-link strong {
+  color: inherit;
+  font-size: 0.84rem;
+  font-weight: 900;
+}
+
+.analytics-module-nav-link small {
+  color: var(--text-muted);
+  font-size: 0.67rem;
+  font-weight: 720;
+}
+
+.analytics-report-page {
+  width: min(100%, 1500px) !important;
+  margin-inline: auto !important;
+  gap: 18px !important;
+}
+
+.analytics-report-page > .analytics-module-nav {
+  margin-bottom: 2px;
+}
+
+.analytics-reading-guide {
+  padding: 20px !important;
+}
+
+.analytics-view-switcher {
+  position: sticky;
+  top: 78px;
+  z-index: 20;
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: color-mix(in srgb, var(--card) 94%, transparent);
+  box-shadow: 0 12px 28px color-mix(in srgb, #07111f 10%, transparent);
+  backdrop-filter: blur(16px);
+}
+
+.analytics-view-tabs {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.analytics-view-tabs button {
+  min-height: 42px;
+  padding: 8px 12px;
+  border: 1px solid transparent;
+  border-radius: 13px;
+  color: var(--text-muted);
+  background: var(--card-muted);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 850;
+  cursor: pointer;
+}
+
+.analytics-view-tabs button:hover {
+  border-color: color-mix(in srgb, var(--primary) 30%, var(--border));
+  color: var(--text);
+}
+
+.analytics-view-tabs button.is-active {
+  border-color: color-mix(in srgb, var(--primary) 46%, var(--border));
+  color: #ffffff;
+  background: var(--primary);
+  box-shadow: 0 8px 18px color-mix(in srgb, var(--primary) 24%, transparent);
+}
+
+.analytics-view-switcher > p {
+  margin: 0;
+  padding-inline: 5px;
+  color: var(--text-muted);
+  font-size: 0.76rem;
+  line-height: 1.45;
+  font-weight: 700;
+}
+
+.analytics-view-content {
+  min-width: 0;
+  display: grid;
+  gap: 18px;
+  animation: analytics-view-enter 0.22s ease both;
+}
+
+@keyframes analytics-view-enter {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.ml-page-pro {
+  width: min(100%, 1500px) !important;
+  margin-inline: auto !important;
+  gap: 18px !important;
+}
+
+.ml-page-pro .ml-hero-pro {
+  border-color: var(--border) !important;
+  background:
+    radial-gradient(circle at 92% 10%, color-mix(in srgb, var(--teal) 14%, transparent), transparent 34%),
+    var(--card) !important;
+  box-shadow: 0 18px 42px color-mix(in srgb, #07111f 10%, transparent) !important;
+}
+
+.ml-page-pro .ml-hero h1 {
+  color: var(--text) !important;
+  background: none !important;
+  -webkit-text-fill-color: currentColor !important;
+}
+
+.ml-page-pro .ml-model-card-pro,
+.ml-page-pro .ml-kpi-card,
+.ml-page-pro .ml-panel {
+  border-color: var(--border) !important;
+  background: var(--card) !important;
+}
+
+.ml-page-pro .ml-hero-actions button:not(.secondary) {
+  border-color: var(--primary) !important;
+  background: var(--primary) !important;
+  color: #ffffff !important;
+  box-shadow: 0 10px 22px color-mix(in srgb, var(--primary) 22%, transparent) !important;
+}
+
+.ml-page-pro .ml-hero-actions button.secondary {
+  border-color: var(--border) !important;
+  background: var(--card-muted) !important;
+  color: var(--text) !important;
+  box-shadow: none !important;
+}
+
+.ml-page-pro .ml-tabs {
+  position: sticky;
+  top: 78px;
+  z-index: 19;
+  padding: 8px !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 18px !important;
+  background: color-mix(in srgb, var(--card) 94%, transparent) !important;
+  backdrop-filter: blur(16px);
+}
+
+.ml-page-pro .ml-tabs button {
+  border-radius: 12px !important;
+  color: var(--text-muted) !important;
+  background: transparent !important;
+}
+
+.ml-page-pro .ml-tabs button.active {
+  color: #ffffff !important;
+  background: var(--primary) !important;
+  box-shadow: none !important;
+}
+
+:root[data-theme='dark'] .analytics-module-nav,
+:root[data-theme='dark'] .analytics-view-switcher,
+:root[data-theme='dark'] .ml-page-pro .ml-tabs {
+  box-shadow: 0 16px 38px rgba(0, 0, 0, 0.22);
+}
+
+@media (max-width: 980px) {
+  .analytics-module-nav {
+    grid-template-columns: 1fr;
+  }
+
+  .analytics-module-nav-copy {
+    padding-bottom: 0;
+  }
+}
+
+@media (max-width: 760px) {
+  .analytics-module-nav-links,
+  .analytics-view-tabs {
+    grid-template-columns: 1fr;
+  }
+
+  .analytics-module-nav-link {
+    min-height: 54px;
+  }
+
+  .analytics-view-switcher,
+  .ml-page-pro .ml-tabs {
+    position: static;
+  }
+
+  .analytics-reading-guide {
+    display: none !important;
+  }
+}
+
 /* ============================================================
    SMART RH · GESTIÓN INTERNA V2
    Compact permissions, balanced user workspace and ticket inbox.
@@ -24557,5 +24852,61 @@ button[type='submit'],
   .contract-salary-source > div {
     align-items: flex-start !important;
     flex-direction: column !important;
+  }
+}
+
+/* Última capa: evita que reglas históricas de ML sustituyan el diseño unificado. */
+.ml-page-pro .ml-hero-pro {
+  border-color: var(--border) !important;
+  background:
+    radial-gradient(circle at 92% 10%, color-mix(in srgb, var(--teal) 14%, transparent), transparent 34%),
+    var(--card) !important;
+}
+
+.ml-page-pro .ml-hero h1 {
+  color: var(--text) !important;
+  background: none !important;
+  -webkit-text-fill-color: currentColor !important;
+}
+
+.ml-page-pro .ml-model-card-pro,
+.ml-page-pro .ml-kpi-card,
+.ml-page-pro .ml-panel {
+  border-color: var(--border) !important;
+  background: var(--card) !important;
+}
+
+.ml-page-pro .ml-hero-actions button:not(.secondary),
+.ml-page-pro .ml-tabs button.active {
+  color: #ffffff !important;
+  background: var(--primary) !important;
+  box-shadow: 0 10px 22px color-mix(in srgb, var(--primary) 22%, transparent) !important;
+}
+
+.ml-page-pro .ml-hero-actions button.secondary {
+  border-color: var(--border) !important;
+  color: var(--text) !important;
+  background: var(--card-muted) !important;
+  box-shadow: none !important;
+}
+
+.ml-page-pro .ml-tabs {
+  position: sticky !important;
+  top: 78px !important;
+  z-index: 19 !important;
+  padding: 8px !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 18px !important;
+  background: color-mix(in srgb, var(--card) 94%, transparent) !important;
+  backdrop-filter: blur(16px) !important;
+}
+
+.ml-page-pro .ml-tabs button {
+  border-radius: 12px !important;
+}
+
+@media (max-width: 760px) {
+  .ml-page-pro .ml-tabs {
+    position: static !important;
   }
 }

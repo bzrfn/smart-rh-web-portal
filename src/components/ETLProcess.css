@@ -997,3 +997,147 @@
     font-size: 38px !important;
   }
 }
+
+/* Experiencia final de Datos: compacta, legible y consistente con SMART RH. */
+.etl-page {
+  width: min(100%, 1500px) !important;
+  gap: 18px !important;
+}
+
+.etl-hero {
+  grid-template-columns: minmax(0, 1.6fr) minmax(230px, 0.58fr) !important;
+  padding: 28px !important;
+  border-radius: 24px !important;
+  border-color: var(--border) !important;
+  background:
+    radial-gradient(circle at 92% 8%, color-mix(in srgb, var(--teal) 14%, transparent), transparent 36%),
+    var(--card) !important;
+  box-shadow: 0 18px 42px color-mix(in srgb, #07111f 10%, transparent) !important;
+}
+
+.etl-hero::after {
+  display: none !important;
+}
+
+.etl-hero h2 {
+  color: var(--text) !important;
+  font-size: clamp(2.2rem, 4vw, 3.8rem) !important;
+  line-height: 1.02 !important;
+  letter-spacing: -0.045em !important;
+  background: none !important;
+  -webkit-text-fill-color: currentColor !important;
+}
+
+.etl-hero p {
+  max-width: 760px !important;
+  margin-top: 14px !important;
+  line-height: 1.62 !important;
+}
+
+.etl-button {
+  min-height: 44px !important;
+  border-radius: 13px !important;
+  background: var(--primary) !important;
+  box-shadow: 0 10px 22px color-mix(in srgb, var(--primary) 22%, transparent) !important;
+}
+
+.etl-hero-badge {
+  min-height: 164px !important;
+  align-content: center !important;
+  padding: 22px !important;
+  border-radius: 20px !important;
+  border-color: var(--border) !important;
+  background: color-mix(in srgb, var(--card-muted) 88%, var(--teal) 12%) !important;
+}
+
+.etl-hero-badge span {
+  width: auto !important;
+  height: auto !important;
+  display: block !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  color: var(--teal-dark, var(--teal)) !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  font-size: 0.69rem !important;
+  letter-spacing: 0.09em !important;
+  text-transform: uppercase !important;
+}
+
+.etl-hero-badge strong {
+  margin-top: 5px !important;
+  color: var(--text) !important;
+  font-size: 1.18rem !important;
+  line-height: 1.25 !important;
+}
+
+.etl-hero-badge small {
+  color: var(--text-muted) !important;
+  line-height: 1.45 !important;
+}
+
+.etl-empty-state,
+.etl-tabs-card,
+.etl-analysis-main,
+.etl-recommendation-panel,
+.etl-raw-insights,
+.etl-kpi-card,
+.etl-stat-card,
+.etl-chart-card {
+  border-color: var(--border) !important;
+  background: var(--card) !important;
+  box-shadow: 0 12px 28px color-mix(in srgb, #07111f 8%, transparent) !important;
+}
+
+.etl-empty-state {
+  min-height: 260px !important;
+  border-radius: 22px !important;
+}
+
+.etl-empty-icon {
+  width: 48px !important;
+  height: 48px !important;
+  border-radius: 15px !important;
+  color: var(--primary) !important;
+  background: color-mix(in srgb, var(--primary) 11%, var(--card)) !important;
+}
+
+.etl-tabs-card {
+  position: sticky !important;
+  top: 78px !important;
+  z-index: 19 !important;
+  padding: 12px !important;
+  border-radius: 20px !important;
+  backdrop-filter: blur(16px) !important;
+}
+
+.etl-tabs-header {
+  padding: 2px 4px 10px !important;
+}
+
+.etl-tabs {
+  gap: 7px !important;
+}
+
+.etl-tab-button {
+  min-height: 42px !important;
+  border-radius: 13px !important;
+  border-color: transparent !important;
+  background: var(--card-muted) !important;
+}
+
+.etl-tab-button.active {
+  color: #ffffff !important;
+  background: var(--primary) !important;
+  box-shadow: none !important;
+}
+
+@media (max-width: 900px) {
+  .etl-hero {
+    grid-template-columns: 1fr !important;
+  }
+
+  .etl-tabs-card {
+    position: static !important;
+  }
+}

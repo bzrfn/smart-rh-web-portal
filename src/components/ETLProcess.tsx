@@ -29,6 +29,7 @@ import {
   ComposedChart,
 } from 'recharts';
 import { useETL } from '../hooks/useETL';
+import AnalyticsModuleNav from './AnalyticsModuleNav';
 import './ETLProcess.css';
 
 const COLORS = ['#38bdf8', '#2dd4bf', '#0a57a4', '#f59e0b', '#ef4444', '#7dd3fc'];
@@ -404,22 +405,24 @@ export function ETLProcess() {
 
   return (
     <div className="etl-page">
+      <AnalyticsModuleNav />
+
       {/* Sección principal: explicación y acciones primarias del ETL */}
       <section className="etl-hero">
         <div className="etl-hero-content">
-          <p className="etl-eyebrow">Extracción, transformación y carga</p>
+          <p className="etl-eyebrow">Preparación de información</p>
 
-          <h2>Proceso ETL Inteligente</h2>
+          <h2>Datos listos para revisar</h2>
 
           <p>
-            Procesa información real de usuarios, nómina y vacaciones para generar indicadores,
-            análisis ejecutivo, recomendaciones y visualizaciones útiles para la toma de decisiones
-            dentro de Recursos Humanos.
+            Reúne y ordena la información de usuarios, nómina y vacaciones para convertirla
+            en indicadores claros. No modifica los registros originales: prepara una lectura
+            actualizada para el equipo de Recursos Humanos.
           </p>
 
           <div className="etl-actions">
             <button className="etl-button" onClick={handleETL} disabled={loading}>
-              {loading ? 'Procesando información...' : 'Ejecutar ETL'}
+              {loading ? 'Preparando información...' : 'Preparar datos'}
             </button>
 
             {report && (
@@ -433,20 +436,20 @@ export function ETLProcess() {
         </div>
 
         <div className="etl-hero-badge">
-          <span>ETL</span>
-          <strong>Reportes activos</strong>
-          <small>Persisten hasta nueva ejecución</small>
+          <span>Estado del proceso</span>
+          <strong>{report ? 'Información preparada' : 'Pendiente de ejecución'}</strong>
+          <small>{report ? 'Disponible hasta la siguiente actualización' : 'Ejecuta el proceso para comenzar'}</small>
         </div>
       </section>
 
       {/* Estado vacío: cuando no existe un reporte aún */}
       {!report && (
         <section className="etl-empty-state">
-          <div className="etl-empty-icon">ETL</div>
-          <h3>Aún no hay reportes cargados</h3>
+          <div className="etl-empty-icon">01</div>
+          <h3>Prepara la primera lectura de datos</h3>
           <p>
-            Presiona “Ejecutar ETL” para analizar los datos actuales de usuarios,
-            nómina y vacaciones. El resultado se conservará aunque reinicies la página.
+            Selecciona “Preparar datos” para reunir la información vigente de usuarios,
+            nómina y vacaciones. El resultado permanecerá disponible al volver a esta página.
           </p>
         </section>
       )}
@@ -458,10 +461,10 @@ export function ETLProcess() {
             <div className="etl-tabs-header">
               <div>
                 <p className="etl-eyebrow">Panel de resultados</p>
-                <h3>Exploración del reporte ETL</h3>
+                <h3>Revisión de información preparada</h3>
               </div>
 
-              <span className="etl-chip">Datos procesados</span>
+              <span className="etl-chip">Información vigente</span>
             </div>
 
             <div className="etl-tabs">
@@ -616,7 +619,7 @@ export function ETLProcess() {
                 <div className="etl-section-header etl-section-header-premium">
                   <div>
                     <p className="etl-eyebrow">Análisis ejecutivo</p>
-                    <h3>Diagnóstico inteligente del proceso ETL</h3>
+                    <h3>Lectura general de la información</h3>
                     <p>
                       Lectura interpretativa de usuarios, nómina y vacaciones para convertir datos
                       operativos en decisiones administrativas.
@@ -713,19 +716,19 @@ export function ETLProcess() {
                 </div>
               </div>
 
-              {/* Sección opcional: hallazgos técnicos del ETL */}
+              {/* Sección opcional: hallazgos del procesamiento */}
               {report.insights && report.insights.length > 0 && (
                 <div className="etl-insights-card etl-analysis-wide etl-raw-insights">
                   <div className="etl-section-header etl-section-header-premium">
                     <div>
-                      <p className="etl-eyebrow">Hallazgos base del ETL</p>
-                      <h3>Resumen técnico del procesamiento</h3>
+                      <p className="etl-eyebrow">Hallazgos de la preparación</p>
+                      <h3>Resumen del procesamiento</h3>
                       <p>
                         Lectura automática generada a partir de los datos procesados en la última ejecución.
                       </p>
                     </div>
 
-                    <span className="etl-chip">ETL</span>
+                    <span className="etl-chip">Datos preparados</span>
                   </div>
 
                   <div className="etl-raw-insights-grid">
@@ -747,7 +750,7 @@ export function ETLProcess() {
               <div className="etl-chart-card">
                 <div className="etl-chart-header">
                   <h3>Volumen de datos procesados</h3>
-                  <p>Comparación de registros extraídos por cada fuente del proceso ETL.</p>
+                  <p>Comparación de registros reunidos desde cada fuente de información.</p>
                 </div>
 
                 <div className="etl-chart-box">
@@ -995,7 +998,7 @@ export function ETLProcess() {
 
               <div className="etl-chart-card etl-chart-card-wide">
                 <div className="etl-chart-header">
-                  <h3>Radar general del ETL</h3>
+                  <h3>Comparación general de información</h3>
                   <p>Vista comparativa del volumen de información procesada.</p>
                 </div>
 

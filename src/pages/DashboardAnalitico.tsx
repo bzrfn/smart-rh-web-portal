@@ -25,6 +25,7 @@ import {
   YAxis,
 } from 'recharts';
 import { useAuth } from '../app/auth/AuthContext';
+import AnalyticsModuleNav from '../components/AnalyticsModuleNav';
 import { api } from '../services/api';
 
 /* =========================================================
@@ -34,6 +35,34 @@ import { api } from '../services/api';
 type ThemeMode = 'dark' | 'light';
 type Accent = 'blue' | 'teal' | 'gold' | 'danger' | 'cyan';
 type ChartCategory = 'Operativa' | 'Administrativa' | 'Comparativa' | 'Machine Learning';
+type AnalyticsView = 'operativa' | 'administrativa' | 'comparativa' | 'segmentos';
+
+const analyticsViews: Array<{
+  id: AnalyticsView;
+  label: string;
+  description: string;
+}> = [
+  {
+    id: 'operativa',
+    label: 'Operación diaria',
+    description: 'Asistencia, evolución e incidencias que requieren seguimiento.',
+  },
+  {
+    id: 'administrativa',
+    label: 'Administración',
+    description: 'Nómina, vacaciones y contratos en una lectura ordenada.',
+  },
+  {
+    id: 'comparativa',
+    label: 'Comparaciones',
+    description: 'Relaciones entre indicadores para detectar casos que conviene revisar.',
+  },
+  {
+    id: 'segmentos',
+    label: 'Grupos de personal',
+    description: 'Agrupaciones automáticas explicadas sin lenguaje técnico innecesario.',
+  },
+];
 
 type ChartItem = {
   name: string;
@@ -351,6 +380,7 @@ export default function DashboardAnalitico() {
   const [kmeans, setKmeans] = useState<KMeansTraining | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [activeView, setActiveView] = useState<AnalyticsView>('operativa');
 
   const incidenciasPorFecha = useMemo(() => {
     return analytics.charts.asistenciasPorFecha.map((item) => ({
@@ -475,25 +505,27 @@ export default function DashboardAnalitico() {
   }, []);
 
   return (
-    <div style={styles.page}>
+    <div className="analytics-report-page" style={styles.page}>
+      <AnalyticsModuleNav />
+
       <section style={styles.hero}>
         <div style={styles.heroCopy}>
-          <span style={styles.chip}>Visualización de datos</span>
-          <h1 style={styles.title}>Dashboard Analítico SMART RH</h1>
+          <span style={styles.chip}>Lectura de la operación</span>
+          <h1 style={styles.title}>Reportes de Recursos Humanos</h1>
           <p style={styles.subtitle}>
-            Panel de gráficas para representar información de asistencia, nómina,
-            vacaciones, contratos y K-means. 
+            Consulta indicadores de asistencia, nómina, vacaciones y contratos sin revisar
+            archivos separados. Cada gráfica incluye una explicación para facilitar la decisión.
           </p>
 
           <div style={styles.heroTags}>
-            <MiniTag label="Gráficas" value="11" styles={styles} />
-            <MiniTag label="Categorías" value="4" styles={styles} />
-            <MiniTag label="Fuente" value="MySQL + ML" styles={styles} />
+            <MiniTag label="Indicadores" value="11" styles={styles} />
+            <MiniTag label="Vistas" value="4" styles={styles} />
+            <MiniTag label="Información" value="Actualizada" styles={styles} />
           </div>
         </div>
 
         <aside style={styles.heroPanel}>
-          <span style={styles.eyebrow}>Conclusión general</span>
+          <span style={styles.eyebrow}>Estado de la información</span>
           <h2 style={styles.panelTitle}>{dataQuality.label}</h2>
           <p style={styles.panelText}>
             {analytics.interpretaciones.conclusion || dashboardConclusion}
@@ -506,14 +538,14 @@ export default function DashboardAnalitico() {
               styles={styles}
             />
             <PanelMetric
-              label="Calidad K-means"
+              label="Calidad de agrupación"
               value={getSilhouetteLabel(kmeans?.mejorResultado?.silhouette)}
               styles={styles}
             />
           </div>
 
           <button style={styles.primaryButton} onClick={cargarDashboard} disabled={loading}>
-            {loading ? 'Actualizando...' : 'Actualizar dashboard'}
+            {loading ? 'Consultando...' : 'Volver a consultar'}
           </button>
         </aside>
       </section>
@@ -578,11 +610,11 @@ export default function DashboardAnalitico() {
         />
       </section>
 
-      <section style={styles.explainCard}>
+      <section className="analytics-reading-guide" style={styles.explainCard}>
         <SectionHeading
           eyebrow="Guía de lectura"
           title="Cómo interpretar este dashboard"
-          text="El dashboard está dividido en cuatro bloques: visualización operativa, administrativa, comparativa y Machine Learning."
+          text="Elige una vista según la pregunta que necesitas resolver. Cada bloque mantiene juntas las gráficas relacionadas."
           styles={styles}
         />
 
@@ -607,126 +639,146 @@ export default function DashboardAnalitico() {
           />
           <ReadingStep
             number="04"
-            title="Machine Learning"
-            text="Visualiza los grupos generados por K-means."
+            title="Grupos de personal"
+            text="Consulta agrupaciones de comportamiento como apoyo para la revisión."
             styles={styles}
           />
         </div>
       </section>
 
-      <DashboardSection
-        category="Operativa"
-        title="1. Visualización operativa"
-        text="Estas gráficas explican cómo se comportan los registros de asistencia y dónde se concentran las incidencias."
-        styles={styles}
-      />
-
-      <section style={styles.gridTwo}>
-        <Grafica01AsistenciasPorEstado
-          data={analytics.charts.asistenciasPorEstado}
-          interpretacion={analytics.interpretaciones.asistencia}
-          styles={styles}
-          colors={colors}
-        />
-
-        <Grafica02EvolucionAsistencias
-          data={analytics.charts.asistenciasPorFecha}
-          styles={styles}
-          colors={colors}
-        />
+      <section className="analytics-view-switcher" aria-label="Vistas del reporte">
+        <div className="analytics-view-tabs" role="tablist" aria-label="Elegir información">
+          {analyticsViews.map((view) => (
+            <button
+              key={view.id}
+              type="button"
+              role="tab"
+              aria-selected={activeView === view.id}
+              className={activeView === view.id ? 'is-active' : ''}
+              onClick={() => setActiveView(view.id)}
+            >
+              {view.label}
+            </button>
+          ))}
+        </div>
+        <p>{analyticsViews.find((view) => view.id === activeView)?.description}</p>
       </section>
 
-      <section style={styles.gridOne}>
-        <Grafica03IncidenciasPorFecha
-          data={incidenciasPorFecha}
-          interpretacion={analytics.interpretaciones.incidencias}
-          styles={styles}
-          colors={colors}
-        />
-      </section>
+      <div className="analytics-view-content" role="tabpanel">
+        {activeView === 'operativa' ? (
+          <>
+            <DashboardSection
+              category="Operativa"
+              title="Seguimiento de la operación diaria"
+              text="Revisa cómo se comporta la asistencia y en qué fechas se concentran los casos pendientes o rechazados."
+              styles={styles}
+            />
+            <section style={styles.gridTwo}>
+              <Grafica01AsistenciasPorEstado
+                data={analytics.charts.asistenciasPorEstado}
+                interpretacion={analytics.interpretaciones.asistencia}
+                styles={styles}
+                colors={colors}
+              />
+              <Grafica02EvolucionAsistencias
+                data={analytics.charts.asistenciasPorFecha}
+                styles={styles}
+                colors={colors}
+              />
+            </section>
+            <section style={styles.gridOne}>
+              <Grafica03IncidenciasPorFecha
+                data={incidenciasPorFecha}
+                interpretacion={analytics.interpretaciones.incidencias}
+                styles={styles}
+                colors={colors}
+              />
+            </section>
+          </>
+        ) : null}
 
-      <DashboardSection
-        category="Administrativa"
-        title="2. Visualización administrativa"
-        text="Estas gráficas explican la información administrativa del sistema: nómina, vacaciones y contratos."
-        styles={styles}
-      />
+        {activeView === 'administrativa' ? (
+          <>
+            <DashboardSection
+              category="Administrativa"
+              title="Información administrativa"
+              text="Consulta nómina, solicitudes de vacaciones y contratos vigentes sin mezclar estos datos con la operación diaria."
+              styles={styles}
+            />
+            <section style={styles.gridTwo}>
+              <Grafica04NominaPromedio
+                data={analytics.charts.nominaTopEmpleados}
+                interpretacion={analytics.interpretaciones.nomina}
+                styles={styles}
+                colors={colors}
+              />
+              <Grafica05VacacionesPorEstado
+                data={analytics.charts.vacacionesPorEstado}
+                interpretacion={analytics.interpretaciones.vacaciones}
+                styles={styles}
+                colors={colors}
+              />
+            </section>
+            <section style={styles.gridTwo}>
+              <Grafica06DiasVacaciones data={vacacionesTop} styles={styles} colors={colors} />
+              <Grafica07ContratosPorEstado
+                data={analytics.charts.contratosPorEstado}
+                styles={styles}
+                colors={colors}
+              />
+            </section>
+          </>
+        ) : null}
 
-      <section style={styles.gridTwo}>
-        <Grafica04NominaPromedio
-          data={analytics.charts.nominaTopEmpleados}
-          interpretacion={analytics.interpretaciones.nomina}
-          styles={styles}
-          colors={colors}
-        />
+        {activeView === 'comparativa' ? (
+          <>
+            <DashboardSection
+              category="Comparativa"
+              title="Comparaciones para revisar"
+              text="Observa relaciones entre indicadores para localizar casos que merecen atención. Estas comparaciones no determinan por sí solas una causa."
+              styles={styles}
+            />
+            <section style={styles.gridTwo}>
+              <Grafica08AsistenciaVsNomina
+                data={analytics.charts.asistenciaVsNomina}
+                styles={styles}
+                colors={colors}
+              />
+              <Grafica09IncidenciasVsVacaciones
+                data={incidenciasVsVacaciones}
+                styles={styles}
+                colors={colors}
+              />
+            </section>
+          </>
+        ) : null}
 
-        <Grafica05VacacionesPorEstado
-          data={analytics.charts.vacacionesPorEstado}
-          interpretacion={analytics.interpretaciones.vacaciones}
-          styles={styles}
-          colors={colors}
-        />
-      </section>
-
-      <section style={styles.gridTwo}>
-        <Grafica06DiasVacaciones
-          data={vacacionesTop}
-          styles={styles}
-          colors={colors}
-        />
-
-        <Grafica07ContratosPorEstado
-          data={analytics.charts.contratosPorEstado}
-          styles={styles}
-          colors={colors}
-        />
-      </section>
-
-      <DashboardSection
-        category="Comparativa"
-        title="3. Visualización comparativa"
-        text="Estas gráficas cruzan variables para observar patrones. No se usan para afirmar causalidad, sino para detectar relaciones visuales."
-        styles={styles}
-      />
-
-      <section style={styles.gridTwo}>
-        <Grafica08AsistenciaVsNomina
-          data={analytics.charts.asistenciaVsNomina}
-          styles={styles}
-          colors={colors}
-        />
-
-        <Grafica09IncidenciasVsVacaciones
-          data={incidenciasVsVacaciones}
-          styles={styles}
-          colors={colors}
-        />
-      </section>
-
-      <DashboardSection
-        category="Machine Learning"
-        title="4. Visualización Machine Learning"
-        text="Estas gráficas muestran cómo se distribuyen los empleados después de aplicar K-means."
-        styles={styles}
-      />
-
-      <section style={styles.gridTwo}>
-        <Grafica10KMeansBarras
-          data={clusterBarChart}
-          kmeans={kmeans}
-          styles={styles}
-          colors={colors}
-        />
-
-        <Grafica11KMeansDona
-          data={clusterDonutChart}
-          kmeans={kmeans}
-          styles={styles}
-          colors={colors}
-        />
-      </section>
-
-      <TablaJustificacion styles={styles} />
+        {activeView === 'segmentos' ? (
+          <>
+            <DashboardSection
+              category="Machine Learning"
+              title="Grupos de personal"
+              text="Consulta grupos creados a partir de comportamientos similares. Úsalos como apoyo para revisar información, nunca como una decisión automática sobre una persona."
+              styles={styles}
+            />
+            <section style={styles.gridTwo}>
+              <Grafica10KMeansBarras
+                data={clusterBarChart}
+                kmeans={kmeans}
+                styles={styles}
+                colors={colors}
+              />
+              <Grafica11KMeansDona
+                data={clusterDonutChart}
+                kmeans={kmeans}
+                styles={styles}
+                colors={colors}
+              />
+            </section>
+            <TablaJustificacion styles={styles} />
+          </>
+        ) : null}
+      </div>
 
       <section style={styles.conclusionCard}>
         <SectionHeading
@@ -762,7 +814,7 @@ export default function DashboardAnalitico() {
             styles={styles}
           />
           <ConclusionItem
-            title="K-means"
+            title="Agrupación de personal"
             text={
               kmeans
                 ? `El resultado K-means se interpreta como ${getSilhouetteLabel(
@@ -770,7 +822,7 @@ export default function DashboardAnalitico() {
                   )}. ${getSilhouetteExplanation(kmeans.mejorResultado.silhouette)}`
                 : ''
             }
-            fallback="K-means se mostrará cuando el endpoint de entrenamiento esté disponible."
+            fallback="La agrupación se mostrará cuando exista información suficiente para calcularla."
             styles={styles}
           />
         </div>
