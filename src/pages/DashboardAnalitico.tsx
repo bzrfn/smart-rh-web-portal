@@ -34,7 +34,7 @@ import { api } from '../services/api';
 
 type ThemeMode = 'dark' | 'light';
 type Accent = 'blue' | 'teal' | 'gold' | 'danger' | 'cyan';
-type ChartCategory = 'Operativa' | 'Administrativa' | 'Comparativa' | 'Machine Learning';
+type ChartCategory = 'Operativa' | 'Administrativa' | 'Comparativa' | 'Grupos de personal';
 type AnalyticsView = 'operativa' | 'administrativa' | 'comparativa' | 'segmentos';
 
 const analyticsViews: Array<{
@@ -45,22 +45,22 @@ const analyticsViews: Array<{
   {
     id: 'operativa',
     label: 'Operación diaria',
-    description: 'Asistencia, evolución e incidencias que requieren seguimiento.',
+    description: 'Revisa asistencias pendientes, rechazadas y los días con más incidencias.',
   },
   {
     id: 'administrativa',
     label: 'Administración',
-    description: 'Nómina, vacaciones y contratos en una lectura ordenada.',
+    description: 'Consulta pagos, vacaciones y contratos para detectar asuntos pendientes.',
   },
   {
     id: 'comparativa',
     label: 'Comparaciones',
-    description: 'Relaciones entre indicadores para detectar casos que conviene revisar.',
+    description: 'Compara dos datos al mismo tiempo para localizar casos que conviene revisar.',
   },
   {
     id: 'segmentos',
     label: 'Grupos de personal',
-    description: 'Agrupaciones automáticas explicadas sin lenguaje técnico innecesario.',
+    description: 'Consulta personas con comportamientos similares como apoyo para la revisión.',
   },
 ];
 
@@ -298,22 +298,22 @@ function getSilhouetteExplanation(value?: number | null) {
   const score = Number(value);
 
   if (!Number.isFinite(score)) {
-    return 'Aún no se cuenta con resultado de silueta.';
+    return 'Todavía no hay información suficiente para comparar los grupos.';
   }
 
   if (score >= 0.7) {
-    return 'Los grupos están muy bien separados y el resultado es fuerte.';
+    return 'Los grupos tienen diferencias claras y pueden servir como apoyo para la revisión.';
   }
 
   if (score >= 0.5) {
-    return 'Los grupos tienen buena separación y el resultado es útil.';
+    return 'Los grupos muestran diferencias suficientes para orientar una revisión.';
   }
 
   if (score >= 0.25) {
-    return 'La separación es moderada; sirve como referencia, pero requiere revisión.';
+    return 'Los grupos se parecen en algunos aspectos; usa el resultado solo como referencia.';
   }
 
-  return 'La separación es baja; se recomienda agregar más datos o revisar variables.';
+  return 'Los grupos son muy parecidos; conviene actualizar la información antes de utilizarlos.';
 }
 
 function hasData<T>(data?: T[]) {
@@ -401,7 +401,7 @@ export default function DashboardAnalitico() {
     if (!kmeans?.mejorResultado?.clusters) return [];
 
     return kmeans.mejorResultado.clusters.map((cluster) => ({
-      name: `Cluster ${cluster.cluster + 1}`,
+      name: `Grupo ${cluster.cluster + 1}`,
       empleados: cluster.total,
       porcentaje: cluster.porcentaje,
       perfil: cluster.perfil,
@@ -443,10 +443,10 @@ export default function DashboardAnalitico() {
       totalCharts: 8,
       label:
         chartsWithData >= 7
-          ? 'Completa'
+          ? 'Lista para revisar'
           : chartsWithData >= 5
-            ? 'Aceptable'
-            : 'Limitada',
+            ? 'Disponible con pendientes'
+            : 'Falta información',
     };
   }, [analytics, clusterBarChart]);
 
@@ -456,18 +456,18 @@ export default function DashboardAnalitico() {
     const empleados = analytics.kpis.totalEmpleados;
 
     if (!empleados) {
-      return 'El dashboard aún no cuenta con empleados suficientes para generar una conclusión sólida.';
+      return 'Todavía no hay suficientes empleados para mostrar un resumen confiable.';
     }
 
     if (asistencia >= 0.8 && incidencias <= empleados) {
-      return 'El comportamiento general es favorable: la mayoría de asistencias se encuentran aprobadas y las incidencias son controladas.';
+      return 'La situación general es favorable: la mayoría de las asistencias están aprobadas y hay pocas incidencias por revisar.';
     }
 
     if (asistencia >= 0.5) {
-      return 'El comportamiento general es moderado: existen registros aprobados, pero también incidencias que deben revisarse.';
+      return 'Hay registros correctos, pero también incidencias que conviene revisar antes de cerrar el periodo.';
     }
 
-    return 'El comportamiento general requiere atención: la tasa de aprobación es baja o existen incidencias relevantes.';
+    return 'La información requiere atención: hay pocas asistencias aprobadas o existen varias incidencias pendientes.';
   }, [analytics.kpis]);
 
   async function cargarDashboard() {
@@ -508,24 +508,24 @@ export default function DashboardAnalitico() {
     <div className="analytics-report-page" style={styles.page}>
       <AnalyticsModuleNav />
 
-      <section style={styles.hero}>
+      <section className="analytics-report-hero" style={styles.hero}>
         <div style={styles.heroCopy}>
-          <span style={styles.chip}>Lectura de la operación</span>
+          <span style={styles.chip}>Resumen para Recursos Humanos</span>
           <h1 style={styles.title}>Reportes de Recursos Humanos</h1>
           <p style={styles.subtitle}>
-            Consulta indicadores de asistencia, nómina, vacaciones y contratos sin revisar
-            archivos separados. Cada gráfica incluye una explicación para facilitar la decisión.
+            Consulta asistencia, nómina, vacaciones y contratos sin abrir cada módulo por
+            separado. Cada gráfica explica qué muestra, para qué sirve y qué debes revisar.
           </p>
 
           <div style={styles.heroTags}>
-            <MiniTag label="Indicadores" value="11" styles={styles} />
-            <MiniTag label="Vistas" value="4" styles={styles} />
-            <MiniTag label="Información" value="Actualizada" styles={styles} />
+            <MiniTag label="Personas incluidas" value={String(analytics.kpis.totalEmpleados)} styles={styles} />
+            <MiniTag label="Casos por revisar" value={String(analytics.kpis.totalIncidencias)} styles={styles} />
+            <MiniTag label="Última consulta" value={analytics.generatedAt ? 'Disponible' : 'Pendiente'} styles={styles} />
           </div>
         </div>
 
         <aside style={styles.heroPanel}>
-          <span style={styles.eyebrow}>Estado de la información</span>
+          <span style={styles.eyebrow}>Estado del reporte</span>
           <h2 style={styles.panelTitle}>{dataQuality.label}</h2>
           <p style={styles.panelText}>
             {analytics.interpretaciones.conclusion || dashboardConclusion}
@@ -533,19 +533,19 @@ export default function DashboardAnalitico() {
 
           <div style={styles.panelInfoGrid}>
             <PanelMetric
-              label="Gráficas con datos"
+              label="Apartados disponibles"
               value={`${dataQuality.chartsWithData}/${dataQuality.totalCharts}`}
               styles={styles}
             />
             <PanelMetric
-              label="Calidad de agrupación"
+              label="Claridad de los grupos"
               value={getSilhouetteLabel(kmeans?.mejorResultado?.silhouette)}
               styles={styles}
             />
           </div>
 
           <button style={styles.primaryButton} onClick={cargarDashboard} disabled={loading}>
-            {loading ? 'Consultando...' : 'Volver a consultar'}
+            {loading ? 'Actualizando reportes...' : 'Actualizar reportes'}
           </button>
         </aside>
       </section>
@@ -555,55 +555,39 @@ export default function DashboardAnalitico() {
       {loading ? (
         <div style={styles.loadingBox}>
           <span style={styles.loadingDot} />
-          Cargando datos visuales...
+          Preparando los reportes...
         </div>
       ) : null}
 
-      <section style={styles.kpiGrid}>
+      <section className="analytics-summary-strip" style={styles.kpiGrid}>
         <KpiCard
-          title="Empleados analizados"
+          title="Personal incluido"
           value={String(analytics.kpis.totalEmpleados)}
-          detail="Registros activos considerados"
+          detail="Personas consideradas en estos reportes"
           accent="blue"
           styles={styles}
           colors={colors}
         />
         <KpiCard
-          title="Asistencias registradas"
-          value={String(analytics.kpis.totalAsistencias)}
-          detail={`Aprobación general ${formatPercent(analytics.kpis.tasaAprobacion)}`}
+          title="Asistencias pendientes"
+          value={String(analytics.kpis.asistenciasPendientes)}
+          detail="Registros que todavía necesitan revisión"
           accent="teal"
           styles={styles}
           colors={colors}
         />
         <KpiCard
-          title="Nómina promedio"
+          title="Pago promedio"
           value={formatMoney(analytics.kpis.promedioNomina)}
-          detail="Promedio general analizado"
+          detail="Promedio calculado con la nómina registrada"
           accent="gold"
           styles={styles}
           colors={colors}
         />
         <KpiCard
-          title="Vacaciones"
-          value={String(analytics.kpis.solicitudesVacaciones)}
-          detail="Solicitudes registradas"
-          accent="cyan"
-          styles={styles}
-          colors={colors}
-        />
-        <KpiCard
-          title="Contratos activos"
-          value={String(analytics.kpis.contratosActivos)}
-          detail="Situación contractual vigente"
-          accent="blue"
-          styles={styles}
-          colors={colors}
-        />
-        <KpiCard
-          title="Incidencias"
+          title="Casos por revisar"
           value={String(analytics.kpis.totalIncidencias)}
-          detail="Pendientes y rechazadas"
+          detail="Asistencias pendientes o rechazadas"
           accent="danger"
           styles={styles}
           colors={colors}
@@ -612,35 +596,35 @@ export default function DashboardAnalitico() {
 
       <section className="analytics-reading-guide" style={styles.explainCard}>
         <SectionHeading
-          eyebrow="Guía de lectura"
-          title="Cómo interpretar este dashboard"
-          text="Elige una vista según la pregunta que necesitas resolver. Cada bloque mantiene juntas las gráficas relacionadas."
+          eyebrow="Antes de comenzar"
+          title="Elige la vista según lo que necesitas resolver"
+          text="Cada vista reúne información relacionada. Abre una, revisa los casos señalados y entra al módulo correspondiente para realizar cambios."
           styles={styles}
         />
 
         <div style={styles.readingGrid}>
           <ReadingStep
             number="01"
-            title="Operativa"
-            text="Explica asistencia, estados e incidencias."
+            title="Revisar el día"
+            text="Consulta asistencia e incidencias que necesitan atención."
             styles={styles}
           />
           <ReadingStep
             number="02"
-            title="Administrativa"
-            text="Explica nómina, contratos y vacaciones."
+            title="Revisar trámites"
+            text="Consulta pagos, contratos y solicitudes de vacaciones."
             styles={styles}
           />
           <ReadingStep
             number="03"
-            title="Comparativa"
-            text="Cruza variables para detectar patrones."
+            title="Comparar casos"
+            text="Busca diferencias o comportamientos que conviene validar."
             styles={styles}
           />
           <ReadingStep
             number="04"
-            title="Grupos de personal"
-            text="Consulta agrupaciones de comportamiento como apoyo para la revisión."
+            title="Revisar grupos"
+            text="Observa personas con características similares sin aplicar decisiones automáticas."
             styles={styles}
           />
         </div>
@@ -756,7 +740,7 @@ export default function DashboardAnalitico() {
         {activeView === 'segmentos' ? (
           <>
             <DashboardSection
-              category="Machine Learning"
+              category="Grupos de personal"
               title="Grupos de personal"
               text="Consulta grupos creados a partir de comportamientos similares. Úsalos como apoyo para revisar información, nunca como una decisión automática sobre una persona."
               styles={styles}
@@ -775,12 +759,11 @@ export default function DashboardAnalitico() {
                 colors={colors}
               />
             </section>
-            <TablaJustificacion styles={styles} />
           </>
         ) : null}
       </div>
 
-      <section style={styles.conclusionCard}>
+      <section className="analytics-conclusion-card" style={styles.conclusionCard}>
         <SectionHeading
           eyebrow="Conclusiones"
           title="Interpretación final"
@@ -788,7 +771,7 @@ export default function DashboardAnalitico() {
           styles={styles}
         />
 
-        <div style={styles.conclusionGrid}>
+        <div className="analytics-conclusion-grid" style={styles.conclusionGrid}>
           <ConclusionItem
             title="Asistencia"
             text={analytics.interpretaciones.asistencia}
@@ -817,7 +800,7 @@ export default function DashboardAnalitico() {
             title="Agrupación de personal"
             text={
               kmeans
-                ? `El resultado K-means se interpreta como ${getSilhouetteLabel(
+                ? `La claridad de los grupos es ${getSilhouetteLabel(
                     kmeans.mejorResultado.silhouette
                   )}. ${getSilhouetteExplanation(kmeans.mejorResultado.silhouette)}`
                 : ''
@@ -886,7 +869,7 @@ function Grafica01AsistenciasPorEstado({
     category: 'Operativa',
     title: 'Asistencias por estado',
     chartType: 'Gráfica de barras verticales',
-    source: 'Tabla asistencias, campo estado',
+    source: 'Abre Asistencia y atiende primero los registros pendientes o rechazados.',
     question: '¿Cuántas asistencias fueron aprobadas, pendientes o rechazadas?',
     description:
       'Presenta el conteo de registros de asistencia agrupados por estado administrativo.',
@@ -987,7 +970,7 @@ function Grafica02EvolucionAsistencias({
     category: 'Operativa',
     title: 'Evolución de asistencias',
     chartType: 'Gráfica de área y línea',
-    source: 'Tabla asistencias, campos fecha y estado',
+    source: 'Revisa los días con cambios importantes y valida los registros de esas fechas.',
     question: '¿Cómo cambia el registro de asistencias con el tiempo?',
     description:
       'Muestra la cantidad total de asistencias y asistencias aprobadas por fecha.',
@@ -1118,7 +1101,7 @@ function Grafica03IncidenciasPorFecha({
     category: 'Operativa',
     title: 'Incidencias por fecha',
     chartType: 'Gráfica de línea múltiple',
-    source: 'Tabla asistencias, estados pendiente y rechazada',
+    source: 'Entra a Asistencia y resuelve los días que concentran más casos.',
     question: '¿En qué fechas se concentran más incidencias?',
     description:
       'Compara asistencias pendientes, rechazadas e incidencias totales a través del tiempo.',
@@ -1239,7 +1222,7 @@ function Grafica04NominaPromedio({
     category: 'Administrativa',
     title: 'Nómina promedio por empleado',
     chartType: 'Barras horizontales',
-    source: 'Tabla nominas y tabla usuarios',
+    source: 'Abre Nómina si necesitas validar un importe o corregir un registro.',
     question: '¿Qué empleados tienen mayor promedio de nómina?',
     description:
       'Presenta el top de empleados con mayor promedio económico registrado.',
@@ -1354,7 +1337,7 @@ function Grafica05VacacionesPorEstado({
     category: 'Administrativa',
     title: 'Vacaciones por estado',
     chartType: 'Gráfica de dona',
-    source: 'Tabla vacaciones, campo estado',
+    source: 'Abre Vacaciones y responde primero las solicitudes pendientes.',
     question: '¿Cómo se distribuyen las solicitudes de vacaciones?',
     description:
       'Muestra la proporción de vacaciones aprobadas, pendientes y rechazadas.',
@@ -1449,7 +1432,7 @@ function Grafica06DiasVacaciones({
     category: 'Administrativa',
     title: 'Días de vacaciones solicitados',
     chartType: 'Barras horizontales',
-    source: 'Tabla vacaciones, campo dias_solicitados',
+    source: 'Revisa posibles cruces de fechas antes de aprobar periodos largos.',
     question: '¿Qué empleados han solicitado más días de vacaciones?',
     description:
       'Presenta los empleados con mayor cantidad de días solicitados.',
@@ -1560,7 +1543,7 @@ function Grafica07ContratosPorEstado({
     category: 'Administrativa',
     title: 'Contratos por estado',
     chartType: 'Gráfica de barras verticales',
-    source: 'Tabla contratos, campo estado',
+    source: 'Abre Contratos para revisar vencimientos o estados que no estén vigentes.',
     question: '¿Cuántos contratos están activos, inactivos o finalizados?',
     description:
       'Resume la situación contractual de los empleados considerados.',
@@ -1652,7 +1635,7 @@ function Grafica08AsistenciaVsNomina({
     category: 'Comparativa',
     title: 'Asistencia vs nómina',
     chartType: 'Gráfica de dispersión',
-    source: 'Tablas asistencias, nominas y usuarios',
+    source: 'Revisa cada caso individual antes de relacionar el pago con la asistencia.',
     question: '¿Existe relación visual entre tasa de asistencia y nómina promedio?',
     description:
       'Cada punto representa un empleado con su tasa de asistencia y su promedio de nómina.',
@@ -1752,7 +1735,7 @@ function Grafica09IncidenciasVsVacaciones({
     category: 'Comparativa',
     title: 'Incidencias vs vacaciones',
     chartType: 'Gráfica de dispersión',
-    source: 'Tablas asistencias y vacaciones',
+    source: 'Valida cada caso en Asistencia y Vacaciones antes de tomar una decisión.',
     question: '¿Los empleados con más incidencias también registran más solicitudes?',
     description:
       'Compara incidencias laborales con solicitudes de vacaciones por empleado.',
@@ -1844,7 +1827,7 @@ function Grafica10KMeansBarras({
   const colorTextoEjes = colors.chartAxis;
 
   const colorCluster1 = colors.isDark ? '#38BDF8' : '#4f6173';
-  const colorCluster2 = colors.isDark ? '#2DD4BF' : '#c13373';
+  const colorCluster2 = colors.isDark ? '#2DD4BF' : '#0F9F96';
   const colorCluster3 = colors.isDark ? '#FACC15' : '#2cb8ce';
   const colorCluster4 = colors.isDark ? '#7DD3FC' : '#0A57A4';
   const colorCluster5 = colors.isDark ? '#F87171' : '#D64545';
@@ -1864,13 +1847,13 @@ function Grafica10KMeansBarras({
 
   const info: VisualizationInfo = {
     number: '10',
-    category: 'Machine Learning',
-    title: 'Distribución por clúster K-means',
+    category: 'Grupos de personal',
+    title: 'Personas por grupo similar',
     chartType: 'Gráfica de barras verticales',
-    source: 'Endpoint /kmeans/entrenar',
-    question: '¿Cuántos empleados quedaron en cada grupo generado por K-means?',
+    source: 'Abre el grupo que te interese y revisa el contexto de sus integrantes.',
+    question: '¿Cuántas personas comparten características parecidas?',
     description:
-      'Presenta el número de empleados agrupados en cada clúster.',
+      'Presenta el número de personas incluidas en cada grupo de características similares.',
     whyThisChart:
       'Se usa barras porque compara la cantidad de empleados por grupo.',
     accent: 'cyan',
@@ -1919,7 +1902,7 @@ function Grafica10KMeansBarras({
             </BarChart>
           </ResponsiveContainer>
         ) : (
-          <EmptyChart styles={styles} text="No se pudo cargar el resultado K-means." />
+          <EmptyChart styles={styles} text="Todavía no hay información suficiente para formar grupos." />
         )}
       </div>
 
@@ -1927,12 +1910,9 @@ function Grafica10KMeansBarras({
         title="Interpretación"
         text={
           kmeans
-            ? `K-means trabajó con K=${kmeans.mejorResultado.k}. Su índice de silueta fue ${formatNumber(
-                kmeans.mejorResultado.silhouette,
-                4
-              )}, por lo que la calidad se interpreta como ${getSilhouetteLabel(
+            ? `Se formaron ${kmeans.mejorResultado.k} grupos. La claridad del resultado es ${getSilhouetteLabel(
                 kmeans.mejorResultado.silhouette
-              )}.`
+              )}: ${getSilhouetteExplanation(kmeans.mejorResultado.silhouette)}`
             : ''
         }
         fallback="Ayuda a identificar si los perfiles están equilibrados o concentrados."
@@ -1990,13 +1970,13 @@ function Grafica11KMeansDona({
 
   const info: VisualizationInfo = {
     number: '11',
-    category: 'Machine Learning',
-    title: 'Porcentaje por clúster',
+    category: 'Grupos de personal',
+    title: 'Participación de cada grupo',
     chartType: 'Gráfica de dona',
-    source: 'Endpoint /kmeans/entrenar',
-    question: '¿Qué proporción del personal representa cada clúster?',
+    source: 'Usa esta comparación como referencia y valida cada persona por separado.',
+    question: '¿Qué proporción del personal representa cada grupo?',
     description:
-      'Muestra el peso porcentual de cada grupo generado por K-means.',
+      'Muestra qué parte del personal pertenece a cada grupo de características similares.',
     whyThisChart:
       'Se usa dona porque muestra proporción entre pocos grupos.',
     accent: 'gold',
@@ -2037,7 +2017,7 @@ function Grafica11KMeansDona({
             </PieChart>
           </ResponsiveContainer>
         ) : (
-          <EmptyChart styles={styles} text="No hay datos porcentuales de K-means." />
+          <EmptyChart styles={styles} text="Todavía no hay información para calcular la proporción de los grupos." />
         )}
       </div>
 
@@ -2048,7 +2028,7 @@ function Grafica11KMeansDona({
             ? getSilhouetteExplanation(kmeans.mejorResultado.silhouette)
             : ''
         }
-        fallback="Permite explicar qué perfil tiene mayor presencia dentro del dataset."
+        fallback="Permite saber qué grupo reúne a más personas dentro de la información disponible."
         styles={styles}
       />
     </ChartCard>
@@ -2111,7 +2091,7 @@ function KpiCard({
   const accentColor = getAccentColor(accent, colors);
 
   return (
-    <article style={styles.kpiCard}>
+    <article className="analytics-kpi-card" style={styles.kpiCard}>
       <span style={{ ...styles.kpiAccent, background: accentColor }} />
       <p>{title}</p>
       <strong>{value}</strong>
@@ -2152,7 +2132,7 @@ function DashboardSection({
   styles: Record<string, CSSProperties>;
 }) {
   return (
-    <section style={styles.sectionBanner}>
+    <section className="analytics-section-banner" style={styles.sectionBanner}>
       <div>
         <span style={styles.eyebrow}>{category}</span>
         <h2 style={styles.sectionTitle}>{title}</h2>
@@ -2174,7 +2154,7 @@ function ReadingStep({
   styles: Record<string, CSSProperties>;
 }) {
   return (
-    <article style={styles.readingStep}>
+    <article className="analytics-reading-step" style={styles.readingStep}>
       <span>{number}</span>
       <strong>{title}</strong>
       <p>{text}</p>
@@ -2196,7 +2176,7 @@ function ChartCard({
   const accentColor = getAccentColor(info.accent, colors);
 
   return (
-    <article style={styles.card}>
+    <article className="analytics-chart-card" style={styles.card}>
       <div style={styles.chartHeader}>
         <div>
           <div style={styles.chartMetaRow}>
@@ -2211,7 +2191,6 @@ function ChartCard({
             </span>
 
             <span style={styles.chartCategory}>{info.category}</span>
-            <span style={styles.chartType}>{info.chartType}</span>
           </div>
 
           <h2 style={styles.sectionTitle}>{info.title}</h2>
@@ -2219,10 +2198,10 @@ function ChartCard({
         </div>
       </div>
 
-      <div style={styles.chartExplanationGrid}>
-        <InfoBox title="Pregunta" text={info.question} styles={styles} />
-        <InfoBox title="Fuente de datos" text={info.source} styles={styles} />
-        <InfoBox title="Por qué esta gráfica" text={info.whyThisChart} styles={styles} />
+      <div className="analytics-chart-help" style={styles.chartExplanationGrid}>
+        <InfoBox title="Qué estás viendo" text={info.question} styles={styles} />
+        <InfoBox title="Para qué sirve" text={info.whyThisChart} styles={styles} />
+        <InfoBox title="Qué hacer" text={info.source} styles={styles} />
       </div>
 
       {children}
@@ -2240,8 +2219,8 @@ function InfoBox({
   styles: Record<string, CSSProperties>;
 }) {
   return (
-    <div style={styles.infoBox}>
-      <strong>{title}</strong>
+    <div className="analytics-info-box" style={styles.infoBox}>
+      <strong>{title === 'Interpretación' ? 'Qué significa' : title}</strong>
       <p>{text}</p>
     </div>
   );
@@ -2259,7 +2238,7 @@ function ChartInterpretation({
   styles: Record<string, CSSProperties>;
 }) {
   return (
-    <div style={styles.interpretation}>
+    <div className="analytics-interpretation" style={styles.interpretation}>
       <strong>{title}</strong>
       <p>{text || fallback}</p>
     </div>
@@ -2278,7 +2257,7 @@ function ConclusionItem({
   styles: Record<string, CSSProperties>;
 }) {
   return (
-    <article style={styles.conclusionItem}>
+    <article className="analytics-conclusion-item" style={styles.conclusionItem}>
       <strong>{title}</strong>
       <p>{text || fallback}</p>
     </article>
@@ -2549,41 +2528,40 @@ function getColors(isDark: boolean) {
 function getStyles(C: ThemeColors): Record<string, CSSProperties> {
   return {
     page: {
-      minHeight: '100vh',
-      padding: 28,
+      minHeight: '100%',
+      width: '100%',
+      padding: 0,
       color: C.text,
-      background: C.isDark
-        ? 'radial-gradient(circle at top right, rgba(56,189,248,0.14), transparent 35%), radial-gradient(circle at top left, rgba(45,212,191,0.10), transparent 32%), #07111F'
-        : 'radial-gradient(circle at top right, rgba(10,87,164,0.12), transparent 35%), radial-gradient(circle at top left, rgba(15,159,150,0.10), transparent 32%), #F4F7FB',
+      background: 'transparent',
     },
     hero: {
       display: 'grid',
       gridTemplateColumns: 'minmax(0, 1.5fr) minmax(320px, 0.8fr)',
-      gap: 22,
-      marginBottom: 20,
+      gap: 18,
+      marginBottom: 14,
     },
     heroCopy: {
-      padding: 26,
-      borderRadius: 30,
+      padding: 24,
+      borderRadius: 24,
       background: C.surface,
       border: `1px solid ${C.border}`,
-      boxShadow: C.shadow,
+      boxShadow: '0 10px 28px rgba(15,23,42,0.07)',
     },
     chip: {
       display: 'inline-flex',
-      padding: '8px 13px',
+      padding: '6px 10px',
       borderRadius: 999,
       background: C.isDark ? 'rgba(45,212,191,0.14)' : 'rgba(15,159,150,0.12)',
       color: C.teal,
-      fontSize: 12,
+      fontSize: 11,
       fontWeight: 900,
       letterSpacing: 1.4,
       textTransform: 'uppercase',
     },
     title: {
-      margin: '18px 0 10px',
-      fontSize: 42,
-      lineHeight: 1.05,
+      margin: '10px 0 10px',
+      fontSize: 'clamp(2rem, 3.4vw, 3.35rem)',
+      lineHeight: 1.02,
       fontWeight: 950,
       color: C.text,
     },
@@ -2591,19 +2569,19 @@ function getStyles(C: ThemeColors): Record<string, CSSProperties> {
       margin: 0,
       maxWidth: 920,
       color: C.textMuted,
-      lineHeight: 1.75,
-      fontWeight: 700,
-      fontSize: 16,
+      lineHeight: 1.6,
+      fontWeight: 600,
+      fontSize: 14,
     },
     heroTags: {
       display: 'grid',
       gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
-      gap: 12,
-      marginTop: 22,
+      gap: 8,
+      marginTop: 16,
     },
     miniTag: {
-      padding: 14,
-      borderRadius: 18,
+      padding: 11,
+      borderRadius: 13,
       background: C.surfaceSoft,
       border: `1px solid ${C.border}`,
       display: 'flex',
@@ -2611,14 +2589,14 @@ function getStyles(C: ThemeColors): Record<string, CSSProperties> {
       gap: 4,
     },
     heroPanel: {
-      padding: 24,
-      borderRadius: 30,
+      padding: 18,
+      borderRadius: 20,
       background: C.surface,
       border: `1px solid ${C.border}`,
-      boxShadow: C.shadow,
+      boxShadow: '0 10px 28px rgba(15,23,42,0.07)',
       display: 'flex',
       flexDirection: 'column',
-      gap: 16,
+      gap: 12,
     },
     eyebrow: {
       color: C.teal,
@@ -2630,7 +2608,7 @@ function getStyles(C: ThemeColors): Record<string, CSSProperties> {
     panelTitle: {
       margin: 0,
       color: C.text,
-      fontSize: 28,
+      fontSize: 22,
       fontWeight: 950,
     },
     panelText: {
@@ -2645,8 +2623,8 @@ function getStyles(C: ThemeColors): Record<string, CSSProperties> {
       gap: 10,
     },
     panelMetric: {
-      padding: 14,
-      borderRadius: 18,
+      padding: 11,
+      borderRadius: 13,
       background: C.surfaceSoft,
       border: `1px solid ${C.border}`,
       display: 'flex',
@@ -2655,10 +2633,10 @@ function getStyles(C: ThemeColors): Record<string, CSSProperties> {
     },
     primaryButton: {
       border: 0,
-      borderRadius: 16,
-      padding: '14px 18px',
-      background: C.teal,
-      color: C.isDark ? '#03111A' : '#FFFFFF',
+      borderRadius: 12,
+      padding: '12px 16px',
+      background: C.primary,
+      color: '#FFFFFF',
       fontWeight: 950,
       cursor: 'pointer',
     },
@@ -2691,19 +2669,19 @@ function getStyles(C: ThemeColors): Record<string, CSSProperties> {
     },
     kpiGrid: {
       display: 'grid',
-      gridTemplateColumns: 'repeat(6, minmax(0, 1fr))',
-      gap: 16,
-      marginBottom: 18,
+      gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
+      gap: 10,
+      marginBottom: 14,
     },
     kpiCard: {
       display: 'flex',
       flexDirection: 'column',
-      gap: 8,
-      padding: 20,
-      borderRadius: 24,
+      gap: 6,
+      padding: 16,
+      borderRadius: 17,
       background: C.surface,
       border: `1px solid ${C.border}`,
-      boxShadow: C.shadow,
+      boxShadow: '0 8px 22px rgba(15,23,42,0.06)',
     },
     kpiAccent: {
       width: 42,
@@ -2712,22 +2690,22 @@ function getStyles(C: ThemeColors): Record<string, CSSProperties> {
       marginBottom: 6,
     },
     explainCard: {
-      padding: 22,
-      borderRadius: 28,
+      padding: 20,
+      borderRadius: 20,
       background: C.surface,
       border: `1px solid ${C.border}`,
-      boxShadow: C.shadow,
-      marginBottom: 18,
+      boxShadow: '0 8px 22px rgba(15,23,42,0.06)',
+      marginBottom: 14,
     },
     readingGrid: {
       display: 'grid',
       gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
-      gap: 12,
-      marginTop: 16,
+      gap: 8,
+      marginTop: 13,
     },
     readingStep: {
-      padding: 16,
-      borderRadius: 20,
+      padding: 12,
+      borderRadius: 14,
       background: C.surfaceSoft,
       border: `1px solid ${C.border}`,
       display: 'flex',
@@ -2735,32 +2713,32 @@ function getStyles(C: ThemeColors): Record<string, CSSProperties> {
       gap: 7,
     },
     sectionBanner: {
-      padding: 22,
-      borderRadius: 28,
+      padding: 18,
+      borderRadius: 20,
       background: C.surface,
       border: `1px solid ${C.border}`,
-      boxShadow: C.shadow,
-      marginBottom: 18,
+      boxShadow: '0 8px 22px rgba(15,23,42,0.06)',
+      marginBottom: 12,
     },
     gridTwo: {
       display: 'grid',
       gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
-      gap: 18,
-      marginBottom: 18,
+      gap: 12,
+      marginBottom: 12,
     },
     gridOne: {
       display: 'grid',
       gridTemplateColumns: '1fr',
-      gap: 18,
-      marginBottom: 18,
+      gap: 12,
+      marginBottom: 12,
     },
     card: {
-      padding: 22,
-      borderRadius: 28,
+      padding: 18,
+      borderRadius: 20,
       background: C.surface,
       border: `1px solid ${C.border}`,
-      boxShadow: C.shadow,
-      marginBottom: 18,
+      boxShadow: '0 8px 22px rgba(15,23,42,0.06)',
+      marginBottom: 12,
     },
     chartHeader: {
       display: 'flex',
@@ -2805,7 +2783,7 @@ function getStyles(C: ThemeColors): Record<string, CSSProperties> {
     },
     sectionTitle: {
       margin: '8px 0',
-      fontSize: 24,
+      fontSize: 19,
       fontWeight: 950,
       color: C.text,
     },
@@ -2818,21 +2796,21 @@ function getStyles(C: ThemeColors): Record<string, CSSProperties> {
     chartExplanationGrid: {
       display: 'grid',
       gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
-      gap: 10,
-      marginTop: 16,
+      gap: 8,
+      marginTop: 12,
     },
     infoBox: {
-      padding: 13,
-      borderRadius: 17,
+      padding: 10,
+      borderRadius: 12,
       background: C.surfaceSoft,
       border: `1px solid ${C.border}`,
       color: C.textSoft,
       lineHeight: 1.45,
     },
     chartBox: {
-      marginTop: 16,
-      padding: 12,
-      borderRadius: 22,
+      marginTop: 12,
+      padding: 10,
+      borderRadius: 15,
       background: C.surfaceStrong,
       border: `1px solid ${C.border}`,
     },
@@ -2844,9 +2822,9 @@ function getStyles(C: ThemeColors): Record<string, CSSProperties> {
       boxShadow: C.shadow,
     },
     interpretation: {
-      marginTop: 14,
-      padding: 14,
-      borderRadius: 18,
+      marginTop: 10,
+      padding: 11,
+      borderRadius: 13,
       background: C.isDark ? 'rgba(56,189,248,0.12)' : 'rgba(10,87,164,0.08)',
       border: `1px solid ${C.border}`,
       color: C.textSoft,
@@ -2895,22 +2873,22 @@ function getStyles(C: ThemeColors): Record<string, CSSProperties> {
       verticalAlign: 'top',
     },
     conclusionCard: {
-      padding: 22,
-      borderRadius: 28,
+      padding: 18,
+      borderRadius: 20,
       background: C.surface,
       border: `1px solid ${C.border}`,
-      boxShadow: C.shadow,
-      marginBottom: 18,
+      boxShadow: '0 8px 22px rgba(15,23,42,0.06)',
+      marginBottom: 14,
     },
     conclusionGrid: {
       display: 'grid',
       gridTemplateColumns: 'repeat(5, minmax(0, 1fr))',
-      gap: 14,
-      marginTop: 16,
+      gap: 9,
+      marginTop: 13,
     },
     conclusionItem: {
-      padding: 16,
-      borderRadius: 20,
+      padding: 12,
+      borderRadius: 14,
       background: C.surfaceSoft,
       border: `1px solid ${C.border}`,
       color: C.textSoft,

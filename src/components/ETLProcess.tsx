@@ -318,15 +318,15 @@ export function ETLProcess() {
           'Cruzar vacaciones con asistencia y calendario operativo para anticipar posibles ausencias críticas.',
       },
       {
-        categoria: 'Madurez del dato',
-        titulo: 'Valor del ETL para toma de decisiones',
-        nivel: 'Estratégico',
+        categoria: 'Información disponible',
+        titulo: 'Una sola lectura para tomar decisiones',
+        nivel: 'Informativo',
         descripcion:
-          'El proceso ETL ya no solo genera archivos; ahora convierte datos operativos en indicadores interpretables para usuarios, nómina y vacaciones. Esto permite pasar de una consulta aislada a una lectura ejecutiva del estado real de Recursos Humanos.',
+          'Esta herramienta reúne usuarios, nómina y vacaciones en un mismo resumen. Así puedes revisar el estado de Recursos Humanos sin abrir cada módulo por separado.',
         impacto:
-          'La permanencia de los reportes permite conservar una fotografía del último procesamiento, mientras que una nueva ejecución actualiza los indicadores con información reciente.',
+          'El último resumen permanece disponible y puedes actualizarlo cuando existan movimientos nuevos.',
         decision:
-          'Usar este módulo como tablero de control para revisiones administrativas, avances del proyecto y futuras integraciones analíticas.',
+          'Actualiza el resumen después de cambios importantes y revisa primero los apartados marcados para atención.',
       },
     ];
   }, [report]);
@@ -376,9 +376,9 @@ export function ETLProcess() {
       },
       {
         prioridad: 'Media',
-        area: 'Análisis gerencial',
+        area: 'Resumen general',
         accion:
-          'Ejecutar el ETL después de altas de usuarios, cambios de nómina o nuevas solicitudes de vacaciones.',
+          'Actualizar el resumen después de altas de usuarios, cambios de nómina o nuevas solicitudes de vacaciones.',
         beneficio:
           'Mantiene reportes vigentes sin depender de consultas manuales o archivos separados.',
       },
@@ -410,19 +410,18 @@ export function ETLProcess() {
       {/* Sección principal: explicación y acciones primarias del ETL */}
       <section className="etl-hero">
         <div className="etl-hero-content">
-          <p className="etl-eyebrow">Preparación de información</p>
+          <p className="etl-eyebrow">Resumen de información</p>
 
-          <h2>Datos listos para revisar</h2>
+          <h2>Revisa la información importante en un solo lugar</h2>
 
           <p>
-            Reúne y ordena la información de usuarios, nómina y vacaciones para convertirla
-            en indicadores claros. No modifica los registros originales: prepara una lectura
-            actualizada para el equipo de Recursos Humanos.
+            Consulta un resumen de usuarios, nómina y vacaciones. Esta pantalla solo organiza
+            la información para facilitar su revisión; no cambia ningún registro del sistema.
           </p>
 
           <div className="etl-actions">
             <button className="etl-button" onClick={handleETL} disabled={loading}>
-              {loading ? 'Preparando información...' : 'Preparar datos'}
+              {loading ? 'Actualizando resumen...' : 'Actualizar resumen'}
             </button>
 
             {report && (
@@ -436,9 +435,9 @@ export function ETLProcess() {
         </div>
 
         <div className="etl-hero-badge">
-          <span>Estado del proceso</span>
-          <strong>{report ? 'Información preparada' : 'Pendiente de ejecución'}</strong>
-          <small>{report ? 'Disponible hasta la siguiente actualización' : 'Ejecuta el proceso para comenzar'}</small>
+          <span>Estado del resumen</span>
+          <strong>{report ? 'Listo para consultar' : 'Aún no se ha generado'}</strong>
+          <small>{report ? 'Incluye la información de la última actualización' : 'Selecciona “Actualizar resumen” para comenzar'}</small>
         </div>
       </section>
 
@@ -446,10 +445,10 @@ export function ETLProcess() {
       {!report && (
         <section className="etl-empty-state">
           <div className="etl-empty-icon">01</div>
-          <h3>Prepara la primera lectura de datos</h3>
+          <h3>Genera tu primer resumen</h3>
           <p>
-            Selecciona “Preparar datos” para reunir la información vigente de usuarios,
-            nómina y vacaciones. El resultado permanecerá disponible al volver a esta página.
+            Selecciona “Actualizar resumen” para consultar la información vigente de usuarios,
+            nómina y vacaciones. El resultado seguirá disponible cuando vuelvas a esta página.
           </p>
         </section>
       )}
@@ -460,48 +459,56 @@ export function ETLProcess() {
           <section className="etl-tabs-card">
             <div className="etl-tabs-header">
               <div>
-                <p className="etl-eyebrow">Panel de resultados</p>
-                <h3>Revisión de información preparada</h3>
+                <p className="etl-eyebrow">Información disponible</p>
+                <h3>Elige lo que necesitas revisar</h3>
               </div>
 
-              <span className="etl-chip">Información vigente</span>
+              <span className="etl-chip">Último resumen</span>
             </div>
 
             <div className="etl-tabs">
               <button
                 type="button"
+                role="tab"
+                aria-selected={activeTab === 'resumen'}
                 className={`etl-tab-button ${activeTab === 'resumen' ? 'active' : ''}`}
                 onClick={() => setActiveTab('resumen')}
               >
                 <span>01</span>
-                Resumen
+                Panorama
               </button>
 
               <button
                 type="button"
+                role="tab"
+                aria-selected={activeTab === 'estadisticas'}
                 className={`etl-tab-button ${activeTab === 'estadisticas' ? 'active' : ''}`}
                 onClick={() => setActiveTab('estadisticas')}
               >
                 <span>02</span>
-                Estadísticas
+                Detalles
               </button>
 
               <button
                 type="button"
+                role="tab"
+                aria-selected={activeTab === 'analisis'}
                 className={`etl-tab-button ${activeTab === 'analisis' ? 'active' : ''}`}
                 onClick={() => setActiveTab('analisis')}
               >
                 <span>03</span>
-                Análisis
+                Qué revisar
               </button>
 
               <button
                 type="button"
+                role="tab"
+                aria-selected={activeTab === 'graficas'}
                 className={`etl-tab-button ${activeTab === 'graficas' ? 'active' : ''}`}
                 onClick={() => setActiveTab('graficas')}
               >
                 <span>04</span>
-                Gráficas
+                Comparaciones
               </button>
             </div>
           </section>
@@ -539,7 +546,7 @@ export function ETLProcess() {
           {activeTab === 'estadisticas' && (
             <section className="etl-stats-grid etl-panel-animation">
               <div className="etl-stat-card">
-                <div className="etl-stat-icon">USR</div>
+                <div className="etl-stat-marker" aria-hidden="true" />
                 <div>
                   <span>Usuarios activos</span>
                   <strong>{formatNumber(report.usuarios.activos)}</strong>
@@ -548,7 +555,7 @@ export function ETLProcess() {
               </div>
 
               <div className="etl-stat-card">
-                <div className="etl-stat-icon">USR</div>
+                <div className="etl-stat-marker" aria-hidden="true" />
                 <div>
                   <span>Usuarios inactivos</span>
                   <strong>{formatNumber(report.usuarios.inactivos)}</strong>
@@ -557,7 +564,7 @@ export function ETLProcess() {
               </div>
 
               <div className="etl-stat-card">
-                <div className="etl-stat-icon">PER</div>
+                <div className="etl-stat-marker" aria-hidden="true" />
                 <div>
                   <span>Perfiles con foto</span>
                   <strong>{formatNumber(report.usuarios.conFoto)}</strong>
@@ -566,7 +573,7 @@ export function ETLProcess() {
               </div>
 
               <div className="etl-stat-card">
-                <div className="etl-stat-icon">PER</div>
+                <div className="etl-stat-marker" aria-hidden="true" />
                 <div>
                   <span>Perfiles sin foto</span>
                   <strong>{formatNumber(report.usuarios.sinFoto)}</strong>
@@ -575,7 +582,7 @@ export function ETLProcess() {
               </div>
 
               <div className="etl-stat-card">
-                <div className="etl-stat-icon">NOM</div>
+                <div className="etl-stat-marker" aria-hidden="true" />
                 <div>
                   <span>Promedio salario base</span>
                   <strong>{formatCurrency(report.nomina.promedioSalarioBase)}</strong>
@@ -584,7 +591,7 @@ export function ETLProcess() {
               </div>
 
               <div className="etl-stat-card">
-                <div className="etl-stat-icon">BON</div>
+                <div className="etl-stat-marker" aria-hidden="true" />
                 <div>
                   <span>Total bonos</span>
                   <strong>{formatCurrency(report.nomina.totalBonos)}</strong>
@@ -593,7 +600,7 @@ export function ETLProcess() {
               </div>
 
               <div className="etl-stat-card">
-                <div className="etl-stat-icon">DED</div>
+                <div className="etl-stat-marker" aria-hidden="true" />
                 <div>
                   <span>Total deducciones</span>
                   <strong>{formatCurrency(report.nomina.totalDeducciones)}</strong>
@@ -602,7 +609,7 @@ export function ETLProcess() {
               </div>
 
               <div className="etl-stat-card">
-                <div className="etl-stat-icon">VAC</div>
+                <div className="etl-stat-marker" aria-hidden="true" />
                 <div>
                   <span>Vacaciones pendientes</span>
                   <strong>{formatNumber(report.vacaciones.pendientes)}</strong>
@@ -618,20 +625,20 @@ export function ETLProcess() {
               <div className="etl-analysis-main">
                 <div className="etl-section-header etl-section-header-premium">
                   <div>
-                    <p className="etl-eyebrow">Análisis ejecutivo</p>
-                    <h3>Lectura general de la información</h3>
+                    <p className="etl-eyebrow">Situación actual</p>
+                    <h3>Qué significa la información</h3>
                     <p>
-                      Lectura interpretativa de usuarios, nómina y vacaciones para convertir datos
-                      operativos en decisiones administrativas.
+                      Una explicación sencilla de los datos más importantes y del seguimiento
+                      recomendado para Recursos Humanos.
                     </p>
                   </div>
 
-                  <span className="etl-chip">Interpretación avanzada</span>
+                  <span className="etl-chip">Explicación sencilla</span>
                 </div>
 
                 {/* Grid de tarjetas que muestran cada diagnóstico ejecutivo */}
                 <div className="etl-diagnostic-grid">
-                  {analisisEjecutivo.map((item, index) => (
+                  {analisisEjecutivo.slice(0, 4).map((item, index) => (
                     <article className="etl-diagnostic-card" key={index}>
                       <div className="etl-diagnostic-top">
                         <span className="etl-diagnostic-number">{String(index + 1).padStart(2, '0')}</span>
@@ -647,7 +654,7 @@ export function ETLProcess() {
                               ? 'critical'
                               : item.nivel === 'Atención'
                                 ? 'warning'
-                                : item.nivel === 'Estratégico'
+                                : item.nivel === 'Informativo'
                                   ? 'strategic'
                                   : 'stable'
                           }`}
@@ -658,17 +665,17 @@ export function ETLProcess() {
 
                       <div className="etl-diagnostic-body">
                         <div>
-                          <strong>Lectura</strong>
+                          <strong>Qué estás viendo</strong>
                           <p>{item.descripcion}</p>
                         </div>
 
                         <div>
-                          <strong>Impacto</strong>
+                          <strong>Por qué importa</strong>
                           <p>{item.impacto}</p>
                         </div>
 
                         <div>
-                          <strong>Decisión sugerida</strong>
+                          <strong>Qué hacer</strong>
                           <p>{item.decision}</p>
                         </div>
                       </div>
@@ -681,19 +688,19 @@ export function ETLProcess() {
               <div className="etl-recommendation-panel">
                 <div className="etl-section-header etl-section-header-premium">
                   <div>
-                    <p className="etl-eyebrow">Plan de acción</p>
-                    <h3>Recomendaciones priorizadas</h3>
+                    <p className="etl-eyebrow">Siguientes pasos</p>
+                    <h3>Qué conviene atender primero</h3>
                     <p>
                       Acciones concretas para mejorar control administrativo, calidad de datos
                       y seguimiento operativo.
                     </p>
                   </div>
 
-                  <span className="etl-chip">Gestión RH</span>
+                  <span className="etl-chip">Acciones sugeridas</span>
                 </div>
 
                 <div className="etl-action-list">
-                  {recomendaciones.map((item, index) => (
+                  {recomendaciones.slice(0, 4).map((item, index) => (
                     <article className="etl-action-card" key={index}>
                       <div className="etl-action-header">
                         <span className="etl-action-index">{index + 1}</span>
@@ -707,7 +714,7 @@ export function ETLProcess() {
                       <div className="etl-action-content">
                         <p>{item.accion}</p>
                         <div className="etl-benefit-box">
-                          <span>Beneficio esperado</span>
+                          <span>Para qué sirve</span>
                           <p>{item.beneficio}</p>
                         </div>
                       </div>
@@ -721,14 +728,14 @@ export function ETLProcess() {
                 <div className="etl-insights-card etl-analysis-wide etl-raw-insights">
                   <div className="etl-section-header etl-section-header-premium">
                     <div>
-                      <p className="etl-eyebrow">Hallazgos de la preparación</p>
-                      <h3>Resumen del procesamiento</h3>
+                      <p className="etl-eyebrow">Información destacada</p>
+                      <h3>Lo más importante de esta actualización</h3>
                       <p>
-                        Lectura automática generada a partir de los datos procesados en la última ejecución.
+                        Observaciones generadas con la información incluida en el último resumen.
                       </p>
                     </div>
 
-                    <span className="etl-chip">Datos preparados</span>
+                    <span className="etl-chip">Resumen actualizado</span>
                   </div>
 
                   <div className="etl-raw-insights-grid">
@@ -749,8 +756,8 @@ export function ETLProcess() {
             <section className="etl-chart-grid etl-panel-animation">
               <div className="etl-chart-card">
                 <div className="etl-chart-header">
-                  <h3>Volumen de datos procesados</h3>
-                  <p>Comparación de registros reunidos desde cada fuente de información.</p>
+                  <h3>Información incluida en el resumen</h3>
+                  <p>Muestra cuántos registros se consultaron de usuarios, nómina y vacaciones.</p>
                 </div>
 
                 <div className="etl-chart-box">
@@ -769,7 +776,7 @@ export function ETLProcess() {
               <div className="etl-chart-card">
                 <div className="etl-chart-header">
                   <h3>Usuarios por rol</h3>
-                  <p>Distribución del personal según perfil asignado.</p>
+                  <p>Sirve para conocer cuántas personas tienen cada tipo de acceso.</p>
                 </div>
 
                 <div className="etl-chart-box">
@@ -788,7 +795,7 @@ export function ETLProcess() {
               <div className="etl-chart-card">
                 <div className="etl-chart-header">
                   <h3>Estado de usuarios</h3>
-                  <p>Actividad y completitud de perfil dentro del sistema.</p>
+                  <p>Identifica cuentas activas, inactivas y perfiles que todavía no tienen foto.</p>
                 </div>
 
                 <div className="etl-chart-box">
@@ -807,7 +814,7 @@ export function ETLProcess() {
               <div className="etl-chart-card">
                 <div className="etl-chart-header">
                   <h3>Vacaciones por estado</h3>
-                  <p>Solicitudes pendientes, aprobadas y rechazadas.</p>
+                  <p>Permite saber cuántas solicitudes están pendientes, aprobadas o rechazadas.</p>
                 </div>
 
                 <div className="etl-chart-box">
@@ -834,7 +841,7 @@ export function ETLProcess() {
               <div className="etl-chart-card">
                 <div className="etl-chart-header">
                   <h3>Balance de vacaciones</h3>
-                  <p>Relación entre días solicitados, promedio y estados administrativos.</p>
+                  <p>Compara solicitudes, días pedidos y casos que todavía requieren respuesta.</p>
                 </div>
 
                 <div className="etl-chart-box">
@@ -853,7 +860,7 @@ export function ETLProcess() {
               <div className="etl-chart-card">
                 <div className="etl-chart-header">
                   <h3>Solicitudes por fecha</h3>
-                  <p>Movimiento de vacaciones por fecha inicial.</p>
+                  <p>Ayuda a detectar las fechas en las que se concentran más solicitudes.</p>
                 </div>
 
                 <div className="etl-chart-box">
@@ -887,7 +894,7 @@ export function ETLProcess() {
               <div className="etl-chart-card">
                 <div className="etl-chart-header">
                   <h3>Componentes de nómina</h3>
-                  <p>Comparativa entre salario base, bonos, deducciones y total pagado.</p>
+                  <p>Muestra cuánto corresponde a salario, bonos, deducciones y pago final.</p>
                 </div>
 
                 <div className="etl-chart-box">
@@ -905,8 +912,8 @@ export function ETLProcess() {
 
               <div className="etl-chart-card">
                 <div className="etl-chart-header">
-                  <h3>Comparativa económica</h3>
-                  <p>Lectura directa de los principales valores monetarios procesados.</p>
+                  <h3>Resumen de pagos</h3>
+                  <p>Compara los importes principales para revisar cómo se forma el pago final.</p>
                 </div>
 
                 <div className="etl-chart-box">
@@ -926,7 +933,7 @@ export function ETLProcess() {
               <div className="etl-chart-card">
                 <div className="etl-chart-header">
                   <h3>Nómina por estado</h3>
-                  <p>Estado operativo de los registros de nómina.</p>
+                  <p>Permite revisar cuántos pagos están pendientes, procesados u observados.</p>
                 </div>
 
                 <div className="etl-chart-box">
@@ -950,8 +957,8 @@ export function ETLProcess() {
 
               <div className="etl-chart-card">
                 <div className="etl-chart-header">
-                  <h3>Eficiencia de nómina</h3>
-                  <p>Comparación de valores base, compensaciones, deducciones y neto.</p>
+                  <h3>Cómo se compone la nómina</h3>
+                  <p>Facilita comparar salario, bonos, deducciones y total pagado.</p>
                 </div>
 
                 <div className="etl-chart-box">
@@ -976,7 +983,7 @@ export function ETLProcess() {
               <div className="etl-chart-card etl-chart-card-wide">
                 <div className="etl-chart-header">
                   <h3>Nómina por periodo</h3>
-                  <p>Evolución del gasto salarial por periodo registrado.</p>
+                  <p>Muestra cómo cambian los pagos entre un periodo y otro.</p>
                 </div>
 
                 <div className="etl-chart-box">
@@ -998,8 +1005,8 @@ export function ETLProcess() {
 
               <div className="etl-chart-card etl-chart-card-wide">
                 <div className="etl-chart-header">
-                  <h3>Comparación general de información</h3>
-                  <p>Vista comparativa del volumen de información procesada.</p>
+                  <h3>Cantidad de información por apartado</h3>
+                  <p>Compara cuántos registros aporta cada apartado al resumen actual.</p>
                 </div>
 
                 <div className="etl-chart-box">

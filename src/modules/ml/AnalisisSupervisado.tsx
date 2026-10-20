@@ -305,15 +305,15 @@ export default function AnalisisSupervisado() {
   const modelMetricData = useMemo(() => {
     return [
       {
-        metrica: 'Accuracy',
+        metrica: 'Aciertos',
         valor: Number(evaluacion?.accuracy || 0),
       },
       {
-        metrica: 'MAE x100',
+        metrica: 'Error promedio',
         valor: Number(evaluacion?.mae || 0) * 100,
       },
       {
-        metrica: 'MSE x100',
+        metrica: 'Errores grandes',
         valor: Number(evaluacion?.mse || 0) * 100,
       },
     ];
@@ -330,7 +330,7 @@ export default function AnalisisSupervisado() {
     return [
       {
         title: 'Panorama general',
-        text: `El ${porcentajeBajo}% del personal se clasifica actualmente en riesgo bajo, lo que indica estabilidad general del dataset.`,
+        text: `El ${porcentajeBajo}% del personal se encuentra en nivel bajo, lo que indica una situación general estable.`,
       },
       {
         title: 'Atención preventiva',
@@ -422,7 +422,7 @@ export default function AnalisisSupervisado() {
       const { data } = await api.get<MlResponse>('/ml/predicciones');
 
       if (!data?.ok) {
-        setError(data?.message || 'No se pudo cargar el análisis supervisado.');
+        setError(data?.message || 'No se pudieron cargar las predicciones.');
         return;
       }
 
@@ -460,14 +460,14 @@ export default function AnalisisSupervisado() {
       const { data } = await api.post<MlResponse>('/ml/entrenar');
 
       if (!data?.ok) {
-        setError(data?.message || 'No se pudo ejecutar el modelo.');
+        setError(data?.message || 'No se pudo actualizar el análisis.');
         return;
       }
 
       setResumen(data.resumen || null);
       setEvaluacion(data.evaluacion || null);
       setPredicciones(data.predicciones || []);
-      setSuccess(data.message || 'Modelo supervisado ejecutado correctamente.');
+      setSuccess(data.message || 'El análisis se actualizó correctamente.');
 
       setLastUpdated(
         new Date().toLocaleString('es-MX', {
@@ -476,7 +476,7 @@ export default function AnalisisSupervisado() {
         })
       );
     } catch (err: any) {
-      setError(err?.response?.data?.message || 'Error al ejecutar el modelo.');
+      setError(err?.response?.data?.message || 'Ocurrió un error al actualizar el análisis.');
     } finally {
       setTraining(false);
     }
@@ -591,7 +591,7 @@ export default function AnalisisSupervisado() {
       {loading ? (
         <div className="ml-loading-card">
           <strong>Cargando análisis...</strong>
-          <p>Obteniendo predicciones y evaluación del modelo.</p>
+          <p>Consultando la información necesaria para mostrar las predicciones.</p>
         </div>
       ) : (
         <>
@@ -796,12 +796,11 @@ export default function AnalisisSupervisado() {
             <>
               <section className="ml-graph-intro">
                 <div>
-                  <span className="ml-section-tag">Visualización analítica</span>
-                  <h2>Gráficas de seguimiento preventivo</h2>
+                  <span className="ml-section-tag">Comparaciones visuales</span>
+                  <h2>Entiende las predicciones con gráficas</h2>
                   <p>
-                    Estas gráficas permiten interpretar la información disponible, detectar
-                    concentración de riesgo, comparar roles y ubicar empleados con mayor
-                    probabilidad de incidencia.
+                    Cada gráfica explica qué información compara y para qué puede ayudarte.
+                    Úsalas para localizar personas o situaciones que conviene revisar.
                   </p>
                 </div>
               </section>
@@ -884,8 +883,8 @@ export default function AnalisisSupervisado() {
                 <article className="ml-panel ml-chart-card">
                   <div className="ml-panel-header">
                     <div>
-                      <span>Histograma</span>
-                      <h2>Distribución de probabilidad</h2>
+                      <span>Niveles de probabilidad</span>
+                      <h2>Personas por rango de probabilidad</h2>
                     </div>
                   </div>
 
@@ -904,8 +903,8 @@ export default function AnalisisSupervisado() {
                   <div className="ml-chart-summary">
                     <strong>Qué significa:</strong>
                     <p>
-                      Agrupa a los empleados por rangos de probabilidad. Ayuda a identificar
-                      si el riesgo está concentrado en pocos empleados o distribuido en varios.
+                      Agrupa al personal según su probabilidad estimada. Ayuda a saber si la
+                      atención se concentra en pocas personas o se distribuye entre varias.
                     </p>
                   </div>
                 </article>
@@ -913,8 +912,8 @@ export default function AnalisisSupervisado() {
                 <article className="ml-panel ml-chart-card">
                   <div className="ml-panel-header">
                     <div>
-                      <span>Comparativo por rol</span>
-                      <h2>Riesgo por tipo de usuario</h2>
+                      <span>Comparación por acceso</span>
+                      <h2>Nivel preventivo según el tipo de cuenta</h2>
                     </div>
                   </div>
 
@@ -936,8 +935,8 @@ export default function AnalisisSupervisado() {
                   <div className="ml-chart-summary">
                     <strong>Qué significa:</strong>
                     <p>
-                      Compara la distribución del riesgo por rol. Permite revisar si el riesgo
-                      se concentra más en empleados, administradores u otros perfiles.
+                      Compara los niveles preventivos según el tipo de acceso. Permite revisar
+                      si alguna clase de cuenta concentra más casos que requieren seguimiento.
                     </p>
                   </div>
                 </article>
@@ -945,8 +944,8 @@ export default function AnalisisSupervisado() {
                 <article className="ml-panel ml-chart-card ml-chart-wide">
                   <div className="ml-panel-header">
                     <div>
-                      <span>Relación de variables</span>
-                      <h2>Probabilidad vs ausencias estimadas</h2>
+                      <span>Comparación de resultados</span>
+                      <h2>Probabilidad y ausencias previstas</h2>
                     </div>
                   </div>
 
@@ -966,9 +965,8 @@ export default function AnalisisSupervisado() {
                   <div className="ml-chart-summary">
                     <strong>Qué significa:</strong>
                     <p>
-                      Relaciona la probabilidad de riesgo con las ausencias estimadas. Los
-                      puntos más altos y a la derecha representan empleados que requieren
-                      mayor atención preventiva.
+                      Cada punto representa una persona. Los puntos ubicados más arriba y a la
+                      derecha combinan una probabilidad mayor con más ausencias previstas.
                     </p>
                   </div>
                 </article>
@@ -976,8 +974,8 @@ export default function AnalisisSupervisado() {
                 <article className="ml-panel ml-chart-card ml-chart-wide">
                   <div className="ml-panel-header">
                     <div>
-                      <span>Vacaciones y score</span>
-                      <h2>Días disponibles vs score de riesgo</h2>
+                      <span>Vacaciones y prevención</span>
+                      <h2>Días disponibles y nivel preventivo</h2>
                     </div>
                   </div>
 
@@ -997,9 +995,8 @@ export default function AnalisisSupervisado() {
                   <div className="ml-chart-summary">
                     <strong>Qué significa:</strong>
                     <p>
-                      Permite observar si los empleados con pocos días disponibles tienen un
-                      score de riesgo mayor. Es útil para detectar patrones relacionados con
-                      carga laboral, descanso o historial de uso de vacaciones.
+                      Permite observar si las personas con pocos días disponibles también
+                      muestran un nivel preventivo mayor. Úsalo para revisar descanso y carga de trabajo.
                     </p>
                   </div>
                 </article>
@@ -1036,8 +1033,8 @@ export default function AnalisisSupervisado() {
                 <article className="ml-panel ml-chart-card">
                   <div className="ml-panel-header">
                     <div>
-                      <span>Calidad del cálculo</span>
-                      <h2>Precisión y margen de error</h2>
+                      <span>Confiabilidad del resultado</span>
+                      <h2>Aciertos y margen de diferencia</h2>
                     </div>
                   </div>
 
@@ -1056,8 +1053,8 @@ export default function AnalisisSupervisado() {
                   <div className="ml-chart-summary">
                     <strong>Qué significa:</strong>
                     <p>
-                      Resume qué tan consistente fue el cálculo y cuánto se alejaron las
-                      estimaciones del resultado esperado. Un margen menor es preferible.
+                      Muestra cuántas clasificaciones coincidieron y cuánto se alejaron las
+                      estimaciones. Más aciertos y menos diferencia indican un resultado más estable.
                     </p>
                   </div>
                 </article>
@@ -1118,7 +1115,7 @@ export default function AnalisisSupervisado() {
                   <option value="probabilidad_desc">Mayor probabilidad</option>
                   <option value="probabilidad_asc">Menor probabilidad</option>
                   <option value="ausencias_desc">Más ausencias</option>
-                  <option value="score_desc">Mayor nivel preventivo</option>
+                  <option value="score_desc">Mayor puntuación preventiva</option>
                   <option value="nombre_asc">Nombre A-Z</option>
                 </select>
 
@@ -1136,7 +1133,7 @@ export default function AnalisisSupervisado() {
                     <tr>
                       <th>Empleado</th>
                       <th>Estado</th>
-                      <th>Nivel preventivo</th>
+                      <th>Puntuación preventiva</th>
                       <th>Ausencias</th>
                       <th>Riesgo</th>
                       <th>Probabilidad</th>
@@ -1236,42 +1233,39 @@ export default function AnalisisSupervisado() {
 
               <section className="ml-model-grid-pro">
                 <article className="ml-panel">
-                  <span className="ml-section-tag">Objetivo del modelo</span>
-                  <h3>Qué predice</h3>
+                  <span className="ml-section-tag">Resultado principal</span>
+                  <h3>Qué calcula</h3>
                   <p>
-                    El sistema predice el nivel de riesgo laboral de cada empleado y estima
-                    posibles ausencias en el próximo periodo. La salida se expresa como riesgo
-                    bajo, medio o alto.
+                    El sistema estima qué personas podrían requerir seguimiento y cuántas
+                    ausencias podrían presentarse. El resultado se muestra como nivel bajo,
+                    medio o alto.
                   </p>
                 </article>
 
                 <article className="ml-panel">
-                  <span className="ml-section-tag">Tipo de aprendizaje</span>
-                  <h3>Supervisado</h3>
+                  <span className="ml-section-tag">Información anterior</span>
+                  <h3>Aprende de registros previos</h3>
                   <p>
-                    El modelo usa registros con variables de entrada y una etiqueta de riesgo
-                    calculada. Con estos ejemplos aprende a clasificar nuevos registros con
-                    características similares.
+                    El cálculo toma como referencia registros anteriores para reconocer
+                    situaciones parecidas en la información actual.
                   </p>
                 </article>
 
                 <article className="ml-panel">
-                  <span className="ml-section-tag">Clasificación</span>
-                  <h3>KNN</h3>
+                  <span className="ml-section-tag">Comparación</span>
+                  <h3>Busca casos similares</h3>
                   <p>
-                    KNN compara cada empleado contra registros similares y asigna una clase
-                    según los vecinos más cercanos. En este caso las clases son bajo, medio
-                    y alto.
+                    Cada persona se compara con registros de características similares. Esa
+                    comparación ayuda a asignar un nivel bajo, medio o alto.
                   </p>
                 </article>
 
                 <article className="ml-panel">
-                  <span className="ml-section-tag">Regresión</span>
-                  <h3>Ausencias estimadas</h3>
+                  <span className="ml-section-tag">Estimación</span>
+                  <h3>Calcula ausencias posibles</h3>
                   <p>
-                    La estimación de ausencias se calcula mediante una relación lineal entre
-                    score de riesgo, antigüedad y días disponibles, permitiendo generar una
-                    predicción numérica.
+                    La estimación considera la puntuación preventiva, la antigüedad y los días
+                    disponibles para presentar una cantidad aproximada de ausencias.
                   </p>
                 </article>
               </section>
@@ -1280,8 +1274,8 @@ export default function AnalisisSupervisado() {
                 <article className="ml-panel">
                   <div className="ml-panel-header">
                     <div>
-                      <span>Variables de entrada</span>
-                      <h2>Características usadas</h2>
+                      <span>Información considerada</span>
+                      <h2>Datos que influyen en el resultado</h2>
                     </div>
                   </div>
 
@@ -1307,8 +1301,8 @@ export default function AnalisisSupervisado() {
                     </div>
 
                     <div>
-                      <strong>Score de riesgo</strong>
-                      <p>Puntuación calculada a partir de reglas de negocio.</p>
+                      <strong>Puntuación preventiva</strong>
+                      <p>Valor que reúne distintas señales disponibles en el sistema.</p>
                     </div>
 
                     <div>
@@ -1322,66 +1316,66 @@ export default function AnalisisSupervisado() {
               <section className="ml-workflow-grid">
                 <article>
                   <span>01</span>
-                  <h3>Extracción</h3>
-                  <p>Se obtienen empleados reales desde la base de datos transaccional.</p>
+                  <h3>Reunir</h3>
+                  <p>Se consulta la información disponible de las personas registradas.</p>
                 </article>
 
                 <article>
                   <span>02</span>
-                  <h3>Limpieza</h3>
-                  <p>Se excluyen cuentas generales del sistema para no contaminar el dataset.</p>
+                  <h3>Depurar</h3>
+                  <p>Se excluyen cuentas eliminadas o generales que no representan personal activo.</p>
                 </article>
 
                 <article>
                   <span>03</span>
-                  <h3>Transformación</h3>
-                  <p>Se calculan antigüedad, score, riesgo real y ausencias estimadas.</p>
+                  <h3>Preparar</h3>
+                  <p>Se ordenan antigüedad, vacaciones y señales preventivas.</p>
                 </article>
 
                 <article>
                   <span>04</span>
-                  <h3>Predicción</h3>
-                  <p>El modelo clasifica cada empleado y asigna probabilidad de riesgo.</p>
+                  <h3>Calcular</h3>
+                  <p>Se asigna un nivel y una probabilidad estimada para cada persona.</p>
                 </article>
 
                 <article>
                   <span>05</span>
-                  <h3>Evaluación</h3>
-                  <p>Se calculan Accuracy, MAE y MSE para interpretar el desempeño.</p>
+                  <h3>Comprobar</h3>
+                  <p>Se revisa cuántos resultados coinciden y qué tan grandes son las diferencias.</p>
                 </article>
 
                 <article>
                   <span>06</span>
-                  <h3>Uso RH</h3>
-                  <p>Se generan recomendaciones preventivas para apoyar decisiones.</p>
+                  <h3>Revisar</h3>
+                  <p>Recursos Humanos valida el contexto antes de tomar cualquier decisión.</p>
                 </article>
               </section>
 
               <section className="ml-metrics-explain-grid">
                 <article className="ml-panel">
-                  <span className="ml-section-tag">Accuracy</span>
+                  <span className="ml-section-tag">Aciertos del análisis</span>
                   <h3>{formatNumber(evaluacion?.accuracy, 2)}%</h3>
                   <p>
-                    Mide qué porcentaje de clasificaciones fueron correctas. Un valor alto
-                    indica que el modelo coincide con la clasificación esperada.
+                    Indica qué porcentaje de resultados coincidió con la clasificación esperada.
+                    Un porcentaje mayor representa más coincidencias.
                   </p>
                 </article>
 
                 <article className="ml-panel">
-                  <span className="ml-section-tag">MAE</span>
+                  <span className="ml-section-tag">Diferencia promedio</span>
                   <h3>{formatNumber(evaluacion?.mae, 4)}</h3>
                   <p>
-                    Error absoluto medio. Indica en promedio cuánto se equivoca el modelo
-                    en la estimación numérica.
+                    Indica cuánto se alejan, en promedio, las estimaciones del valor esperado.
+                    Un número menor es preferible.
                   </p>
                 </article>
 
                 <article className="ml-panel">
-                  <span className="ml-section-tag">MSE</span>
+                  <span className="ml-section-tag">Diferencias importantes</span>
                   <h3>{formatNumber(evaluacion?.mse, 4)}</h3>
                   <p>
-                    Error cuadrático medio. Penaliza más los errores grandes, por eso ayuda
-                    a detectar desviaciones importantes.
+                    Da mayor peso a las diferencias grandes. Sirve para detectar cuando una
+                    estimación se aleja demasiado de lo esperado.
                   </p>
                 </article>
               </section>
@@ -1441,7 +1435,7 @@ export default function AnalisisSupervisado() {
               </div>
 
               <div>
-                <span>Score de riesgo</span>
+                  <span>Puntuación preventiva</span>
                 <strong>{selectedEmployee.score_riesgo}</strong>
               </div>
 

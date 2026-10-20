@@ -32,8 +32,8 @@ describe('Reportes y datos visual contract', () => {
   });
 
   test('visible language explains the modules to non-technical users', () => {
-    expect(dataModule).toContain('Datos listos para revisar');
-    expect(dataModule).toContain('Revisión de información preparada');
+    expect(dataModule).toContain('Revisa la información importante en un solo lugar');
+    expect(dataModule).toContain('Elige lo que necesitas revisar');
     expect(predictions).toContain('Predicciones de personal');
     expect(predictions).toContain('Qué significa el resultado');
     expect(predictions).toContain('Cómo se obtienen las predicciones');
@@ -68,5 +68,18 @@ describe('Reportes y datos visual contract', () => {
     expect(predictions).toContain("useState(5)");
     expect(styles).toContain('SMART RH — PREDICCIONES / EXPERIENCIA FINAL');
     expect(styles).toContain('.ml-page-pro .ml-decision-notes');
+  });
+
+  test('data, reports and predictions explain the next action in everyday language', () => {
+    expect(dataModule).toContain('Actualizar resumen');
+    expect(dataModule).toContain('Qué estás viendo');
+    expect(dataModule).toContain('Qué conviene atender primero');
+    expect(reports).toContain('Cada gráfica explica qué muestra, para qué sirve y qué debes revisar');
+    expect(reports).toContain('Qué estás viendo');
+    expect(reports).toContain('Para qué sirve');
+    expect(reports).toContain('Qué hacer');
+    expect(predictions).toContain('Aprende de registros previos');
+    expect(predictions).toContain('Aciertos del análisis');
+    expect(predictions).toContain('Diferencia promedio');
   });
 });
