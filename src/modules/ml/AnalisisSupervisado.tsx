@@ -110,12 +110,15 @@ function shortName(name: string, max = 18) {
   return name.length > max ? `${name.slice(0, max)}...` : name;
 }
 
-function getNivelModelo(accuracy?: number) {
-  const value = Number(accuracy || 0);
+function isPersonnelRecord(item: PrediccionML) {
+  const name = String(item.nombre_completo || '').trim().toLowerCase();
+  const email = String(item.correo || '').trim().toLowerCase();
 
-  if (value >= 90) return 'Alto desempeño';
-  if (value >= 75) return 'Desempeño aceptable';
-  return 'Requiere ajuste';
+  return !(
+    name.includes('cuenta eliminada') ||
+    email.includes('@deleted.smart-rh.invalid') ||
+    email.includes('@deleted.')
+  );
 }
 
 export default function AnalisisSupervisado() {
@@ -135,104 +138,98 @@ export default function AnalisisSupervisado() {
   const [roleFilter, setRoleFilter] = useState('TODOS');
   const [sortBy, setSortBy] = useState<SortBy>('probabilidad_desc');
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(5);
   const [selectedEmployee, setSelectedEmployee] = useState<PrediccionML | null>(null);
 
-  const totalEmpleados = resumen?.total_empleados || 0;
+  const personnelPredictions = useMemo(
+    () => predicciones.filter(isPersonnelRecord),
+    [predicciones]
+  );
+
+  const totalEmpleados = personnelPredictions.length;
+
+  const riskTotals = useMemo(
+    () => ({
+      bajo: personnelPredictions.filter((item) => item.riesgo_predicho === 'BAJO').length,
+      medio: personnelPredictions.filter((item) => item.riesgo_predicho === 'MEDIO').length,
+      alto: personnelPredictions.filter((item) => item.riesgo_predicho === 'ALTO').length,
+    }),
+    [personnelPredictions]
+  );
 
   const porcentajes = useMemo(() => {
-    if (!resumen || totalEmpleados === 0) {
+    if (totalEmpleados === 0) {
       return { bajo: 0, medio: 0, alto: 0 };
     }
 
     return {
-      bajo: Math.round((resumen.riesgo_bajo / totalEmpleados) * 100),
-      medio: Math.round((resumen.riesgo_medio / totalEmpleados) * 100),
-      alto: Math.round((resumen.riesgo_alto / totalEmpleados) * 100),
+      bajo: Math.round((riskTotals.bajo / totalEmpleados) * 100),
+      medio: Math.round((riskTotals.medio / totalEmpleados) * 100),
+      alto: Math.round((riskTotals.alto / totalEmpleados) * 100),
     };
-  }, [resumen, totalEmpleados]);
+  }, [riskTotals, totalEmpleados]);
 
   const rolesDisponibles = useMemo(() => {
-    const roles = new Set(predicciones.map((item) => item.rol).filter(Boolean));
+    const roles = new Set(personnelPredictions.map((item) => item.rol).filter(Boolean));
     return ['TODOS', ...Array.from(roles)];
-  }, [predicciones]);
+  }, [personnelPredictions]);
 
   const empleadosActivos = useMemo(() => {
-    return predicciones.filter((item) => Number(item.activo) === 1).length;
-  }, [predicciones]);
+    return personnelPredictions.filter((item) => Number(item.activo) === 1).length;
+  }, [personnelPredictions]);
 
   const empleadosInactivos = useMemo(() => {
-    return predicciones.filter((item) => Number(item.activo) === 0).length;
-  }, [predicciones]);
+    return personnelPredictions.filter((item) => Number(item.activo) === 0).length;
+  }, [personnelPredictions]);
 
   const promedioAusencias = useMemo(() => {
-    if (!predicciones.length) return 0;
+    if (!personnelPredictions.length) return 0;
 
-    const total = predicciones.reduce(
+    const total = personnelPredictions.reduce(
       (acc, item) => acc + Number(item.ausencias_estimadas || 0),
       0
     );
 
-    return total / predicciones.length;
-  }, [predicciones]);
-
-  const promedioScore = useMemo(() => {
-    if (!predicciones.length) return 0;
-
-    const total = predicciones.reduce((acc, item) => acc + Number(item.score_riesgo || 0), 0);
-
-    return total / predicciones.length;
-  }, [predicciones]);
-
-  const maxProbabilidad = useMemo(() => {
-    if (!predicciones.length) return 0;
-
-    return Math.max(...predicciones.map((item) => Number(item.probabilidad || 0)));
-  }, [predicciones]);
-
-  const mayorProbabilidadEmpleado = useMemo(() => {
-    return [...predicciones].sort(
-      (a, b) => Number(b.probabilidad) - Number(a.probabilidad)
-    )[0];
-  }, [predicciones]);
+    return total / personnelPredictions.length;
+  }, [personnelPredictions]);
 
   const topRiesgo = useMemo(() => {
-    return [...predicciones]
+    return [...personnelPredictions]
       .sort((a, b) => Number(b.probabilidad) - Number(a.probabilidad))
       .slice(0, 5);
-  }, [predicciones]);
+  }, [personnelPredictions]);
 
   const empleadosSeguimiento = useMemo(() => {
-    return predicciones.filter(
+    return personnelPredictions.filter(
       (item) =>
         item.riesgo_predicho === 'MEDIO' ||
         item.riesgo_predicho === 'ALTO' ||
         Number(item.probabilidad) >= 60
     ).length;
-  }, [predicciones]);
+  }, [personnelPredictions]);
 
   const riskChartData = useMemo(() => {
     return [
       {
         name: 'Bajo',
         key: 'BAJO' as Riesgo,
-        value: resumen?.riesgo_bajo || 0,
+        value: riskTotals.bajo,
       },
       {
         name: 'Medio',
         key: 'MEDIO' as Riesgo,
-        value: resumen?.riesgo_medio || 0,
+        value: riskTotals.medio,
       },
       {
         name: 'Alto',
         key: 'ALTO' as Riesgo,
-        value: resumen?.riesgo_alto || 0,
+        value: riskTotals.alto,
       },
     ];
-  }, [resumen]);
+  }, [riskTotals]);
 
   const topChartData = useMemo(() => {
-    return [...predicciones]
+    return [...personnelPredictions]
       .sort((a, b) => Number(b.probabilidad) - Number(a.probabilidad))
       .slice(0, 8)
       .map((item) => ({
@@ -241,32 +238,32 @@ export default function AnalisisSupervisado() {
         ausencias: Number(item.ausencias_estimadas || 0),
         riesgo: item.riesgo_predicho,
       }));
-  }, [predicciones]);
+  }, [personnelPredictions]);
 
   const scatterData = useMemo(() => {
-    return predicciones.map((item) => ({
+    return personnelPredictions.map((item) => ({
       x: Number(item.probabilidad || 0),
       y: Number(item.ausencias_estimadas || 0),
       z: Number(item.score_riesgo || 0),
       nombre: item.nombre_completo,
       riesgo: item.riesgo_predicho,
     }));
-  }, [predicciones]);
+  }, [personnelPredictions]);
 
   const scoreVacationScatterData = useMemo(() => {
-    return predicciones.map((item) => ({
+    return personnelPredictions.map((item) => ({
       x: Number(item.dias_vacaciones_disponibles || 0),
       y: Number(item.score_riesgo || 0),
       z: Number(item.probabilidad || 0),
       nombre: item.nombre_completo,
       riesgo: item.riesgo_predicho,
     }));
-  }, [predicciones]);
+  }, [personnelPredictions]);
 
   const riskByRoleData = useMemo(() => {
     const map = new Map<string, { rol: string; BAJO: number; MEDIO: number; ALTO: number }>();
 
-    predicciones.forEach((item) => {
+    personnelPredictions.forEach((item) => {
       const rol = item.rol || 'Sin rol';
 
       if (!map.has(rol)) {
@@ -286,17 +283,17 @@ export default function AnalisisSupervisado() {
     });
 
     return Array.from(map.values());
-  }, [predicciones]);
+  }, [personnelPredictions]);
 
   const probabilityBandsData = useMemo(() => {
     return PROBABILITY_BANDS.map((band) => ({
       rango: band.label,
-      empleados: predicciones.filter((item) => {
+      empleados: personnelPredictions.filter((item) => {
         const prob = Number(item.probabilidad || 0);
         return prob >= band.min && prob <= band.max;
       }).length,
     }));
-  }, [predicciones]);
+  }, [personnelPredictions]);
 
   const activeStatusData = useMemo(() => {
     return [
@@ -323,10 +320,10 @@ export default function AnalisisSupervisado() {
   }, [evaluacion]);
 
   const insights = useMemo(() => {
-    const riesgoMedio = resumen?.riesgo_medio || 0;
-    const riesgoAlto = resumen?.riesgo_alto || 0;
-    const riesgoBajo = resumen?.riesgo_bajo || 0;
-    const total = resumen?.total_empleados || 0;
+    const riesgoMedio = riskTotals.medio;
+    const riesgoAlto = riskTotals.alto;
+    const riesgoBajo = riskTotals.bajo;
+    const total = totalEmpleados;
     const porcentajeBajo = total ? Math.round((riesgoBajo / total) * 100) : 0;
     const mayor = topRiesgo[0];
 
@@ -360,12 +357,12 @@ export default function AnalisisSupervisado() {
         )} por empleado.`,
       },
     ];
-  }, [resumen, topRiesgo, promedioAusencias]);
+  }, [riskTotals, totalEmpleados, topRiesgo, promedioAusencias]);
 
   const filteredPredicciones = useMemo(() => {
     const term = search.trim().toLowerCase();
 
-    const filtered = predicciones.filter((item) => {
+    const filtered = personnelPredictions.filter((item) => {
       const matchesSearch =
         !term ||
         item.nombre_completo.toLowerCase().includes(term) ||
@@ -403,7 +400,7 @@ export default function AnalisisSupervisado() {
 
       return Number(b.probabilidad) - Number(a.probabilidad);
     });
-  }, [predicciones, search, riskFilter, activeFilter, roleFilter, sortBy]);
+  }, [personnelPredictions, search, riskFilter, activeFilter, roleFilter, sortBy]);
 
   const totalPages = Math.max(1, Math.ceil(filteredPredicciones.length / pageSize));
 
@@ -502,7 +499,7 @@ export default function AnalisisSupervisado() {
       'recomendacion',
     ];
 
-    const datosAExportar = tipo === 'todo' ? predicciones : filteredPredicciones;
+    const datosAExportar = tipo === 'todo' ? personnelPredictions : filteredPredicciones;
 
     if (!datosAExportar.length) {
       setError('No hay datos disponibles para exportar.');
@@ -543,7 +540,7 @@ export default function AnalisisSupervisado() {
       <AnalyticsModuleNav />
 
       <section className="ml-hero ml-hero-pro">
-        <div>
+        <div className="ml-hero-copy-pro">
           <p className="ml-eyebrow">Prevención y seguimiento</p>
           <h1>Predicciones de personal</h1>
 
@@ -555,19 +552,11 @@ export default function AnalisisSupervisado() {
 
           <div className="ml-hero-actions">
             <button type="button" onClick={ejecutarModelo} disabled={training}>
-              {training ? 'Analizando información...' : 'Generar predicciones'}
+              {training ? 'Analizando información…' : 'Actualizar análisis'}
             </button>
 
             <button type="button" className="secondary" onClick={cargarPredicciones}>
-              Volver a consultar
-            </button>
-
-            <button type="button" className="secondary" onClick={() => exportarCSV('todo')}>
-              Descargar resultados
-            </button>
-
-            <button type="button" className="secondary" onClick={() => exportarCSV('filtrado')}>
-              Descargar vista actual
+              Consultar resultados
             </button>
           </div>
 
@@ -576,29 +565,24 @@ export default function AnalisisSupervisado() {
         </div>
 
         <div className="ml-model-card ml-model-card-pro">
-          <span>Lectura disponible</span>
+          <span>Estado del análisis</span>
           <strong>{resumen ? 'Resultados vigentes' : 'Sin ejecución reciente'}</strong>
-          <p>Señales preventivas para apoyar el seguimiento del personal</p>
+          <p>Información preventiva disponible para la revisión de Recursos Humanos.</p>
 
           <div className="ml-model-meta">
             <div>
-              <small>Regresión</small>
-              <b>{resumen?.modelo_regresion || 'Ausencias estimadas'}</b>
+              <small>Personas consideradas</small>
+              <b>{totalEmpleados} empleados</b>
             </div>
 
             <div>
-              <small>Dataset válido</small>
-              <b>{totalEmpleados} empleados</b>
+              <small>Requieren seguimiento</small>
+              <b>{empleadosSeguimiento} casos</b>
             </div>
 
             <div>
               <small>Última ejecución</small>
               <b>{lastUpdated || 'Pendiente'}</b>
-            </div>
-
-            <div>
-              <small>Nivel</small>
-              <b>{getNivelModelo(evaluacion?.accuracy)}</b>
             </div>
           </div>
         </div>
@@ -611,67 +595,21 @@ export default function AnalisisSupervisado() {
         </div>
       ) : (
         <>
-          <section className="ml-kpi-grid ml-kpi-grid-pro">
-            <article className="ml-kpi-card">
-              <span>Empleados analizados</span>
-              <strong>{resumen?.total_empleados || 0}</strong>
-              <p>Registros reales considerados por el modelo.</p>
-            </article>
-
-            <article className="ml-kpi-card">
-              <span>Precisión del análisis</span>
-              <strong>{formatNumber(evaluacion?.accuracy, 2)}%</strong>
-              <p>Porcentaje de resultados que coincidieron con la evaluación esperada.</p>
-            </article>
-
-            <article className="ml-kpi-card">
-              <span>Seguimiento RH</span>
-              <strong>{empleadosSeguimiento}</strong>
-              <p>Empleados con riesgo medio, alto o probabilidad mayor a 60%.</p>
-            </article>
-
-            <article className="ml-kpi-card">
-              <span>Ausencias promedio</span>
-              <strong>{formatNumber(promedioAusencias, 2)}</strong>
-              <p>Promedio estimado por empleado en el periodo.</p>
-            </article>
-
-            <article className="ml-kpi-card">
-              <span>Margen de error promedio</span>
-              <strong>{formatNumber(evaluacion?.mae, 4)}</strong>
-              <p>Error absoluto medio en la estimación.</p>
-            </article>
-
-            <article className="ml-kpi-card">
-              <span>Errores de mayor impacto</span>
-              <strong>{formatNumber(evaluacion?.mse, 4)}</strong>
-              <p>Error cuadrático medio del modelo.</p>
-            </article>
-
-            <article className="ml-kpi-card">
-              <span>Probabilidad máxima</span>
-              <strong>{formatNumber(maxProbabilidad, 0)}%</strong>
-              <p>Mayor probabilidad detectada en la ejecución.</p>
-            </article>
-
-            <article className="ml-kpi-card">
-              <span>Score promedio</span>
-              <strong>{formatNumber(promedioScore, 1)}</strong>
-              <p>Nivel preventivo promedio calculado para el personal.</p>
-            </article>
-          </section>
-
-          <section className="ml-tabs">
+          <section className="ml-tabs" role="tablist" aria-label="Vistas de predicciones">
             <button
               type="button"
+              role="tab"
+              aria-selected={activeTab === 'resumen'}
               className={activeTab === 'resumen' ? 'active' : ''}
               onClick={() => setActiveTab('resumen')}
             >
-              Resumen
+              Panorama
             </button>
 
             <button
               type="button"
+              role="tab"
+              aria-selected={activeTab === 'graficas'}
               className={activeTab === 'graficas' ? 'active' : ''}
               onClick={() => setActiveTab('graficas')}
             >
@@ -680,99 +618,47 @@ export default function AnalisisSupervisado() {
 
             <button
               type="button"
+              role="tab"
+              aria-selected={activeTab === 'empleados'}
               className={activeTab === 'empleados' ? 'active' : ''}
               onClick={() => setActiveTab('empleados')}
             >
-              Empleados
+              Personas
             </button>
 
             <button
               type="button"
+              role="tab"
+              aria-selected={activeTab === 'modelo'}
               className={activeTab === 'modelo' ? 'active' : ''}
               onClick={() => setActiveTab('modelo')}
             >
-              Modelo
+              Cómo se calcula
             </button>
           </section>
 
           {activeTab === 'resumen' && (
             <>
-              <section className="ml-summary-grid-pro">
-                <article className="ml-panel ml-executive-card">
-                  <div className="ml-panel-header">
-                    <div>
-                      <span>Resumen ejecutivo</span>
-                      <h2>Estado actual del personal</h2>
-                    </div>
-                  </div>
-
-                  <p>
-                    El modelo analizó <b>{totalEmpleados}</b> empleados reales y clasificó
-                    el riesgo laboral en tres niveles: bajo, medio y alto. Esta información
-                    permite a RRHH actuar de forma preventiva antes de que se presenten
-                    incidencias operativas.
-                  </p>
-
-                  <div className="ml-executive-grid">
-                    <div>
-                      <span>Personal estable</span>
-                      <strong>{resumen?.riesgo_bajo || 0}</strong>
-                      <small>{porcentajes.bajo}% de los registros</small>
-                    </div>
-
-                    <div>
-                      <span>Atención preventiva</span>
-                      <strong>{resumen?.riesgo_medio || 0}</strong>
-                      <small>{porcentajes.medio}% de los registros</small>
-                    </div>
-
-                    <div>
-                      <span>Atención crítica</span>
-                      <strong>{resumen?.riesgo_alto || 0}</strong>
-                      <small>{porcentajes.alto}% de los registros</small>
-                    </div>
-
-                    <div>
-                      <span>Probabilidad mayor</span>
-                      <strong>{formatNumber(maxProbabilidad, 0)}%</strong>
-                      <small>{mayorProbabilidadEmpleado?.nombre_completo || 'Sin datos'}</small>
-                    </div>
-                  </div>
+              <section className="ml-overview-strip" aria-label="Resumen preventivo">
+                <article className="ml-overview-stat">
+                  <span>Personal revisado</span>
+                  <strong>{totalEmpleados}</strong>
+                  <p>Personas incluidas en el análisis actual.</p>
                 </article>
-
-                <article className="ml-panel ml-health-card-pro">
-                  <div className="ml-panel-header">
-                    <div>
-                      <span>Salud del modelo</span>
-                      <h2>Evaluación rápida</h2>
-                    </div>
-                  </div>
-
-                  <div className="ml-health-list">
-                    <div>
-                      <span>Precisión</span>
-                      <strong>{formatNumber(evaluacion?.accuracy, 2)}%</strong>
-                      <p>{getNivelModelo(evaluacion?.accuracy)}</p>
-                    </div>
-
-                    <div>
-                      <span>Margen promedio</span>
-                      <strong>{formatNumber(evaluacion?.mae, 4)}</strong>
-                      <p>Mientras más bajo, mejor estimación.</p>
-                    </div>
-
-                    <div>
-                      <span>Errores relevantes</span>
-                      <strong>{formatNumber(evaluacion?.mse, 4)}</strong>
-                      <p>Penaliza más los errores grandes.</p>
-                    </div>
-
-                    <div>
-                      <span>Registros evaluados</span>
-                      <strong>{evaluacion?.total_registros || 0}</strong>
-                      <p>Empleados usados en la evaluación.</p>
-                    </div>
-                  </div>
+                <article className="ml-overview-stat is-warning">
+                  <span>Seguimiento preventivo</span>
+                  <strong>{riskTotals.medio}</strong>
+                  <p>Casos que conviene revisar durante el periodo.</p>
+                </article>
+                <article className="ml-overview-stat is-danger">
+                  <span>Atención prioritaria</span>
+                  <strong>{riskTotals.alto}</strong>
+                  <p>Casos con señales que requieren revisión pronta.</p>
+                </article>
+                <article className="ml-overview-stat">
+                  <span>Ausencias estimadas</span>
+                  <strong>{formatNumber(promedioAusencias, 2)}</strong>
+                  <p>Promedio estimado por persona para el periodo.</p>
                 </article>
               </section>
 
@@ -789,7 +675,7 @@ export default function AnalisisSupervisado() {
                     <div className="ml-risk-row">
                       <div>
                         <strong>Bajo</strong>
-                        <span>{resumen?.riesgo_bajo || 0} empleados</span>
+                        <span>{riskTotals.bajo} personas</span>
                       </div>
                       <div className="ml-bar">
                         <span
@@ -803,7 +689,7 @@ export default function AnalisisSupervisado() {
                     <div className="ml-risk-row">
                       <div>
                         <strong>Medio</strong>
-                        <span>{resumen?.riesgo_medio || 0} empleados</span>
+                        <span>{riskTotals.medio} personas</span>
                       </div>
                       <div className="ml-bar">
                         <span
@@ -817,7 +703,7 @@ export default function AnalisisSupervisado() {
                     <div className="ml-risk-row">
                       <div>
                         <strong>Alto</strong>
-                        <span>{resumen?.riesgo_alto || 0} empleados</span>
+                        <span>{riskTotals.alto} personas</span>
                       </div>
                       <div className="ml-bar">
                         <span
@@ -856,23 +742,29 @@ export default function AnalisisSupervisado() {
                         </div>
                       </button>
                     ))}
+
+                    {!topRiesgo.length && (
+                      <div className="ml-empty ml-empty-compact">
+                        Aún no hay resultados disponibles para priorizar una revisión.
+                      </div>
+                    )}
                   </div>
                 </article>
               </section>
 
-              <section className="ml-insight-grid">
-                <article className="ml-panel">
+              <section className="ml-decision-notes">
+                <article className="ml-panel ml-brief-card">
                   <div className="ml-panel-header">
                     <div>
-                      <span>Insights automáticos</span>
-                      <h2>Lectura</h2>
+                      <span>Lectura del periodo</span>
+                      <h2>Qué significa el resultado</h2>
                     </div>
                   </div>
 
                   <div className="ml-insight-list">
-                    {insights.map((item) => (
+                    {insights.slice(0, 3).map((item) => (
                       <div key={item.title} className="ml-insight-item">
-                        <span>✓</span>
+                        <span aria-hidden="true" />
                         <div>
                           <strong>{item.title}</strong>
                           <p>{item.text}</p>
@@ -882,65 +774,18 @@ export default function AnalisisSupervisado() {
                   </div>
                 </article>
 
-                <article className="ml-panel">
+                <article className="ml-panel ml-action-card-pro">
                   <div className="ml-panel-header">
                     <div>
-                      <span>Plan de acción</span>
-                      <h2>Recomendaciones RH</h2>
+                      <span>Siguiente paso</span>
+                      <h2>Qué hacer ahora</h2>
                     </div>
                   </div>
 
-                  <div className="ml-recommendation-list">
-                    <p>
-                      <b>Prioridad 1:</b> Revisar empleados con probabilidad mayor a 60%.
-                    </p>
-                    <p>
-                      <b>Prioridad 2:</b> Atender empleados en riesgo medio aunque no tengan
-                      ausencias acumuladas.
-                    </p>
-                    <p>
-                      <b>Prioridad 3:</b> Actualizar asistencia, vacaciones y estado laboral
-                      antes de ejecutar nuevamente.
-                    </p>
-                    <p>
-                      <b>Nota:</b> El modelo funciona como apoyo a la decisión, no como sanción
-                      automática.
-                    </p>
-                  </div>
-                </article>
-              </section>
-
-              <section className="ml-data-quality-grid">
-                <article className="ml-panel">
-                  <span className="ml-section-tag">Calidad de la información</span>
-                  <h3>Datos considerados</h3>
-                  <p>
-                    El análisis usa empleados reales registrados en SMART RH. Las cuentas
-                    generales del sistema, como usuarios administrativos sin relación laboral
-                    directa, se excluyen para evitar sesgos.
-                  </p>
-
-                  <div className="ml-chip-list">
-                    <span>{empleadosActivos} activos</span>
-                    <span>{empleadosInactivos} inactivos</span>
-                    <span>{totalEmpleados} registros válidos</span>
-                    <span>Cuentas de sistema excluidas</span>
-                  </div>
-                </article>
-
-                <article className="ml-panel">
-                  <span className="ml-section-tag">Interpretación</span>
-                  <h3>Cómo leer el resultado</h3>
-                  <p>
-                    Un empleado con riesgo medio no necesariamente tiene una incidencia, pero
-                    sí muestra condiciones que ameritan seguimiento preventivo. El riesgo alto
-                    indicaría necesidad de intervención inmediata.
-                  </p>
-
-                  <div className="ml-chip-list">
-                    <span>Bajo = monitoreo normal</span>
-                    <span>Medio = seguimiento</span>
-                    <span>Alto = atención prioritaria</span>
+                  <div className="ml-action-list-pro">
+                    <div><b>01</b><span>Abre los casos de atención prioritaria y valida su contexto.</span></div>
+                    <div><b>02</b><span>Revisa asistencia, vacaciones y situación laboral antes de actuar.</span></div>
+                    <div><b>03</b><span>Documenta el seguimiento; la predicción nunca aplica una sanción.</span></div>
                   </div>
                 </article>
               </section>
@@ -1003,8 +848,8 @@ export default function AnalisisSupervisado() {
                 <article className="ml-panel ml-chart-card">
                   <div className="ml-panel-header">
                     <div>
-                      <span>Top empleados</span>
-                      <h2>Mayor probabilidad</h2>
+                      <span>Revisión prioritaria</span>
+                      <h2>Personas con mayor probabilidad</h2>
                     </div>
                   </div>
 
@@ -1224,13 +1069,21 @@ export default function AnalisisSupervisado() {
             <section className="ml-table-section">
               <div className="ml-panel-header">
                 <div>
-                  <span>Predicciones generadas</span>
-                  <h2>Resultados por empleado</h2>
+                  <span>Consulta individual</span>
+                  <h2>Resultados por persona</h2>
                 </div>
 
-                <small>
-                  {filteredPredicciones.length} de {predicciones.length} registros
-                </small>
+                <div className="ml-table-head-actions">
+                  <small>
+                    {filteredPredicciones.length} de {personnelPredictions.length} personas
+                  </small>
+                  <button type="button" onClick={() => exportarCSV('todo')}>
+                    Descargar todos
+                  </button>
+                  <button type="button" className="secondary" onClick={() => exportarCSV('filtrado')}>
+                    Descargar vista
+                  </button>
+                </div>
               </div>
 
               <div className="ml-filters">
@@ -1372,13 +1225,12 @@ export default function AnalisisSupervisado() {
           {activeTab === 'modelo' && (
             <>
               <section className="ml-model-explain-hero">
-                <span className="ml-section-tag">Explicación académica y técnica</span>
-                <h2>Modelo de aprendizaje supervisado aplicado a SMART RH</h2>
+                <span className="ml-section-tag">Transparencia del análisis</span>
+                <h2>Cómo se obtienen las predicciones</h2>
                 <p>
-                  Este módulo implementa un enfoque educativo de aprendizaje supervisado para
-                  clasificar riesgo laboral y estimar ausencias. El objetivo es mostrar cómo los
-                  datos de RRHH pueden transformarse en información útil para la prevención y la
-                  toma de decisiones.
+                  Esta sección explica qué información se considera, cómo se genera el resultado
+                  y cuáles son sus límites. Así puedes interpretar cada predicción antes de tomar
+                  una decisión de Recursos Humanos.
                 </p>
               </section>
 

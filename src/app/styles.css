@@ -24910,3 +24910,451 @@ button[type='submit'],
     position: static !important;
   }
 }
+
+/* =========================================================
+   SMART RH — PREDICCIONES / EXPERIENCIA FINAL
+   Capa deliberadamente final para neutralizar reglas históricas.
+========================================================= */
+
+.ml-page-pro {
+  gap: 16px !important;
+  color: var(--text);
+}
+
+.ml-page-pro .ml-hero-pro {
+  grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.7fr) !important;
+  gap: 18px !important;
+  min-height: 0 !important;
+  padding: 24px !important;
+  border-radius: 24px !important;
+  box-shadow: var(--shadow-sm) !important;
+  overflow: hidden;
+}
+
+.ml-page-pro .ml-hero-copy-pro {
+  align-self: center;
+  min-width: 0;
+}
+
+.ml-page-pro .ml-eyebrow,
+.ml-page-pro .ml-panel-header span,
+.ml-page-pro .ml-section-tag {
+  color: var(--primary) !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.09em !important;
+}
+
+.ml-page-pro .ml-hero h1 {
+  max-width: 760px;
+  margin: 8px 0 10px !important;
+  font-size: clamp(2rem, 3.4vw, 3.35rem) !important;
+  line-height: 1.02 !important;
+  letter-spacing: -0.045em !important;
+}
+
+.ml-page-pro .ml-hero-copy-pro > p:not(.ml-eyebrow) {
+  max-width: 720px !important;
+  font-size: 14px !important;
+  line-height: 1.6 !important;
+}
+
+.ml-page-pro .ml-hero-actions {
+  gap: 10px !important;
+  margin-top: 18px !important;
+}
+
+.ml-page-pro .ml-hero-actions button,
+.ml-page-pro .ml-table-head-actions button {
+  min-height: 42px !important;
+  padding: 0 16px !important;
+  border-radius: 12px !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+}
+
+.ml-page-pro .ml-model-card-pro {
+  align-self: stretch !important;
+  padding: 18px !important;
+  border-radius: 20px !important;
+  box-shadow: none !important;
+}
+
+.ml-page-pro .ml-model-card-pro > strong {
+  margin-top: 6px !important;
+  color: var(--text) !important;
+  font-size: 21px !important;
+  line-height: 1.2 !important;
+}
+
+.ml-page-pro .ml-model-card-pro > p {
+  margin-top: 7px !important;
+  font-size: 13px !important;
+  line-height: 1.5 !important;
+}
+
+.ml-page-pro .ml-model-meta {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 8px !important;
+  margin-top: 16px !important;
+}
+
+.ml-page-pro .ml-model-meta > div {
+  min-width: 0;
+  padding: 11px !important;
+  border-radius: 13px !important;
+  background: var(--card-muted) !important;
+}
+
+.ml-page-pro .ml-model-meta small {
+  min-height: 26px;
+  font-size: 9px !important;
+  line-height: 1.35;
+  letter-spacing: 0.04em !important;
+}
+
+.ml-page-pro .ml-model-meta b {
+  overflow: hidden;
+  margin-top: 5px !important;
+  font-size: 12px !important;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+}
+
+.ml-page-pro .ml-tabs {
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 6px !important;
+  padding: 6px !important;
+  border-radius: 16px !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+
+.ml-page-pro .ml-tabs button {
+  min-height: 40px !important;
+  padding: 0 14px !important;
+  border-radius: 10px !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+}
+
+.ml-page-pro .ml-tabs button:not(.active) {
+  color: var(--text-muted) !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.ml-page-pro .ml-overview-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.ml-page-pro .ml-overview-stat {
+  position: relative;
+  min-width: 0;
+  padding: 16px 17px 15px;
+  border: 1px solid var(--border);
+  border-radius: 17px;
+  background: var(--card);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.ml-page-pro .ml-overview-stat::before {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: var(--primary);
+  content: '';
+}
+
+.ml-page-pro .ml-overview-stat.is-warning::before { background: #d79a24; }
+.ml-page-pro .ml-overview-stat.is-danger::before { background: #d65a5a; }
+
+.ml-page-pro .ml-overview-stat > span {
+  display: block;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.ml-page-pro .ml-overview-stat > strong {
+  display: block;
+  margin-top: 6px;
+  color: var(--text);
+  font-size: 27px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.ml-page-pro .ml-overview-stat > p {
+  margin: 7px 0 0;
+  color: var(--text-muted);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.ml-page-pro .ml-main-grid {
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr) !important;
+  gap: 12px !important;
+}
+
+.ml-page-pro .ml-panel,
+.ml-page-pro .ml-table-section {
+  padding: 20px !important;
+  border-radius: 20px !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+
+.ml-page-pro .ml-panel-header {
+  gap: 14px;
+  margin-bottom: 16px !important;
+}
+
+.ml-page-pro .ml-panel-header h2 {
+  margin-top: 4px !important;
+  font-size: 19px !important;
+  line-height: 1.2 !important;
+}
+
+.ml-page-pro .ml-risk-bars {
+  gap: 13px !important;
+}
+
+.ml-page-pro .ml-risk-row {
+  grid-template-columns: minmax(110px, 0.8fr) minmax(120px, 1.4fr) 42px !important;
+  gap: 12px !important;
+  padding: 12px 0 !important;
+}
+
+.ml-page-pro .ml-risk-row > div:first-child span {
+  margin-top: 3px;
+  font-size: 11px !important;
+}
+
+.ml-page-pro .ml-bar {
+  height: 7px !important;
+}
+
+.ml-page-pro .ml-top-list {
+  gap: 7px !important;
+}
+
+.ml-page-pro .ml-top-item {
+  min-height: 54px !important;
+  padding: 10px 11px !important;
+  border-radius: 13px !important;
+}
+
+.ml-page-pro .ml-top-item > div:first-child {
+  min-width: 0;
+  text-align: left;
+}
+
+.ml-page-pro .ml-top-item strong,
+.ml-page-pro .ml-top-item span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ml-page-pro .ml-empty-compact {
+  min-height: 130px;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  text-align: center;
+}
+
+.ml-page-pro .ml-decision-notes {
+  display: grid;
+  grid-template-columns: minmax(0, 1.12fr) minmax(300px, 0.88fr);
+  gap: 12px;
+}
+
+.ml-page-pro .ml-insight-list {
+  display: grid;
+  gap: 8px !important;
+}
+
+.ml-page-pro .ml-insight-item {
+  display: grid;
+  grid-template-columns: 7px minmax(0, 1fr) !important;
+  gap: 11px !important;
+  padding: 10px 0 !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--border) !important;
+  background: transparent !important;
+}
+
+.ml-page-pro .ml-insight-item:last-child { border-bottom: 0 !important; }
+
+.ml-page-pro .ml-insight-item > span {
+  width: 7px !important;
+  height: 7px !important;
+  margin-top: 6px;
+  border-radius: 50%;
+  background: var(--primary) !important;
+}
+
+.ml-page-pro .ml-insight-item strong { font-size: 13px !important; }
+.ml-page-pro .ml-insight-item p {
+  margin-top: 3px !important;
+  font-size: 12px !important;
+  line-height: 1.5 !important;
+}
+
+.ml-page-pro .ml-action-list-pro {
+  display: grid;
+  gap: 8px;
+}
+
+.ml-page-pro .ml-action-list-pro > div {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+  padding: 11px;
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  background: var(--card-muted);
+}
+
+.ml-page-pro .ml-action-list-pro b {
+  color: var(--primary);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.ml-page-pro .ml-action-list-pro span {
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.ml-page-pro .ml-table-head-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.ml-page-pro .ml-table-head-actions small {
+  margin-right: 4px;
+  color: var(--text-muted);
+}
+
+.ml-page-pro .ml-table-head-actions button {
+  border: 0;
+  color: #fff;
+  background: var(--primary);
+  cursor: pointer;
+}
+
+.ml-page-pro .ml-table-head-actions button.secondary {
+  border: 1px solid var(--border);
+  color: var(--text);
+  background: var(--card-muted);
+}
+
+.ml-page-pro .ml-filters {
+  gap: 8px !important;
+  margin-bottom: 14px !important;
+}
+
+.ml-page-pro .ml-filters input,
+.ml-page-pro .ml-filters select {
+  min-height: 42px !important;
+  border-radius: 11px !important;
+  font-size: 12px !important;
+}
+
+.ml-page-pro .ml-table-wrapper {
+  border-radius: 15px !important;
+  overscroll-behavior: auto !important;
+  touch-action: pan-x pan-y !important;
+}
+
+.ml-page-pro .ml-model-explain-hero,
+.ml-page-pro .ml-graph-intro {
+  padding: 22px !important;
+  border-radius: 20px !important;
+}
+
+.ml-page-pro button:focus-visible,
+.ml-page-pro input:focus-visible,
+.ml-page-pro select:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--primary) 32%, transparent) !important;
+  outline-offset: 2px !important;
+}
+
+:root[data-theme='dark'] .ml-page-pro .ml-overview-stat,
+:root[data-theme='dark'] .ml-page-pro .ml-panel,
+:root[data-theme='dark'] .ml-page-pro .ml-table-section,
+:root[data-theme='dark'] .ml-page-pro .ml-model-card-pro {
+  background: var(--card) !important;
+  border-color: var(--border) !important;
+}
+
+:root[data-theme='dark'] .ml-page-pro .ml-tabs button.active,
+:root[data-theme='dark'] .ml-page-pro .ml-hero-actions button:not(.secondary),
+:root[data-theme='dark'] .ml-page-pro .ml-table-head-actions button:not(.secondary) {
+  background: var(--primary) !important;
+  box-shadow: none !important;
+}
+
+@media (max-width: 1100px) {
+  .ml-page-pro .ml-overview-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ml-page-pro .ml-model-meta {
+    grid-template-columns: 1fr !important;
+  }
+
+  .ml-page-pro .ml-model-meta small { min-height: 0; }
+}
+
+@media (max-width: 860px) {
+  .ml-page-pro .ml-hero-pro,
+  .ml-page-pro .ml-main-grid,
+  .ml-page-pro .ml-decision-notes {
+    grid-template-columns: 1fr !important;
+  }
+
+  .ml-page-pro .ml-model-meta {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 620px) {
+  .ml-page-pro .ml-hero-pro,
+  .ml-page-pro .ml-panel,
+  .ml-page-pro .ml-table-section {
+    padding: 16px !important;
+  }
+
+  .ml-page-pro .ml-overview-strip,
+  .ml-page-pro .ml-model-meta {
+    grid-template-columns: 1fr !important;
+  }
+
+  .ml-page-pro .ml-tabs {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .ml-page-pro .ml-risk-row {
+    grid-template-columns: minmax(94px, 0.8fr) minmax(90px, 1.2fr) 38px !important;
+    gap: 8px !important;
+  }
+
+  .ml-page-pro .ml-panel-header,
+  .ml-page-pro .ml-table-head-actions {
+    align-items: stretch !important;
+    flex-direction: column !important;
+  }
+
+  .ml-page-pro .ml-table-head-actions button { width: 100%; }
+}

@@ -35,7 +35,8 @@ describe('Reportes y datos visual contract', () => {
     expect(dataModule).toContain('Datos listos para revisar');
     expect(dataModule).toContain('Revisión de información preparada');
     expect(predictions).toContain('Predicciones de personal');
-    expect(predictions).toContain('Precisión del análisis');
+    expect(predictions).toContain('Qué significa el resultado');
+    expect(predictions).toContain('Cómo se obtienen las predicciones');
     expect(predictions).toContain('Nivel preventivo');
     expect(reports).toContain('Reportes de Recursos Humanos');
     expect(reports).toContain('Grupos de personal');
@@ -56,5 +57,16 @@ describe('Reportes y datos visual contract', () => {
     expect(styles).toContain('@media (max-width: 760px)');
     expect(styles).toContain('grid-template-columns: 1fr');
     expect(dataStyles).toContain('@media (max-width: 900px)');
+  });
+
+  test('predictions prioritize decisions and exclude deleted identities', () => {
+    expect(predictions).toContain('isPersonnelRecord');
+    expect(predictions).toContain("email.includes('@deleted.smart-rh.invalid')");
+    expect(predictions).toContain('ml-overview-strip');
+    expect(predictions).toContain('Atención prioritaria');
+    expect(predictions).toContain('Descargar vista');
+    expect(predictions).toContain("useState(5)");
+    expect(styles).toContain('SMART RH — PREDICCIONES / EXPERIENCIA FINAL');
+    expect(styles).toContain('.ml-page-pro .ml-decision-notes');
   });
 });
