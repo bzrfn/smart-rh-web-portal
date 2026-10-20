@@ -45,7 +45,7 @@ describe('Gestión interna visual contract', () => {
   test('user creation and editing use a sectioned focused modal', () => {
     expect(users).toContain('<SmartRhModal');
     expect(users).toContain('users-form-section');
-    expect(users).toContain('Identidad y acceso');
+    expect(users).toContain('Datos de la cuenta');
     expect(users).toContain('Relación laboral');
     expect(users).toContain('Nuevo usuario');
   });

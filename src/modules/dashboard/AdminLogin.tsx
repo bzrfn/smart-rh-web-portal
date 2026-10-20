@@ -182,7 +182,7 @@ export default function AdminLogin() {
       }
 
       setError(
-        'No fue posible iniciar la verificación 2FA administrativa.'
+        'No fue posible enviar el código de seguridad. Inténtalo de nuevo.'
       );
 
     } catch (
@@ -226,9 +226,8 @@ export default function AdminLogin() {
           </h1>
 
           <p className="auth-showcase-text">
-            El administrador general autorizó este intento.
-            Ahora debes identificarte con tus propias
-            credenciales administrativas.
+            El administrador general aprobó el acceso. Ahora escribe
+            el correo y la contraseña de tu propia cuenta.
           </p>
 
           <div className="auth-showcase-points">
@@ -237,12 +236,11 @@ export default function AdminLogin() {
 
               <div>
                 <h3>
-                  Autorización central
+                  Primer paso completado
                 </h3>
 
                 <p>
-                  El código anterior únicamente autorizó
-                  continuar con el proceso.
+                  El código anterior permitió continuar al inicio de sesión.
                 </p>
               </div>
             </div>
@@ -252,7 +250,7 @@ export default function AdminLogin() {
 
               <div>
                 <h3>
-                  Identidad individual
+                  Tu cuenta personal
                 </h3>
 
                 <p>
@@ -267,7 +265,7 @@ export default function AdminLogin() {
 
               <div>
                 <h3>
-                  2FA obligatorio
+                  Segundo código de seguridad
                 </h3>
 
                 <p>
@@ -301,8 +299,7 @@ export default function AdminLogin() {
             </div>
 
             <p className="auth-description">
-              La autorización general fue validada.
-              Ingresa ahora tus credenciales personales.
+              La solicitud fue aprobada. Ingresa ahora el correo y la contraseña de tu cuenta.
             </p>
 
             <label className="auth-label">
@@ -350,7 +347,7 @@ export default function AdminLogin() {
                 {
                   loading
                     ? 'Validando...'
-                    : 'Continuar con 2FA'
+                    : 'Continuar al código de seguridad'
                 }
               </span>
 

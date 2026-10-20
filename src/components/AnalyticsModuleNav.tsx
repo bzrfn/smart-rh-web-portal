@@ -5,19 +5,19 @@ const analyticsModules = [
   {
     path: '/portal/etl',
     label: 'Datos',
-    description: 'Preparar información',
+    description: 'Reunir información',
     icon: 'data' as const,
   },
   {
     path: '/portal/dashboard-analitico',
     label: 'Reportes',
-    description: 'Interpretar resultados',
+    description: 'Entender resultados',
     icon: 'chart' as const,
   },
   {
     path: '/portal/analisis-supervisado',
     label: 'Predicciones',
-    description: 'Anticipar tendencias',
+    description: 'Detectar casos por revisar',
     icon: 'spark' as const,
   },
 ];
@@ -27,7 +27,7 @@ export default function AnalyticsModuleNav() {
     <nav className="analytics-module-nav" aria-label="Navegación de reportes y datos">
       <div className="analytics-module-nav-copy">
         <span>Reportes y datos</span>
-        <strong>Preparar, interpretar y anticipar</strong>
+        <strong>Reunir información, entender resultados y decidir qué revisar</strong>
       </div>
 
       <div className="analytics-module-nav-links">

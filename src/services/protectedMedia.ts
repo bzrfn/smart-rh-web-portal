@@ -28,7 +28,7 @@ function normalizeProtectedResourceUrl(resourceUrl: string): string {
   const resource = new URL(value);
 
   if (resource.origin !== apiUrl.origin) {
-    throw new Error('El archivo solicitado no pertenece al servidor autorizado de SMART RH.');
+    throw new Error('No se pudo abrir este archivo porque su ubicación no es válida.');
   }
 
   return resource.toString();

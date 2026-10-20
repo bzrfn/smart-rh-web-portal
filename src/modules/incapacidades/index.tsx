@@ -292,7 +292,7 @@ function validationDescription(
       'pendiente'
   ) {
     return (
-      'La validación automática todavía no está disponible para este comprobante.'
+      'La revisión del comprobante todavía no está disponible.'
     );
   }
 
@@ -301,12 +301,12 @@ function validationDescription(
     'consistente'
   ) {
     return (
-      'La revisión técnica del PDF no detectó un duplicado exacto ni anomalías estructurales. Esto no confirma la autenticidad médica del documento.'
+      'No se encontró un archivo idéntico ni problemas de lectura. Esto no confirma que el comprobante sea auténtico.'
     );
   }
 
   return (
-    'SMART RH detectó señales técnicas que requieren revisión humana antes de tomar una decisión administrativa.'
+    'SMART RH encontró aspectos del archivo que una persona debe revisar antes de decidir.'
   );
 }
 
@@ -320,17 +320,17 @@ function validationReasonLabel(
   switch (reason) {
     case 'DOCUMENTO_DUPLICADO':
       return (
-        'El mismo archivo PDF ya aparece asociado a otra incapacidad.'
+        'El mismo comprobante ya aparece en otra incapacidad.'
       );
 
     case 'ESTRUCTURA_PDF':
       return (
-        'La estructura técnica del PDF requiere revisión.'
+        'El archivo no pudo leerse con normalidad y requiere revisión.'
       );
 
     case 'ERROR_ANALISIS':
       return (
-        'El análisis automático no pudo completarse correctamente.'
+        'No se pudo completar la revisión del comprobante.'
       );
 
     default:
@@ -940,15 +940,13 @@ export default function Incapacidades() {
             </h3>
 
             <p>
-              Consulta cada solicitud,
-              valida su comprobante y
-              registra una resolución
-              administrativa trazable.
+              Abre cada solicitud, revisa el comprobante
+              y registra si se aprueba o se rechaza.
             </p>
           </div>
 
           <div className="module-hero-badge">
-            Incapacidades Inteligentes
+            Revisión de comprobantes
           </div>
         </div>
 
@@ -1084,7 +1082,7 @@ export default function Incapacidades() {
                   <tr>
                     <th>Empleado</th>
                     <th>Periodo</th>
-                    <th>Comprobante y validación</th>
+                    <th>Comprobante y revisión</th>
                     <th>Estado</th>
                     <th>Acciones</th>
                   </tr>
@@ -1121,7 +1119,7 @@ export default function Incapacidades() {
                           </div>
                         </td>
 
-                        <td data-label="Comprobante y validación">
+                        <td data-label="Comprobante y revisión">
                           <div className="operation-evidence-cell">
                             {item.comprobante_key ? (
                               <button
@@ -1294,7 +1292,7 @@ export default function Incapacidades() {
           onClose={() => { setSelected(null); setObservaciones(''); }}
           eyebrow="Expediente médico"
           title={`Incapacidad de ${employeeName(selected)}`}
-          description="Consulta el comprobante, la validación automática y la resolución administrativa."
+          description="Consulta el comprobante, el resultado de la revisión y la decisión registrada."
           size="wide"
           busy={reviewing}
         >
@@ -1388,13 +1386,12 @@ export default function Incapacidades() {
               </p>
 
               <h3 className="module-title">
-                Validación automática
+                Revisión del comprobante
               </h3>
 
               <p className="module-subtitle">
-                Revisión técnica del comprobante PDF.
-                La decisión final continúa en manos
-                de Recursos Humanos.
+                El sistema comprueba el archivo y señala posibles problemas.
+                Recursos Humanos siempre toma la decisión final.
               </p>
             </div>
 
@@ -1421,7 +1418,7 @@ export default function Incapacidades() {
             <div className="asistencia-summary-grid">
               <div className="asistencia-summary-card">
                 <h3>
-                  Integridad técnica
+                  Resultado de la revisión
                 </h3>
 
                 <p>
@@ -1433,7 +1430,7 @@ export default function Incapacidades() {
 
               <div className="asistencia-summary-card">
                 <h3>
-                  Versión PDF
+                  Formato del archivo
                 </h3>
 
                 <p>
@@ -1445,7 +1442,7 @@ export default function Incapacidades() {
 
               <div className="asistencia-summary-card">
                 <h3>
-                  Duplicado exacto
+                  Archivo repetido
                 </h3>
 
                 <p>
@@ -1495,7 +1492,7 @@ export default function Incapacidades() {
               ) : null}
 
             <p className="table-secondary-text">
-              Último análisis:{' '}
+              Última revisión:{' '}
               {validationDateLabel(
                 selected.validacion_automatica
                   ?.analizado_at

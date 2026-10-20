@@ -449,7 +449,7 @@ export default function AsistenteSmartRh() {
       setSuggestions([
         'No puedo registrar asistencia',
         'Ver calendario laboral',
-        'Crear ticket de soporte',
+        'Crear solicitud de soporte',
       ]);
       setShowSuggestions(true);
     }
@@ -612,14 +612,14 @@ export default function AsistenteSmartRh() {
           id: buildId(),
           author: 'assistant',
           text: ticketId
-            ? `Listo. Cree el ticket con folio ${ticketId}. Puedes darle seguimiento desde Soporte.`
-            : 'Listo. Envie la consulta a soporte con el contexto disponible.',
+            ? `Listo. Creé la solicitud con folio ${ticketId}. Puedes darle seguimiento desde Soporte.`
+            : 'Listo. Envié la consulta a soporte con la información disponible.',
         },
       ]);
     } catch (err: any) {
       setError(
         err?.response?.data?.message ||
-          'No se pudo crear el ticket de soporte.'
+          'No se pudo crear la solicitud de soporte. Inténtalo de nuevo.'
       );
     } finally {
       setTicketLoading(false);
@@ -987,7 +987,7 @@ export default function AsistenteSmartRh() {
               onClick={createTicket}
               disabled={ticketLoading}
             >
-              {ticketLoading ? 'Creando ticket...' : 'Crear ticket con contexto'}
+              {ticketLoading ? 'Creando solicitud...' : 'Crear solicitud de soporte'}
             </button>
           ) : null}
         </section>

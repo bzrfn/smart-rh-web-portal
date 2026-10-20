@@ -489,10 +489,10 @@ export default function Usuarios() {
         targetUsers.map((u) => api.put(`/permisos/${u.id}`, updates[u.id], authConfig))
       );
 
-      setMessage(`Acción masiva aplicada correctamente a ${targetUsers.length} empleado(s).`);
+          setMessage(`Acceso actualizado para ${targetUsers.length} empleado(s).`);
     } catch (e: any) {
       setPermisosMap(previousMap);
-      setError(e?.response?.data?.message ?? 'No se pudo aplicar la acción masiva.');
+          setError(e?.response?.data?.message ?? 'No se pudo cambiar el acceso de las personas seleccionadas.');
     } finally {
       setSavingKey('');
     }
@@ -672,7 +672,7 @@ export default function Usuarios() {
               </div>
 
               <div className="users-filter-summary">
-                <span>{empleados.length} empleados administrables</span>
+                <span>{empleados.length} empleados disponibles</span>
                 <span>{hasPermissionQuery ? `${filteredPermisosUsers.length} coincidencia(s)` : 'Escribe al menos 2 letras para buscar'}</span>
               </div>
             </div>
@@ -680,7 +680,7 @@ export default function Usuarios() {
             <details className="permission-bulk-disclosure">
               <summary>
                 <span className="permission-command-icon">A</span>
-                <span><strong>Acción general por módulo</strong><small>Úsala solo cuando necesites cambiar el acceso de todo el grupo filtrado.</small></span>
+                <span><strong>Cambiar acceso para varias personas</strong><small>Úsalo solo si el mismo cambio aplica a todas las personas encontradas.</small></span>
                 <em>Configurar</em>
               </summary>
               <div className="permission-command-bar">
@@ -761,8 +761,8 @@ export default function Usuarios() {
               </div>
             ) : (
               <div className="empty-state-card">
-                <h3>Sin empleados</h3>
-                <p>No hay usuarios empleados para administrar permisos.</p>
+                <h3>Sin empleados disponibles</h3>
+                <p>No hay empleados a quienes puedas cambiar el acceso.</p>
               </div>
             )}
           </>
@@ -776,13 +776,13 @@ export default function Usuarios() {
             onClose={() => { resetForm(); setShowUserForm(false); }}
             eyebrow={editingId ? 'Edición de personal' : 'Alta de personal'}
             title={editingId ? 'Editar usuario' : 'Crear nuevo usuario'}
-            description="Organiza la información de acceso, contacto y relación laboral en un solo flujo."
+            description="Completa los datos de la cuenta, el contacto y la relación laboral en un solo formulario."
             size="wide"
             busy={savingKey === 'user-form'}
           >
             <div className="users-modal-form">
             <section className="users-form-section">
-              <div className="users-form-section-title"><span>01</span><div><strong>Identidad y acceso</strong><small>Datos con los que la persona será identificada en SMART RH.</small></div></div>
+              <div className="users-form-section-title"><span>01</span><div><strong>Datos de la cuenta</strong><small>Información con la que la persona será identificada en SMART RH.</small></div></div>
 
             <div className="form-grid">
               <label className="form-label">

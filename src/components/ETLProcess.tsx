@@ -231,12 +231,12 @@ export function ETLProcess() {
         titulo: 'Cobertura operativa del personal',
         nivel: porcentajeActivos >= 90 ? 'Estable' : porcentajeActivos >= 70 ? 'Atención' : 'Crítico',
         descripcion:
-          `El sistema registra ${usuarios} usuario(s), con ${usuariosActivos} activo(s), equivalente al ${porcentajeActivos.toFixed(1)}% de disponibilidad operativa. ` +
-          `Este dato permite identificar qué parte del personal está habilitada para interactuar con asistencia, documentación, nómina, vacaciones y procesos administrativos.`,
+          `Hay ${usuarios} usuario(s) registrados y ${usuariosActivos} activo(s), equivalentes al ${porcentajeActivos.toFixed(1)}% del total. ` +
+          `Este dato muestra cuántas personas pueden usar asistencia, documentos, pagos y vacaciones.`,
         impacto:
           usuariosInactivos > 0
-            ? `Existen ${usuariosInactivos} usuario(s) inactivo(s). Esto puede representar cuentas pendientes de depuración, personal dado de baja o accesos que deben revisarse.`
-            : 'No se detectan usuarios inactivos, por lo que la base actual se mantiene limpia para operación.',
+            ? `Hay ${usuariosInactivos} usuario(s) inactivo(s). Revisa si son bajas de personal o cuentas que ya no deben tener acceso.`
+            : 'No hay usuarios inactivos pendientes de revisión.',
         decision:
           usuariosInactivos > 0
             ? 'Revisar si los usuarios inactivos deben conservarse como historial o bloquearse definitivamente.'
@@ -247,12 +247,12 @@ export function ETLProcess() {
         titulo: 'Calidad de identificación del personal',
         nivel: porcentajePerfilCompleto >= 90 ? 'Estable' : porcentajePerfilCompleto >= 60 ? 'Atención' : 'Crítico',
         descripcion:
-          `La completitud visual del expediente es de ${porcentajePerfilCompleto.toFixed(1)}%, con ${usuariosConFoto} usuario(s) con foto y ${usuariosSinFoto} sin foto. ` +
-          `Este indicador es importante porque la foto se relaciona con credenciales, perfil del empleado, identificación visual y documentación laboral.`,
+          `El ${porcentajePerfilCompleto.toFixed(1)}% de los perfiles tiene foto: ${usuariosConFoto} con foto y ${usuariosSinFoto} sin foto. ` +
+          `La foto ayuda a identificar al personal en su perfil, credencial y documentos.`,
         impacto:
           usuariosSinFoto > 0
             ? `Los ${usuariosSinFoto} perfil(es) sin foto reducen la calidad del expediente digital y pueden afectar la presentación profesional del sistema.`
-            : 'Todos los usuarios cuentan con foto de perfil, lo que fortalece la trazabilidad documental y la identificación del personal.',
+            : 'Todos los usuarios cuentan con foto de perfil y pueden identificarse correctamente.',
         decision:
           usuariosSinFoto > 0
             ? 'Completar perfiles faltantes antes de generar reportes formales o credenciales digitales.'
@@ -263,8 +263,8 @@ export function ETLProcess() {
         titulo: 'Lectura económica de pagos',
         nivel: totalNomina > 0 ? 'Estable' : 'Atención',
         descripcion:
-          `La nómina procesada registra un total pagado de ${formatCurrency(totalNomina)}, con salario base acumulado de ${formatCurrency(totalSalarioBase)} ` +
-          `y promedio salarial de ${formatCurrency(promedioSalario)}. Esta lectura permite dimensionar el peso económico del personal registrado.`,
+          `Los pagos incluidos suman ${formatCurrency(totalNomina)}, con ${formatCurrency(totalSalarioBase)} de salario base ` +
+          `y un promedio de ${formatCurrency(promedioSalario)} por persona.`,
         impacto:
           `Los bonos representan aproximadamente ${pesoBonos.toFixed(1)}% del salario base, mientras que las deducciones representan ${pesoDeducciones.toFixed(1)}%. ` +
           `Esta comparación ayuda a entender si el pago neto está siendo impulsado por compensaciones o reducido por descuentos.`,
@@ -292,8 +292,8 @@ export function ETLProcess() {
         titulo: 'Carga administrativa de ausencias',
         nivel: vacacionesPendientes > 0 ? 'Atención' : 'Estable',
         descripcion:
-          `Se procesaron ${vacacionesTotal} solicitud(es) de vacaciones, con ${vacacionesPendientes} pendiente(s), ${vacacionesAprobadas} aprobada(s) y ${vacacionesRechazadas} rechazada(s). ` +
-          `La proporción pendiente es de ${porcentajePendientes.toFixed(1)}%, lo cual refleja la carga administrativa actual del módulo.`,
+          `Hay ${vacacionesTotal} solicitud(es) de vacaciones: ${vacacionesPendientes} pendiente(s), ${vacacionesAprobadas} aprobada(s) y ${vacacionesRechazadas} rechazada(s). ` +
+          `El ${porcentajePendientes.toFixed(1)}% todavía necesita una respuesta.`,
         impacto:
           vacacionesPendientes > 0
             ? 'Las solicitudes pendientes pueden generar retrasos en la planeación operativa, especialmente si el periodo solicitado está próximo.'
@@ -426,7 +426,7 @@ export function ETLProcess() {
 
             {report && (
               <span className="etl-last-run">
-                Última ejecución: {formatDate(report.generatedAt)}
+                Última actualización: {formatDate(report.generatedAt)}
               </span>
             )}
           </div>
@@ -525,7 +525,7 @@ export function ETLProcess() {
               <div className="etl-kpi-card">
                 <span>Nómina total</span>
                 <strong>{formatCurrency(report.resumen.totalPagadoNomina)}</strong>
-                <p>{formatNumber(report.resumen.totalNominas)} registro(s) procesados.</p>
+                <p>{formatNumber(report.resumen.totalNominas)} pagos incluidos.</p>
               </div>
 
               <div className="etl-kpi-card">
@@ -595,7 +595,7 @@ export function ETLProcess() {
                 <div>
                   <span>Total bonos</span>
                   <strong>{formatCurrency(report.nomina.totalBonos)}</strong>
-                  <p>Bonificaciones acumuladas en los registros procesados.</p>
+                  <p>Bonificaciones acumuladas en los pagos incluidos.</p>
                 </div>
               </div>
 
@@ -604,7 +604,7 @@ export function ETLProcess() {
                 <div>
                   <span>Total deducciones</span>
                   <strong>{formatCurrency(report.nomina.totalDeducciones)}</strong>
-                  <p>Deducciones acumuladas dentro de la nómina procesada.</p>
+                  <p>Deducciones acumuladas en los pagos incluidos.</p>
                 </div>
               </div>
 

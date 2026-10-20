@@ -931,8 +931,7 @@ export default function Aprobaciones() {
           </h2>
 
           <p className="module-subtitle">
-            Revisa, valida y resuelve los registros pendientes antes de que
-            impacten el historial general del sistema.
+            Comprueba cada jornada y aprueba, rechaza, justifica o corrige el registro.
           </p>
         </div>
       </div>
@@ -1598,8 +1597,7 @@ export default function Aprobaciones() {
                       />
 
                       <span className="asistencia-review-help">
-                        Incluye únicamente la información necesaria para dejar
-                        trazabilidad administrativa.
+                        Incluye únicamente la información necesaria para explicar la decisión.
                       </span>
                     </label>
                   </div>

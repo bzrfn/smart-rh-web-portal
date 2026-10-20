@@ -111,22 +111,21 @@ export default function Asistencia() {
               <p className="module-eyebrow">Operación</p>
               <h2 className="module-title">Asistencia</h2>
               <p className="module-subtitle">
-                Gestiona aprobaciones, seguimiento y control operativo del registro de
-                asistencia del personal.
+                Revisa entradas, salidas y registros que todavía necesitan una decisión.
               </p>
             </div>
           </div>
 
           <div className="module-hero-banner operation-brief">
             <div className="module-hero-copy">
-              <h3>Control de trazabilidad operativa</h3>
+              <h3>Registros de asistencia en un solo lugar</h3>
               <p>
-                Supervisa los registros capturados desde la app móvil, valida pendientes y
-                mantén consistencia antes de impactar otros módulos.
+                Comprueba la jornada de cada persona y resuelve los pendientes antes de
+                cerrar el seguimiento.
               </p>
             </div>
 
-            <div className="module-hero-badge">Gestión centralizada</div>
+            <div className="module-hero-badge">Revisión diaria</div>
           </div>
 
           <div className="asistencia-summary-grid operation-summary-grid">
@@ -288,17 +287,16 @@ export default function Asistencia() {
             <p className="module-eyebrow">Consulta</p>
             <h2 className="module-title">Asistencia</h2>
             <p className="module-subtitle">
-              Consulta información relacionada con tus registros de asistencia.
+              Revisa tus entradas, salidas y el estado de cada registro.
             </p>
           </div>
         </div>
 
         <div className="module-hero-banner">
           <div className="module-hero-copy">
-            <h3>Seguimiento personal</h3>
+            <h3>Tu asistencia</h3>
             <p>
-              Aquí se integrará tu historial individual, el estado de validación y el
-              seguimiento operativo de tus registros.
+              Consulta qué jornadas fueron registradas y cuáles siguen pendientes de revisión.
             </p>
           </div>
 
@@ -309,13 +307,13 @@ export default function Asistencia() {
           <div className="asistencia-summary-card">
             <div className="dashboard-card-accent teal" />
             <h3>Mi historial</h3>
-            <p>Aquí se mostrará tu historial real de asistencias.</p>
+            <p>Consulta las fechas, entradas y salidas registradas en tu cuenta.</p>
           </div>
 
           <div className="asistencia-summary-card">
             <div className="dashboard-card-accent blue" />
             <h3>Estado de registros</h3>
-            <p>Aquí se mostrará el estado de validación de tus asistencias registradas.</p>
+            <p>Revisa si cada jornada está pendiente, aprobada o rechazada.</p>
           </div>
         </div>
       </div>

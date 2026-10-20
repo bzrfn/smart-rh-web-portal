@@ -287,9 +287,8 @@ export default function AdminDestination() {
             </h1>
 
             <p>
-              Tu contraseña y la verificación en dos pasos
-              fueron confirmadas. Elige el entorno que
-              necesitas utilizar.
+              Tu acceso fue confirmado. Elige si necesitas administrar
+              información o mostrar el código de asistencia.
             </p>
           </div>
 
@@ -368,8 +367,8 @@ export default function AdminDestination() {
               </strong>
 
               <span>
-                Gestiona usuarios, asistencia, documentos,
-                vacaciones, nómina, analítica y configuración.
+                Gestiona personas, asistencia, documentos,
+                vacaciones, pagos y reportes.
               </span>
 
               <small>
@@ -403,12 +402,11 @@ export default function AdminDestination() {
               </strong>
 
               <span>
-                Inicia una sesión exclusiva para mostrar
-                el QR dinámico que escanean los empleados.
+                Muestra el código que los empleados escanean para registrar su asistencia.
               </span>
 
               <small>
-                Sesión separada del JWT administrativo
+                El portal administrativo permanece protegido
               </small>
             </span>
 

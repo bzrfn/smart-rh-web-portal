@@ -44,7 +44,10 @@ export default function ForgotPassword() {
         },
       });
     } catch (err: any) {
-      setError(err?.response?.data?.message || 'Error de conexión');
+      setError(
+        err?.response?.data?.message ||
+          'No se pudo enviar el código. Revisa tu conexión e inténtalo de nuevo.'
+      );
     } finally {
       setLoading(false);
     }
@@ -138,7 +141,7 @@ export default function ForgotPassword() {
 
             <div className="auth-footer-links">
               <Link to="/login" className="auth-link primary">
-                Volver al login
+                Volver a iniciar sesión
               </Link>
 
               <Link to="/" className="auth-link">

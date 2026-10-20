@@ -208,9 +208,9 @@ function getSilhouetteQuality(value?: number | null): QualityInfo {
   if (value === undefined || value === null || !Number.isFinite(Number(value))) {
     return {
       label: 'Pendiente',
-      description: 'Aún no se ha ejecutado el entrenamiento K-means.',
+      description: 'Aún no se han formado los grupos de personal.',
       recommendation:
-        'Primero revisa el método del codo, después entrena el modelo para obtener una evaluación.',
+        'Revisa la cantidad sugerida de grupos y después selecciona “Actualizar grupos”.',
       tone: 'pending',
     };
   }
@@ -221,7 +221,7 @@ function getSilhouetteQuality(value?: number | null): QualityInfo {
     return {
       label: 'Muy bueno',
       description:
-        'Los grupos están muy bien separados. El modelo encontró patrones claros entre empleados.',
+        'Los grupos muestran diferencias claras entre las personas incluidas.',
       recommendation:
         'El resultado es confiable para explicar perfiles laborales y tomar decisiones de seguimiento.',
       tone: 'excellent',
@@ -263,22 +263,22 @@ function getSilhouetteQuality(value?: number | null): QualityInfo {
 function getParameterExplanation(k: number, trials: number, maxIterations: number, mejorK: number) {
   const kMessage =
     k === mejorK
-      ? `Estás usando K=${k}, que coincide con el valor recomendado por el índice de silueta.`
-      : `Estás usando K=${k}, pero el sistema recomienda K=${mejorK} por mejor separación de grupos.`;
+      ? `Elegiste ${k} grupos, la cantidad recomendada para esta información.`
+      : `Elegiste ${k} grupos; el sistema recomienda ${mejorK} para distinguir mejor los perfiles.`;
 
   const trialsMessage =
     trials < 5
-      ? 'Pocos intentos pueden producir resultados inestables.'
+      ? 'Pocas comparaciones pueden dejar fuera una mejor distribución.'
       : trials <= 15
-        ? 'Cantidad adecuada para una práctica escolar y un dataset pequeño o mediano.'
-        : 'Cantidad alta; puede mejorar la búsqueda, pero tardará más.';
+        ? 'Cantidad adecuada para comparar distintas formas de organizar los grupos.'
+        : 'Cantidad alta: puede encontrar otra distribución, pero tardará más.';
 
   const iterationsMessage =
     maxIterations < 50
-      ? 'Pocas iteraciones pueden cortar el entrenamiento antes de estabilizar centroides.'
+      ? 'Pocas pasadas pueden terminar la comparación antes de ordenar bien los grupos.'
       : maxIterations <= 150
-        ? 'Valor adecuado para que los centroides se ajusten sin tardar demasiado.'
-        : 'Valor alto; útil si el dataset crece, pero puede aumentar tiempo de procesamiento.';
+        ? 'Cantidad adecuada para ordenar los grupos sin tardar demasiado.'
+        : 'Cantidad alta: puede ayudar con más información, pero tardará más.';
 
   return {
     kMessage,
@@ -304,7 +304,7 @@ function getRecommendedSettings(datasetLength: number) {
       trials: 10,
       maxIterations: 100,
       reason:
-        'Con un dataset mediano, 3 grupos permite separar perfiles estables, intermedios y de seguimiento.',
+        'Con esta cantidad de personas, 3 grupos permite distinguir perfiles estables, intermedios y de seguimiento.',
     };
   }
 
@@ -320,8 +320,8 @@ function getRecommendedSettings(datasetLength: number) {
 function getElbowInsight(elbow: ElbowItem[], mejorK: number) {
   if (!elbow.length) {
     return {
-      title: 'Codo pendiente',
-      text: 'Aún no hay resultados del método del codo. Presiona “Recalcular codo” para probar varios valores de K.',
+      title: 'Cantidad sugerida pendiente',
+      text: 'Aún no se ha comparado cuántos grupos conviene formar. Selecciona “Revisar cantidad sugerida”.',
       easyConclusion:
         'Todavía no sabemos cuántos grupos conviene usar.',
     };
@@ -329,12 +329,11 @@ function getElbowInsight(elbow: ElbowItem[], mejorK: number) {
 
   const selected = elbow.find((item) => item.k === mejorK);
   const bestSilhouette = selected ? formatNumber(selected.silhouette, 4) : 'N/D';
-  const inertia = selected ? formatNumber(selected.inertia, 4) : 'N/D';
 
   return {
-    title: `K recomendado: ${mejorK}`,
-    text: `El sistema recomienda K=${mejorK} porque obtuvo una buena relación entre separación de grupos e inercia. Para ese valor, la silueta es ${bestSilhouette} y la inercia es ${inertia}.`,
-    easyConclusion: `Para este dataset, lo más razonable es dividir a los empleados en ${mejorK} grupos.`,
+    title: `${mejorK} grupos recomendados`,
+    text: `El sistema comparó varias opciones y encontró que ${mejorK} grupos ofrecen una separación clara (${bestSilhouette}).`,
+    easyConclusion: `Para esta información, lo más razonable es organizar al personal en ${mejorK} grupos.`,
   };
 }
 
@@ -369,7 +368,7 @@ function getClusterRecommendation(cluster: Cluster) {
   }
 
   if (name === 'Perfil de seguimiento') {
-    return 'Revisar incidencias, registros incompletos y pendientes. Este grupo puede requerir acompañamiento administrativo.';
+    return 'Revisar registros incompletos, rechazos y pendientes. Este grupo puede requerir seguimiento de Recursos Humanos.';
   }
 
   if (name === 'Perfil activo') {
@@ -393,9 +392,9 @@ function getBusinessConclusion(params: {
       title: 'Conclusión pendiente',
       text:
         datasetLength < 2
-          ? 'No hay suficientes empleados para ejecutar K-means.'
-          : 'Todavía no se ha entrenado el modelo. Ejecuta el entrenamiento para obtener conclusiones.',
-      action: 'Presiona “Entrenar K-means” cuando el dataset esté cargado.',
+          ? 'Se necesitan al menos dos personas para formar grupos.'
+          : 'Todavía no se han formado los grupos. Actualízalos para ver una conclusión.',
+      action: 'Selecciona “Actualizar grupos” cuando la información esté disponible.',
     };
   }
 
@@ -411,7 +410,7 @@ function getBusinessConclusion(params: {
   const intermediateTotal = intermediate.reduce((sum, cluster) => sum + cluster.total, 0);
   const activeTotal = active.reduce((sum, cluster) => sum + cluster.total, 0);
 
-  let text = `El modelo agrupó ${datasetLength} empleados en ${mejorK} grupos. `;
+  let text = `El sistema organizó ${datasetLength} personas en ${mejorK} grupos. `;
 
   if (quality.tone === 'excellent' || quality.tone === 'good') {
     text += 'La separación entre grupos es útil para interpretar perfiles laborales. ';
@@ -425,8 +424,8 @@ function getBusinessConclusion(params: {
 
   const action =
     riskTotal > 0
-      ? 'Prioriza la revisión de los perfiles de seguimiento y valida sus asistencias, salidas y solicitudes pendientes.'
-      : 'El resultado no muestra un grupo crítico dominante; se recomienda mantener monitoreo preventivo.';
+      ? 'Revisa primero los perfiles de seguimiento y confirma sus asistencias, salidas y solicitudes pendientes.'
+      : 'No se detecta un grupo que requiera atención inmediata; mantén la revisión habitual.';
 
   return {
     title: `Conclusión general: ${quality.label}`,
@@ -549,7 +548,7 @@ export default function AnalisisKMeans() {
     if (!training?.mejorResultado?.clusters) return [];
 
     return training.mejorResultado.clusters.map((cluster) => ({
-      name: `Cluster ${cluster.cluster + 1}`,
+      name: `Grupo ${cluster.cluster + 1}`,
       empleados: cluster.total,
       porcentaje: cluster.porcentaje,
     }));
@@ -641,7 +640,7 @@ export default function AnalisisKMeans() {
         setElbow([]);
         setTraining(null);
         setError(
-          'Se requieren al menos 2 empleados para ejecutar el análisis K-means.'
+          'Se necesitan al menos 2 personas para comparar y formar grupos.'
         );
         return;
       }
@@ -651,7 +650,7 @@ export default function AnalisisKMeans() {
     } catch (err: any) {
       setError(
         err?.response?.data?.message ||
-          'No se pudo recalcular el método del codo.'
+          'No se pudo calcular la cantidad sugerida de grupos. Inténtalo de nuevo.'
       );
     } finally {
       setLoading(false);
@@ -667,7 +666,7 @@ export default function AnalisisKMeans() {
 
       if (dataset.length < 2) {
         setError(
-          'Se requieren al menos 2 empleados para ejecutar el entrenamiento K-means.'
+          'Se necesitan al menos 2 personas para formar grupos.'
         );
         return;
       }
@@ -687,7 +686,7 @@ export default function AnalisisKMeans() {
     } catch (err: any) {
       setError(
         err?.response?.data?.message ||
-          'No se pudo entrenar el modelo K-means.'
+          'No se pudieron actualizar los grupos. Inténtalo de nuevo.'
       );
     } finally {
       setLoading(false);
@@ -709,7 +708,7 @@ export default function AnalisisKMeans() {
     } catch (err: any) {
       setError(
         err?.response?.data?.message ||
-          'No se pudo cargar la información inicial de K-means.'
+          'No se pudo cargar la información para formar los grupos.'
       );
     } finally {
       setLoading(false);
@@ -730,11 +729,11 @@ export default function AnalisisKMeans() {
 
   const loadingLabel =
     loadingAction === 'training'
-      ? 'Entrenando modelo...'
+      ? 'Actualizando grupos...'
       : loadingAction === 'elbow'
-        ? 'Calculando codo...'
+        ? 'Buscando la cantidad recomendada...'
         : loadingAction === 'initial'
-          ? 'Cargando análisis...'
+          ? 'Cargando información...'
           : 'Procesando...';
 
   return (
@@ -742,31 +741,31 @@ export default function AnalisisKMeans() {
       {/* Encabezado principal: presenta el objetivo del módulo y una conclusión ejecutiva inicial. */}
       <section style={styles.hero}>
         <div style={styles.heroContent}>
-          <span style={styles.chip}>Machine Learning no supervisado</span>
-          <h1 style={styles.title}>Análisis K-means SMART RH</h1>
+          <span style={styles.chip}>Comparación de perfiles</span>
+          <h1 style={styles.title}>Grupos de personal con características similares</h1>
           <p style={styles.subtitle}>
-            Este módulo agrupa empleados de acuerdo con asistencia, vacaciones,
-            contratos, nómina y actividad laboral. Sirve para encontrar perfiles
-            similares sin clasificar manualmente a cada empleado.
+            Compara asistencia, vacaciones, contratos y pagos para reunir personas
+            con características parecidas. Úsalo para saber qué grupos mantener bajo
+            revisión, sin tomar decisiones automáticas sobre ningún empleado.
           </p>
 
           <div style={styles.heroMetaGrid}>
             <InfoPill
-              label="Modelo"
-              value="K-means"
-              detail="Agrupa empleados por similitud"
+              label="Qué hace"
+              value="Forma grupos"
+              detail="Compara información laboral"
               styles={styles}
             />
             <InfoPill
-              label="K significa"
-              value="Número de grupos"
-              detail="Ejemplo: K=3 crea 3 perfiles"
+              label="Cómo los separa"
+              value="Por similitud"
+              detail="Busca comportamientos parecidos"
               styles={styles}
             />
             <InfoPill
-              label="Resultado"
-              value="Perfiles"
-              detail="Estable, intermedio, activo o seguimiento"
+              label="Qué debes hacer"
+              value="Revisar cada caso"
+              detail="Confirma antes de decidir"
               styles={styles}
             />
           </div>
@@ -805,44 +804,44 @@ export default function AnalisisKMeans() {
       <section style={styles.workflowCard}>
         <div style={styles.sectionHeadingCompact}>
           <div>
-            <span style={styles.eyebrow}>Guía rápida</span>
-            <h2 style={styles.sectionTitle}>¿Qué números debo poner?</h2>
+            <span style={styles.eyebrow}>Opciones del análisis</span>
+            <h2 style={styles.sectionTitle}>Configuración recomendada</h2>
           </div>
           <p style={styles.sectionHint}>
-            Usa esta guía para configurar el modelo sin adivinar valores.
+            Puedes usar estos valores sugeridos o ajustarlos antes de formar los grupos.
           </p>
         </div>
 
         <div style={styles.parameterGuideGrid}>
           <GuideCard
-            title="K / Número de grupos"
-            value={`Usar ${mejorK || recommendedSettings.k}`}
-            text="K indica cuántos grupos quieres formar. No se usa K=1 porque un solo grupo no separa empleados; por eso se empieza desde K=2."
+            title="Cantidad de grupos"
+            value={`${mejorK || recommendedSettings.k} grupos`}
+            text="Indica en cuántos grupos quieres organizar al personal. Se necesitan al menos dos para poder comparar perfiles."
             note={parameterExplanation.kMessage}
             styles={styles}
           />
 
           <GuideCard
-            title="Intentos"
+            title="Comparaciones"
             value={`${recommendedSettings.trials} recomendado`}
-            text="Cada intento inicia centroides en posiciones diferentes. Sirve porque K-means puede dar resultados distintos según dónde empiece."
+            text="El sistema prueba distintas formas de organizar a las personas y conserva la que muestra diferencias más claras."
             note={parameterExplanation.trialsMessage}
             styles={styles}
           />
 
           <GuideCard
-            title="Iteraciones máximas"
+            title="Pasadas de revisión"
             value={`${recommendedSettings.maxIterations} recomendado`}
-            text="Cada iteración reajusta los centros de los grupos. Normalmente 100 es suficiente para este proyecto."
+            text="Indica cuántas veces puede ajustar la distribución. Normalmente 100 es suficiente."
             note={parameterExplanation.iterationsMessage}
             styles={styles}
           />
 
           <GuideCard
             title="Configuración sugerida"
-            value={`K=${mejorK || recommendedSettings.k}`}
+            value={`${mejorK || recommendedSettings.k} grupos`}
             text={recommendedSettings.reason}
-            note={`Intentos=${recommendedSettings.trials}, Iteraciones=${recommendedSettings.maxIterations}`}
+            note={`${recommendedSettings.trials} comparaciones y ${recommendedSettings.maxIterations} pasadas`}
             styles={styles}
           />
         </div>
@@ -858,43 +857,43 @@ export default function AnalisisKMeans() {
       <section style={styles.workflowCard}>
         <div style={styles.sectionHeadingCompact}>
           <div>
-            <span style={styles.eyebrow}>Flujo de trabajo</span>
-            <h2 style={styles.sectionTitle}>Proceso del análisis</h2>
+            <span style={styles.eyebrow}>Cómo funciona</span>
+            <h2 style={styles.sectionTitle}>De la información a la revisión</h2>
           </div>
           <p style={styles.sectionHint}>
-            Cada etapa explica qué calcula el sistema y para qué sirve el resultado.
+            Estas son las etapas que sigue el sistema antes de mostrar los grupos.
           </p>
         </div>
 
         <div style={styles.stepGrid}>
           <StepCard
             number="01"
-            title="Dataset"
-            text="Une datos de usuarios, asistencia, nómina, contratos y vacaciones."
+            title="Información reunida"
+            text="Reúne datos de personal, asistencia, pagos, contratos y vacaciones."
             status={stepStatuses[0]}
             styles={styles}
             colors={colors}
           />
           <StepCard
             number="02"
-            title="Método del codo"
-            text="Prueba varios valores de K para ver cuántos grupos conviene formar."
+            title="Cantidad sugerida"
+            text="Compara varias opciones para saber cuántos grupos conviene formar."
             status={stepStatuses[1]}
             styles={styles}
             colors={colors}
           />
           <StepCard
             number="03"
-            title="Entrenamiento"
-            text="Ejecuta varios intentos y elige el mejor resultado por índice de silueta."
+            title="Formación de grupos"
+            text="Prueba distintas distribuciones y conserva la más clara."
             status={stepStatuses[2]}
             styles={styles}
             colors={colors}
           />
           <StepCard
             number="04"
-            title="Conclusión"
-            text="Interpreta los grupos y genera recomendaciones fáciles de entender."
+            title="Revisión final"
+            text="Explica cada grupo y señala qué casos conviene revisar primero."
             status={stepStatuses[3]}
             styles={styles}
             colors={colors}
@@ -905,15 +904,15 @@ export default function AnalisisKMeans() {
       {/* KPIs y métricas principales para ver en una sola lectura. */}
       <section style={styles.kpiGrid}>
         <MetricCard
-          title="Empleados analizados"
+          title="Personas incluidas"
           value={String(datasetSummary.total)}
-          detail="Registros disponibles para agrupamiento"
+          detail="Personas consideradas en la comparación"
           accent="blue"
           styles={styles}
           colors={colors}
         />
         <MetricCard
-          title="K recomendado"
+          title="Grupos recomendados"
           value={String(mejorK)}
           detail="Cantidad sugerida de grupos"
           accent="teal"
@@ -921,7 +920,7 @@ export default function AnalisisKMeans() {
           colors={colors}
         />
         <MetricCard
-          title="Índice de silueta"
+          title="Claridad de los grupos"
           value={trainedResult ? formatNumber(trainedResult.silhouette, 4) : 'Pendiente'}
           detail={silhouetteQuality.label}
           accent={silhouetteQuality.tone === 'low' ? 'danger' : 'gold'}
@@ -929,9 +928,9 @@ export default function AnalisisKMeans() {
           colors={colors}
         />
         <MetricCard
-          title="Inercia"
+          title="Cercanía dentro de cada grupo"
           value={trainedResult ? formatNumber(trainedResult.inertia, 4) : 'Pendiente'}
-          detail="Qué tan compactos quedaron los grupos"
+          detail="Qué tan parecidas son las personas reunidas"
           accent="blue"
           styles={styles}
           colors={colors}
@@ -943,12 +942,11 @@ export default function AnalisisKMeans() {
         <article style={styles.cardLarge}>
           <div style={styles.sectionHeader}>
             <div>
-              <span style={styles.eyebrow}>Configuración</span>
-              <h2 style={styles.sectionTitle}>Entrenamiento K-means</h2>
+              <span style={styles.eyebrow}>Opciones avanzadas</span>
+              <h2 style={styles.sectionTitle}>Formar grupos de personal</h2>
               <p style={styles.text}>
-                Ajusta los parámetros del modelo. Para una práctica escolar y un
-                dataset de empleados, normalmente se recomienda iniciar con K=3,
-                10 intentos y 100 iteraciones.
+                Ajusta cuántos grupos quieres comparar y cuánto debe revisar el sistema.
+                Si no necesitas personalizarlo, usa la configuración recomendada.
               </p>
             </div>
 
@@ -958,18 +956,18 @@ export default function AnalisisKMeans() {
                 onClick={recalcularAnalisis}
                 disabled={loading}
               >
-                Recalcular codo
+                Revisar cantidad sugerida
               </button>
 
               <button style={styles.primaryButton} onClick={entrenar} disabled={loading}>
-                Entrenar K-means
+                Actualizar grupos
               </button>
             </div>
           </div>
 
           <div style={styles.controls}>
             <label style={styles.label}>
-              <span>K / Número de grupos</span>
+              <span>Cantidad de grupos</span>
               <input
                 style={styles.input}
                 type="number"
@@ -979,14 +977,13 @@ export default function AnalisisKMeans() {
                 onChange={(event) => setK(Number(event.target.value))}
               />
               <small style={styles.inputHelp}>
-                K=2 separa en dos perfiles. K=3 suele separar estable,
-                intermedio y seguimiento. K muy alto puede crear grupos
-                artificiales.
+                Dos grupos ofrecen una comparación básica. Tres suelen distinguir
+                perfiles estables, intermedios y de seguimiento.
               </small>
             </label>
 
             <label style={styles.label}>
-              <span>Intentos</span>
+              <span>Comparaciones</span>
               <input
                 style={styles.input}
                 type="number"
@@ -996,13 +993,13 @@ export default function AnalisisKMeans() {
                 onChange={(event) => setTrials(Number(event.target.value))}
               />
               <small style={styles.inputHelp}>
-                10 es suficiente para este proyecto. Más intentos pueden mejorar
-                el resultado, pero tardan más.
+                Diez suele ser suficiente. Más comparaciones pueden mejorar la
+                distribución, pero tardarán más.
               </small>
             </label>
 
             <label style={styles.label}>
-              <span>Iteraciones máximas</span>
+              <span>Pasadas de revisión</span>
               <input
                 style={styles.input}
                 type="number"
@@ -1012,8 +1009,8 @@ export default function AnalisisKMeans() {
                 onChange={(event) => setMaxIterations(Number(event.target.value))}
               />
               <small style={styles.inputHelp}>
-                100 suele ser suficiente. Más iteraciones sirven cuando el
-                modelo tarda en estabilizar los centroides.
+                Cien suele ser suficiente. Aumenta este valor solo si hay muchas
+                personas y el resultado todavía cambia.
               </small>
             </label>
           </div>
@@ -1030,7 +1027,7 @@ export default function AnalisisKMeans() {
           <div style={styles.analysisList}>
             <AnalysisItem
               title="Detectar empleados estables"
-              text="Identifica grupos con buena asistencia, pocas incidencias y salidas completas."
+              text="Identifica grupos con buena asistencia, pocos pendientes y salidas completas."
               styles={styles}
             />
             <AnalysisItem
@@ -1040,12 +1037,12 @@ export default function AnalisisKMeans() {
             />
             <AnalysisItem
               title="Planear recursos"
-              text="Relaciona vacaciones, contratos y nómina con comportamiento operativo."
+              text="Relaciona vacaciones, contratos y pagos con la actividad diaria."
               styles={styles}
             />
             <AnalysisItem
               title="Tomar decisiones informadas"
-              text="Entrega una conclusión entendible para apoyar reportes y presentación."
+              text="Resume qué grupos conviene revisar y por qué."
               styles={styles}
             />
           </div>
@@ -1073,28 +1070,27 @@ export default function AnalisisKMeans() {
           styles={styles}
         />
         <SummaryCard
-          title="Incidencias"
+          title="Casos por revisar"
           value={String(datasetSummary.totalPendientes + datasetSummary.totalRechazadas)}
           detail="Pendientes y rechazadas acumuladas"
           styles={styles}
         />
       </section>
 
-      {/* Gráficos del método del codo y la silueta para evaluar la calidad del agrupamiento. */}
+      {/* Gráficos que resumen la cantidad y claridad de los grupos. */}
       <section style={styles.gridTwo}>
         <article style={styles.card}>
           <div style={styles.chartHeader}>
             <div>
-              <span style={styles.eyebrow}>Método del codo</span>
+              <span style={styles.eyebrow}>Cantidad recomendada</span>
               <h2 style={styles.sectionTitle}>¿Cuántos grupos conviene usar?</h2>
             </div>
-            <span style={styles.chartBadge}>K={mejorK}</span>
+            <span style={styles.chartBadge}>{mejorK} grupos</span>
           </div>
 
           <p style={styles.text}>
-            La gráfica compara varios valores de K. La inercia baja cuando los
-            empleados quedan más cerca de su grupo. El objetivo no es usar el K
-            más alto, sino uno que separe bien sin complicar la interpretación.
+            La gráfica compara varias cantidades de grupos. Busca una opción que
+            reúna a personas parecidas sin crear divisiones innecesarias.
           </p>
 
           <div style={styles.chartBox}>
@@ -1124,8 +1120,8 @@ export default function AnalisisKMeans() {
         <article style={styles.card}>
           <div style={styles.chartHeader}>
             <div>
-              <span style={styles.eyebrow}>Índice de silueta</span>
-              <h2 style={styles.sectionTitle}>¿Qué tan bueno es el resultado?</h2>
+              <span style={styles.eyebrow}>Claridad de los grupos</span>
+              <h2 style={styles.sectionTitle}>¿Qué tan diferentes son?</h2>
             </div>
             <span
               style={{
@@ -1138,9 +1134,9 @@ export default function AnalisisKMeans() {
           </div>
 
           <p style={styles.text}>
-            La silueta mide si los empleados realmente pertenecen a su grupo.
-            Mientras más cerca esté de 1, mejor separados están los perfiles.
-            Si es baja, los grupos se parecen demasiado.
+            Un valor cercano a 1 indica que las personas de cada grupo se parecen
+            entre sí y se distinguen de los demás. Un valor bajo indica que los
+            grupos todavía comparten muchas características.
           </p>
 
           <div style={styles.chartBox}>
@@ -1171,7 +1167,7 @@ export default function AnalisisKMeans() {
       {/* Interpretación simple del resultado para el usuario final. */}
       <section style={styles.insightGrid}>
         <article style={styles.insightCard}>
-          <span style={styles.eyebrow}>Lectura del codo</span>
+          <span style={styles.eyebrow}>Cantidad sugerida</span>
           <h2 style={styles.sectionTitle}>{elbowInsight.title}</h2>
           <p style={styles.text}>{elbowInsight.text}</p>
           <div style={styles.simpleConclusion}>{elbowInsight.easyConclusion}</div>
@@ -1183,8 +1179,8 @@ export default function AnalisisKMeans() {
           <p style={styles.text}>{silhouetteQuality.recommendation}</p>
           <div style={styles.simpleConclusion}>
             {trainedResult
-              ? `Silueta obtenida: ${formatNumber(trainedResult.silhouette, 4)}.`
-              : 'Entrena el modelo para generar esta conclusión.'}
+              ? `Claridad obtenida: ${formatNumber(trainedResult.silhouette, 4)}.`
+              : 'Actualiza los grupos para generar esta conclusión.'}
           </div>
         </article>
 
@@ -1192,7 +1188,7 @@ export default function AnalisisKMeans() {
           <span style={styles.eyebrow}>Grupo dominante</span>
           <h2 style={styles.sectionTitle}>
             {dominantCluster
-              ? `Cluster ${dominantCluster.cluster + 1}`
+              ? `Grupo ${dominantCluster.cluster + 1}`
               : 'Pendiente'}
           </h2>
           <p style={styles.text}>
@@ -1201,7 +1197,7 @@ export default function AnalisisKMeans() {
                   dominantCluster.porcentaje,
                   2
                 )}%). Perfil detectado: ${getClusterName(dominantCluster)}.`
-              : 'Entrena el modelo para conocer qué grupo concentra más empleados.'}
+              : 'Actualiza los grupos para saber cuál reúne a más personas.'}
           </p>
           <div style={styles.simpleConclusion}>
             {dominantCluster
@@ -1218,12 +1214,11 @@ export default function AnalisisKMeans() {
             <div style={styles.sectionHeader}>
               <div>
                 <span style={styles.eyebrow}>Resultado final</span>
-                <h2 style={styles.sectionTitle}>Distribución por clúster</h2>
+                <h2 style={styles.sectionTitle}>Distribución por grupo</h2>
                 <p style={styles.text}>
-                  Resultado del mejor entrenamiento encontrado. K utilizado:{' '}
-                  {training.mejorResultado.k}. Iteraciones:{' '}
-                  {training.mejorResultado.iterations}. Intentos ejecutados:{' '}
-                  {training.intentos.length}.
+                  Se formaron {training.mejorResultado.k} grupos después de{' '}
+                  {training.intentos.length} comparaciones y{' '}
+                  {training.mejorResultado.iterations} pasadas de revisión.
                 </p>
               </div>
             </div>
@@ -1267,7 +1262,7 @@ export default function AnalisisKMeans() {
                       {cluster.cluster + 1}
                     </span>
                     <h3 style={styles.clusterTitle}>
-                      Cluster {cluster.cluster + 1} · {getClusterName(cluster)}
+                      Grupo {cluster.cluster + 1} · {getClusterName(cluster)}
                     </h3>
                   </div>
 
@@ -1356,12 +1351,11 @@ export default function AnalisisKMeans() {
           <section style={styles.card}>
             <div style={styles.sectionHeader}>
               <div>
-                <span style={styles.eyebrow}>Prueba y error</span>
-                <h2 style={styles.sectionTitle}>Intentos ejecutados</h2>
+                <span style={styles.eyebrow}>Comparación de resultados</span>
+                <h2 style={styles.sectionTitle}>Revisiones realizadas</h2>
                 <p style={styles.text}>
-                  Cada intento inicia los centroides en posiciones diferentes.
-                  Por eso el sistema realiza varios intentos y conserva el que
-                  obtiene mejor índice de silueta.
+                  El sistema prueba distintas distribuciones y conserva la que
+                  reúne perfiles parecidos con mayor claridad.
                 </p>
               </div>
             </div>
@@ -1370,12 +1364,12 @@ export default function AnalisisKMeans() {
               <table style={styles.table}>
                 <thead>
                   <tr>
-                    <th style={styles.th}>Intento</th>
-                    <th style={styles.th}>K</th>
-                    <th style={styles.th}>Iteraciones</th>
-                    <th style={styles.th}>Inercia</th>
-                    <th style={styles.th}>Silueta</th>
-                    <th style={styles.th}>Evaluación</th>
+                    <th style={styles.th}>Revisión</th>
+                    <th style={styles.th}>Grupos</th>
+                    <th style={styles.th}>Pasadas</th>
+                    <th style={styles.th}>Cercanía</th>
+                    <th style={styles.th}>Claridad</th>
+                    <th style={styles.th}>Resultado</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1410,36 +1404,36 @@ export default function AnalisisKMeans() {
       ) : (
         <section style={styles.emptyState}>
           <div style={styles.emptyIcon}>KM</div>
-          <h2>Sin entrenamiento ejecutado</h2>
+          <h2>Grupos pendientes</h2>
           <p>
-            Primero revisa el método del codo, ajusta los parámetros y presiona
-            “Entrenar K-means” para visualizar los grupos de empleados.
+            Usa la configuración recomendada y selecciona “Actualizar grupos”
+            para ver cómo se organiza el personal.
           </p>
         </section>
       )}
 
-      {/* Variables del dataset y un resumen general de los datos disponibles. */}
+      {/* Información considerada y resumen de los datos disponibles. */}
       <section style={styles.dataGrid}>
         <article style={styles.card}>
-          <span style={styles.eyebrow}>Dataset</span>
-          <h2 style={styles.sectionTitle}>Variables utilizadas</h2>
+          <span style={styles.eyebrow}>Información considerada</span>
+          <h2 style={styles.sectionTitle}>Datos usados para comparar</h2>
           <p style={styles.text}>
-            Estas variables se normalizan antes de entrenar K-means para evitar
-            que una escala grande domine el agrupamiento.
+            El sistema compara estos datos con el mismo peso para evitar que una
+            sola cifra defina el resultado.
           </p>
 
           <div style={styles.featureGrid}>
             {Object.entries(featureLabels).map(([key, label]) => (
               <div key={key} style={styles.featureItem}>
                 <strong>{label}</strong>
-                <span>{key}</span>
+                <span>Incluido en la comparación</span>
               </div>
             ))}
           </div>
         </article>
 
         <article style={styles.card}>
-          <span style={styles.eyebrow}>Resumen del dataset</span>
+          <span style={styles.eyebrow}>Resumen de la información</span>
           <h2 style={styles.sectionTitle}>Datos disponibles</h2>
 
           <div style={styles.datasetStats}>
@@ -1469,15 +1463,15 @@ export default function AnalisisKMeans() {
         </article>
       </section>
 
-      {/* Muestra una vista resumida del dataset que alimenta el modelo. */}
+      {/* Muestra una vista resumida de las personas consideradas. */}
       <section style={styles.card}>
         <div style={styles.sectionHeader}>
           <div>
-            <span style={styles.eyebrow}>Muestra del dataset</span>
-            <h2 style={styles.sectionTitle}>Primeros empleados analizados</h2>
+            <span style={styles.eyebrow}>Personas incluidas</span>
+            <h2 style={styles.sectionTitle}>Primeras personas consideradas</h2>
             <p style={styles.text}>
-              Vista resumida de los registros que alimentan el modelo. El
-              entrenamiento utiliza más variables que las visibles en esta tabla.
+              Esta tabla muestra una parte de la información usada para formar
+              los grupos. La comparación considera datos adicionales.
             </p>
           </div>
         </div>

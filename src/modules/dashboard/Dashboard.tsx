@@ -99,8 +99,8 @@ const modules: ModuleCard[] = [
   {
     path: '/portal/etl',
     title: 'Datos',
-    description: 'Organiza información para que los reportes se mantengan claros y actualizados.',
-    cue: 'Preparación',
+    description: 'Reúne usuarios, pagos y solicitudes en un resumen fácil de revisar.',
+    cue: 'Resumen',
     icon: 'data',
     group: 'analitica',
     adminOnly: true,
@@ -108,8 +108,8 @@ const modules: ModuleCard[] = [
   {
     path: '/portal/dashboard-analitico',
     title: 'Reportes',
-    description: 'Gráficas e indicadores para entender el comportamiento de la operación.',
-    cue: 'Indicadores',
+    description: 'Compara asistencia, pagos, vacaciones y contratos con explicaciones claras.',
+    cue: 'Comparaciones',
     icon: 'chart',
     group: 'analitica',
     adminOnly: true,
@@ -117,8 +117,8 @@ const modules: ModuleCard[] = [
   {
     path: '/portal/analisis-supervisado',
     title: 'Predicciones',
-    description: 'Señales que ayudan a anticipar riesgos o tendencias del personal.',
-    cue: 'Tendencias',
+    description: 'Muestra qué personas podrían necesitar seguimiento y explica por qué.',
+    cue: 'Seguimiento',
     icon: 'chart',
     group: 'analitica',
     adminOnly: true,
@@ -144,7 +144,7 @@ const moduleGroups = [
   {
     id: 'analitica',
     label: 'Reportes y datos',
-    description: 'Lecturas claras para tomar decisiones sin revisar archivos sueltos.',
+    description: 'Resúmenes y comparaciones para saber qué revisar y qué hacer después.',
   },
 ] as const satisfies ReadonlyArray<{
   id: ModuleCard['group'];
@@ -169,7 +169,7 @@ const adminPriorities: PriorityCard[] = [
   },
   {
     title: 'Cerrar casos con Max',
-    detail: 'Cuando un caso no queda resuelto, prepara un ticket con contexto antes de escalar.',
+    detail: 'Cuando un caso no queda resuelto, pide a Max preparar una solicitud de soporte con los datos necesarios.',
     path: '/portal/soporte',
     icon: 'support',
     meta: 'Soporte',
@@ -190,7 +190,7 @@ const adminSignals = [
   {
     label: 'Salida',
     title: 'Seguimiento claro',
-    detail: 'Guardar, escalar con Max o continuar al módulo correspondiente.',
+    detail: 'Guarda el cambio, abre el apartado correspondiente o pide ayuda a Max.',
   },
 ];
 
@@ -247,7 +247,7 @@ const adminReviewNotes = [
   },
   {
     title: 'Cuándo escalar',
-    detail: 'Si falta contexto, abre Soporte o pide a Max preparar el caso.',
+    detail: 'Si falta información, abre Soporte o pide a Max preparar la solicitud.',
   },
 ];
 
@@ -262,7 +262,7 @@ const employeeReviewNotes = [
   },
   {
     title: 'Cuándo pedir ayuda',
-    detail: 'Si algo no coincide, Max te orienta o prepara un ticket.',
+    detail: 'Si algo no coincide, Max te orienta o prepara una solicitud de soporte.',
   },
 ];
 
@@ -403,7 +403,7 @@ export default function Dashboard() {
             <ul>
               <li>Empleado y fecha identificados.</li>
               <li>Evidencia o documento revisado.</li>
-              <li>Acción guardada o escalada con contexto.</li>
+              <li>Cambio guardado o solicitud de soporte preparada.</li>
             </ul>
           </div>
         </div>
@@ -458,7 +458,7 @@ export default function Dashboard() {
               <b>03</b>
               <strong>Deja seguimiento</strong>
             </div>
-            <p>Guarda el cambio o prepara el ticket con Max si requiere soporte.</p>
+            <p>Guarda el cambio o pide a Max preparar una solicitud de soporte.</p>
           </article>
         </div>
 

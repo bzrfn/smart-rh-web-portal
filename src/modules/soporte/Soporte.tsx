@@ -287,8 +287,8 @@ export default function Soporte() {
           <p className="support-eyebrow">Gestión administrativa</p>
           <h2>Soporte</h2>
           <p>
-            Administra incidencias reportadas desde la app móvil, revisa el estado de cada ticket,
-            responde al empleado y mantén trazabilidad operativa.
+            Revisa las solicitudes de ayuda enviadas desde la app, responde al empleado
+            y registra el avance hasta cerrar cada caso.
           </p>
         </div>
 
@@ -305,7 +305,7 @@ export default function Soporte() {
         <div className="support-kpi-card">
           <span>Total</span>
           <strong>{resumen.total}</strong>
-          <p>Tickets registrados.</p>
+          <p>Solicitudes registradas.</p>
         </div>
 
         <div className="support-kpi-card">
@@ -323,7 +323,7 @@ export default function Soporte() {
         <div className="support-kpi-card">
           <span>Alta prioridad</span>
           <strong>{resumen.alta_prioridad}</strong>
-          <p>Tickets críticos.</p>
+          <p>Solicitudes que deben atenderse primero.</p>
         </div>
       </section>
 
@@ -382,15 +382,15 @@ export default function Soporte() {
         <div className="support-list-panel">
           <div className="support-section-header">
             <div>
-              <p className="support-eyebrow">Bandeja de tickets</p>
-              <h3>{selectedDate ? `Reportes del ${new Date(`${selectedDate}T12:00:00`).toLocaleDateString('es-MX', { day: '2-digit', month: 'long' })}` : 'Incidencias recibidas'}</h3>
+              <p className="support-eyebrow">Solicitudes de soporte</p>
+              <h3>{selectedDate ? `Solicitudes del ${new Date(`${selectedDate}T12:00:00`).toLocaleDateString('es-MX', { day: '2-digit', month: 'long' })}` : 'Solicitudes recibidas'}</h3>
             </div>
             {selectedDate && <button className="btn btn-small btn-secondary" type="button" onClick={() => setSelectedDate(null)}>Quitar fecha</button>}
           </div>
 
           <form className="support-filters" onSubmit={submitSearch}>
             <label className="support-filter-control support-filter-search">
-              <span>Buscar ticket</span>
+              <span>Buscar solicitud</span>
               <input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
@@ -439,8 +439,8 @@ export default function Soporte() {
           <div className="support-ticket-list">
             {loading ? (
               <div className="support-empty">
-                <strong>Cargando tickets...</strong>
-                <p>Consultando incidencias registradas.</p>
+                <strong>Cargando solicitudes...</strong>
+                <p>Consultando los casos registrados.</p>
               </div>
             ) : filteredTickets.length > 0 ? (
               paginatedTickets.map((ticket) => (
@@ -474,15 +474,15 @@ export default function Soporte() {
               ))
             ) : (
               <div className="support-empty">
-                <strong>Sin tickets encontrados</strong>
-                <p>No hay incidencias que coincidan con los filtros seleccionados.</p>
+                <strong>Sin solicitudes encontradas</strong>
+                <p>No hay casos que coincidan con los filtros seleccionados.</p>
               </div>
             )}
           </div>
 
           {filteredTickets.length > 0 && (
             <div className="support-pagination">
-              <span>{filteredTickets.length} tickets · Página {currentPage} de {totalPages}</span>
+              <span>{filteredTickets.length} solicitudes · Página {currentPage} de {totalPages}</span>
               <div>
                 <button className="btn btn-small btn-secondary" type="button" disabled={currentPage <= 1} onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}>Anterior</button>
                 <button className="btn btn-small btn-secondary" type="button" disabled={currentPage >= totalPages} onClick={() => setCurrentPage((page) => Math.min(totalPages, page + 1))}>Siguiente</button>
@@ -496,7 +496,7 @@ export default function Soporte() {
         open={Boolean(selectedTicket)}
         onClose={closeTicket}
         eyebrow="Seguimiento de soporte"
-        title={selectedTicket?.titulo || 'Detalle del ticket'}
+        title={selectedTicket?.titulo || 'Detalle de la solicitud'}
         description="Revisa el caso, actualiza su prioridad y deja una respuesta clara para el empleado."
         size="wide"
         busy={saving}
@@ -505,7 +505,7 @@ export default function Soporte() {
             <div className="support-detail-modal-content">
               <div className="support-section-header">
                 <div>
-                  <p className="support-eyebrow">Detalle del ticket</p>
+                  <p className="support-eyebrow">Detalle de la solicitud</p>
                   <h3>{getEmployeeName(selectedTicket)}</h3>
                 </div>
 
@@ -535,7 +535,7 @@ export default function Soporte() {
 
               <div className="support-admin-form">
                 <label>
-                  Estado del ticket
+                  Estado de la solicitud
                   <select value={estadoEdit} onChange={(e) => setEstadoEdit(e.target.value as TicketEstado)}>
                     <option value="abierto">Abierto</option>
                     <option value="en_revision">En revisión</option>

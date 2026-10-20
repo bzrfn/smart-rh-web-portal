@@ -1307,7 +1307,7 @@ export default function AnalisisSupervisado() {
 
                     <div>
                       <strong>Ausencias estimadas</strong>
-                      <p>Variable numérica usada para análisis predictivo.</p>
+                      <p>Cantidad aproximada de ausencias que podría presentarse.</p>
                     </div>
                   </div>
                 </article>
@@ -1385,15 +1385,15 @@ export default function AnalisisSupervisado() {
                   <span className="ml-section-tag">Uso responsable</span>
                   <h3>Limitaciones y consideraciones</h3>
                   <p>
-                    El resultado del modelo debe interpretarse como apoyo para RRHH, no como
-                    una decisión automática. Antes de tomar acciones, se debe revisar contexto,
-                    historial, incidencias reales y comunicación con el empleado.
+                    Estas estimaciones sirven como apoyo para Recursos Humanos, no como una
+                    decisión automática. Antes de actuar, revisa el historial, los casos reales
+                    y la comunicación con el empleado.
                   </p>
 
                   <div className="ml-chip-list">
                     <span>No sanciona automáticamente</span>
                     <span>Requiere interpretación humana</span>
-                    <span>Depende de calidad de datos</span>
+                    <span>Depende de información completa</span>
                     <span>Debe actualizarse periódicamente</span>
                   </div>
                 </article>
@@ -1408,7 +1408,7 @@ export default function AnalisisSupervisado() {
           <div className="ml-modal" onClick={(e) => e.stopPropagation()}>
             <div className="ml-modal-header">
               <div>
-                <span>Detalle de predicción</span>
+                <span>Detalle del seguimiento</span>
                 <h2>{selectedEmployee.nombre_completo}</h2>
                 <p>{selectedEmployee.correo}</p>
               </div>
@@ -1420,7 +1420,7 @@ export default function AnalisisSupervisado() {
 
             <div className="ml-modal-grid">
               <div>
-                <span>Riesgo predicho</span>
+                <span>Nivel de seguimiento</span>
                 <strong>{getRiskLabel(selectedEmployee.riesgo_predicho)}</strong>
               </div>
 

@@ -62,7 +62,10 @@ export default function VerifyLoginCode() {
       setAuth({ token: data.token, user: data.user });
       navigate('/admin/destino', { replace: true });
     } catch (err: any) {
-      setError(err?.response?.data?.message || 'Error de conexión');
+      setError(
+        err?.response?.data?.message ||
+          'No se pudo comprobar el código. Revisa tu conexión e inténtalo de nuevo.'
+      );
     } finally {
       setLoading(false);
     }
@@ -85,13 +88,12 @@ export default function VerifyLoginCode() {
 
       <div className="auth-premium-grid">
         <div className="auth-showcase-card">
-          <div className="auth-showcase-badge">Acceso 2FA</div>
+          <div className="auth-showcase-badge">Segundo paso de seguridad</div>
 
           <h1 className="auth-showcase-title">Código de acceso</h1>
 
           <p className="auth-showcase-text">
-            Para proteger el portal administrativo, SMART RH solicita un código de un solo uso
-            enviado al correo asociado a la cuenta.
+            Escribe el código de un solo uso enviado al correo de tu cuenta.
           </p>
 
           <div className="auth-showcase-points">
@@ -115,7 +117,7 @@ export default function VerifyLoginCode() {
               <span className="auth-showcase-dot" />
               <div>
                 <h3>Acceso protegido</h3>
-                <p>Solo después de validar el código se entrega la sesión administrativa.</p>
+                <p>Al confirmar el código podrás entrar al portal administrativo.</p>
               </div>
             </div>
           </div>
@@ -124,14 +126,14 @@ export default function VerifyLoginCode() {
         <div className="auth-wrapper auth-wrapper-premium">
           <div className="auth-brand-block">
             <h1 className="auth-brand">SMART RH</h1>
-            <p className="auth-brand-subtitle">Autenticación de dos factores</p>
+            <p className="auth-brand-subtitle">Confirmación de acceso</p>
           </div>
 
           <form className="auth-card auth-card-premium" onSubmit={submit}>
             <div className="auth-card-header">
               <div>
-                <p className="auth-eyebrow">Verificación segura</p>
-                <h2 className="auth-title">Código 2FA</h2>
+                <p className="auth-eyebrow">Segundo paso de seguridad</p>
+                <h2 className="auth-title">Confirmar código de acceso</h2>
               </div>
 
               <div className="auth-card-icon"></div>
@@ -165,7 +167,7 @@ export default function VerifyLoginCode() {
             <div className="auth-footer-links">
               {!adminFlow && (
                 <Link to="/login" className="auth-link primary">
-                  Volver al login
+                  Volver a iniciar sesión
                 </Link>
               )}
 

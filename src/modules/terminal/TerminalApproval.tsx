@@ -220,8 +220,7 @@ export default function TerminalApproval() {
           </h1>
 
           <p>
-            Confirma o rechaza la solicitud de un dispositivo
-            que desea operar el QR dinámico de asistencia.
+            Revisa qué dispositivo solicita mostrar el código de asistencia y decide si puede usarlo.
           </p>
         </header>
 
@@ -239,7 +238,7 @@ export default function TerminalApproval() {
 
         <label className="terminal-field">
           <span>
-            Identificador de solicitud
+            Código de la solicitud
           </span>
 
           <input
@@ -252,7 +251,7 @@ export default function TerminalApproval() {
                   event.target.value
                 )
             }
-            placeholder="Solicitud recibida por correo"
+            placeholder="Pega aquí el código recibido por correo"
             autoComplete="off"
             spellCheck={
               false
@@ -301,7 +300,7 @@ export default function TerminalApproval() {
             {loading ===
             'approve'
               ? 'Autorizando…'
-              : 'Aprobar terminal'}
+              : 'Permitir este dispositivo'}
           </button>
 
           <button

@@ -65,7 +65,10 @@ export default function ResetPassword() {
         navigate('/login', { replace: true });
       }, 1400);
     } catch (err: any) {
-      setError(err?.response?.data?.message || 'Error de conexión');
+      setError(
+        err?.response?.data?.message ||
+          'No se pudo cambiar la contraseña. Revisa tu conexión e inténtalo de nuevo.'
+      );
     } finally {
       setLoading(false);
     }
@@ -93,8 +96,7 @@ export default function ResetPassword() {
           <h1 className="auth-showcase-title">Actualizar contraseña</h1>
 
           <p className="auth-showcase-text">
-            Restablece el acceso de forma segura utilizando el código temporal enviado
-            al correo de la cuenta.
+            Usa el código enviado al correo para crear una contraseña nueva.
           </p>
 
           <div className="auth-showcase-points">
@@ -102,7 +104,7 @@ export default function ResetPassword() {
               <span className="auth-showcase-dot" />
               <div>
                 <h3>Control por código</h3>
-                <p>Validación previa antes de permitir la actualización de credenciales.</p>
+                <p>El código confirma que puedes cambiar la contraseña de esta cuenta.</p>
               </div>
             </div>
 
@@ -110,7 +112,7 @@ export default function ResetPassword() {
               <span className="auth-showcase-dot" />
               <div>
                 <h3>Proceso guiado</h3>
-                <p>Interfaz clara para completar el restablecimiento sin ambigüedad.</p>
+                <p>Completa el código, la contraseña nueva y su confirmación.</p>
               </div>
             </div>
 
@@ -182,7 +184,7 @@ export default function ResetPassword() {
 
             <div className="auth-footer-links">
               <Link to="/login" className="auth-link primary">
-                Volver al login
+                Volver a iniciar sesión
               </Link>
 
               <Link to="/" className="auth-link">

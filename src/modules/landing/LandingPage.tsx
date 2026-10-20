@@ -117,7 +117,7 @@ export default function LandingPage() {
         label: 'Max integrado',
         title: 'Soporte con contexto para cerrar casos más rápido',
         detail:
-          'Max ayuda a ubicar el módulo correcto, resumir el caso y preparar tickets cuando hace falta.',
+          'Max ayuda a ubicar el apartado correcto, resumir el caso y preparar una solicitud de soporte cuando hace falta.',
         stat: '03',
         accent: 'Asistente operativo',
       },
@@ -135,13 +135,13 @@ export default function LandingPage() {
       {
         label: 'Inteligencia',
         title: 'Max con contexto',
-        detail: 'El asistente ayuda a resolver dudas y preparar tickets con información útil.',
+        detail: 'El asistente ayuda a resolver dudas y preparar solicitudes de soporte con información útil.',
         icon: 'spark' as const,
       },
       {
         label: 'Control',
-        title: 'Datos y auditoría',
-        detail: 'ETL, analítica y seguimiento para decisiones de Recursos Humanos.',
+        title: 'Información y seguimiento',
+        detail: 'Resúmenes y reportes claros para tomar decisiones de Recursos Humanos.',
         icon: 'chart' as const,
       },
     ],
@@ -397,8 +397,8 @@ export default function LandingPage() {
               </div>
 
               <div>
-                <strong>ETL</strong>
-                <span>Análisis de datos</span>
+                <strong>Datos</strong>
+                <span>Resúmenes claros</span>
               </div>
             </div>
           </div>

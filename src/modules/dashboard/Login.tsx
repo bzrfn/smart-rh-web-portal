@@ -89,7 +89,10 @@ export default function Login() {
 
       setInfo('Se requiere verificación por correo para continuar.');
     } catch (err: any) {
-      setError(err?.response?.data?.message || 'Error de conexión');
+      setError(
+        err?.response?.data?.message ||
+          'No se pudo iniciar sesión. Revisa tu conexión e inténtalo de nuevo.'
+      );
     } finally {
       setLoading(false);
     }
@@ -120,8 +123,8 @@ export default function Login() {
           <h1 className="auth-showcase-title">SMART RH</h1>
 
           <p className="auth-showcase-text">
-            Una entrada limpia al ecosistema SMART RH: portal, asistencia,
-            documentos, solicitudes, soporte y análisis desde un mismo flujo.
+            Ingresa para consultar asistencia, documentos, solicitudes, soporte y
+            reportes desde un solo lugar.
           </p>
 
           <div className="auth-showcase-points">
@@ -152,8 +155,8 @@ export default function Login() {
               <div>
                 <h3>Max integrado</h3>
                 <p>
-                  Usa el asistente para resolver dudas, ordenar contexto y preparar
-                  tickets cuando el caso lo necesite.
+                  Usa el asistente para resolver dudas y preparar solicitudes de
+                  soporte con la información necesaria.
                 </p>
               </div>
             </div>
@@ -177,7 +180,7 @@ export default function Login() {
             </div>
 
             <p className="auth-description">
-              Ingresa tus credenciales para continuar al portal de SMART RH.
+              Escribe el correo y la contraseña de tu cuenta para entrar.
             </p>
 
             <label className="auth-label">Correo</label>
@@ -185,7 +188,7 @@ export default function Login() {
               className="auth-input"
               value={correo}
               onChange={(e) => setCorreo(e.target.value)}
-              placeholder="Email"
+              placeholder="usuario@empresa.com"
               autoComplete="username"
             />
 

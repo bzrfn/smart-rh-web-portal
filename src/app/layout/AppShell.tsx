@@ -219,14 +219,14 @@ export default function AppShell() {
         path: '/portal/analisis-supervisado',
         label: 'Predicciones',
         icon: 'chart',
-        description: 'Señales para decidir',
+        description: 'Personas que podrían requerir seguimiento',
         adminOnly: true,
       },
       {
         path: '/portal/etl',
         label: 'Datos',
         icon: 'data',
-        description: 'Información lista para reportes',
+        description: 'Resumen de usuarios, pagos y solicitudes',
         adminOnly: true,
       },
     ];

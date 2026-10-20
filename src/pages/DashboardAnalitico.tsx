@@ -45,7 +45,7 @@ const analyticsViews: Array<{
   {
     id: 'operativa',
     label: 'Operación diaria',
-    description: 'Revisa asistencias pendientes, rechazadas y los días con más incidencias.',
+    description: 'Revisa asistencias pendientes, rechazadas y los días con más casos por atender.',
   },
   {
     id: 'administrativa',
@@ -460,14 +460,14 @@ export default function DashboardAnalitico() {
     }
 
     if (asistencia >= 0.8 && incidencias <= empleados) {
-      return 'La situación general es favorable: la mayoría de las asistencias están aprobadas y hay pocas incidencias por revisar.';
+      return 'La situación general es favorable: la mayoría de las asistencias están aprobadas y hay pocos casos por revisar.';
     }
 
     if (asistencia >= 0.5) {
-      return 'Hay registros correctos, pero también incidencias que conviene revisar antes de cerrar el periodo.';
+      return 'Hay registros correctos, pero también casos que conviene revisar antes de cerrar el periodo.';
     }
 
-    return 'La información requiere atención: hay pocas asistencias aprobadas o existen varias incidencias pendientes.';
+    return 'La información requiere atención: hay pocas asistencias aprobadas o existen varios casos pendientes.';
   }, [analytics.kpis]);
 
   async function cargarDashboard() {
@@ -606,7 +606,7 @@ export default function DashboardAnalitico() {
           <ReadingStep
             number="01"
             title="Revisar el día"
-            text="Consulta asistencia e incidencias que necesitan atención."
+            text="Consulta asistencias y casos que necesitan atención."
             styles={styles}
           />
           <ReadingStep
@@ -766,8 +766,8 @@ export default function DashboardAnalitico() {
       <section className="analytics-conclusion-card" style={styles.conclusionCard}>
         <SectionHeading
           eyebrow="Conclusiones"
-          title="Interpretación final"
-          text="Resumen ejecutivo de lo que presentan las gráficas principales."
+          title="Qué conviene revisar"
+          text="Resumen de los casos y tendencias que merecen atención."
           styles={styles}
         />
 
@@ -793,11 +793,11 @@ export default function DashboardAnalitico() {
           <ConclusionItem
             title="Incidencias"
             text={analytics.interpretaciones.incidencias}
-            fallback="Las incidencias ayudan a detectar casos que requieren revisión."
+            fallback="Los registros pendientes o rechazados ayudan a detectar casos que requieren revisión."
             styles={styles}
           />
           <ConclusionItem
-            title="Agrupación de personal"
+            title="Grupos de personal"
             text={
               kmeans
                 ? `La claridad de los grupos es ${getSilhouetteLabel(
@@ -919,7 +919,7 @@ function Grafica01AsistenciasPorEstado({
       <ChartInterpretation
         title="Interpretación"
         text={interpretacion}
-        fallback="Si predominan las aprobadas, el comportamiento operativo es estable. Si aumentan pendientes o rechazadas, hay incidencias que revisar."
+        fallback="Si predominan las aprobadas, la situación es estable. Si aumentan las pendientes o rechazadas, hay casos que revisar."
         styles={styles}
       />
     </ChartCard>
@@ -1102,9 +1102,9 @@ function Grafica03IncidenciasPorFecha({
     title: 'Incidencias por fecha',
     chartType: 'Gráfica de línea múltiple',
     source: 'Entra a Asistencia y resuelve los días que concentran más casos.',
-    question: '¿En qué fechas se concentran más incidencias?',
+    question: '¿En qué fechas hay más casos por revisar?',
     description:
-      'Compara asistencias pendientes, rechazadas e incidencias totales a través del tiempo.',
+      'Compara asistencias pendientes y rechazadas a través del tiempo.',
     whyThisChart:
       'Se usa línea múltiple porque permite comparar varias series temporales en una misma gráfica.',
     accent: 'danger',
@@ -1163,7 +1163,7 @@ function Grafica03IncidenciasPorFecha({
             </LineChart>
           </ResponsiveContainer>
         ) : (
-          <EmptyChart styles={styles} text="No hay datos de incidencias por fecha." />
+          <EmptyChart styles={styles} text="No hay casos pendientes o rechazados por fecha." />
         )}
       </div>
 
@@ -1736,9 +1736,9 @@ function Grafica09IncidenciasVsVacaciones({
     title: 'Incidencias vs vacaciones',
     chartType: 'Gráfica de dispersión',
     source: 'Valida cada caso en Asistencia y Vacaciones antes de tomar una decisión.',
-    question: '¿Los empleados con más incidencias también registran más solicitudes?',
+    question: '¿Las personas con más casos pendientes también registran más solicitudes?',
     description:
-      'Compara incidencias laborales con solicitudes de vacaciones por empleado.',
+      'Compara casos pendientes con solicitudes de vacaciones por persona.',
     whyThisChart:
       'Se usa dispersión porque permite observar relación entre dos variables.',
     accent: 'danger',
@@ -1781,13 +1781,13 @@ function Grafica09IncidenciasVsVacaciones({
             </ScatterChart>
           </ResponsiveContainer>
         ) : (
-          <EmptyChart styles={styles} text="No hay datos para incidencias vs vacaciones." />
+          <EmptyChart styles={styles} text="No hay información suficiente para comparar casos y vacaciones." />
         )}
       </div>
 
       <ChartInterpretation
         title="Interpretación"
-        text="Cada punto representa un empleado. El eje X muestra incidencias y el eje Y solicitudes de vacaciones."
+        text="Cada punto representa una persona. La línea horizontal muestra casos pendientes y la vertical, solicitudes de vacaciones."
         fallback="Sirve para detectar empleados que requieren revisión administrativa individual."
         styles={styles}
       />

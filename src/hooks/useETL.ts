@@ -51,7 +51,10 @@ export function useETL() {
       }
     } catch (err: any) {
       // Manejo de errores de red o respuesta inesperada
-      setError(err?.response?.data?.message || err.message || 'Error ejecutando ETL');
+      setError(
+        err?.response?.data?.message ||
+          'No se pudo actualizar el resumen. Revisa tu conexión e inténtalo de nuevo.'
+      );
     } finally {
       setLoading(false);
     }

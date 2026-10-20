@@ -686,7 +686,7 @@ export default function TerminalAttendance() {
 
         if (!token) {
           throw new Error(
-            'No se recibió el JWT exclusivo de terminal.'
+            'No se pudo confirmar el acceso de esta terminal. Solicita autorización nuevamente.'
           );
         }
 
@@ -1236,14 +1236,13 @@ export default function TerminalAttendance() {
             </h2>
 
             <p>
-              La terminal utiliza una sesión exclusiva de
-              asistencia. Las credenciales administrativas
-              nunca se convierten en una sesión QR.
+              Este dispositivo necesita aprobación antes de mostrar el código de asistencia.
+              La cuenta del administrador permanece protegida.
             </p>
 
             <label className="terminal-field">
               <span>
-                Identificador de terminal
+                Nombre del dispositivo
               </span>
 
               <input
@@ -1336,7 +1335,7 @@ export default function TerminalAttendance() {
                     resetWaiting
                   }
                 >
-                  Cancelar espera local
+                  Cancelar solicitud
                 </button>
               )}
             </div>
@@ -1344,7 +1343,7 @@ export default function TerminalAttendance() {
 
           <article className="terminal-auth-help">
             <span className="terminal-section-eyebrow">
-              FLUJO SMART RH
+              PASOS PARA ACTIVARLA
             </span>
 
             <h2>
@@ -1358,7 +1357,7 @@ export default function TerminalAttendance() {
                 </strong>
 
                 <span>
-                  La terminal solicita autorización.
+                  Este dispositivo envía una solicitud de autorización.
                 </span>
               </div>
 
@@ -1379,8 +1378,7 @@ export default function TerminalAttendance() {
                 </strong>
 
                 <span>
-                  Al aprobarla, este dispositivo obtiene
-                  una sesión exclusiva y muestra el QR.
+                  Al aprobarla, este dispositivo muestra el código de asistencia.
                 </span>
               </div>
             </div>
@@ -1438,7 +1436,7 @@ export default function TerminalAttendance() {
             <div className="terminal-qr-cycle" aria-live="polite">
               <div className="terminal-qr-cycle-copy">
                 <span>
-                  Renovación automática
+                  Tiempo disponible
                 </span>
 
                 <strong>
@@ -1530,7 +1528,7 @@ export default function TerminalAttendance() {
               </strong>
 
               <small>
-                Sincronización con Backend SMART RH
+                Información recibida correctamente
               </small>
             </article>
 
@@ -1600,7 +1598,7 @@ export default function TerminalAttendance() {
         </span>
 
         <span>
-          QR dinámico · Sesión dedicada · Auditoría activa
+          Código renovable · Acceso controlado · Registro protegido
         </span>
       </footer>
     </main>

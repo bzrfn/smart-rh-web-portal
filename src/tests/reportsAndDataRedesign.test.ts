@@ -15,7 +15,7 @@ describe('Reportes y datos visual contract', () => {
     expect(navigation).toContain("'/portal/etl'");
     expect(navigation).toContain("'/portal/dashboard-analitico'");
     expect(navigation).toContain("'/portal/analisis-supervisado'");
-    expect(navigation).toContain('Preparar, interpretar y anticipar');
+    expect(navigation).toContain('Reunir información, entender resultados y decidir qué revisar');
     expect(dataModule).toContain('<AnalyticsModuleNav />');
     expect(reports).toContain('<AnalyticsModuleNav />');
     expect(predictions).toContain('<AnalyticsModuleNav />');

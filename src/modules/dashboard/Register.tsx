@@ -93,7 +93,10 @@ export default function Register() {
 
       setInfo('Cuenta creada. Revisa tu correo para confirmar tu cuenta.');
     } catch (err: any) {
-      setError(err?.response?.data?.message || 'Error de conexión');
+      setError(
+        err?.response?.data?.message ||
+          'No se pudo crear la cuenta. Revisa tu conexión e inténtalo de nuevo.'
+      );
     } finally {
       setLoading(false);
     }
@@ -117,8 +120,7 @@ export default function Register() {
           <h1 className="auth-showcase-title">Crear acceso</h1>
 
           <p className="auth-showcase-text">
-            Registra una nueva cuenta. SMART RH enviará un código de confirmación
-            al correo registrado antes de permitir el acceso.
+            Registra una cuenta y confirma el correo antes del primer acceso.
           </p>
 
           <div className="auth-showcase-points">
@@ -142,7 +144,7 @@ export default function Register() {
               <span className="auth-showcase-dot" />
               <div>
                 <h3>Documentación lista</h3>
-                <p>La imagen quedará disponible para credencial y expediente digital.</p>
+                <p>La foto se utilizará en el perfil, la credencial y los documentos del empleado.</p>
               </div>
             </div>
           </div>
@@ -165,7 +167,7 @@ export default function Register() {
             </div>
 
             <p className="auth-description">
-              Completa la información. Al finalizar recibirás un código de confirmación.
+              Completa los datos de la persona. Al finalizar enviaremos un código a su correo.
             </p>
 
             <div className="auth-photo-upload">
@@ -224,7 +226,7 @@ export default function Register() {
 
             <div className="auth-footer-links">
               <Link to="/login" className="auth-link primary">
-                Volver al login
+                Volver a iniciar sesión
               </Link>
 
               <Link to="/" className="auth-link">

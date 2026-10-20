@@ -377,7 +377,7 @@ export default function Nomina() {
           <div className="module-hero-copy">
             <h3>Pagos organizados por persona y periodo</h3>
             <p>
-              Identifica pendientes, valida importes y actualiza el estado de cada pago desde un mismo flujo.
+              Identifica pendientes, valida importes y actualiza el estado de cada pago desde un mismo lugar.
             </p>
           </div>
 

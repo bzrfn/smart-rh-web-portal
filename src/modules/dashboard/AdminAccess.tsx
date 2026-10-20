@@ -281,9 +281,8 @@ export default function AdminAccess() {
           </h1>
 
           <p className="auth-showcase-text">
-            El acceso al portal requiere una autorización
-            central antes de solicitar las credenciales
-            personales del administrador.
+            Antes de iniciar sesión, el administrador general debe
+            autorizar el acceso mediante un código temporal.
           </p>
 
           <div className="auth-showcase-points">
@@ -292,12 +291,12 @@ export default function AdminAccess() {
 
               <div>
                 <h3>
-                  1. Autorización central
+                  1. Solicita el acceso
                 </h3>
 
                 <p>
-                  SMART RH envía un código temporal únicamente
-                  al administrador general configurado en el sistema.
+                  SMART RH envía un código temporal al administrador
+                  general responsable de aprobar el ingreso.
                 </p>
               </div>
             </div>
@@ -307,7 +306,7 @@ export default function AdminAccess() {
 
               <div>
                 <h3>
-                  2. Credenciales personales
+                  2. Ingresa tu cuenta
                 </h3>
 
                 <p>
@@ -323,13 +322,12 @@ export default function AdminAccess() {
 
               <div>
                 <h3>
-                  3. Segundo factor
+                  3. Confirma el segundo código
                 </h3>
 
                 <p>
-                  Una contraseña correcta todavía requiere
-                  el código 2FA enviado al correo personal
-                  del administrador.
+                  Después de la contraseña, escribe el segundo
+                  código enviado a tu correo personal.
                 </p>
               </div>
             </div>
@@ -368,19 +366,17 @@ export default function AdminAccess() {
             {!challengeId ? (
               <>
                 <p className="auth-description">
-                  Solicita autorización al administrador general
-                  para continuar al inicio de sesión administrativo.
+                  Envía una solicitud al administrador general para continuar.
                 </p>
 
                 <div className="auth-email-chip">
-                  Autorización controlada por SMART RH
+                  El administrador general recibirá el código
                 </div>
               </>
             ) : (
               <>
                 <p className="auth-description">
-                  Solicita al administrador general el código temporal
-                  correspondiente a esta solicitud.
+                  Pide al administrador general el código que recibió para esta solicitud.
                 </p>
 
                 <div className="auth-email-chip">
@@ -421,7 +417,7 @@ export default function AdminAccess() {
                   loading
                     ? 'Procesando...'
                     : challengeId
-                    ? 'Validar autorización'
+                      ? 'Confirmar código y continuar'
                     : 'Solicitar autorización'
                 }
               </span>

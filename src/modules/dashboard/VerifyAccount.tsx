@@ -58,7 +58,10 @@ export default function VerifyAccount() {
       setAuth({ token: data.token, user: data.user });
       navigate('/portal', { replace: true });
     } catch (err: any) {
-      setError(err?.response?.data?.message || 'Error de conexión');
+      setError(
+        err?.response?.data?.message ||
+          'No se pudo confirmar la cuenta. Revisa tu conexión e inténtalo de nuevo.'
+      );
     } finally {
       setLoading(false);
     }
@@ -86,8 +89,7 @@ export default function VerifyAccount() {
           <h1 className="auth-showcase-title">Confirma tu correo</h1>
 
           <p className="auth-showcase-text">
-            Antes de activar el acceso al portal, SMART RH necesita confirmar que el correo
-            registrado pertenece al usuario.
+            Escribe el código enviado al correo para confirmar la cuenta y permitir el acceso.
           </p>
 
           <div className="auth-showcase-points">
@@ -111,7 +113,7 @@ export default function VerifyAccount() {
               <span className="auth-showcase-dot" />
               <div>
                 <h3>Cuenta protegida</h3>
-                <p>Después de confirmar el correo podrás acceder al portal administrativo.</p>
+                <p>Después de confirmar el correo podrás iniciar sesión en SMART RH.</p>
               </div>
             </div>
           </div>
@@ -160,7 +162,7 @@ export default function VerifyAccount() {
 
             <div className="auth-footer-links">
               <Link to="/login" className="auth-link primary">
-                Volver al login
+                Volver a iniciar sesión
               </Link>
 
               <Link to="/" className="auth-link">
