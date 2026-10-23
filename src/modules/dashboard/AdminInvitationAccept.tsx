@@ -52,6 +52,15 @@ export default function AdminInvitationAccept() {
       ]
     );
 
+  const tipoCuenta =
+    useMemo(
+      () =>
+        searchParams.get('tipoCuenta') === 'empleado'
+          ? 'empleado'
+          : 'admin',
+      [searchParams]
+    );
+
   const [
     contrasena,
     setContrasena,
@@ -91,6 +100,11 @@ export default function AdminInvitationAccept() {
     useState(
       ''
     );
+
+  const [
+    activatedRole,
+    setActivatedRole,
+  ] = useState('');
 
 
   const linkValido =
@@ -156,10 +170,11 @@ export default function AdminInvitationAccept() {
         data,
       } =
         await api.post(
-          '/auth/admin-invitations/accept',
+          '/auth/invitations/accept',
           {
             invitationId,
             token,
+            tipoCuenta,
             contrasena,
           }
         );
@@ -167,7 +182,13 @@ export default function AdminInvitationAccept() {
 
       setSuccess(
         data?.message ||
-        'Cuenta administrativa activada correctamente.'
+        'Cuenta activada correctamente.'
+      );
+
+      setActivatedRole(
+        String(
+          data?.user?.role || ''
+        ).toLowerCase()
       );
 
       setContrasena(
@@ -183,7 +204,7 @@ export default function AdminInvitationAccept() {
     ) {
       setError(
         e?.response?.data?.message ||
-        'La invitación es inválida, expiró o ya fue utilizada.'
+        'La invitación es inválida, venció o ya fue utilizada.'
       );
 
     } finally {
@@ -198,16 +219,15 @@ export default function AdminInvitationAccept() {
     <div className="auth-page">
       <div className="auth-card">
         <div className="auth-showcase-badge">
-          SMART RH · Invitación administrativa
+          SMART RH · Invitación personal
         </div>
 
         <h1>
-          Activar cuenta administrativa
+          Activar tu cuenta
         </h1>
 
         <p>
-          Define tu propia contraseña para completar
-          la creación de tu cuenta.
+          Define una contraseña segura para terminar la activación.
         </p>
 
         {!linkValido && (
@@ -285,9 +305,9 @@ export default function AdminInvitationAccept() {
           }}
         >
           <Link
-            to="/admin/acceso"
+            to={activatedRole === 'admin' ? '/admin/acceso' : '/'}
           >
-            Ir al acceso administrativo
+            {activatedRole === 'admin' ? 'Ir al acceso administrativo' : 'Volver al inicio'}
           </Link>
         </div>
       </div>

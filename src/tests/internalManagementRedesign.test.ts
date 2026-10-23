@@ -47,7 +47,7 @@ describe('Gestión interna visual contract', () => {
     expect(users).toContain('users-form-section');
     expect(users).toContain('Datos de la cuenta');
     expect(users).toContain('Relación laboral');
-    expect(users).toContain('Nuevo usuario');
+    expect(users).toContain('Invitar nuevo usuario');
   });
 
   test('user list defaults to five records and keeps the form comfortably spaced', () => {
@@ -55,7 +55,9 @@ describe('Gestión interna visual contract', () => {
     expect(users).toContain('useState(5)');
     expect(finalStyles).toContain('.smart-modal .users-modal-form');
     expect(finalStyles).toContain('gap: 22px !important');
-    expect(users).toContain('users-password-field');
+    expect(users).not.toContain('users-password-field');
+    expect(users).toContain("'/auth/invitations'");
+    expect(users).toContain("tipo_cuenta: roleId === 1 ? 'admin' : 'empleado'");
     expect(users).toContain('users-role-field');
     expect(repairStyles).toContain('z-index: 2147483600 !important');
     expect(finalAlignmentStyles).toContain('grid-template-columns: repeat(3, minmax(0, 1fr)) !important');

@@ -116,6 +116,11 @@ export default function Navigation() {
         element={<AdminInvitationAccept />}
       />
 
+      <Route
+        path="/activar-cuenta"
+        element={<AdminInvitationAccept />}
+      />
+
       {isAdmin ? (
         <Route path="/portal" element={<AppShell />}>
           <Route index element={<Dashboard />} />

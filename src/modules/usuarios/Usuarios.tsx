@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { api } from '../../services/api';
 import { useAuth } from '../../app/auth/AuthContext';
-import PasswordField from '../../components/PasswordField';
 import SmartRhModal from '../../components/SmartRhModal';
 
 type User = {
@@ -29,7 +28,6 @@ type UserForm = {
   nombre: string;
   apellido: string;
   correo: string;
-  contrasena: string;
   rol_id: string;
   telefono: string;
   direccion: string;
@@ -55,7 +53,6 @@ const EMPTY_FORM: UserForm = {
   nombre: '',
   apellido: '',
   correo: '',
-  contrasena: '',
   rol_id: '2',
   telefono: '',
   direccion: '',
@@ -309,7 +306,6 @@ export default function Usuarios() {
       nombre: u.nombre || '',
       apellido: u.apellido || '',
       correo: u.correo || '',
-      contrasena: '',
       rol_id: String(u.rol_id || (isAdminUser(u) ? 1 : 2)),
       telefono: u.telefono || '',
       direccion: u.direccion || '',
@@ -340,15 +336,18 @@ export default function Usuarios() {
       return;
     }
 
-    if (!editingId && roleId === 1) {
+    if (!editingId) {
       try {
         setSavingKey('user-form');
         setError('');
         setMessage('');
 
         const { data } = await api.post(
-          '/auth/admin-invitations',
-          basePayload,
+          '/auth/invitations',
+          {
+            ...basePayload,
+            tipo_cuenta: roleId === 1 ? 'admin' : 'empleado',
+          },
           authConfig
         );
 
@@ -356,12 +355,12 @@ export default function Usuarios() {
         setShowUserForm(false);
         setMessage(
           data?.message ||
-          'Invitación administrativa enviada correctamente.'
+          'Invitación enviada correctamente.'
         );
       } catch (e: any) {
         setError(
           e?.response?.data?.message ??
-          'No se pudo enviar la invitación administrativa.'
+          'No se pudo enviar la invitación por correo.'
         );
       } finally {
         setSavingKey('');
@@ -374,15 +373,6 @@ export default function Usuarios() {
       ...basePayload,
       rol_id: roleId,
     };
-
-    if (!editingId) {
-      payload.contrasena = form.contrasena;
-    }
-
-    if (!editingId && !payload.contrasena) {
-      setError('La contraseña es obligatoria para crear un empleado.');
-      return;
-    }
 
     try {
       setSavingKey('user-form');
@@ -399,17 +389,6 @@ export default function Usuarios() {
         resetForm();
         setShowUserForm(false);
         setMessage('Usuario actualizado correctamente.');
-      } else {
-        await api.post(
-          '/users',
-          payload,
-          authConfig
-        );
-
-        resetForm();
-        setShowUserForm(false);
-        setMessage('Empleado creado correctamente.');
-        await loadUsers();
       }
     } catch (e: any) {
       setError(
@@ -774,9 +753,9 @@ export default function Usuarios() {
           <SmartRhModal
             open={showUserForm}
             onClose={() => { resetForm(); setShowUserForm(false); }}
-            eyebrow={editingId ? 'Edición de personal' : 'Alta de personal'}
-            title={editingId ? 'Editar usuario' : 'Crear nuevo usuario'}
-            description="Completa los datos de la cuenta, el contacto y la relación laboral en un solo formulario."
+            eyebrow={editingId ? 'Edición de personal' : 'Invitación de personal'}
+            title={editingId ? 'Editar usuario' : 'Invitar nuevo usuario'}
+            description={editingId ? 'Actualiza los datos de la cuenta y la relación laboral.' : 'SMART RH enviará un enlace personal para que la persona active su cuenta y defina su contraseña.'}
             size="wide"
             busy={savingKey === 'user-form'}
           >
@@ -800,17 +779,6 @@ export default function Usuarios() {
                 <input type="email" value={form.correo} onChange={(e) => updateForm('correo', e.target.value)} />
               </label>
 
-              {!editingId && form.rol_id !== '1' && (
-                <div className="users-password-field">
-                  <PasswordField
-                    label="Contraseña"
-                    value={form.contrasena}
-                    onChange={(e) => updateForm('contrasena', e.target.value)}
-                    autoComplete="new-password"
-                  />
-                </div>
-              )}
-
               <label className="form-label users-role-field">
                 Rol
                 <select value={form.rol_id} onChange={(e) => updateForm('rol_id', e.target.value)}>
@@ -831,10 +799,10 @@ export default function Usuarios() {
                 </select>
               </label>
 
-              {!editingId && form.rol_id === '1' && (
+              {!editingId && (
                 <p className="module-info">
-                  El administrador recibirá una invitación por correo y
-                  establecerá personalmente su contraseña.
+                  La persona recibirá una invitación en este correo. El enlace es personal,
+                  vence en 30 minutos y permite establecer su propia contraseña.
                 </p>
               )}
             </div>
@@ -888,9 +856,7 @@ export default function Usuarios() {
                     ? 'Guardando...'
                     : editingId
                       ? 'Actualizar usuario'
-                      : form.rol_id === '1'
-                        ? 'Enviar invitación'
-                        : 'Crear empleado'
+                      : 'Enviar invitación'
                 }
               </button>
 
@@ -913,7 +879,7 @@ export default function Usuarios() {
                 </p>
               </div>
               <button className="btn" type="button" onClick={() => { resetForm(); setShowUserForm(true); }}>
-                Nuevo usuario
+                Invitar usuario
               </button>
             </div>
 
