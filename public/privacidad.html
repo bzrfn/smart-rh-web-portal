@@ -5,308 +5,262 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="index, follow">
   <meta name="description" content="Política de Privacidad de SMART RH para la aplicación móvil y el portal de recursos humanos.">
+  <meta name="theme-color" content="#071525">
   <title>Política de Privacidad | SMART RH</title>
-  <style>
-    :root {
-      color-scheme: light;
-      --brand: #0a57a4;
-      --brand-dark: #084785;
-      --brand-soft: #eaf3fb;
-      --ink: #0f172a;
-      --muted: #52627a;
-      --line: #dce5ef;
-      --surface: #ffffff;
-      --canvas: #f4f8fc;
-      --focus: #22b8b0;
-    }
-
-    * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-    body {
-      margin: 0;
-      color: var(--ink);
-      background: var(--canvas);
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      font-size: 16px;
-      line-height: 1.65;
-    }
-
-    a { color: var(--brand); text-underline-offset: 3px; }
-    a:hover { color: var(--brand-dark); }
-    a:focus-visible { outline: 3px solid rgba(34, 184, 176, .38); outline-offset: 3px; border-radius: 4px; }
-
-    .topbar {
-      border-bottom: 1px solid var(--line);
-      background: var(--surface);
-    }
-
-    .topbar-inner,
-    .page {
-      width: min(1120px, calc(100% - 32px));
-      margin: 0 auto;
-    }
-
-    .topbar-inner {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 24px;
-      min-height: 72px;
-    }
-
-    .brand {
-      color: var(--brand);
-      font-size: 21px;
-      font-weight: 800;
-      letter-spacing: -.02em;
-      text-decoration: none;
-    }
-
-    .topbar nav { display: flex; flex-wrap: wrap; gap: 18px; }
-    .topbar nav a { color: var(--muted); font-size: 14px; font-weight: 650; text-decoration: none; }
-
-    .page { padding: 56px 0 72px; }
-    .hero {
-      padding: clamp(28px, 5vw, 52px);
-      border: 1px solid var(--line);
-      border-radius: 28px;
-      background: var(--surface);
-      box-shadow: 0 18px 50px rgba(15, 23, 42, .08);
-    }
-
-    .eyebrow {
-      margin: 0 0 10px;
-      color: var(--brand);
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: .09em;
-      text-transform: uppercase;
-    }
-
-    h1, h2, h3 { text-wrap: balance; }
-    h1 { margin: 0; font-size: clamp(2rem, 5vw, 3.35rem); line-height: 1.08; letter-spacing: -.035em; }
-    .lead { max-width: 68ch; margin: 18px 0 0; color: var(--muted); font-size: 18px; }
-    .updated { margin: 20px 0 0; color: var(--muted); font-size: 14px; }
-
-    .layout {
-      display: grid;
-      grid-template-columns: 250px minmax(0, 1fr);
-      gap: 28px;
-      align-items: start;
-      margin-top: 28px;
-    }
-
-    .index {
-      position: sticky;
-      top: 20px;
-      padding: 20px;
-      border: 1px solid var(--line);
-      border-radius: 20px;
-      background: var(--surface);
-    }
-
-    .index strong { display: block; margin-bottom: 10px; font-size: 13px; letter-spacing: .02em; }
-    .index a { display: block; padding: 6px 0; color: var(--muted); font-size: 14px; text-decoration: none; }
-
-    .policy {
-      padding: clamp(24px, 4vw, 44px);
-      border: 1px solid var(--line);
-      border-radius: 24px;
-      background: var(--surface);
-    }
-
-    section { scroll-margin-top: 24px; }
-    section + section { margin-top: 38px; padding-top: 34px; border-top: 1px solid var(--line); }
-    h2 { margin: 0 0 12px; font-size: 25px; line-height: 1.2; letter-spacing: -.02em; }
-    h3 { margin: 22px 0 8px; font-size: 17px; line-height: 1.35; }
-    p { max-width: 72ch; margin: 10px 0; color: var(--muted); text-wrap: pretty; }
-    ul { max-width: 72ch; margin: 12px 0 0; padding-left: 22px; color: var(--muted); }
-    li + li { margin-top: 8px; }
-
-    .notice {
-      margin-top: 18px;
-      padding: 18px 20px;
-      border-left: 4px solid var(--brand);
-      border-radius: 12px;
-      background: var(--brand-soft);
-    }
-    .notice p { margin: 0; color: var(--ink); }
-
-    .contact-card {
-      margin-top: 18px;
-      padding: 20px;
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      background: #f9fbfd;
-    }
-    .contact-card p { margin: 4px 0; }
-
-    footer { padding: 28px 16px 38px; color: var(--muted); font-size: 13px; text-align: center; }
-
-    @media (max-width: 800px) {
-      .topbar-inner { align-items: flex-start; flex-direction: column; padding: 18px 0; }
-      .layout { grid-template-columns: 1fr; }
-      .index { position: static; }
-      .page { padding-top: 28px; }
-    }
-  </style>
+  <link rel="stylesheet" href="/legal.css">
 </head>
 <body>
-  <header class="topbar">
-    <div class="topbar-inner">
-      <a class="brand" href="/">SMART RH</a>
-      <nav aria-label="Navegación legal">
+  <header class="legal-topbar">
+    <div class="legal-shell legal-topbar-inner">
+      <a class="legal-brand" href="/" aria-label="Ir a la página principal de SMART RH">
+        <span class="legal-brand-mark">SRH</span>
+        <span class="legal-brand-copy">
+          <strong>SMART RH</strong>
+          <small>Información legal</small>
+        </span>
+      </a>
+      <nav class="legal-nav" aria-label="Navegación legal">
+        <a href="/">Página principal</a>
         <a href="#contacto">Contacto</a>
-        <a href="/eliminar-cuenta.html">Eliminar una cuenta</a>
+        <a class="legal-nav-primary" href="/eliminar-cuenta.html">Eliminar una cuenta</a>
       </nav>
     </div>
   </header>
 
-  <main class="page">
-    <header class="hero">
-      <p class="eyebrow">Información legal y de privacidad</p>
-      <h1>Política de Privacidad de SMART RH</h1>
-      <p class="lead">Esta política explica qué información trata SMART RH, para qué se utiliza, cómo se protege y qué opciones tienen las personas usuarias sobre sus datos.</p>
-      <p class="updated"><strong>Última actualización:</strong> 28 de octubre de 2026.</p>
+  <main class="legal-shell legal-main">
+    <header class="legal-hero">
+      <div class="legal-hero-copy">
+        <p class="legal-kicker">Privacidad, seguridad y control</p>
+        <h1>Política de Privacidad de SMART RH</h1>
+        <p>Conoce qué información utiliza SMART RH, por qué es necesaria, cómo la protegemos y qué opciones tienes para administrar tus datos.</p>
+        <div class="legal-hero-meta">
+          <span>Vigente desde el 28 de octubre de 2026</span>
+          <span>Aplicación móvil y portal web</span>
+          <span>Lectura aproximada: 8 minutos</span>
+        </div>
+      </div>
+      <aside class="legal-hero-aside">
+        <span>Compromiso SMART RH</span>
+        <strong>Tu información laboral se utiliza para operar el servicio, no para publicidad.</strong>
+        <p>No vendemos datos personales ni creamos perfiles publicitarios a partir de tu expediente laboral.</p>
+      </aside>
     </header>
 
-    <div class="layout">
-      <nav class="index" aria-label="Contenido de la política">
-        <strong>Contenido</strong>
-        <a href="#responsable">1. Responsable</a>
-        <a href="#alcance">2. Alcance</a>
-        <a href="#datos">3. Datos tratados</a>
-        <a href="#finalidades">4. Finalidades</a>
-        <a href="#permisos">5. Permisos del dispositivo</a>
-        <a href="#comparticion">6. Compartición</a>
-        <a href="#seguridad">7. Seguridad</a>
-        <a href="#conservacion">8. Conservación</a>
-        <a href="#derechos">9. Derechos y eliminación</a>
-        <a href="#transferencias">10. Transferencias</a>
-        <a href="#cambios">11. Cambios</a>
-        <a href="#contacto">12. Contacto</a>
+    <section class="legal-proof-grid" aria-label="Resumen de privacidad">
+      <article class="legal-proof-card">
+        <span>Publicidad</span>
+        <strong>Sin venta de datos</strong>
+        <p>La información personal y laboral no se comercializa con redes publicitarias.</p>
+      </article>
+      <article class="legal-proof-card">
+        <span>Seguridad</span>
+        <strong>Acceso por roles</strong>
+        <p>Cada persona consulta únicamente la información permitida por su función.</p>
+      </article>
+      <article class="legal-proof-card">
+        <span>Control</span>
+        <strong>Derechos y eliminación</strong>
+        <p>Puedes corregir información o iniciar la eliminación de tu cuenta.</p>
+      </article>
+    </section>
+
+    <div class="legal-layout">
+      <nav class="legal-toc" aria-label="Contenido de la política">
+        <div class="legal-toc-header">
+          <span>Índice</span>
+          <strong>Contenido de la política</strong>
+        </div>
+        <div class="legal-toc-links">
+          <a href="#responsable"><span>01</span>Responsable</a>
+          <a href="#alcance"><span>02</span>Alcance</a>
+          <a href="#datos"><span>03</span>Datos tratados</a>
+          <a href="#finalidades"><span>04</span>Finalidades</a>
+          <a href="#permisos"><span>05</span>Permisos</a>
+          <a href="#comparticion"><span>06</span>Compartición</a>
+          <a href="#seguridad"><span>07</span>Seguridad</a>
+          <a href="#conservacion"><span>08</span>Conservación</a>
+          <a href="#derechos"><span>09</span>Derechos</a>
+          <a href="#transferencias"><span>10</span>Transferencias</a>
+          <a href="#cambios"><span>11</span>Cambios</a>
+          <a href="#contacto"><span>12</span>Contacto</a>
+        </div>
       </nav>
 
-      <article class="policy">
-        <section id="responsable">
-          <h2>1. Responsable del tratamiento</h2>
+      <article class="legal-content">
+        <section class="legal-section" id="responsable">
+          <span class="legal-section-number">01</span>
+          <h2>Responsable del tratamiento</h2>
           <p><strong>SMART RH</strong>, desarrollado y operado por Brandon Bernal, es responsable del tratamiento de los datos personales descritos en esta política para la aplicación móvil y el portal web SMART RH.</p>
           <p>Las organizaciones que contratan o administran SMART RH también pueden actuar como responsables de la información laboral de sus empleados. En esos casos, SMART RH procesa la información siguiendo las instrucciones y permisos configurados por la organización.</p>
         </section>
 
-        <section id="alcance">
-          <h2>2. Alcance</h2>
+        <section class="legal-section" id="alcance">
+          <span class="legal-section-number">02</span>
+          <h2>Alcance de esta política</h2>
           <p>Esta política aplica a la aplicación móvil SMART RH, al portal administrativo y a los servicios relacionados. SMART RH es una herramienta empresarial de recursos humanos destinada a empleados, administradores y personal autorizado por una organización.</p>
-          <div class="notice"><p>SMART RH no vende datos personales, no muestra publicidad basada en intereses y no utiliza la información laboral para crear perfiles publicitarios.</p></div>
+          <div class="legal-note"><p><strong>Importante:</strong> SMART RH no vende datos personales, no muestra publicidad basada en intereses y no utiliza información laboral para crear perfiles publicitarios.</p></div>
         </section>
 
-        <section id="datos">
-          <h2>3. Datos que podemos tratar</h2>
-          <h3>Identificación y contacto</h3>
-          <ul>
-            <li>Nombre, correo electrónico, teléfono, dirección y fotografía de perfil.</li>
-            <li>Identificador de empleado, puesto, departamento, organización y estado de la cuenta.</li>
-          </ul>
-
-          <h3>Información laboral</h3>
-          <ul>
-            <li>Fechas laborales, asistencia, horarios, vacaciones, contratos, recibos de nómina y credencial digital.</li>
-            <li>Documentos laborales y registros de incapacidades que la persona o su organización decidan incorporar.</li>
-          </ul>
-
-          <h3>Cuenta, seguridad y soporte</h3>
-          <ul>
-            <li>Credenciales protegidas, tokens de sesión, verificaciones de acceso y preferencias de módulos.</li>
-            <li>Registros técnicos, dirección IP, fecha y hora de acceso, eventos de seguridad y acciones administrativas.</li>
-            <li>Mensajes, archivos y datos incluidos voluntariamente en solicitudes de soporte.</li>
-          </ul>
-
-          <h3>Datos del dispositivo y contenido seleccionado</h3>
-          <ul>
-            <li>Token de notificaciones y datos técnicos necesarios para entregar avisos.</li>
-            <li>Imágenes o documentos que la persona elija desde su dispositivo.</li>
-            <li>Acceso temporal a la cámara cuando la persona escanea un código QR o captura contenido para una función que lo requiere.</li>
-          </ul>
+        <section class="legal-section" id="datos">
+          <span class="legal-section-number">03</span>
+          <h2>Datos que podemos tratar</h2>
+          <p>La información concreta depende de los módulos habilitados por la organización y de las acciones realizadas por cada persona.</p>
+          <div class="legal-data-grid">
+            <article class="legal-data-card">
+              <strong>Identificación y contacto</strong>
+              <p>Nombre, correo electrónico, teléfono, dirección, fotografía, identificador de empleado, puesto y departamento.</p>
+            </article>
+            <article class="legal-data-card">
+              <strong>Información laboral</strong>
+              <p>Fechas laborales, asistencia, horarios, vacaciones, contratos, nómina, credencial, documentos e incapacidades.</p>
+            </article>
+            <article class="legal-data-card">
+              <strong>Cuenta y seguridad</strong>
+              <p>Credenciales protegidas, sesiones, verificaciones, dirección IP, auditoría y eventos de seguridad.</p>
+            </article>
+            <article class="legal-data-card">
+              <strong>Dispositivo y contenido</strong>
+              <p>Token de notificaciones, datos técnicos e imágenes o archivos seleccionados voluntariamente.</p>
+            </article>
+          </div>
         </section>
 
-        <section id="finalidades">
-          <h2>4. Para qué utilizamos los datos</h2>
+        <section class="legal-section" id="finalidades">
+          <span class="legal-section-number">04</span>
+          <h2>Para qué utilizamos los datos</h2>
           <ul>
             <li>Crear y administrar cuentas autorizadas por la organización.</li>
             <li>Autenticar usuarios, proteger sesiones y prevenir accesos no autorizados.</li>
-            <li>Gestionar asistencia, calendario laboral, vacaciones, incapacidades, contratos, nómina, documentos y credenciales.</li>
+            <li>Gestionar asistencia, calendario, vacaciones, incapacidades, contratos, nómina, documentos y credenciales.</li>
             <li>Mostrar información laboral conforme al rol y los permisos asignados.</li>
             <li>Enviar notificaciones relacionadas con el trabajo y el estado de solicitudes.</li>
             <li>Atender soporte, diagnosticar errores y mantener la continuidad del servicio.</li>
-            <li>Cumplir obligaciones legales, laborales, fiscales, de seguridad o prevención de fraude cuando correspondan.</li>
+            <li>Cumplir obligaciones legales, laborales, fiscales, de seguridad o prevención de fraude.</li>
           </ul>
         </section>
 
-        <section id="permisos">
-          <h2>5. Permisos del dispositivo</h2>
-          <p>SMART RH solicita permisos únicamente cuando una función los necesita:</p>
+        <section class="legal-section" id="permisos">
+          <span class="legal-section-number">05</span>
+          <h2>Permisos del dispositivo</h2>
+          <div class="legal-data-grid">
+            <article class="legal-data-card">
+              <strong>Cámara</strong>
+              <p>Se utiliza cuando escaneas un código QR de asistencia o verificas una credencial. No se activa en segundo plano.</p>
+            </article>
+            <article class="legal-data-card">
+              <strong>Fotografías y archivos</strong>
+              <p>Permite seleccionar una foto de perfil o adjuntar un documento laboral cuando tú lo decides.</p>
+            </article>
+            <article class="legal-data-card">
+              <strong>Notificaciones</strong>
+              <p>Permite recibir avisos de asistencia, solicitudes, documentos y comunicaciones de la organización.</p>
+            </article>
+            <article class="legal-data-card">
+              <strong>Tu decisión</strong>
+              <p>Puedes rechazar o revocar permisos desde tu dispositivo. La función relacionada podría dejar de estar disponible.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="legal-section" id="comparticion">
+          <span class="legal-section-number">06</span>
+          <h2>Con quién puede compartirse la información</h2>
           <ul>
-            <li><strong>Cámara:</strong> para escanear códigos QR de asistencia o verificar credenciales. La cámara no se activa en segundo plano.</li>
-            <li><strong>Fotografías y archivos:</strong> para que la persona seleccione una imagen de perfil o adjunte un documento laboral.</li>
-            <li><strong>Notificaciones:</strong> para informar sobre asistencia, solicitudes, documentos y avisos de la organización.</li>
+            <li>La organización empleadora y sus administradores autorizados, conforme al rol y las responsabilidades laborales.</li>
+            <li>Proveedores de infraestructura, almacenamiento, correo, notificaciones y seguridad que operan bajo obligaciones de confidencialidad.</li>
+            <li>Autoridades competentes cuando exista una obligación legal, una orden válida o la necesidad de proteger derechos y seguridad.</li>
           </ul>
-          <p>La persona puede rechazar o revocar estos permisos desde la configuración de su dispositivo. Algunas funciones específicas dejarán de estar disponibles, pero el permiso no se utiliza para publicidad.</p>
+          <div class="legal-note"><p>No compartimos datos personales con redes publicitarias ni los comercializamos.</p></div>
         </section>
 
-        <section id="comparticion">
-          <h2>6. Con quién puede compartirse la información</h2>
-          <p>La información puede estar disponible para:</p>
-          <ul>
-            <li>La organización empleadora y sus administradores autorizados, según el rol y las responsabilidades laborales.</li>
-            <li>Proveedores de infraestructura, almacenamiento, correo, notificaciones y seguridad que procesan datos para operar SMART RH bajo obligaciones de confidencialidad.</li>
-            <li>Autoridades competentes cuando exista una obligación legal, orden válida o necesidad de proteger derechos y seguridad.</li>
-          </ul>
-          <p>No compartimos datos personales con redes publicitarias ni los comercializamos.</p>
-        </section>
-
-        <section id="seguridad">
-          <h2>7. Seguridad de la información</h2>
-          <p>Aplicamos controles técnicos y organizativos razonables, entre ellos transmisión mediante HTTPS, credenciales protegidas, control de acceso por roles, sesiones autenticadas, registros de auditoría, copias de seguridad y restricciones de acceso a infraestructura.</p>
+        <section class="legal-section" id="seguridad">
+          <span class="legal-section-number">07</span>
+          <h2>Seguridad de la información</h2>
+          <p>Aplicamos controles técnicos y organizativos razonables: transmisión mediante HTTPS, credenciales protegidas, acceso por roles, sesiones autenticadas, auditoría, copias de seguridad y restricciones de infraestructura.</p>
           <p>Ningún sistema es completamente infalible. Si se detecta un incidente que pueda afectar los derechos de las personas, se atenderá conforme a las obligaciones aplicables.</p>
         </section>
 
-        <section id="conservacion">
-          <h2>8. Conservación de datos</h2>
-          <p>Conservamos la información mientras la cuenta esté activa, durante la relación con la organización o por el plazo necesario para prestar el servicio. Algunos documentos laborales, fiscales, contractuales, de seguridad o auditoría pueden conservarse por obligaciones legales o para resolver controversias.</p>
-          <p>Cuando ya no sea necesario conservar información, se elimina, se anonimiza o se bloquea de forma segura, según corresponda.</p>
+        <section class="legal-section" id="conservacion">
+          <span class="legal-section-number">08</span>
+          <h2>Conservación de datos</h2>
+          <p>Conservamos la información mientras la cuenta esté activa, durante la relación con la organización o por el plazo necesario para prestar el servicio.</p>
+          <div class="legal-retention-grid">
+            <article class="legal-data-card">
+              <strong>Datos operativos</strong>
+              <p>Se eliminan o anonimizan cuando dejan de ser necesarios para prestar el servicio.</p>
+            </article>
+            <article class="legal-data-card">
+              <strong>Registros obligatorios</strong>
+              <p>Información laboral, fiscal, contractual, de seguridad o auditoría puede conservarse por una obligación legal válida.</p>
+            </article>
+          </div>
         </section>
 
-        <section id="derechos">
-          <h2>9. Derechos y eliminación de cuenta</h2>
-          <p>Las personas pueden solicitar acceso, corrección, actualización, oposición o eliminación de sus datos, sujeto a las obligaciones de conservación aplicables.</p>
-          <p>La eliminación puede iniciarse desde la aplicación en <strong>Mi perfil → Editar perfil → Privacidad y cuenta → Eliminar cuenta</strong>, o desde nuestro recurso web:</p>
-          <p><a href="/eliminar-cuenta.html"><strong>Solicitar la eliminación de una cuenta SMART RH</strong></a></p>
-          <p>Al eliminar una cuenta se revocan las sesiones activas y se elimina o anonimiza la información personal que no deba conservarse. Los registros laborales que deban mantenerse por obligación legal quedarán limitados a esa finalidad.</p>
+        <section class="legal-section" id="derechos">
+          <span class="legal-section-number">09</span>
+          <h2>Derechos y eliminación de cuenta</h2>
+          <p>Puedes solicitar acceso, corrección, actualización, oposición o eliminación de tus datos, sujeto a las obligaciones de conservación aplicables.</p>
+          <p>La eliminación puede iniciarse en <strong>Mi perfil → Editar perfil → Privacidad y cuenta → Eliminar cuenta</strong> o desde el recurso público de eliminación.</p>
+          <div class="legal-contact-card">
+            <div>
+              <strong>Recurso externo de eliminación</strong>
+              <p>Consulta el proceso, los datos afectados y las opciones disponibles sin iniciar sesión.</p>
+            </div>
+            <a class="legal-button" href="/eliminar-cuenta.html">Ver proceso de eliminación</a>
+          </div>
         </section>
 
-        <section id="transferencias">
-          <h2>10. Procesamiento en otros países</h2>
+        <section class="legal-section" id="transferencias">
+          <span class="legal-section-number">10</span>
+          <h2>Procesamiento en otros países</h2>
           <p>Los proveedores tecnológicos utilizados para operar SMART RH pueden procesar información en México, Estados Unidos u otros países. Cuando esto ocurre, se aplican medidas contractuales y de seguridad razonables para proteger los datos.</p>
         </section>
 
-        <section id="cambios">
-          <h2>11. Cambios a esta política</h2>
-          <p>Podemos actualizar esta política cuando cambien las funciones, las prácticas de tratamiento o las obligaciones legales. La fecha de la versión vigente se mostrará al inicio de esta página. Cuando un cambio sea relevante, se comunicará por medios razonables dentro de SMART RH o mediante la organización.</p>
+        <section class="legal-section" id="cambios">
+          <span class="legal-section-number">11</span>
+          <h2>Cambios a esta política</h2>
+          <p>Podemos actualizar esta política cuando cambien las funciones, las prácticas de tratamiento o las obligaciones legales. La fecha vigente se muestra al principio de esta página. Los cambios relevantes se comunicarán por medios razonables dentro de SMART RH o mediante la organización.</p>
         </section>
 
-        <section id="contacto">
-          <h2>12. Contacto de privacidad</h2>
-          <p>Para preguntas, solicitudes o aclaraciones relacionadas con privacidad y datos personales:</p>
-          <div class="contact-card">
-            <p><strong>Responsable:</strong> SMART RH / Brandon Bernal</p>
-            <p><strong>Correo:</strong> <a href="mailto:al22231032@gmail.com">al22231032@gmail.com</a></p>
-            <p><strong>Asunto recomendado:</strong> Privacidad SMART RH</p>
+        <section class="legal-section" id="contacto">
+          <span class="legal-section-number">12</span>
+          <h2>Contacto de privacidad</h2>
+          <p>Para preguntas, solicitudes o aclaraciones relacionadas con privacidad y datos personales, utiliza el siguiente contacto:</p>
+          <div class="legal-contact-card">
+            <div>
+              <strong>SMART RH / Brandon Bernal</strong>
+              <p><a href="mailto:al22231032@gmail.com">al22231032@gmail.com</a></p>
+              <p>Asunto recomendado: Privacidad SMART RH</p>
+            </div>
+            <a class="legal-button" href="mailto:al22231032@gmail.com?subject=Privacidad%20SMART%20RH">Enviar correo</a>
           </div>
         </section>
       </article>
     </div>
   </main>
 
-  <footer>© 2026 SMART RH. Política pública aplicable a la aplicación móvil y al portal web.</footer>
+  <footer class="legal-footer">
+    <div class="legal-shell legal-footer-grid">
+      <section class="legal-footer-brand">
+        <strong>SMART RH</strong>
+        <p>Gestión de Recursos Humanos para organizaciones, administradores y empleados.</p>
+      </section>
+      <nav class="legal-footer-column" aria-label="Recursos">
+        <strong>Recursos</strong>
+        <a href="/">Página principal</a>
+        <a href="/#servicios">Servicios</a>
+        <a href="/#contacto">Contacto</a>
+      </nav>
+      <nav class="legal-footer-column" aria-label="Legal y privacidad">
+        <strong>Legal y privacidad</strong>
+        <a href="/privacidad.html">Política de privacidad</a>
+        <a href="/eliminar-cuenta.html">Eliminar una cuenta</a>
+      </nav>
+    </div>
+    <div class="legal-shell legal-footer-bottom">
+      <span>© 2026 SMART RH. Todos los derechos reservados.</span>
+      <span>México</span>
+    </div>
+  </footer>
 </body>
 </html>

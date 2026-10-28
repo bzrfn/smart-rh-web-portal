@@ -4,124 +4,147 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="index, follow">
-  <meta name="description" content="Solicita la eliminación de una cuenta y los datos asociados de SMART RH.">
+  <meta name="description" content="Conoce las opciones para eliminar una cuenta SMART RH y los datos personales asociados.">
+  <meta name="theme-color" content="#1b0d13">
   <title>Eliminar una cuenta | SMART RH</title>
-  <style>
-    :root {
-      color-scheme: light;
-      --brand: #0a57a4;
-      --brand-dark: #084785;
-      --danger: #b42318;
-      --danger-soft: #fff1f0;
-      --ink: #0f172a;
-      --muted: #52627a;
-      --line: #dce5ef;
-      --surface: #ffffff;
-      --canvas: #f4f8fc;
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      color: var(--ink);
-      background: var(--canvas);
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      font-size: 16px;
-      line-height: 1.65;
-    }
-    a { color: var(--brand); text-underline-offset: 3px; }
-    a:focus-visible { outline: 3px solid rgba(10, 87, 164, .28); outline-offset: 3px; border-radius: 5px; }
-    .topbar { border-bottom: 1px solid var(--line); background: var(--surface); }
-    .topbar-inner, main { width: min(920px, calc(100% - 32px)); margin: 0 auto; }
-    .topbar-inner { display: flex; align-items: center; justify-content: space-between; gap: 24px; min-height: 72px; }
-    .brand { color: var(--brand); font-size: 21px; font-weight: 800; letter-spacing: -.02em; text-decoration: none; }
-    .topbar-inner > a:last-child { color: var(--muted); font-size: 14px; font-weight: 650; text-decoration: none; }
-    main { padding: 56px 0 72px; }
-    .card {
-      padding: clamp(26px, 5vw, 52px);
-      border: 1px solid var(--line);
-      border-radius: 28px;
-      background: var(--surface);
-      box-shadow: 0 18px 50px rgba(15, 23, 42, .08);
-    }
-    .eyebrow { margin: 0 0 10px; color: var(--danger); font-size: 12px; font-weight: 800; letter-spacing: .09em; text-transform: uppercase; }
-    h1, h2 { text-wrap: balance; }
-    h1 { margin: 0; font-size: clamp(2rem, 5vw, 3.25rem); line-height: 1.08; letter-spacing: -.035em; }
-    h2 { margin: 32px 0 10px; font-size: 22px; line-height: 1.25; }
-    p { max-width: 70ch; margin: 10px 0; color: var(--muted); text-wrap: pretty; }
-    ol, ul { max-width: 70ch; padding-left: 22px; color: var(--muted); }
-    li + li { margin-top: 8px; }
-    .warning { margin: 24px 0; padding: 18px 20px; border: 1px solid #ffd1cc; border-left: 4px solid var(--danger); border-radius: 14px; background: var(--danger-soft); }
-    .warning p { margin: 0; color: var(--ink); }
-    .button {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 48px;
-      margin-top: 16px;
-      padding: 0 20px;
-      border-radius: 13px;
-      color: #fff;
-      background: var(--danger);
-      font-weight: 750;
-      text-decoration: none;
-      box-shadow: 0 10px 22px rgba(180, 35, 24, .2);
-    }
-    .details { margin-top: 28px; padding: 22px; border: 1px solid var(--line); border-radius: 18px; background: #f9fbfd; }
-    .details h2 { margin-top: 0; }
-    footer { padding: 28px 16px 38px; color: var(--muted); font-size: 13px; text-align: center; }
-    @media (max-width: 620px) {
-      .topbar-inner { align-items: flex-start; flex-direction: column; padding: 18px 0; }
-      main { padding-top: 28px; }
-      .button { width: 100%; text-align: center; }
-    }
-  </style>
+  <link rel="stylesheet" href="/legal.css">
 </head>
-<body>
-  <header class="topbar">
-    <div class="topbar-inner">
-      <a class="brand" href="/">SMART RH</a>
-      <a href="/privacidad.html">Política de Privacidad</a>
+<body class="legal-delete-page">
+  <header class="legal-topbar">
+    <div class="legal-shell legal-topbar-inner">
+      <a class="legal-brand" href="/" aria-label="Volver a SMART RH">
+        <span class="legal-brand-mark">SRH</span>
+        <span class="legal-brand-copy"><strong>SMART RH</strong><small>Centro de privacidad</small></span>
+      </a>
+      <nav class="legal-nav" aria-label="Navegación legal">
+        <a href="/privacidad.html">Política de Privacidad</a>
+        <a class="legal-nav-primary" href="/">Volver al portal</a>
+      </nav>
     </div>
   </header>
 
-  <main>
-    <article class="card">
-      <p class="eyebrow">Privacidad y control de datos</p>
-      <h1>Eliminar una cuenta SMART RH</h1>
-      <p>Puedes solicitar la eliminación de tu cuenta y de los datos personales asociados desde la aplicación o mediante el correo de privacidad. No necesitas contratar un servicio adicional ni comunicarte por teléfono.</p>
+  <main class="legal-shell legal-main">
+    <section class="legal-hero" aria-labelledby="delete-title">
+      <div class="legal-hero-copy">
+        <p class="legal-kicker">Control de cuenta y datos personales</p>
+        <h1 id="delete-title">Eliminar una cuenta SMART RH</h1>
+        <p>Puedes iniciar la eliminación desde la aplicación o solicitarla por correo si ya no tienes acceso. El proceso no requiere contratar servicios, realizar llamadas ni proporcionar tu contraseña por correo.</p>
+        <div class="legal-hero-meta" aria-label="Información del proceso">
+          <span>Solicitud sin costo</span><span>Verificación de identidad</span><span>Confirmación por correo</span>
+        </div>
+      </div>
+      <aside class="legal-hero-aside legal-danger-panel">
+        <span>Acción permanente</span>
+        <strong>Al concluir el proceso perderás el acceso a tu cuenta.</strong>
+        <p>Se cerrarán las sesiones activas y no podrás recuperar la cuenta eliminada. Revisa la información antes de confirmar.</p>
+      </aside>
+    </section>
 
-      <div class="warning"><p><strong>Esta acción es permanente.</strong> Al concluir el proceso perderás el acceso a SMART RH y se cerrarán tus sesiones activas.</p></div>
+    <section class="legal-methods" aria-label="Opciones para eliminar una cuenta">
+      <article class="legal-method">
+        <span class="legal-method-badge">Opción recomendada</span>
+        <h2>Desde la aplicación</h2>
+        <p>Es la forma más rápida cuando todavía puedes iniciar sesión en SMART RH.</p>
+        <ol>
+          <li>Inicia sesión y abre <strong>Mi perfil</strong>.</li>
+          <li>Selecciona <strong>Editar perfil</strong>.</li>
+          <li>Entra en <strong>Privacidad y cuenta</strong>.</li>
+          <li>Selecciona <strong>Eliminar cuenta</strong>.</li>
+          <li>Ingresa tu contraseña y escribe <strong>CONFIRMAR</strong>.</li>
+          <li>Revisa la advertencia y confirma la eliminación.</li>
+        </ol>
+        <div class="legal-warning"><p>La aplicación cerrará tu sesión al terminar y mostrará la pantalla de acceso.</p></div>
+      </article>
 
-      <h2>Opción 1: desde la aplicación</h2>
-      <ol>
-        <li>Inicia sesión en SMART RH.</li>
-        <li>Abre <strong>Mi perfil</strong> y selecciona <strong>Editar perfil</strong>.</li>
-        <li>Entra en <strong>Privacidad y cuenta</strong>.</li>
-        <li>Selecciona <strong>Eliminar cuenta</strong>.</li>
-        <li>Confirma tu identidad y escribe la palabra solicitada para completar la eliminación.</li>
-      </ol>
+      <article class="legal-method">
+        <span class="legal-method-badge">Sin acceso a la app</span>
+        <h2>Solicitud por correo</h2>
+        <p>Utiliza esta opción si no puedes entrar a tu cuenta. Envía el mensaje desde el correo registrado e incluye tu nombre y organización.</p>
+        <ol>
+          <li>Abre el formulario de correo con el botón inferior.</li>
+          <li>Completa tu nombre, correo registrado y organización.</li>
+          <li>Envía la solicitud desde el correo asociado a SMART RH.</li>
+          <li>Atiende únicamente la verificación razonable que te solicitemos.</li>
+          <li>Recibe la confirmación cuando el proceso concluya.</li>
+        </ol>
+        <a class="legal-button legal-delete-button" href="mailto:al22231032@gmail.com?subject=Solicitud%20de%20eliminaci%C3%B3n%20de%20cuenta%20SMART%20RH&amp;body=Nombre%3A%0ACorreo%20registrado%3A%0AOrganizaci%C3%B3n%3A%0ASolicito%20la%20eliminaci%C3%B3n%20de%20mi%20cuenta%20SMART%20RH%20y%20los%20datos%20personales%20asociados.%0A">Solicitar eliminación por correo</a>
+        <div class="legal-warning"><p><strong>No envíes contraseñas</strong> ni documentos de identidad en el primer mensaje.</p></div>
+      </article>
+    </section>
 
-      <h2>Opción 2: solicitud externa</h2>
-      <p>Si no puedes acceder a la aplicación, envía la solicitud desde el correo vinculado a tu cuenta. Incluye tu nombre, correo registrado y organización. No envíes tu contraseña ni documentos de identidad en el primer mensaje.</p>
-      <a class="button" href="mailto:al22231032@gmail.com?subject=Solicitud%20de%20eliminaci%C3%B3n%20de%20cuenta%20SMART%20RH&body=Nombre%3A%0ACorreo%20registrado%3A%0AOrganizaci%C3%B3n%3A%0ASolicito%20la%20eliminaci%C3%B3n%20de%20mi%20cuenta%20SMART%20RH%20y%20los%20datos%20personales%20asociados.%0A">Solicitar eliminación por correo</a>
+    <div class="legal-layout">
+      <aside class="legal-toc" aria-label="Contenido de esta página">
+        <div class="legal-toc-header"><span>Guía del proceso</span><strong>Qué debes saber</strong></div>
+        <nav class="legal-toc-links">
+          <a href="#datos-eliminados"><span>01</span>Datos que se eliminan</a>
+          <a href="#datos-conservados"><span>02</span>Registros conservados</a>
+          <a href="#proteccion"><span>03</span>Protección de la solicitud</a>
+          <a href="#contacto"><span>04</span>Contacto</a>
+        </nav>
+      </aside>
 
-      <section class="details">
-        <h2>Qué sucede con tus datos</h2>
-        <ul>
-          <li>Se revocan las sesiones y se elimina el acceso de la cuenta.</li>
-          <li>Se elimina o anonimiza la información personal que ya no sea necesaria.</li>
-          <li>Los archivos propiedad de la cuenta se eliminan cuando no existe una obligación válida de conservarlos.</li>
-          <li>Algunos registros laborales, contractuales, fiscales, de seguridad o auditoría pueden conservarse durante el plazo exigido por la ley o por una obligación legítima de la organización. Su uso queda limitado a esa finalidad.</li>
-        </ul>
-        <p>Podremos solicitar una verificación razonable para evitar que otra persona elimine tu cuenta sin autorización. Cuando la solicitud sea atendida, recibirás una confirmación en el correo registrado.</p>
-      </section>
+      <div class="legal-content">
+        <section class="legal-section" id="datos-eliminados">
+          <span class="legal-section-number">01</span>
+          <h2>Qué sucede al eliminar la cuenta</h2>
+          <p>Después de validar la solicitud, SMART RH ejecuta las acciones necesarias para retirar el acceso y reducir la información personal asociada a la cuenta.</p>
+          <div class="legal-retention-grid">
+            <article class="legal-data-card"><strong>Acceso y sesiones</strong><p>La cuenta deja de funcionar y se revocan las sesiones activas.</p></article>
+            <article class="legal-data-card"><strong>Datos de perfil</strong><p>La información personal que ya no sea necesaria se elimina o anonimiza.</p></article>
+            <article class="legal-data-card"><strong>Archivos personales</strong><p>Los archivos propiedad de la cuenta se eliminan cuando no existe una obligación válida de conservarlos.</p></article>
+            <article class="legal-data-card"><strong>Notificaciones</strong><p>La cuenta deja de recibir comunicaciones operativas de SMART RH.</p></article>
+          </div>
+        </section>
 
-      <h2>Contacto</h2>
-      <p>Correo de privacidad: <a href="mailto:al22231032@gmail.com">al22231032@gmail.com</a></p>
-      <p>Consulta los detalles completos en la <a href="/privacidad.html">Política de Privacidad de SMART RH</a>.</p>
-    </article>
+        <section class="legal-section" id="datos-conservados">
+          <span class="legal-section-number">02</span>
+          <h2>Información que puede conservarse</h2>
+          <p>La eliminación de la cuenta no siempre implica borrar inmediatamente todos los registros laborales. Algunos datos pueden mantenerse cuando existe una obligación legal o una necesidad legítima documentada.</p>
+          <ul>
+            <li>Registros laborales y contractuales exigidos por la normativa aplicable.</li>
+            <li>Información fiscal, de nómina o seguridad social durante los plazos legales.</li>
+            <li>Registros de seguridad, prevención de fraude y auditoría.</li>
+            <li>Evidencia necesaria para atender obligaciones o controversias vigentes.</li>
+          </ul>
+          <div class="legal-note"><p><strong>Uso limitado:</strong> la información conservada queda restringida a la finalidad legal o legítima que justifica su retención y no mantiene activa la cuenta.</p></div>
+        </section>
+
+        <section class="legal-section" id="proteccion">
+          <span class="legal-section-number">03</span>
+          <h2>Cómo protegemos tu solicitud</h2>
+          <p>Para evitar que otra persona elimine tu cuenta sin autorización, podremos solicitar una verificación razonable de identidad y de la relación con la organización.</p>
+          <ul>
+            <li>La solicitud externa debe enviarse, de preferencia, desde el correo registrado.</li>
+            <li>Nunca solicitamos la contraseña por correo electrónico.</li>
+            <li>La confirmación final se comunica al correo asociado a la cuenta.</li>
+            <li>Si faltan datos para validar la solicitud, explicaremos qué información adicional es necesaria.</li>
+          </ul>
+        </section>
+
+        <section class="legal-section" id="contacto">
+          <span class="legal-section-number">04</span>
+          <h2>¿Necesitas ayuda?</h2>
+          <p>Escríbenos si tienes dudas sobre el proceso, si no puedes acceder a la aplicación o si necesitas conocer el estado de una solicitud.</p>
+          <div class="legal-contact-card">
+            <div>
+              <strong>Responsable de privacidad SMART RH</strong>
+              <p><a href="mailto:al22231032@gmail.com">al22231032@gmail.com</a></p>
+              <p>Consulta también la <a href="/privacidad.html">Política de Privacidad de SMART RH</a>.</p>
+            </div>
+            <a class="legal-button legal-delete-button" href="mailto:al22231032@gmail.com?subject=Ayuda%20con%20eliminaci%C3%B3n%20de%20cuenta%20SMART%20RH">Contactar privacidad</a>
+          </div>
+        </section>
+      </div>
+    </div>
   </main>
 
-  <footer>© 2026 SMART RH. Recurso público para solicitudes de eliminación de cuenta.</footer>
+  <footer class="legal-footer">
+    <div class="legal-shell legal-footer-grid">
+      <div class="legal-footer-brand"><strong>SMART RH</strong><p>Plataforma de recursos humanos para la gestión segura de información laboral, asistencia y servicios para empleados.</p></div>
+      <div class="legal-footer-column"><strong>Legal y privacidad</strong><a href="/privacidad.html">Política de Privacidad</a><a href="/eliminar-cuenta.html">Eliminar una cuenta</a></div>
+      <div class="legal-footer-column"><strong>Contacto</strong><a href="mailto:al22231032@gmail.com">Correo de privacidad</a><a href="/">Página principal</a></div>
+    </div>
+    <div class="legal-shell legal-footer-bottom"><span>© 2026 SMART RH. Todos los derechos reservados.</span><span>México · Última actualización: 28 de octubre de 2026</span></div>
+  </footer>
 </body>
 </html>

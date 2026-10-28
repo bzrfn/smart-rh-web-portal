@@ -8,6 +8,7 @@ import {
   landingTranslations,
   LandingLanguage,
 } from './landingTranslations';
+import './legalFooter.css';
 
 const LANGUAGE_KEY = 'smart_rh_public_language';
 const THEME_KEY = 'smart_rh_theme';
@@ -60,6 +61,109 @@ const contactMessages: Record<
   },
 };
 
+const legalFooterMessages: Record<
+  LandingLanguage,
+  {
+    platform: string;
+    resources: string;
+    legal: string;
+    privacy: string;
+    deleteAccount: string;
+    privacyContact: string;
+    access: string;
+    operation: string;
+    location: string;
+    portalStatus: string;
+    privacyDescription: string;
+    deleteDescription: string;
+  }
+> = {
+  es: {
+    platform: 'Plataforma',
+    resources: 'Recursos',
+    legal: 'Legal y privacidad',
+    privacy: 'Política de privacidad',
+    deleteAccount: 'Eliminar una cuenta',
+    privacyContact: 'Contacto de privacidad',
+    access: 'Acceso administrativo',
+    operation: 'Cómo funciona',
+    location: 'México',
+    portalStatus: 'Portal web y aplicación móvil',
+    privacyDescription: 'Datos, permisos y seguridad',
+    deleteDescription: 'Solicitud dentro y fuera de la app',
+  },
+  en: {
+    platform: 'Platform',
+    resources: 'Resources',
+    legal: 'Legal and privacy',
+    privacy: 'Privacy policy',
+    deleteAccount: 'Delete an account',
+    privacyContact: 'Privacy contact',
+    access: 'Administrator access',
+    operation: 'How it works',
+    location: 'Mexico',
+    portalStatus: 'Web portal and mobile app',
+    privacyDescription: 'Data, permissions, and security',
+    deleteDescription: 'Request in or outside the app',
+  },
+  pt: {
+    platform: 'Plataforma',
+    resources: 'Recursos',
+    legal: 'Legal e privacidade',
+    privacy: 'Política de privacidade',
+    deleteAccount: 'Excluir uma conta',
+    privacyContact: 'Contato de privacidade',
+    access: 'Acesso administrativo',
+    operation: 'Como funciona',
+    location: 'México',
+    portalStatus: 'Portal web e aplicativo móvel',
+    privacyDescription: 'Dados, permissões e segurança',
+    deleteDescription: 'Solicitação dentro ou fora do app',
+  },
+  zh: {
+    platform: '平台',
+    resources: '资源',
+    legal: '法律与隐私',
+    privacy: '隐私政策',
+    deleteAccount: '删除账户',
+    privacyContact: '隐私联系',
+    access: '管理员访问',
+    operation: '工作原理',
+    location: '墨西哥',
+    portalStatus: '网页门户和移动应用',
+    privacyDescription: '数据、权限与安全',
+    deleteDescription: '在应用内外提交请求',
+  },
+  fr: {
+    platform: 'Plateforme',
+    resources: 'Ressources',
+    legal: 'Juridique et confidentialité',
+    privacy: 'Politique de confidentialité',
+    deleteAccount: 'Supprimer un compte',
+    privacyContact: 'Contact confidentialité',
+    access: 'Accès administrateur',
+    operation: 'Fonctionnement',
+    location: 'Mexique',
+    portalStatus: 'Portail web et application mobile',
+    privacyDescription: 'Données, autorisations et sécurité',
+    deleteDescription: 'Demande dans ou hors de l’application',
+  },
+  it: {
+    platform: 'Piattaforma',
+    resources: 'Risorse',
+    legal: 'Note legali e privacy',
+    privacy: 'Informativa sulla privacy',
+    deleteAccount: 'Elimina un account',
+    privacyContact: 'Contatto privacy',
+    access: 'Accesso amministratore',
+    operation: 'Come funziona',
+    location: 'Messico',
+    portalStatus: 'Portale web e app mobile',
+    privacyDescription: 'Dati, autorizzazioni e sicurezza',
+    deleteDescription: 'Richiesta dentro o fuori dall’app',
+  },
+};
+
 function getInitialLanguage(): LandingLanguage {
   const saved = localStorage.getItem(LANGUAGE_KEY) as LandingLanguage | null;
   if (saved && landingTranslations[saved]) return saved;
@@ -91,6 +195,7 @@ export default function LandingPage() {
 
   const t = useMemo(() => landingTranslations[language], [language]);
   const contactText = useMemo(() => contactMessages[language], [language]);
+  const legalText = useMemo(() => legalFooterMessages[language], [language]);
   const currentLanguage = useMemo(
     () => landingLanguages.find((item) => item.code === language) || landingLanguages[0],
     [language]
@@ -595,13 +700,58 @@ export default function LandingPage() {
         </section>
       </main>
 
-      <footer className="public-footer">
-        <div>
-          <strong>SMART RH</strong>
-          <p>{t.footer.description}</p>
+      <footer className="public-footer public-footer-directory">
+        <div className="public-footer-grid">
+          <section className="public-footer-brand" aria-labelledby="footer-brand-title">
+            <a href="#inicio" className="public-footer-logo" id="footer-brand-title">
+              <span>SRH</span>
+              <strong>SMART RH</strong>
+            </a>
+            <p>{t.footer.description}</p>
+            <div className="public-footer-status">
+              <i aria-hidden="true" />
+              {legalText.portalStatus}
+            </div>
+          </section>
+
+          <nav className="public-footer-column" aria-label={legalText.platform}>
+            <strong>{legalText.platform}</strong>
+            <a href="#inicio">{t.nav.home}</a>
+            <a href="#servicios">{t.nav.services}</a>
+            <a href="#contacto">{t.nav.contact}</a>
+            <Link to="/admin/acceso">{legalText.access}</Link>
+          </nav>
+
+          <nav className="public-footer-column" aria-label={legalText.resources}>
+            <strong>{legalText.resources}</strong>
+            <a href="#nosotros">{t.nav.about}</a>
+            <a href="#historia">{legalText.operation}</a>
+            <a href="#valores">{t.nav.values}</a>
+            <a href="mailto:al22231032@gmail.com">al22231032@gmail.com</a>
+          </nav>
+
+          <nav className="public-footer-column public-footer-legal" aria-label={legalText.legal}>
+            <strong>{legalText.legal}</strong>
+            <a href="/privacidad.html">
+              <span>{legalText.privacy}</span>
+              <small>{legalText.privacyDescription}</small>
+            </a>
+            <a href="/eliminar-cuenta.html">
+              <span>{legalText.deleteAccount}</span>
+              <small>{legalText.deleteDescription}</small>
+            </a>
+            <a href="mailto:al22231032@gmail.com">{legalText.privacyContact}</a>
+          </nav>
         </div>
 
-        <span>© 2026 SMART RH. {t.footer.rights}</span>
+        <div className="public-footer-bottom">
+          <span>© 2026 SMART RH. {t.footer.rights}</span>
+          <div>
+            <a href="/privacidad.html">{legalText.privacy}</a>
+            <a href="/eliminar-cuenta.html">{legalText.deleteAccount}</a>
+            <span>{legalText.location}</span>
+          </div>
+        </div>
       </footer>
     </div>
   );
