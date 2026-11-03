@@ -2,7 +2,7 @@
 
 ## Ramas y revisión
 
-`main` representa la versión estable. Crear una rama corta por objetivo, subirla, abrir un pull request hacia main y solicitar revisión de otro integrante. Fusionar cuando CI esté verde, los comentarios resueltos y la revisión aprobada. No hacer commits ni push directos a main.
+`main` representa la versión estable. Crear una rama corta por objetivo, subirla, abrir un pull request hacia main y revisar personalmente el diff. Fusionar cuando CI esté verde, los comentarios resueltos y la revisión personal concluida. No se exige aprobación externa mientras el desarrollo sea individual. No hacer commits ni push directos a main.
 
 Usar `feature/descripcion` para funcionalidades, `fix/descripcion` para errores, `docs/descripcion` para documentación y `chore/descripcion` para mantenimiento. No se añade una rama develop permanente; se puede incorporar posteriormente si el equipo necesita una integración independiente.
 
@@ -48,7 +48,7 @@ Las pruebas del backend en CI son unitarias. La validación móvil es de tipos, 
 
 ## Integración y despliegue
 
-Integrar mediante PR aprobado. Se recomienda Squash and merge para dejar un commit por PR en main, preservando el detalle en el PR. Si el equipo necesita conservar cada commit del PR, puede usar merge commit; aplicar un criterio consistente.
+Integrar mediante PR revisado personalmente y con CI correcto. Se recomienda Squash and merge para dejar un commit por PR en main, preservando el detalle en el PR. Si el equipo necesita conservar cada commit del PR, puede usar merge commit; aplicar un criterio consistente.
 
 Después de integrar: actualizar main local con `git pull --ff-only origin main`. Desplegar desde el commit integrado en main, registrar su SHA y comprobar el resultado. Un push o un merge no despliega AWS con este pipeline.
 
@@ -56,6 +56,6 @@ Para incidentes, crear una rama hotfix desde main y pasar por PR/CI. Para recupe
 
 ## Protección de main
 
-Una vez que el workflow esté integrado y el check de main haya terminado bien: exigir PR, una aprobación independiente, check `portal-ci` y resolución de conversaciones. Bloquear force push y borrado, incluyendo administradores. La protección debe activarse en GitHub; este documento por sí solo no la aplica.
+Una vez que el workflow esté integrado y el check de main haya terminado bien: exigir PR, cero aprobaciones externas, check `portal-ci` y resolución de conversaciones. Bloquear force push y borrado, incluyendo administradores. La protección debe activarse en GitHub; este documento por sí solo no la aplica.
 
-Antes de exigir aprobación debe existir otro colaborador con permisos de escritura. El autor no puede aprobar su propio PR. No se agregan revisores o colaboradores automáticamente.
+El flujo individual conserva el PR para revisar el diff y las evidencias; no se intenta aprobar el propio PR ni se exige aprobación del último push por otra persona. El desarrollador puede integrarlo cuando CI pase. Si posteriormente se incorpora otro colaborador, podrá acordarse una revisión independiente.

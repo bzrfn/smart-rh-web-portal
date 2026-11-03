@@ -30,6 +30,8 @@ Indica los comandos ejecutados y sus resultados reales. No marques pruebas no re
 - [ ] CI terminó correctamente.
 - [ ] Documenté configuración, migraciones o cambios incompatibles, cuando aplica.
 
-## Revisión del equipo
+## Revisión individual
 
-Solicitar aprobación a otro integrante con permisos de escritura. No pegar códigos de acceso ni datos personales en el PR.
+- [ ] Revisé personalmente Files changed y los resultados de CI antes de integrar.
+
+Desarrollo individual: no se requiere aprobación externa ni se intenta aprobar el propio PR. No pegar códigos de acceso ni datos personales en el PR.
