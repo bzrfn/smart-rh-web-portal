@@ -11,6 +11,7 @@ import {
   api,
 } from '../../services/api';
 
+import './AdminAccess.css';
 
 export default function AdminAccess() {
   const navigate =
@@ -257,7 +258,7 @@ export default function AdminAccess() {
 
 
   return (
-    <div className="auth-page auth-page-premium">
+    <div className="auth-page auth-page-premium auth-page-admin-access">
       <Link
         to="/"
         className="auth-back-home"

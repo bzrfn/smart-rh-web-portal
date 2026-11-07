@@ -727,7 +727,7 @@ export default function LandingPage() {
             <a href="#nosotros">{t.nav.about}</a>
             <a href="#historia">{legalText.operation}</a>
             <a href="#valores">{t.nav.values}</a>
-            <a href="mailto:al22231032@gmail.com">al22231032@gmail.com</a>
+            <a href="mailto:portal.smartrh@gmail.com">portal.smartrh@gmail.com</a>
           </nav>
 
           <nav className="public-footer-column public-footer-legal" aria-label={legalText.legal}>
@@ -740,7 +740,7 @@ export default function LandingPage() {
               <span>{legalText.deleteAccount}</span>
               <small>{legalText.deleteDescription}</small>
             </a>
-            <a href="mailto:al22231032@gmail.com">{legalText.privacyContact}</a>
+            <a href="mailto:portal.smartrh@gmail.com">{legalText.privacyContact}</a>
           </nav>
         </div>
 

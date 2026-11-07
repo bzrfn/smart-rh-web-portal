@@ -2,10 +2,9 @@ import { CSSProperties, FormEvent, PointerEvent, useEffect, useMemo, useRef, use
 import { Link } from 'react-router-dom';
 import { api } from '../../services/api';
 import { useAuth } from '../../app/auth/AuthContext';
+import { maxHistoryStorageKey, verifiedMaxResponse } from './max.transport';
 import maxAssistantIcon from '../../assets/max-touch-icon.svg';
 
-const MAX_PORTAL_HISTORY_KEY = 'smart-rh:max:portal-history:v1';
-const MAX_PORTAL_SESSIONS_KEY = 'smart-rh:max:portal-sessions:v1';
 const MAX_CHAT_HISTORY_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 const MAX_CHAT_HISTORY_LIMIT = 12;
 
@@ -97,14 +96,13 @@ function isFreshSession(session: MaxChatSession) {
   return Date.now() - Number(session.savedAt || 0) <= MAX_CHAT_HISTORY_TTL_MS;
 }
 
-function persistChatSessions(activeSessionId: string, sessions: MaxChatSession[]) {
+function persistChatSessions(activeSessionId: string, sessions: MaxChatSession[], storageKey: string) {
   if (typeof window === 'undefined') return;
 
   window.localStorage.setItem(
-    MAX_PORTAL_SESSIONS_KEY,
-    JSON.stringify({ activeSessionId, sessions })
+    storageKey,
+    JSON.stringify({ activeSessionId, sessions: sessions.map(s => ({ ...s, messages: s.messages.slice(-60) })) })
   );
-  window.localStorage.removeItem(MAX_PORTAL_HISTORY_KEY);
 }
 
 function clamp(value: number, min: number, max: number) {
@@ -223,6 +221,16 @@ function getWebTarget(target: string) {
 
 export default function AsistenteSmartRh() {
   const { user } = useAuth();
+  return user ? <MaxChatSessionWidget key={`${user.id}:${user.role}`} /> : null;
+}
+
+function MaxChatSessionWidget() {
+  const { user } = useAuth();
+  const storageKey = maxHistoryStorageKey(user!.id, user!.role);
+  const requestLock = useRef(false);
+  const pendingRequest = useRef<{ fingerprint: string; id: string } | null>(null);
+  const mounted = useRef(true);
+  useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
   const messagesRef = useRef<HTMLDivElement | null>(null);
   const panelRef = useRef<HTMLElement | null>(null);
   const composerRef = useRef<HTMLTextAreaElement | null>(null);
@@ -245,7 +253,7 @@ export default function AsistenteSmartRh() {
     if (maxHistoryReady || typeof window === 'undefined') return;
 
     try {
-      const sessionsRaw = window.localStorage.getItem(MAX_PORTAL_SESSIONS_KEY);
+      const sessionsRaw = window.localStorage.getItem(storageKey);
       if (sessionsRaw) {
         const payload = JSON.parse(sessionsRaw) as {
           activeSessionId?: string;
@@ -267,23 +275,8 @@ export default function AsistenteSmartRh() {
         }
       }
 
-      const raw = window.localStorage.getItem(MAX_PORTAL_HISTORY_KEY);
-      if (!raw) return;
-
-      const payload = JSON.parse(raw) as { savedAt?: number; messages?: unknown[] };
-      const isFresh = typeof payload.savedAt === 'number' && Date.now() - payload.savedAt <= MAX_CHAT_HISTORY_TTL_MS;
-
-      if (isFresh && Array.isArray(payload.messages) && payload.messages.length > 0) {
-        const migratedSession = buildChatSession(payload.messages as Message[]);
-        setChatSessions([migratedSession]);
-        setActiveSessionId(migratedSession.id);
-        setMessages(migratedSession.messages);
-      } else {
-        window.localStorage.removeItem(MAX_PORTAL_HISTORY_KEY);
-      }
     } catch {
-      window.localStorage.removeItem(MAX_PORTAL_HISTORY_KEY);
-      window.localStorage.removeItem(MAX_PORTAL_SESSIONS_KEY);
+      window.localStorage.removeItem(storageKey);
     } finally {
       setMaxHistoryReady(true);
     }
@@ -307,7 +300,7 @@ export default function AsistenteSmartRh() {
         .slice(0, MAX_CHAT_HISTORY_LIMIT);
 
       setChatSessions(nextSessions);
-      persistChatSessions(activeSessionId, nextSessions);
+      persistChatSessions(activeSessionId, nextSessions, storageKey);
     } catch {
       // El historial local no debe bloquear el chat.
     }
@@ -331,6 +324,7 @@ export default function AsistenteSmartRh() {
   };
 
   const startNewChat = () => {
+    if (requestLock.current) return;
     const session = buildChatSession();
 
     setActiveSessionId(session.id);
@@ -341,6 +335,7 @@ export default function AsistenteSmartRh() {
   };
 
   const openChatSession = (session: MaxChatSession) => {
+    if (requestLock.current) return;
     setActiveSessionId(session.id);
     setMessages(session.messages);
     setSelectedHistoryId(session.id);
@@ -350,7 +345,12 @@ export default function AsistenteSmartRh() {
     setShowSuggestions(false);
   };
 
-  const deleteChatSession = (sessionId: string) => {
+  const deleteChatSession = async (sessionId: string) => {
+    if (requestLock.current) return;
+    requestLock.current = true;
+    try { await api.delete(`/chatbot/conversaciones/${encodeURIComponent(sessionId)}?canal=web`); }
+    catch { setError('No pude eliminar la conversación del servidor. Intenta nuevamente.'); return; }
+    finally { requestLock.current = false; }
     const remainingSessions = chatSessions.filter((session) => session.id !== sessionId);
     const fallbackSession = remainingSessions[0] || buildChatSession();
     const nextSessions = remainingSessions.length ? remainingSessions : [fallbackSession];
@@ -364,7 +364,7 @@ export default function AsistenteSmartRh() {
 
     persistChatSessions(
       activeSessionId === sessionId ? fallbackSession.id : activeSessionId,
-      nextSessions
+      nextSessions, storageKey
     );
 
     if (selectedHistoryId === sessionId) {
@@ -372,18 +372,22 @@ export default function AsistenteSmartRh() {
     }
   };
 
-  const clearAllChatSessions = () => {
+  const clearAllChatSessions = async () => {
+    if (requestLock.current) return;
+    requestLock.current = true;
+    try { await api.delete('/chatbot/conversaciones?canal=web'); }
+    catch { setError('No pude eliminar el historial del servidor. Intenta nuevamente.'); return; }
+    finally { requestLock.current = false; }
     const session = buildChatSession();
 
     if (typeof window !== 'undefined') {
-      window.localStorage.removeItem(MAX_PORTAL_HISTORY_KEY);
-      window.localStorage.removeItem(MAX_PORTAL_SESSIONS_KEY);
+          window.localStorage.removeItem(storageKey);
     }
 
     setChatSessions([session]);
     setActiveSessionId(session.id);
     setMessages(session.messages);
-    persistChatSessions(session.id, [session]);
+    persistChatSessions(session.id, [session], storageKey);
     resetComposerState();
   };
   const [suggestions, setSuggestions] = useState<string[]>([]);
@@ -401,7 +405,7 @@ export default function AsistenteSmartRh() {
 
   const historyPayload = useMemo(
     () =>
-      messages.slice(-6).map((item) => ({
+      messages.slice(-20).map((item) => ({
         author: item.author,
         text: item.text,
       })),
@@ -423,8 +427,7 @@ export default function AsistenteSmartRh() {
 
     return Boolean(
       lastQuestion &&
-        !hasCreatedTicket &&
-        latestAssistant?.response?.requiere_escalamiento
+        latestAssistant?.response?.puede_crear_ticket && latestAssistant?.response?.intent === 'ticket_borrador_listo'
     );
   }, [hasCreatedTicket, lastQuestion, messages]);
 
@@ -449,7 +452,7 @@ export default function AsistenteSmartRh() {
       setSuggestions([
         'No puedo registrar asistencia',
         'Ver calendario laboral',
-        'Crear solicitud de soporte',
+        'Confirmar creación del ticket',
       ]);
       setShowSuggestions(true);
     }
@@ -529,11 +532,15 @@ export default function AsistenteSmartRh() {
     });
   }, [messages, loading, open]);
 
-  async function sendMessage(nextMessage?: string) {
+  async function sendMessage(nextMessage?: string, confirmTicket = false) {
     const cleanMessage = String(nextMessage || message).trim();
 
-    if (!cleanMessage || loading) return;
+    if (!cleanMessage || requestLock.current) return;
+    requestLock.current = true;
+    const fingerprint = `${activeSessionId}:${cleanMessage}:${confirmTicket}`;
+    if (pendingRequest.current?.fingerprint !== fingerprint) pendingRequest.current = { fingerprint, id: buildId() };
 
+    const requestId = pendingRequest.current.id;
     const isQuickSuggestion = Boolean(nextMessage) && suggestions.some(
       (item) => item.trim().toLowerCase() === cleanMessage.toLowerCase()
     );
@@ -543,10 +550,9 @@ export default function AsistenteSmartRh() {
     setMessage('');
     setShowSuggestions(isQuickSuggestion);
     setLastQuestion(cleanMessage);
-    setMessages((current) => [
-      ...current,
+    setMessages((current) => [...current.filter(m => m.id !== requestId),
       {
-        id: buildId(),
+        id: requestId,
         author: 'user',
         text: cleanMessage,
       },
@@ -559,18 +565,21 @@ export default function AsistenteSmartRh() {
         mensaje: cleanMessage,
         historial: historyPayload,
         canal: 'web',
+        conversacion_id: activeSessionId,
+        solicitud_id: requestId,
+        crear_ticket: confirmTicket,
       });
 
-      const response = data?.respuesta as ChatbotResponse;
+      const response = verifiedMaxResponse(data) as ChatbotResponse;
+      pendingRequest.current = null;
+      if (!mounted.current) return;
 
       setMessages((current) => [
         ...current,
         {
           id: buildId(),
           author: 'assistant',
-          text:
-            response?.respuesta ||
-            'No pude generar una respuesta segura. Dame un poco mas de contexto.',
+          text: response.respuesta,
           response,
         },
       ]);
@@ -581,49 +590,23 @@ export default function AsistenteSmartRh() {
         setSuggestions([]);
       }
     } catch (err: any) {
+      if (!mounted.current) return;
+      setMessage(cleanMessage);
       setError(
-        err?.response?.data?.message ||
+        err?.response?.data?.message || err?.message ||
           'No se pudo contactar a Max. Revisa conexion o intenta de nuevo.'
       );
     } finally {
-      setLoading(false);
+      requestLock.current = false;
+      if (mounted.current) setLoading(false);
     }
   }
 
   async function createTicket() {
-    if (!lastQuestion || ticketLoading) return;
-
-    try {
-      setTicketLoading(true);
-      setError('');
-
-      const { data } = await api.post('/chatbot/mensaje', {
-        mensaje: lastQuestion,
-        historial: historyPayload,
-        canal: 'web',
-        crear_ticket: true,
-      });
-
-      const ticketId = data?.ticket?._id;
-
-      setMessages((current) => [
-        ...current,
-        {
-          id: buildId(),
-          author: 'assistant',
-          text: ticketId
-            ? `Listo. Creé la solicitud con folio ${ticketId}. Puedes darle seguimiento desde Soporte.`
-            : 'Listo. Envié la consulta a soporte con la información disponible.',
-        },
-      ]);
-    } catch (err: any) {
-      setError(
-        err?.response?.data?.message ||
-          'No se pudo crear la solicitud de soporte. Inténtalo de nuevo.'
-      );
-    } finally {
-      setTicketLoading(false);
-    }
+    if (!canCreateContextTicket || requestLock.current) return;
+    setTicketLoading(true);
+    try { await sendMessage('Sí, crear el ticket', true); }
+    finally { if (mounted.current) setTicketLoading(false); }
   }
 
   function submit(e: FormEvent) {
@@ -971,7 +954,7 @@ export default function AsistenteSmartRh() {
               type="submit"
               aria-label="Enviar mensaje a Max"
               title="Enviar mensaje"
-              disabled={loading || !message.trim()}
+              disabled={loading || ticketLoading || !maxHistoryReady || !message.trim()}
             >
               <svg className="max-send-icon" viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M5 12h12" />
@@ -985,9 +968,9 @@ export default function AsistenteSmartRh() {
               className="max-ticket-btn"
               type="button"
               onClick={createTicket}
-              disabled={ticketLoading}
+              disabled={ticketLoading || loading}
             >
-              {ticketLoading ? 'Creando solicitud...' : 'Crear solicitud de soporte'}
+              {ticketLoading ? 'Creando solicitud...' : 'Confirmar creación del ticket'}
             </button>
           ) : null}
         </section>
