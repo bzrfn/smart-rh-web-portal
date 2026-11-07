@@ -1,0 +1,86 @@
+/* Scope the dark showcase so legacy auth rules cannot repaint this card. */
+:root[data-theme='dark'] .auth-page-admin-access .auth-showcase-card {
+  --admin-showcase-surface: #10243a;
+  --admin-showcase-step: rgba(8, 20, 35, 0.32);
+  --admin-showcase-copy: #b9cfe0;
+
+  justify-content: center !important;
+  background:
+    radial-gradient(ellipse at 100% 0%, rgba(35, 195, 189, 0.12), transparent 58%),
+    linear-gradient(145deg, #142f49, var(--admin-showcase-surface) 62%, #102c36) !important;
+  border-color: var(--srh-line) !important;
+  box-shadow: var(--srh-shadow) !important;
+}
+
+:root[data-theme='dark'] .auth-page-admin-access .auth-showcase-card::after {
+  display: none !important;
+}
+
+:root[data-theme='dark'] .auth-page-admin-access .auth-showcase-badge {
+  max-width: 100%;
+  padding: 8px 12px;
+  color: #c6f2f0 !important;
+  background: rgba(35, 195, 189, 0.1) !important;
+  border-color: rgba(35, 195, 189, 0.26) !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  line-height: 1.5;
+  text-align: left;
+}
+
+:root[data-theme='dark'] .auth-page-admin-access .auth-showcase-title,
+:root[data-theme='dark'] .auth-page-admin-access .auth-showcase-point h3 {
+  color: var(--srh-ink) !important;
+}
+
+:root[data-theme='dark'] .auth-page-admin-access .auth-showcase-text,
+:root[data-theme='dark'] .auth-page-admin-access .auth-showcase-point p {
+  color: var(--admin-showcase-copy) !important;
+}
+
+:root[data-theme='dark'] .auth-page-admin-access .auth-showcase-points {
+  gap: 12px !important;
+}
+
+:root[data-theme='dark'] .auth-page-admin-access .auth-showcase-point {
+  min-width: 0;
+  grid-template-columns: 10px minmax(0, 1fr);
+  gap: 14px;
+  padding: 16px 18px;
+  background: var(--admin-showcase-step) !important;
+  border-color: var(--srh-line) !important;
+  border-radius: 16px !important;
+}
+
+:root[data-theme='dark'] .auth-page-admin-access .auth-showcase-point p {
+  margin-top: 6px;
+}
+
+:root[data-theme='dark'] .auth-page-admin-access .auth-showcase-dot {
+  width: 10px;
+  height: 10px;
+  margin-top: 7px;
+  background: var(--srh-cyan) !important;
+  box-shadow: 0 0 0 4px rgba(35, 195, 189, 0.12) !important;
+}
+
+@media (max-width: 680px) {
+  :root[data-theme='dark'] .auth-page-admin-access {
+    padding: 16px !important;
+  }
+
+  :root[data-theme='dark'] .auth-page-admin-access .auth-premium-grid {
+    width: 100% !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  :root[data-theme='dark'] .auth-page-admin-access .auth-showcase-card {
+    min-width: 0;
+    padding: 24px !important;
+  }
+
+  :root[data-theme='dark'] .auth-page-admin-access .auth-showcase-point {
+    gap: 12px;
+    padding: 14px;
+  }
+}
