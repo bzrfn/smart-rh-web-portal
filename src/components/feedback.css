@@ -1,0 +1,16 @@
+.operation-notices { position:fixed; z-index:2147483640; right:20px; bottom:20px; display:grid; gap:10px; width:min(430px,calc(100vw - 32px)); pointer-events:none; }
+.operation-notice { pointer-events:auto; display:flex; align-items:flex-start; gap:12px; padding:17px; color:var(--text,#102438); background:var(--card,#fff); border:1px solid var(--border,#c9dce8); border-radius:16px; box-shadow:0 12px 35px #0003; overflow-wrap:anywhere; }
+.operation-notice > div { flex:1; min-width:0; }
+.operation-notice strong { font-size:.95rem; }
+.operation-notice p { margin:5px 0 0; font-size:.9rem; line-height:1.5; }
+.operation-notice-icon { display:grid; place-items:center; width:28px; height:28px; flex-shrink:0; border-radius:50%; background:#22b8b022; color:var(--text,#102438); font-weight:800; }
+.operation-notice-error .operation-notice-icon { background:#dc354522; }
+.operation-notice > button { border:0; background:transparent; color:inherit; font-size:24px; line-height:1; min-width:32px; min-height:32px; cursor:pointer; }
+.operation-notice > button:focus-visible { outline:2px solid #22b8b0; outline-offset:2px; border-radius:6px; }
+@media(max-width:600px) { .operation-notices { right:16px; bottom:max(16px,env(safe-area-inset-bottom)); } }
+@media(prefers-reduced-motion:reduce) { .operation-notice { scroll-behavior:auto; } }
+
+.invitation-resend-form { display:grid; gap:16px; }
+.invitation-pending { cursor:default; color:var(--text); background:#22b8b01a; border:1px solid #22b8b055; }
+.smart-modal-body { overscroll-behavior:contain; }
+.smart-modal :is(input,select,textarea,button):focus-visible { outline:2px solid #22b8b0; outline-offset:3px; }

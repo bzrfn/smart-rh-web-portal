@@ -1,3 +1,4 @@
+import { assertSaved } from '../../services/feedback';
 import { CSSProperties, FormEvent, PointerEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../../services/api';
@@ -348,7 +349,8 @@ function MaxChatSessionWidget() {
   const deleteChatSession = async (sessionId: string) => {
     if (requestLock.current) return;
     requestLock.current = true;
-    try { await api.delete(`/chatbot/conversaciones/${encodeURIComponent(sessionId)}?canal=web`); }
+    try { const confirmedMutation1 = await api.delete(`/chatbot/conversaciones/${encodeURIComponent(sessionId)}?canal=web`);
+      assertSaved(confirmedMutation1.data, 'No se pudo confirmar la operación.'); }
     catch { setError('No pude eliminar la conversación del servidor. Intenta nuevamente.'); return; }
     finally { requestLock.current = false; }
     const remainingSessions = chatSessions.filter((session) => session.id !== sessionId);
@@ -375,7 +377,8 @@ function MaxChatSessionWidget() {
   const clearAllChatSessions = async () => {
     if (requestLock.current) return;
     requestLock.current = true;
-    try { await api.delete('/chatbot/conversaciones?canal=web'); }
+    try { const confirmedMutation2 = await api.delete('/chatbot/conversaciones?canal=web');
+      assertSaved(confirmedMutation2.data, 'No se pudo confirmar la operación.'); }
     catch { setError('No pude eliminar el historial del servidor. Intenta nuevamente.'); return; }
     finally { requestLock.current = false; }
     const session = buildChatSession();

@@ -1,3 +1,4 @@
+import { feedback } from '../../services/feedback';
 import {
   useCallback,
   useEffect,
@@ -472,6 +473,8 @@ function formatBytes(
 
 
 export default function Incapacidades() {
+  function setError(message: string) { setErrorState(message); if (message) feedback.error(message); }
+
   const [
     items,
     setItems,
@@ -498,7 +501,7 @@ export default function Incapacidades() {
 
   const [
     error,
-    setError,
+    setErrorState,
   ] =
     useState(
       ''
@@ -867,7 +870,7 @@ export default function Incapacidades() {
           );
 
         if (
-          !data?.ok ||
+          data?.ok !== true ||
           !data?.incapacidad
         ) {
           throw new Error(
@@ -875,15 +878,9 @@ export default function Incapacidades() {
           );
         }
 
-        setSelected(
-          data.incapacidad
-        );
+        setSelected(null);
 
-        setObservaciones(
-          data.incapacidad
-            .observaciones_admin ||
-            ''
-        );
+        setObservaciones('');
 
         setSuccess(
           estado ===
@@ -892,7 +889,8 @@ export default function Incapacidades() {
             : 'Incapacidad rechazada correctamente.'
         );
 
-        await load();
+        feedback.success(estado === 'aprobada' ? 'Incapacidad aprobada correctamente.' : 'Incapacidad rechazada correctamente.');
+        void load().catch(() => feedback.error('La revisión se guardó; no se pudo actualizar el listado. Vuelve a cargarlo.'));
       } catch (e: any) {
         setError(
           e?.response?.data?.message ??

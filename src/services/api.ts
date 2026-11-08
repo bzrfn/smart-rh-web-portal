@@ -55,7 +55,13 @@ api.interceptors.request.use((config) => {
 });
 
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    const method = String(response.config.method || 'get').toLowerCase();
+    if (['post', 'put', 'patch', 'delete'].includes(method) && response.data?.ok === false) {
+      return Promise.reject(Object.assign(new Error(response.data.message || 'No se pudo confirmar la operación.'), { response }));
+    }
+    return response;
+  },
   (error) => {
     const status = error?.response?.status;
     const message = error?.response?.data?.message;

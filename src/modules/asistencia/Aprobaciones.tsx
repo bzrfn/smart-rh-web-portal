@@ -1,3 +1,5 @@
+import { assertSaved } from '../../services/feedback';
+import { feedback } from '../../services/feedback';
 import {
   useCallback,
   useEffect,
@@ -103,6 +105,8 @@ function buildJustificationMotivo(
 
 
 export default function Aprobaciones() {
+  function setError(message: string) { setErrorState(message); if (message) feedback.error(message); }
+
   const {
     token,
   } = useAuth();
@@ -133,7 +137,7 @@ export default function Aprobaciones() {
 
   const [
     error,
-    setError,
+    setErrorState,
   ] =
     useState(
       ''
@@ -542,15 +546,17 @@ export default function Aprobaciones() {
         ''
       );
 
-      await api.patch(
+      const confirmedMutation1 = await api.patch(
         `/asistencia/${id}/approve`,
         {
           motivo:
             motivo.trim(),
         }
       );
+      assertSaved(confirmedMutation1.data, 'No se pudo confirmar la operación.');
 
       closeReviewPanel();
+      feedback.success('Asistencia aprobada correctamente.');
 
       await load();
 
@@ -585,15 +591,17 @@ export default function Aprobaciones() {
         ''
       );
 
-      await api.patch(
+      const confirmedMutation2 = await api.patch(
         `/asistencia/${id}/reject`,
         {
           motivo:
             motivo.trim(),
         }
       );
+      assertSaved(confirmedMutation2.data, 'No se pudo confirmar la operación.');
 
       closeReviewPanel();
+      feedback.success('Asistencia rechazada correctamente.');
 
       await load();
 
@@ -638,15 +646,17 @@ export default function Aprobaciones() {
         ''
       );
 
-      await api.patch(
+      const confirmedMutation3 = await api.patch(
         `/asistencia/${id}/justify`,
         {
           motivo:
             motivo.trim(),
         }
       );
+      assertSaved(confirmedMutation3.data, 'No se pudo confirmar la operación.');
 
       closeReviewPanel();
+      feedback.success('Asistencia justificada correctamente.');
 
       await load();
 
@@ -704,7 +714,7 @@ export default function Aprobaciones() {
         ''
       );
 
-      await api.patch(
+      const confirmedMutation4 = await api.patch(
         `/asistencia/${id}/correct`,
         {
           motivo:
@@ -717,8 +727,10 @@ export default function Aprobaciones() {
             horaSalidaNueva.trim(),
         }
       );
+      assertSaved(confirmedMutation4.data, 'No se pudo confirmar la operación.');
 
       closeReviewPanel();
+      feedback.success('Horario de asistencia corregido correctamente.');
 
       await load();
 

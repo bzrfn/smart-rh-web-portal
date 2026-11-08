@@ -1,9 +1,11 @@
+import { feedback, assertSaved, mutationError } from '../../services/feedback';
 import { useEffect, useMemo, useState } from 'react';
 import { api } from '../../services/api';
 import { useAuth } from '../../app/auth/AuthContext';
 import SmartRhModal from '../../components/SmartRhModal';
 
 type User = {
+  invitation?: PendingInvitation;
   id: number;
   nombre: string;
   apellido: string;
@@ -15,6 +17,13 @@ type User = {
   direccion?: string | null;
   fecha_ingreso?: string | null;
   dias_vacaciones_disponibles: number;
+};
+
+type PendingInvitation = {
+  invitation_id: string; invite_email: string; nombre: string; apellido: string;
+  account_type: 'admin' | 'empleado' | null; telefono: string | null; direccion: string | null;
+  fecha_ingreso: string | null; dias_vacaciones_disponibles: number;
+  created_at: string; expires_at: string; delivery_failed_at: string | null;
 };
 
 type Permisos = {
@@ -38,7 +47,7 @@ type UserForm = {
 type PermissionFilter = 'todos' | 'activos' | 'inactivos';
 
 type RoleFilter = 'todos' | 'admin' | 'empleado';
-type StatusFilter = 'todos' | 'activos' | 'inactivos';
+type StatusFilter = 'todos' | 'activos' | 'inactivos' | 'pendientes';
 type VacationFilter = 'todos' | 'sin_dias' | 'menos_10' | '10_o_mas';
 type BulkPermissionTarget = keyof Permisos | 'todos';
 
@@ -96,9 +105,24 @@ function getTotalPages(total: number, pageSize: number) {
 }
 
 export default function Usuarios() {
+  function setMessage(message: string) { setMessageState(message); if (message) feedback.success(message); }
+
+  function setError(message: string) { setErrorState(message); if (message) feedback.error(message); }
+
   const { user, token } = useAuth();
 
   const [users, setUsers] = useState<User[]>([]);
+  const [invitations, setInvitations] = useState<PendingInvitation[]>([]);
+  const [resending, setResending] = useState<PendingInvitation | null>(null);
+  const [resendRole, setResendRole] = useState('');
+  const [resendError, setResendError] = useState('');
+  const [now, setNow] = useState(Date.now());
+  useEffect(() => { const timer = window.setInterval(() => setNow(Date.now()), 1000); return () => window.clearInterval(timer); }, []);
+  const directoryUsers = useMemo<User[]>(() => [...users, ...invitations.filter(invite => !users.some(account => account.correo.toLowerCase() === invite.invite_email.toLowerCase())).map((invite, index) => ({
+    id: -index - 1, nombre: invite.nombre, apellido: invite.apellido, correo: invite.invite_email,
+    role: invite.account_type || 'Por confirmar', activo: 0, telefono: invite.telefono, direccion: invite.direccion,
+    fecha_ingreso: invite.fecha_ingreso, dias_vacaciones_disponibles: invite.dias_vacaciones_disponibles, invitation: invite,
+  }))], [users, invitations]);
   const [permisosMap, setPermisosMap] = useState<Record<number, Permisos>>({});
   const [vacationDaysMap, setVacationDaysMap] = useState<Record<number, string>>({});
   const [form, setForm] = useState<UserForm>(EMPTY_FORM);
@@ -111,8 +135,8 @@ export default function Usuarios() {
   const [loadingUsers, setLoadingUsers] = useState(false);
   const [loadingPermisos, setLoadingPermisos] = useState(false);
   const [savingKey, setSavingKey] = useState('');
-  const [error, setError] = useState('');
-  const [message, setMessage] = useState('');
+  const [error, setErrorState] = useState('');
+  const [message, setMessageState] = useState('');
 
   const [permissionSearch, setPermissionSearch] = useState('');
   const [permissionFilter, setPermissionFilter] = useState<PermissionFilter>('todos');
@@ -190,11 +214,13 @@ export default function Usuarios() {
   const filteredUsers = useMemo(() => {
     const query = normalizeText(userSearch.trim());
 
-    return users.filter((u) => {
+    return directoryUsers.filter((u) => {
       const role = String(u.role || '').toLowerCase();
       const dias = Number(u.dias_vacaciones_disponibles || 0);
 
       if (roleFilter !== 'todos' && role !== roleFilter) return false;
+      if (statusFilter === 'pendientes' && !u.invitation) return false;
+      if (statusFilter === 'inactivos' && u.invitation) return false;
       if (statusFilter === 'activos' && !isActiveUser(u)) return false;
       if (statusFilter === 'inactivos' && isActiveUser(u)) return false;
       if (vacationFilter === 'sin_dias' && dias > 0) return false;
@@ -209,7 +235,7 @@ export default function Usuarios() {
 
       return text.includes(query);
     });
-  }, [users, userSearch, roleFilter, statusFilter, vacationFilter]);
+  }, [directoryUsers, userSearch, roleFilter, statusFilter, vacationFilter]);
 
   const usersTotalPages = getTotalPages(filteredUsers.length, usersPageSize);
   const paginatedUsers = paginate(filteredUsers, usersPage, usersPageSize);
@@ -225,7 +251,8 @@ export default function Usuarios() {
       setLoadingUsers(true);
       setError('');
 
-      const { data } = await api.get('/users', authConfig);
+      const [{ data }, pending] = await Promise.all([api.get('/users', authConfig), api.get('/auth/invitations', authConfig)]);
+      setInvitations(Array.isArray(pending.data?.invitations) ? pending.data.invitations : []);
       const list = Array.isArray(data?.users) ? data.users : [];
 
       setUsers(list);
@@ -317,7 +344,7 @@ export default function Usuarios() {
   }
 
   async function saveUser() {
-    if (!token) return;
+    if (!token || savingKey === 'user-form') return;
 
     const roleId = Number(form.rol_id);
 
@@ -348,20 +375,18 @@ export default function Usuarios() {
             ...basePayload,
             tipo_cuenta: roleId === 1 ? 'admin' : 'empleado',
           },
-          authConfig
+          { ...authConfig, timeout: 45000 }
         );
+        assertSaved(data, 'No se pudo confirmar el envío de la invitación.');
 
         resetForm();
         setShowUserForm(false);
-        setMessage(
-          data?.message ||
-          'Invitación enviada correctamente.'
-        );
+        const sent = data?.message || 'Invitación enviada correctamente.';
+        setMessage(sent); feedback.success(sent);
+        void loadUsers();
       } catch (e: any) {
-        setError(
-          e?.response?.data?.message ??
-          'No se pudo enviar la invitación por correo.'
-        );
+        const detail = mutationError(e, 'No se pudo confirmar el envío de la invitación.');
+        setError(detail); feedback.error(detail);
       } finally {
         setSavingKey('');
       }
@@ -380,28 +405,58 @@ export default function Usuarios() {
       setMessage('');
 
       if (editingId) {
-        await api.put(
+        const { data } = await api.put(
           `/users/${editingId}`,
           payload,
           authConfig
         );
 
+        assertSaved(data, 'No se pudo confirmar la actualización.');
         resetForm();
         setShowUserForm(false);
         setMessage('Usuario actualizado correctamente.');
+        feedback.success('Usuario actualizado correctamente.');
+        void loadUsers();
       }
     } catch (e: any) {
       setError(
         e?.response?.data?.message ??
         'No se pudo guardar el usuario.'
       );
+      feedback.error(mutationError(e, 'No se pudo guardar el usuario.'));
     } finally {
       setSavingKey('');
     }
   }
 
+  function startResend(invitation: PendingInvitation) {
+    setResending(invitation); setResendRole(invitation.account_type || ''); setResendError('');
+  }
+  async function resendInvitation() {
+    if (!resending || savingKey.startsWith('resend-')) return;
+    if (!resendRole) { setResendError('Selecciona el rol de la cuenta antes de reenviar.'); return; }
+    const target = resending;
+    try {
+      setSavingKey(`resend-${target.invitation_id}`); setResendError('');
+      const { data } = await api.post(`/auth/invitations/${target.invitation_id}/resend`, { tipo_cuenta: resendRole }, { ...authConfig, timeout: 45000 });
+      assertSaved(data, 'No se pudo confirmar el reenvío.');
+      setResending(null);
+      feedback.success(`Invitación reenviada a ${target.invite_email}. El nuevo enlace vence en ${data.expiresInMinutes || 30} minutos.`);
+      void loadUsers();
+    } catch (error: any) {
+      const detail = mutationError(error, 'No se pudo reenviar la invitación.'); setResendError(detail); feedback.error(detail);
+      try {
+        const pending = await api.get('/auth/invitations', authConfig);
+        const list: PendingInvitation[] = pending.data?.invitations || [];
+        setInvitations(list);
+        const replacement = list.find(item => item.invite_email === target.invite_email);
+        if (replacement) setResending(replacement);
+      } catch { /* Keep the selected person's details until the operator closes the form. */ }
+    } finally { setSavingKey(''); }
+  }
+
   async function onToggle(userId: number, modulo: keyof Permisos) {
-    if (!token) return;
+    if (!token || savingKey) return;
 
     const current = permisosMap[userId] ?? DEFAULT_PERMISOS;
     const next = { ...current, [modulo]: !current[modulo] };
@@ -413,7 +468,8 @@ export default function Usuarios() {
       setError('');
       setMessage('');
 
-      await api.put(`/permisos/${userId}`, next, authConfig);
+      const confirmedMutation1 = await api.put(`/permisos/${userId}`, next, authConfig);
+      assertSaved(confirmedMutation1.data, 'No se pudo confirmar la operación.');
       setMessage('Permisos actualizados correctamente.');
     } catch (e: any) {
       setPermisosMap((prev) => ({ ...prev, [userId]: current }));
@@ -424,7 +480,7 @@ export default function Usuarios() {
   }
 
   async function bulkUpdatePermisos(modulos: (keyof Permisos)[], value: boolean) {
-    if (!token) return;
+    if (!token || savingKey) return;
 
     const targetUsers = filteredPermisosUsers;
 
@@ -464,14 +520,21 @@ export default function Usuarios() {
       setError('');
       setMessage('');
 
-      await Promise.all(
-        targetUsers.map((u) => api.put(`/permisos/${u.id}`, updates[u.id], authConfig))
-      );
-
-          setMessage(`Acceso actualizado para ${targetUsers.length} empleado(s).`);
-    } catch (e: any) {
-      setPermisosMap(previousMap);
-          setError(e?.response?.data?.message ?? 'No se pudo cambiar el acceso de las personas seleccionadas.');
+      const results = await Promise.allSettled(targetUsers.map(async (u) => {
+        const { data } = await api.put(`/permisos/${u.id}`, updates[u.id], authConfig);
+        assertSaved(data, 'No se pudieron confirmar los permisos.');
+      }));
+      const failedIds = targetUsers.filter((_, index) => results[index].status === 'rejected').map(u => u.id);
+      if (failedIds.length) {
+        setPermisosMap(previous => {
+          const restored = { ...previous };
+          for (const id of failedIds) restored[id] = previousMap[id] ?? DEFAULT_PERMISOS;
+          return restored;
+        });
+        setError(`Se guardaron ${targetUsers.length - failedIds.length} de ${targetUsers.length} cambios. No se confirmó el guardado de ${failedIds.length}; revisa esos permisos antes de reintentar.`);
+      } else {
+        setMessage(`Acceso actualizado para ${targetUsers.length} empleado(s).`);
+      }
     } finally {
       setSavingKey('');
     }
@@ -492,7 +555,8 @@ export default function Usuarios() {
       setError('');
       setMessage('');
 
-      await api.patch(`/users/${userId}/vacation-days`, { dias_vacaciones_disponibles: dias }, authConfig);
+      const confirmedMutation2 = await api.patch(`/users/${userId}/vacation-days`, { dias_vacaciones_disponibles: dias }, authConfig);
+      assertSaved(confirmedMutation2.data, 'No se pudo confirmar la operación.');
 
       setUsers((prev) =>
         prev.map((u) => (u.id === userId ? { ...u, dias_vacaciones_disponibles: dias } : u))
@@ -514,7 +578,8 @@ export default function Usuarios() {
       setError('');
       setMessage('');
 
-      await api.patch(`/users/${u.id}/active`, { activo: !u.activo }, authConfig);
+      const confirmedMutation3 = await api.patch(`/users/${u.id}/active`, { activo: !u.activo }, authConfig);
+      assertSaved(confirmedMutation3.data, 'No se pudo confirmar la operación.');
 
       setUsers((prev) =>
         prev.map((item) => (item.id === u.id ? { ...item, activo: u.activo ? 0 : 1 } : item))
@@ -539,7 +604,8 @@ export default function Usuarios() {
       setError('');
       setMessage('');
 
-      await api.delete(`/users/${userId}`, authConfig);
+      const confirmedMutation4 = await api.delete(`/users/${userId}`, authConfig);
+      assertSaved(confirmedMutation4.data, 'No se pudo confirmar la operación.');
 
       setUsers((prev) => prev.map((u) => (u.id === userId ? { ...u, activo: 0 } : u)));
       setMessage('Usuario desactivado correctamente.');
@@ -720,7 +786,7 @@ export default function Usuarios() {
                                   <input
                                     type="checkbox"
                                     checked={permisos[modulo]}
-                                    disabled={savingKey === `${u.id}-${modulo}` || isBulkSaving}
+                                    disabled={Boolean(savingKey) || isBulkSaving}
                                     onChange={() => onToggle(u.id, modulo)}
                                   />
                                   <span className="slider" />
@@ -748,6 +814,25 @@ export default function Usuarios() {
         )}
       </div>
 
+      <SmartRhModal open={Boolean(resending)} onClose={() => { setResending(null); setResendError(''); }}
+        title="Reenviar invitación" eyebrow="Acceso pendiente" size="compact" busy={savingKey.startsWith('resend-')}
+        description="Se enviará un enlace nuevo. El enlace anterior dejará de ser válido.">
+        {resending && <div className="invitation-resend-form">
+          <p><strong>{resending.nombre} {resending.apellido}</strong><br />{resending.invite_email}</p>
+          {resending.account_type ? <p>Rol: {resending.account_type === 'admin' ? 'Administrador' : 'Empleado'}</p> :
+            <label className="form-label">Confirma el rol de esta cuenta<select value={resendRole} onChange={event => setResendRole(event.target.value)} disabled={savingKey.startsWith('resend-')}>
+              <option value="">Selecciona un rol</option><option value="empleado">Empleado</option><option value="admin">Administrador</option>
+            </select></label>}
+          {resendError && <p className="module-error" role="alert">{resendError}</p>}
+          <div className="smart-form-actions">
+            <button type="button" className="btn btn-secondary" disabled={savingKey.startsWith('resend-')} onClick={() => setResending(null)}>Cancelar</button>
+            <button type="button" className="btn" onClick={resendInvitation} disabled={!resendRole || savingKey.startsWith('resend-') || new Date(resending.created_at).getTime() > now - 60000}>
+              {savingKey.startsWith('resend-') ? 'Reenviando…' : new Date(resending.created_at).getTime() > now - 60000 ? `Disponible en ${Math.max(1, Math.ceil((new Date(resending.created_at).getTime() + 60000 - now) / 1000))} s` : 'Reenviar invitación'}
+            </button>
+          </div>
+        </div>}
+      </SmartRhModal>
+
       {showCrud && (
         <>
           <SmartRhModal
@@ -760,6 +845,7 @@ export default function Usuarios() {
             busy={savingKey === 'user-form'}
           >
             <div className="users-modal-form">
+            {error && <p className="module-error" role="alert">{error}</p>}
             <section className="users-form-section">
               <div className="users-form-section-title"><span>01</span><div><strong>Datos de la cuenta</strong><small>Información con la que la persona será identificada en SMART RH.</small></div></div>
 
@@ -910,6 +996,7 @@ export default function Usuarios() {
                     <option value="todos">Todos</option>
                     <option value="activos">Activos</option>
                     <option value="inactivos">Inactivos</option>
+                    <option value="pendientes">Invitaciones pendientes</option>
                   </select>
                 </label>
 
@@ -956,7 +1043,7 @@ export default function Usuarios() {
 
                 <tbody>
                   {paginatedUsers.map((u) => (
-                    <tr key={u.id}>
+                    <tr key={u.invitation?.invitation_id || u.id}>
                       <td>
                         <div className="users-table-person">
                           <span>{`${u.nombre?.charAt(0) || ''}${u.apellido?.charAt(0) || ''}`.toUpperCase()}</span>
@@ -979,17 +1066,18 @@ export default function Usuarios() {
                       </td>
 
                       <td>
-                        <button
+                        {u.invitation ? <span className="status-pill invitation-pending">{u.invitation.delivery_failed_at ? 'Envío no confirmado' : new Date(u.invitation.expires_at).getTime() <= now ? 'Invitación vencida' : 'Pendiente de aceptación'}</span> : <button
                           type="button"
                           className={`status-pill ${u.activo ? 'active' : 'inactive'}`}
                           disabled={savingKey === `${u.id}-active`}
                           onClick={() => toggleActive(u)}
                         >
                           {u.activo ? 'Activo' : 'Inactivo'}
-                        </button>
+                        </button>}
                       </td>
 
                       <td>
+                        {u.invitation ? <span>{u.dias_vacaciones_disponibles} días al activar</span> : <>
                         <div className="users-vacation-control">
                           <input
                             type="number"
@@ -1012,9 +1100,11 @@ export default function Usuarios() {
                             Guardar
                           </button>
                         </div>
+                        </>}
                       </td>
 
                       <td>
+                        {u.invitation ? <button type="button" className="btn btn-small smart-action-correct" onClick={() => startResend(u.invitation!)}>Reenviar invitación</button> : <>
                         <div className="users-row-actions">
                           <button type="button" className="btn btn-small smart-action-correct" onClick={() => startEdit(u)}>
                             Editar
@@ -1029,6 +1119,7 @@ export default function Usuarios() {
                             Desactivar
                           </button>
                         </div>
+                        </>}
                       </td>
                     </tr>
                   ))}

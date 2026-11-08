@@ -1,3 +1,5 @@
+import { assertSaved } from '../../services/feedback';
+import { feedback } from '../../services/feedback';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { api } from '../../services/api';
 import ProtectedImage from '../../components/ProtectedImage';
@@ -223,17 +225,19 @@ export default function DocumentacionEmpleado() {
     setMessage('');
 
     try {
-      await api.patch(`/documentos/usuarios/${selectedId}/foto-perfil`, {
+      const confirmedMutation1 = await api.patch(`/documentos/usuarios/${selectedId}/foto-perfil`, {
         base64: fotoBase64,
         filename,
       });
+      assertSaved(confirmedMutation1.data, 'No se pudo confirmar la operación.');
 
-      await reloadData();
-      setMessage('Foto de perfil actualizada correctamente.');
+      void reloadData().catch(() => feedback.error('El cambio se guardó; no se pudo actualizar el listado de documentos. Vuelve a cargarlo.'));
+      setMessage('Foto de perfil actualizada correctamente.'); feedback.success('Foto de perfil actualizada correctamente.');
       setFotoBase64('');
       setFilename('');
     } catch (e: any) {
       setMessage(e?.response?.data?.message || 'No se pudo actualizar la foto.');
+      feedback.error(e?.response?.data?.message || 'No se pudo actualizar la foto.');
     } finally {
       setLoading(false);
     }
@@ -247,14 +251,17 @@ export default function DocumentacionEmpleado() {
 
     try {
       const { data } = await api.post(`/documentos/usuarios/${selectedId}/contrato-pdf`);
+      assertSaved(data, 'No se pudo confirmar la generación del contrato.');
       const url = data?.contrato_pdf_url || '';
+      if (!url) throw new Error('El servidor no devolvió el contrato.');
 
       if (url) setGeneratedContratoUrl(url);
 
-      await reloadData();
-      setMessage('Contrato PDF generado correctamente.');
+      void reloadData().catch(() => feedback.error('El cambio se guardó; no se pudo actualizar el listado de documentos. Vuelve a cargarlo.'));
+      setMessage('Contrato PDF generado correctamente.'); feedback.success('Contrato PDF generado correctamente.');
     } catch (e: any) {
       setMessage(e?.response?.data?.message || 'No se pudo generar el contrato.');
+      feedback.error(e?.response?.data?.message || 'No se pudo generar el contrato.');
     } finally {
       setLoading(false);
     }
@@ -282,14 +289,17 @@ export default function DocumentacionEmpleado() {
 
     try {
       const { data } = await api.post(`/documentos/usuarios/${selectedId}/credencial-imagen`);
+      assertSaved(data, 'No se pudo confirmar la generación de la credencial.');
       const url = data?.credencial_url || '';
+      if (!url) throw new Error('El servidor no devolvió la credencial.');
 
       if (url) setGeneratedCredencialUrl(url);
 
-      await reloadData();
-      setMessage('Credencial digital generada correctamente.');
+      void reloadData().catch(() => feedback.error('El cambio se guardó; no se pudo actualizar el listado de documentos. Vuelve a cargarlo.'));
+      setMessage('Credencial digital generada correctamente.'); feedback.success('Credencial digital generada correctamente.');
     } catch (e: any) {
       setMessage(e?.response?.data?.message || 'No se pudo generar la credencial.');
+      feedback.error(e?.response?.data?.message || 'No se pudo generar la credencial.');
     } finally {
       setLoading(false);
     }

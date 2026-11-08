@@ -1,3 +1,4 @@
+import { feedback } from '../../services/feedback';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { api } from '../../services/api';
 import CurrencyInput from '../../components/CurrencyInput';
@@ -62,6 +63,8 @@ type PayrollFilter = 'todos' | Nomina['estado'];
 const PAGE_SIZE = 5;
 
 export default function Nomina() {
+  function setError(message: string) { setErrorState(message); if (message) feedback.error(message); }
+
   const [items, setItems] = useState<Nomina[]>([]);
   const [users, setUsers] = useState<UserOption[]>([]);
   const [contracts, setContracts] = useState<ContractOption[]>([]);
@@ -71,9 +74,10 @@ export default function Nomina() {
   const [loading, setLoading] = useState(false);
   const [loadingUsers, setLoadingUsers] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [createOpen, setCreateOpen] = useState(true);
   const [savingEdit, setSavingEdit] = useState(false);
   const [changingEstadoId, setChangingEstadoId] = useState<number | null>(null);
-  const [error, setError] = useState('');
+  const [error, setErrorState] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [activeFilter, setActiveFilter] = useState<PayrollFilter>('todos');
 
@@ -254,7 +258,7 @@ export default function Nomina() {
 
       const { data } = await api.post('/nominas', payload);
 
-      if (!data?.ok) {
+      if (data?.ok !== true) {
         setError(data?.message ?? 'No se pudo registrar la nómina.');
         return;
       }
@@ -272,7 +276,9 @@ export default function Nomina() {
       setUserSearch('');
       setShowUserResults(false);
 
-      await load();
+      setCreateOpen(false);
+      feedback.success('Nómina registrada correctamente.');
+      void load().catch(() => feedback.error('El cambio se guardó; no se pudo actualizar el listado. Vuelve a cargarlo.'));
     } catch (e: any) {
       setError(e?.response?.data?.message ?? 'No se pudo registrar la nómina.');
     } finally {
@@ -322,13 +328,14 @@ export default function Nomina() {
 
       const { data } = await api.put(`/nominas/${edit.id}`, payload);
 
-      if (!data?.ok) {
+      if (data?.ok !== true) {
         setError(data?.message ?? 'No se pudo actualizar la nómina.');
         return;
       }
 
       cancelEdit();
-      await load();
+      feedback.success('Nómina actualizada correctamente.');
+      void load().catch(() => feedback.error('El cambio se guardó; no se pudo actualizar el listado. Vuelve a cargarlo.'));
     } catch (e: any) {
       setError(e?.response?.data?.message ?? 'No se pudo actualizar la nómina.');
     } finally {
@@ -347,12 +354,13 @@ export default function Nomina() {
         estado: siguienteEstado,
       });
 
-      if (!data?.ok) {
+      if (data?.ok !== true) {
         setError(data?.message ?? 'No se pudo cambiar el estado.');
         return;
       }
 
-      await load();
+      feedback.success('Estado de nómina actualizado correctamente.');
+      void load().catch(() => feedback.error('El cambio se guardó; no se pudo actualizar el listado. Vuelve a cargarlo.'));
     } catch (e: any) {
       setError(e?.response?.data?.message ?? 'No se pudo cambiar el estado.');
     } finally {
@@ -420,10 +428,12 @@ export default function Nomina() {
               Elige a la persona, registra los importes y define el periodo que estás procesando.
             </p>
           </div>
+          <button className="btn btn-secondary" type="button" disabled={submitting} aria-expanded={createOpen} onClick={() => setCreateOpen(open => !open)}>{createOpen ? 'Cerrar formulario' : 'Nueva nómina'}</button>
         </div>
 
         {error && <p className="module-error">{error}</p>}
 
+        {createOpen && (
         <form className="record-workflow-form payroll-workflow-form" onSubmit={onSubmit}>
           <section className="record-form-section record-person-section">
             <div className="record-form-section-heading"><span>01</span><div><strong>Persona y contrato</strong><small>El salario se toma del contrato más reciente para evitar capturarlo dos veces.</small></div></div>
@@ -563,6 +573,7 @@ export default function Nomina() {
             <div className="record-live-total"><span>Total estimado</span><strong>{formatCurrency(estimatedTotal)}</strong></div>
           </aside>
         </form>
+        )}
       </div>
 
       {edit.id && (
@@ -575,6 +586,7 @@ export default function Nomina() {
           size="medium"
           busy={savingEdit}
         >
+          {error && <p className="module-error" role="alert">{error}</p>}
           <div className="smart-form-grid">
             <div className="smart-form-group">
               <label>Salario base</label>
