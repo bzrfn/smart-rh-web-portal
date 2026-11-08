@@ -1,3 +1,4 @@
+import { feedback } from '../../services/feedback';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { api } from '../../services/api';
 
@@ -21,10 +22,12 @@ type VacationFilter = 'todas' | Vacacion['estado'];
 const PAGE_SIZE = 5;
 
 export default function Vacaciones() {
+  function setError(message: string) { setErrorState(message); if (message) feedback.error(message); }
+
   const [items, setItems] = useState<Vacacion[]>([]);
   const [loading, setLoading] = useState(false);
   const [actionLoadingId, setActionLoadingId] = useState<number | null>(null);
-  const [error, setError] = useState('');
+  const [error, setErrorState] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [filter, setFilter] = useState<VacationFilter>('todas');
 
@@ -100,6 +103,7 @@ export default function Vacaciones() {
         return;
       }
 
+      feedback.success('Solicitud de vacaciones aprobada correctamente.');
       await load();
     } catch (e: any) {
       setError(
@@ -122,6 +126,7 @@ export default function Vacaciones() {
         return;
       }
 
+      feedback.success('Solicitud de vacaciones rechazada correctamente.');
       await load();
     } catch (e: any) {
       setError(

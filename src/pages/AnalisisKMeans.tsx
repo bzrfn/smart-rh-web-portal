@@ -1,3 +1,4 @@
+import { feedback } from '../services/feedback';
 import { type CSSProperties, useEffect, useMemo, useState } from 'react';
 import {
   Bar,
@@ -683,6 +684,7 @@ export default function AnalisisKMeans() {
       });
 
       setTraining(data);
+      feedback.success('Grupos actualizados correctamente.');
     } catch (err: any) {
       setError(
         err?.response?.data?.message ||

@@ -1,3 +1,4 @@
+import { feedback } from '../../services/feedback';
 import { FormEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { api } from '../../services/api';
@@ -385,7 +386,7 @@ export default function LandingPage() {
         return;
       }
 
-      setContactSuccess(contactText.success);
+      setContactSuccess(contactText.success); feedback.success(contactText.success);
       setContactName('');
       setContactEmail('');
       setContactCompany('');

@@ -1,3 +1,4 @@
+import { feedback } from '../../services/feedback';
 import { useEffect, useMemo, useState } from 'react';
 import {
   Bar,
@@ -468,6 +469,7 @@ export default function AnalisisSupervisado() {
       setEvaluacion(data.evaluacion || null);
       setPredicciones(data.predicciones || []);
       setSuccess(data.message || 'El análisis se actualizó correctamente.');
+      feedback.success(data.message || 'El análisis se actualizó correctamente.');
 
       setLastUpdated(
         new Date().toLocaleString('es-MX', {

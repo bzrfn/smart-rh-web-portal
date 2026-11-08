@@ -1,3 +1,4 @@
+import { feedback, assertSaved, mutationError } from '../../services/feedback';
 import { useEffect, useMemo, useState } from 'react';
 import { api } from '../../services/api';
 import SmartRhModal from '../../components/SmartRhModal';
@@ -155,6 +156,7 @@ export default function Soporte() {
 
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [currentMonth, setCurrentMonth] = useState(() => startOfMonth(new Date()));
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
@@ -212,10 +214,7 @@ export default function Soporte() {
       const list = Array.isArray(data?.tickets) ? data.tickets : [];
       setTickets(list);
 
-      if (selectedTicket) {
-        const updated = list.find((t: Ticket) => t._id === selectedTicket._id);
-        setSelectedTicket(updated || null);
-      }
+      setSelectedTicket(current => current ? list.find((ticket: Ticket) => ticket._id === current._id) || null : null);
     } finally {
       setLoading(false);
     }
@@ -226,14 +225,15 @@ export default function Soporte() {
   }
 
   useEffect(() => {
-    reloadAll();
+    void reloadAll().catch(() => feedback.error('No se pudo cargar Soporte.'));
   }, []);
 
   useEffect(() => {
-    loadTickets();
+    void loadTickets().catch(() => feedback.error('No se pudo actualizar el listado de soporte.'));
   }, [estado, categoria, prioridad]);
 
   function openTicket(ticket: Ticket) {
+    setSaveError('');
     setSelectedTicket(ticket);
     setRespuestaAdmin(ticket.respuesta_admin || '');
     setEstadoEdit(ticket.estado);
@@ -247,26 +247,24 @@ export default function Soporte() {
   }
 
   async function saveTicket() {
-    if (!selectedTicket) return;
-
-    setSaving(true);
-
+    if (!selectedTicket || saving) return;
+    setSaving(true); setSaveError('');
     try {
-      await api.patch(`/soporte/tickets/${selectedTicket._id}`, {
-        estado: estadoEdit,
-        prioridad: prioridadEdit,
-        respuesta_admin: respuestaAdmin,
+      const { data } = await api.patch(`/soporte/tickets/${selectedTicket._id}`, {
+        estado: estadoEdit, prioridad: prioridadEdit, respuesta_admin: respuestaAdmin,
       });
-
-      await reloadAll();
-    } finally {
-      setSaving(false);
-    }
+      assertSaved(data, 'No se pudo confirmar el guardado del ticket.');
+      setSelectedTicket(null); setRespuestaAdmin('');
+      feedback.success('Ticket actualizado correctamente.');
+      void reloadAll().catch(() => feedback.error('El ticket se guardó; no se pudo actualizar el listado. Vuelve a cargarlo.'));
+    } catch (error: any) {
+      const detail = mutationError(error, 'No se pudo guardar el ticket.'); setSaveError(detail); feedback.error(detail);
+    } finally { setSaving(false); }
   }
 
   function submitSearch(e: React.FormEvent) {
     e.preventDefault();
-    loadTickets();
+    void loadTickets().catch(() => feedback.error('No se pudo buscar en Soporte.'));
   }
 
   function moveMonth(direction: number) {
@@ -501,7 +499,8 @@ export default function Soporte() {
         size="wide"
         busy={saving}
       >
-          {selectedTicket && (
+          {saveError && <p className="module-error" role="alert">{saveError}</p>}
+        {selectedTicket && (
             <div className="support-detail-modal-content">
               <div className="support-section-header">
                 <div>

@@ -1,3 +1,4 @@
+import { feedback } from '../../services/feedback';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { api } from '../../services/api';
 import { openProtectedResource } from '../../services/protectedMedia';
@@ -52,6 +53,8 @@ type ContractFilter = 'todos' | Contrato['estado'];
 const PAGE_SIZE = 5;
 
 export default function Contratos() {
+  function setError(message: string) { setErrorState(message); if (message) feedback.error(message); }
+
   const [items, setItems] = useState<Contrato[]>([]);
   const [users, setUsers] = useState<UserOption[]>([]);
   const [userSearch, setUserSearch] = useState('');
@@ -60,9 +63,10 @@ export default function Contratos() {
   const [loading, setLoading] = useState(false);
   const [loadingUsers, setLoadingUsers] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [createOpen, setCreateOpen] = useState(true);
   const [savingEdit, setSavingEdit] = useState(false);
   const [changingEstadoId, setChangingEstadoId] = useState<number | null>(null);
-  const [error, setError] = useState('');
+  const [error, setErrorState] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [activeFilter, setActiveFilter] = useState<ContractFilter>('todos');
 
@@ -231,7 +235,7 @@ export default function Contratos() {
 
       const { data } = await api.post('/contratos', payload);
 
-      if (!data?.ok) {
+      if (data?.ok !== true) {
         setError(data?.message ?? 'No se pudo registrar el contrato.');
         return;
       }
@@ -248,7 +252,9 @@ export default function Contratos() {
       setUserSearch('');
       setShowUserResults(false);
 
-      await load();
+      setCreateOpen(false);
+      feedback.success('Contrato registrado correctamente.');
+      void load().catch(() => feedback.error('El cambio se guardó; no se pudo actualizar el listado. Vuelve a cargarlo.'));
     } catch (e: any) {
       setError(e?.response?.data?.message ?? 'No se pudo registrar el contrato.');
     } finally {
@@ -295,13 +301,14 @@ export default function Contratos() {
 
       const { data } = await api.put(`/contratos/${edit.id}`, payload);
 
-      if (!data?.ok) {
+      if (data?.ok !== true) {
         setError(data?.message ?? 'No se pudo actualizar el contrato.');
         return;
       }
 
       cancelEdit();
-      await load();
+      feedback.success('Contrato actualizado correctamente.');
+      void load().catch(() => feedback.error('El cambio se guardó; no se pudo actualizar el listado. Vuelve a cargarlo.'));
     } catch (e: any) {
       setError(e?.response?.data?.message ?? 'No se pudo actualizar el contrato.');
     } finally {
@@ -325,12 +332,13 @@ export default function Contratos() {
         estado: siguienteEstado,
       });
 
-      if (!data?.ok) {
+      if (data?.ok !== true) {
         setError(data?.message ?? 'No se pudo cambiar el estado.');
         return;
       }
 
-      await load();
+      feedback.success('Estado de contrato actualizado correctamente.');
+      void load().catch(() => feedback.error('El cambio se guardó; no se pudo actualizar el listado. Vuelve a cargarlo.'));
     } catch (e: any) {
       setError(e?.response?.data?.message ?? 'No se pudo cambiar el estado.');
     } finally {
@@ -396,10 +404,12 @@ export default function Contratos() {
               Primero elige a la persona y después completa las condiciones del contrato.
             </p>
           </div>
+          <button className="btn btn-secondary" type="button" disabled={submitting} aria-expanded={createOpen} onClick={() => setCreateOpen(open => !open)}>{createOpen ? 'Cerrar formulario' : 'Nuevo contrato'}</button>
         </div>
 
         {error && <p className="module-error">{error}</p>}
 
+        {createOpen && (
         <form className="record-workflow-form" onSubmit={onSubmit}>
           <section className="record-form-section record-person-section">
             <div className="record-form-section-heading"><span>01</span><div><strong>Persona</strong><small>Selecciona el expediente que recibirá el contrato.</small></div></div>
@@ -557,6 +567,7 @@ export default function Contratos() {
             <div><span>Vigencia</span><strong>{form.fecha_inicio ? `${formatDateDisplay(form.fecha_inicio)} → ${form.fecha_fin ? formatDateDisplay(form.fecha_fin) : 'Sin fecha fin'}` : 'Por definir'}</strong></div>
           </aside>
         </form>
+        )}
       </div>
 
       {edit.id && (
@@ -569,6 +580,7 @@ export default function Contratos() {
           size="medium"
           busy={savingEdit}
         >
+          {error && <p className="module-error" role="alert">{error}</p>}
           <div className="smart-form-grid">
             <div className="smart-form-group">
               <label>Tipo de contrato</label>
