@@ -167,6 +167,7 @@ export default function AdminLogin() {
               true,
 
             state: {
+              adminFlow: true,
               correo:
                 data?.correo ||
                 normalizedEmail,

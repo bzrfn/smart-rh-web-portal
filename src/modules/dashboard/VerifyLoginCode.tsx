@@ -77,7 +77,7 @@ export default function VerifyLoginCode() {
   };
 
   return (
-    <div className={`auth-page auth-page-premium${adminFlow ? ' auth-page-admin-access' : ''}`}>
+    <div className="auth-page auth-page-premium auth-page-admin-access">
       <Link to="/" className="auth-back-home">
         ← Volver al sitio principal
       </Link>
@@ -88,55 +88,14 @@ export default function VerifyLoginCode() {
       <div className="bg-shape bg-shape-bottom-right-small" />
 
       <div className="auth-premium-grid">
-        {adminFlow ? <AdminAccessShowcase /> : (
-        <div className="auth-showcase-card">
-          <div className="auth-showcase-badge">Segundo paso de seguridad</div>
-
-          <h1 className="auth-showcase-title">Código de acceso</h1>
-
-          <p className="auth-showcase-text">
-            Escribe el código de un solo uso enviado al correo de tu cuenta.
-          </p>
-
-          <div className="auth-showcase-points">
-            <div className="auth-showcase-point">
-              <span className="auth-showcase-dot" />
-              <div>
-                <h3>Verificación temporal</h3>
-                <p>El código es válido solo por unos minutos y se consume al usarlo.</p>
-              </div>
-            </div>
-
-            <div className="auth-showcase-point">
-              <span className="auth-showcase-dot" />
-              <div>
-                <h3>Correo asociado</h3>
-                <p>El código fue enviado a: {correo}</p>
-              </div>
-            </div>
-
-            <div className="auth-showcase-point">
-              <span className="auth-showcase-dot" />
-              <div>
-                <h3>Acceso protegido</h3>
-                <p>Al confirmar el código podrás entrar al portal administrativo.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-        )}
+        <AdminAccessShowcase />
 
         <div className="auth-wrapper auth-wrapper-premium">
-          <div className="auth-brand-block">
-            <h1 className="auth-brand">SMART RH</h1>
-            <p className="auth-brand-subtitle">Confirmación de acceso</p>
-          </div>
-
           <form className="auth-card auth-card-premium" onSubmit={submit}>
             <div className="auth-card-header">
               <div>
                 <p className="auth-eyebrow">Segundo paso de seguridad</p>
-                <h2 className="auth-title">Confirmar código de acceso</h2>
+                <h2 className="auth-title">Confirma tu código</h2>
               </div>
 
               <div className="auth-card-icon"></div>
@@ -148,8 +107,9 @@ export default function VerifyLoginCode() {
 
             <div className="auth-email-chip">{correo}</div>
 
-            <label className="auth-label">Código</label>
+            <label className="auth-label" htmlFor="login-verification-code">Código</label>
             <input
+              id="login-verification-code"
               className="auth-input auth-code-input"
               value={codigo}
               onChange={(e) => normalizeCode(e.target.value)}
@@ -168,11 +128,9 @@ export default function VerifyLoginCode() {
             {info && <p className="auth-info">{info}</p>}
 
             <div className="auth-footer-links">
-              {!adminFlow && (
-                <Link to="/login" className="auth-link primary">
-                  Volver a iniciar sesión
-                </Link>
-              )}
+              <Link to={adminFlow ? '/admin/acceso' : '/login'} className="auth-link primary">
+                {adminFlow ? 'Volver al acceso administrativo' : 'Volver a iniciar sesión'}
+              </Link>
 
               <Link to="/" className="auth-link">
                 Ir al sitio principal
