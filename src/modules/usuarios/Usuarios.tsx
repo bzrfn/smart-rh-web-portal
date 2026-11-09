@@ -116,6 +116,12 @@ export default function Usuarios() {
   const [resending, setResending] = useState<PendingInvitation | null>(null);
   const [resendRole, setResendRole] = useState('');
   const [resendError, setResendError] = useState('');
+  const [editingInvitation, setEditingInvitation] = useState<PendingInvitation | null>(null);
+  const [invitationEmail, setInvitationEmail] = useState('');
+  const [invitationRole, setInvitationRole] = useState('');
+  const [invitationEditError, setInvitationEditError] = useState('');
+  const [cancelingInvitation, setCancelingInvitation] = useState<PendingInvitation | null>(null);
+  const [invitationCancelError, setInvitationCancelError] = useState('');
   const [now, setNow] = useState(Date.now());
   useEffect(() => { const timer = window.setInterval(() => setNow(Date.now()), 1000); return () => window.clearInterval(timer); }, []);
   const directoryUsers = useMemo<User[]>(() => [...users, ...invitations.filter(invite => !users.some(account => account.correo.toLowerCase() === invite.invite_email.toLowerCase())).map((invite, index) => ({
@@ -463,6 +469,47 @@ export default function Usuarios() {
         const replacement = list.find(item => item.invite_email === target.invite_email);
         if (replacement && !target.existingUserId) setResending(replacement);
       } catch { /* Keep the selected person's details until the operator closes the form. */ }
+    } finally { setSavingKey(''); }
+  }
+
+  function startInvitationEdit(invitation: PendingInvitation) {
+    setEditingInvitation(invitation); setInvitationEmail(invitation.invite_email);
+    setInvitationRole(invitation.account_type || ''); setInvitationEditError('');
+  }
+  async function saveInvitationEmail(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!editingInvitation || savingKey) return;
+    const target=editingInvitation, correo=invitationEmail.trim().toLowerCase();
+    if (correo===target.invite_email.toLowerCase()) { setInvitationEditError('Escribe el correo corregido o utiliza Reenviar invitación.'); return; }
+    if (!invitationRole) { setInvitationEditError('Confirma el rol de esta invitación.'); return; }
+    setSavingKey('invitation-email');setInvitationEditError('');
+    try {
+      const {data}=await api.post(`/auth/invitations/${target.invitation_id}/correct-email`,{correo,tipo_cuenta:invitationRole},{...authConfig,timeout:45000});
+      assertSaved(data,'No se pudo confirmar la corrección del correo.');
+      setEditingInvitation(null);feedback.success(`Correo corregido. Invitación enviada a ${correo}; el enlace anterior quedó invalidado.`);void loadUsers();
+    } catch(error: any) {
+      const detail=mutationError(error,'No se pudo confirmar la corrección del correo.');setInvitationEditError(detail);feedback.error(detail);
+      try {
+        const {data}=await api.get('/auth/invitations',authConfig);
+        const list: PendingInvitation[]=data?.invitations||[];setInvitations(list);
+        const replacement=list.find(item=>item.invite_email.toLowerCase()===correo&&item.invitation_id!==target.invitation_id);
+        if (error?.response?.status===502 && error?.response?.data?.message==='No fue posible enviar la invitación por correo' && replacement && !list.some(item=>item.invitation_id===target.invitation_id)) {
+          setEditingInvitation(null);startResend(replacement);
+          setResendError(`El correo corregido está guardado, pero no se confirmó el envío. Revisa ${correo} y utiliza Reenviar invitación cuando esté disponible.`);
+        }
+      } catch { /* Keep the selected email and the error until the operator can retry. */ }
+    } finally { setSavingKey(''); }
+  }
+  async function cancelInvitation() {
+    if (!cancelingInvitation || savingKey) return;
+    const target=cancelingInvitation;setSavingKey('invitation-cancel');setInvitationCancelError('');
+    try {
+      const {data}=await api.post(`/auth/invitations/${target.invitation_id}/cancel`,{},authConfig);
+      assertSaved(data,'No se pudo confirmar la cancelación.');
+      setCancelingInvitation(null);setInvitations(items=>items.filter(item=>item.invite_email.toLowerCase()!==target.invite_email.toLowerCase()));
+      feedback.success(`Invitación cancelada para ${target.invite_email}. Su enlace quedó invalidado.`);void loadUsers();
+    } catch(error) {
+      const detail=mutationError(error,'No se pudo confirmar la cancelación.');setInvitationCancelError(detail);feedback.error(detail);void loadUsers();
     } finally { setSavingKey(''); }
   }
 
@@ -825,6 +872,34 @@ export default function Usuarios() {
         )}
       </div>
 
+      <SmartRhModal open={Boolean(editingInvitation)} onClose={() => setEditingInvitation(null)}
+        title="Editar invitación" eyebrow="Correo pendiente" size="compact" busy={savingKey==='invitation-email'}
+        description="Corrige el correo y envía un enlace nuevo. El enlace anterior dejará de funcionar; se conservarán el rol y la fecha de ingreso.">
+        {editingInvitation && <form onSubmit={saveInvitationEmail} className="invitation-resend-form">
+          <p>Correo anterior: <strong>{editingInvitation.invite_email}</strong></p>
+          <label className="form-label">Correo corregido<input type="email" required maxLength={191} autoComplete="email" spellCheck={false} value={invitationEmail} disabled={savingKey==='invitation-email'} onChange={event=>setInvitationEmail(event.target.value)} /></label>
+          {editingInvitation.account_type ? <p>Rol: {editingInvitation.account_type==='admin'?'Administrador':'Empleado'} · Ingreso: {normalizeDate(editingInvitation.fecha_ingreso)||'No registrado'}</p> :
+            <label className="form-label">Confirma el rol<select required value={invitationRole} disabled={savingKey==='invitation-email'} onChange={event=>setInvitationRole(event.target.value)}><option value="">Selecciona un rol</option><option value="empleado">Empleado</option><option value="admin">Administrador</option></select></label>}
+          {invitationEditError && <p className="module-error" role="alert">{invitationEditError}</p>}
+          <div className="smart-form-actions">
+            <button type="button" className="btn btn-secondary" disabled={savingKey==='invitation-email'} onClick={()=>setEditingInvitation(null)}>Volver</button>
+            <button type="submit" className="btn" disabled={savingKey==='invitation-email'}>{savingKey==='invitation-email'?'Guardando y enviando…':'Guardar y enviar invitación'}</button>
+          </div>
+        </form>}
+      </SmartRhModal>
+      <SmartRhModal open={Boolean(cancelingInvitation)} onClose={()=>setCancelingInvitation(null)}
+        title="Cancelar invitación" eyebrow="Acceso pendiente" size="compact" busy={savingKey==='invitation-cancel'}
+        description="La invitación desaparecerá de pendientes y su enlace dejará de permitir la activación.">
+        {cancelingInvitation && <div className="invitation-resend-form">
+          <p>Confirma la cancelación para <strong>{cancelingInvitation.invite_email}</strong>.</p>
+          {invitationCancelError && <p className="module-error" role="alert">{invitationCancelError}</p>}
+          <div className="smart-form-actions">
+            <button type="button" className="btn btn-secondary" disabled={savingKey==='invitation-cancel'} onClick={()=>setCancelingInvitation(null)}>Volver</button>
+            <button type="button" className="btn smart-action-danger" disabled={savingKey==='invitation-cancel'} onClick={cancelInvitation}>{savingKey==='invitation-cancel'?'Cancelando…':'Cancelar invitación'}</button>
+          </div>
+        </div>}
+      </SmartRhModal>
+
       <SmartRhModal open={Boolean(resending)} onClose={() => { setResending(null); setResendError(''); }}
         title="Reenviar invitación" eyebrow="Acceso pendiente" size="compact" busy={savingKey.startsWith('resend-')}
         description={resending?.existingUserId ? "Se enviará un enlace nuevo a esta cuenta existente. No se duplicará el usuario. Su contraseña solo cambiará si acepta el enlace y establece una nueva." : "Se enviará un enlace nuevo. El enlace anterior dejará de ser válido."}>
@@ -1047,7 +1122,11 @@ export default function Usuarios() {
                       </td>
 
                       <td>
-                        {u.invitation ? <button type="button" className="btn btn-small smart-action-correct" onClick={() => startResend(u.invitation!)}>Reenviar invitación</button> : <>
+                        {u.invitation ? <div className="users-row-actions">
+                          <button type="button" className="btn btn-small smart-action-correct" disabled={Boolean(savingKey)} onClick={() => startResend(u.invitation!)}>Reenviar invitación</button>
+                          <button type="button" className="btn btn-small smart-action-correct" disabled={Boolean(savingKey)} onClick={() => startInvitationEdit(u.invitation!)}>Editar invitación</button>
+                          <button type="button" className="btn btn-small smart-action-danger" disabled={Boolean(savingKey)} onClick={() => { setCancelingInvitation(u.invitation!);setInvitationCancelError(''); }}>Cancelar invitación</button>
+                        </div> : <>
                         <div className="users-row-actions">
                           <button type="button" className="btn btn-small smart-action-correct" disabled={!u.activo || Boolean(savingKey)} onClick={() => startExistingResend(u)} title={!u.activo ? 'Activa la cuenta antes de enviar una invitación.' : 'Enviar un enlace nuevo para acceder a esta cuenta.'}>Reenviar invitación</button>
                           <button type="button" className="btn btn-small smart-action-correct" onClick={() => startEdit(u)}>
