@@ -1,3 +1,4 @@
+import AdminAccessShowcase from './AdminAccessShowcase';
 import { useState } from 'react';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { api, setAuthToken } from '../../services/api';
@@ -76,7 +77,7 @@ export default function VerifyLoginCode() {
   };
 
   return (
-    <div className="auth-page auth-page-premium">
+    <div className={`auth-page auth-page-premium${adminFlow ? ' auth-page-admin-access' : ''}`}>
       <Link to="/" className="auth-back-home">
         ← Volver al sitio principal
       </Link>
@@ -87,6 +88,7 @@ export default function VerifyLoginCode() {
       <div className="bg-shape bg-shape-bottom-right-small" />
 
       <div className="auth-premium-grid">
+        {adminFlow ? <AdminAccessShowcase /> : (
         <div className="auth-showcase-card">
           <div className="auth-showcase-badge">Segundo paso de seguridad</div>
 
@@ -122,6 +124,7 @@ export default function VerifyLoginCode() {
             </div>
           </div>
         </div>
+        )}
 
         <div className="auth-wrapper auth-wrapper-premium">
           <div className="auth-brand-block">
