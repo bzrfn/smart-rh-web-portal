@@ -1,0 +1,30 @@
+import React from 'react';
+import { jest } from '@jest/globals';
+import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
+import { api } from '../services/api';
+import { AuthProvider } from '../app/auth/AuthContext';
+import FeedbackHost from '../components/FeedbackHost';
+import { feedback } from '../services/feedback';
+import Usuarios from '../modules/usuarios/Usuarios';
+import AdminInvitationAccept from '../modules/dashboard/AdminInvitationAccept';
+const id='a'.repeat(64),token='b'.repeat(64);
+const preview={correo:'invited@example.invalid',tipoCuenta:'empleado',fechaIngreso:'2026-11-09',diasVacaciones:12,requiresProfileCompletion:true,existingAccount:false,perfil:{nombre:'',apellido:'',telefono:'',direccion:''}};
+function page(query=`?invitationId=${id}&token=${token}&tipoCuenta=empleado`){return render(<MemoryRouter initialEntries={['/activar-cuenta'+query]}><AdminInvitationAccept /></MemoryRouter>);}
+function mockPreview(accept:any={data:{ok:true,user:{role:'empleado'},message:'Cuenta activada correctamente'}}){return jest.spyOn(api,'post').mockImplementation(async(url:any)=>{if(url==='/auth/invitations/inspect')return{data:{ok:true,invitation:preview}};if(accept instanceof Error)throw accept;return accept;});}
+async function fill(){await screen.findByText('invited@example.invalid');for(const[label,value]of [['Nombre(s)','María'],['Apellidos','Pérez'],['Teléfono','7221234567'],['Dirección','Calle de Prueba 123'],['Contraseña','Only-For-Tests-123'],['Confirmar contraseña','Only-For-Tests-123']])fireEvent.change(screen.getByLabelText(label,{exact:true}),{target:{value}});}
+afterEach(()=>{cleanup();jest.restoreAllMocks();localStorage.clear();feedback.clear();});
+it('administrator sends only email, role and joining date, closes and confirms the modal',async()=>{
+ localStorage.setItem('rrhh_auth',JSON.stringify({token:'test',user:{id:1,role:'admin'}}));jest.spyOn(api,'get').mockResolvedValue({data:{ok:true,users:[],invitations:[]}});const post=jest.spyOn(api,'post').mockResolvedValue({data:{ok:true,message:'Invitación enviada correctamente'}});
+ render(<AuthProvider><Usuarios/><FeedbackHost/></AuthProvider>);fireEvent.click(screen.getByRole('button',{name:'Gestionar usuarios'}));fireEvent.click(screen.getByRole('button',{name:/Invitar usuario|Nuevo usuario|Invitar nuevo usuario/}));
+ const dialog=screen.getByRole('dialog',{name:'Invitar nuevo usuario'});expect(within(dialog).queryByLabelText('Nombre')).not.toBeInTheDocument();expect(within(dialog).queryByLabelText('Teléfono')).not.toBeInTheDocument();expect(within(dialog).queryByLabelText('Días de vacaciones')).not.toBeInTheDocument();
+ fireEvent.change(within(dialog).getByLabelText('Correo'),{target:{value:'new@example.invalid'}});fireEvent.change(within(dialog).getByLabelText('Fecha de ingreso'),{target:{value:'2026-11-09'}});fireEvent.click(within(dialog).getByRole('button',{name:'Enviar invitación'}));
+ await waitFor(()=>expect(screen.queryByRole('dialog')).not.toBeInTheDocument());expect(post.mock.calls[0][1]).toEqual({correo:'new@example.invalid',tipo_cuenta:'empleado',fecha_ingreso:'2026-11-09'});expect(screen.getByRole('status')).toHaveTextContent('Invitación enviada');
+});
+it('verifies the link before displaying its assigned data and blocks edits to assigned fields',async()=>{mockPreview();page();await screen.findByText(preview.correo);expect(screen.getByText('Empleado')).toBeInTheDocument();expect(screen.getByText('2026-11-09')).toBeInTheDocument();expect(screen.queryByLabelText('Correo')).not.toBeInTheDocument();expect(screen.queryByRole('combobox')).not.toBeInTheDocument();expect(screen.getByLabelText('Teléfono')).toBeRequired();});
+it('submits personal fields and shows a success screen only after a confirmed activation',async()=>{const post=mockPreview();page();await fill();fireEvent.click(screen.getByRole('button',{name:'Guardar mis datos y activar cuenta'}));await screen.findByRole('heading',{name:'Tu cuenta está lista'});const call=post.mock.calls.find(x=>x[0]==='/auth/invitations/accept');expect(call?.[1]).toEqual({invitationId:id,token,tipoCuenta:'empleado',contrasena:'Only-For-Tests-123',perfil:{nombre:'María',apellido:'Pérez',telefono:'7221234567',direccion:'Calle de Prueba 123'}});expect(screen.queryByLabelText('Teléfono')).not.toBeInTheDocument();});
+it('retains personal data and does not show success if acceptance fails',async()=>{mockPreview(new Error('Network failure'));page();await fill();fireEvent.click(screen.getByRole('button',{name:'Guardar mis datos y activar cuenta'}));await screen.findByRole('alert');expect(screen.getByLabelText('Nombre(s)')).toHaveValue('María');expect(screen.queryByRole('heading',{name:'Tu cuenta está lista'})).not.toBeInTheDocument();});
+it('does not send acceptance when passwords differ',async()=>{const post=mockPreview();page();await fill();fireEvent.change(screen.getByLabelText('Confirmar contraseña'),{target:{value:'different-password'}});fireEvent.click(screen.getByRole('button',{name:'Guardar mis datos y activar cuenta'}));expect(screen.getByRole('alert')).toHaveTextContent('no coinciden');expect(post.mock.calls.filter(x=>x[0]==='/auth/invitations/accept')).toHaveLength(0);});
+it('invalid URL cannot reveal a profile or call the API',()=>{const post=mockPreview();page('?invitationId=invalid&token=invalid');expect(screen.getByRole('alert')).toHaveTextContent('inválida');expect(post).not.toHaveBeenCalled();});
+it('cannot use an existingAccount query flag to bypass the required profile',async()=>{mockPreview();page(`?invitationId=${id}&token=${token}&tipoCuenta=empleado&existingAccount=1`);await screen.findByLabelText('Nombre(s)');expect(screen.getByLabelText('Nombre(s)')).toBeRequired();});
+it('supports legacy account-recovery invitations without resetting existing personal data',async()=>{jest.spyOn(api,'post').mockResolvedValue({data:{ok:true,invitation:{...preview,requiresProfileCompletion:false,existingAccount:true}}});page();await screen.findByText(/La cuenta ya existe/);expect(screen.queryByLabelText('Teléfono')).not.toBeInTheDocument();});
