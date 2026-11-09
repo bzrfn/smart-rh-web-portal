@@ -1,0 +1,18 @@
+.invitation-accept-page { padding-block: 32px; }
+.invitation-accept-card { width: min(100%, 760px); max-width: 760px; }
+.invitation-assigned-data { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 16px; padding: 20px; margin: 24px 0; border: 1px solid var(--border); border-radius: 16px; background: var(--card-muted); }
+.invitation-assigned-data div { min-width: 0; }
+.invitation-assigned-data dt { font-size: .82rem; color: var(--text-muted); margin-bottom: 5px; }
+.invitation-assigned-data dd { margin: 0; font-weight: 650; overflow-wrap: anywhere; }
+.invitation-completion-form fieldset { min-width: 0; margin: 0; padding: 0; border: 0; }
+.invitation-completion-form legend { font-weight: 750; margin-bottom: 8px; }
+.invitation-personal-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 16px; margin-block: 16px; }
+.invitation-personal-grid label { min-width: 0; }
+.invitation-personal-grid input { box-sizing: border-box; width: 100%; }
+.invitation-address { grid-column: 1 / -1; }
+.invitation-completion-form button[type=submit] { width: 100%; min-height: 48px; }
+.invitation-return { margin-top: 24px; }
+@media (max-width: 560px) {
+  .invitation-personal-grid, .invitation-assigned-data { grid-template-columns: 1fr; }
+  .invitation-accept-page { padding-block: 16px; }
+}

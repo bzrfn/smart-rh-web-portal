@@ -92,7 +92,7 @@ function isActiveUser(user: User) {
 }
 
 function getUserFullName(user: User) {
-  return `${user.nombre || ''} ${user.apellido || ''}`.trim();
+  return `${user.nombre || ''} ${user.apellido || ''}`.trim() || (user.invitation ? 'Pendiente de completar perfil' : user.correo);
 }
 
 function paginate<T>(items: T[], page: number, pageSize: number) {
@@ -358,10 +358,12 @@ export default function Usuarios() {
       dias_vacaciones_disponibles: Number(form.dias_vacaciones_disponibles || 12),
     };
 
-    if (!basePayload.nombre || !basePayload.apellido || !basePayload.correo || !roleId) {
-      setError('Nombre, apellido, correo y rol son obligatorios.');
+    if (!basePayload.correo || !roleId || (editingId && (!basePayload.nombre || !basePayload.apellido))) {
+      setError(editingId ? 'Nombre, apellido, correo y rol son obligatorios.' : 'Correo y rol son obligatorios.');
       return;
     }
+
+    if (!editingId && !form.fecha_ingreso) { setError('Indica la fecha de ingreso.'); return; }
 
     if (!editingId) {
       try {
@@ -372,7 +374,8 @@ export default function Usuarios() {
         const { data } = await api.post(
           '/auth/invitations',
           {
-            ...basePayload,
+            correo: basePayload.correo,
+            fecha_ingreso: form.fecha_ingreso,
             tipo_cuenta: roleId === 1 ? 'admin' : 'empleado',
           },
           { ...authConfig, timeout: 45000 }
@@ -848,119 +851,51 @@ export default function Usuarios() {
             onClose={() => { resetForm(); setShowUserForm(false); }}
             eyebrow={editingId ? 'Edición de personal' : 'Invitación de personal'}
             title={editingId ? 'Editar usuario' : 'Invitar nuevo usuario'}
-            description={editingId ? 'Actualiza los datos de la cuenta y la relación laboral.' : 'SMART RH enviará un enlace personal para que la persona active su cuenta y defina su contraseña.'}
-            size="wide"
+            description={editingId ? 'Actualiza los datos de la cuenta y la relación laboral.' : 'Indica correo, rol y fecha de ingreso. La persona completará sus datos al aceptar.'}
+            size={editingId ? 'wide' : 'compact'}
             busy={savingKey === 'user-form'}
           >
-            <div className="users-modal-form">
-            {error && <p className="module-error" role="alert">{error}</p>}
-            <section className="users-form-section">
-              <div className="users-form-section-title"><span>01</span><div><strong>Datos de la cuenta</strong><small>Información con la que la persona será identificada en SMART RH.</small></div></div>
-
-            <div className="form-grid">
-              <label className="form-label">
-                Nombre
-                <input value={form.nombre} onChange={(e) => updateForm('nombre', e.target.value)} />
-              </label>
-
-              <label className="form-label">
-                Apellido
-                <input value={form.apellido} onChange={(e) => updateForm('apellido', e.target.value)} />
-              </label>
-
-              <label className="form-label">
-                Correo
-                <input type="email" value={form.correo} onChange={(e) => updateForm('correo', e.target.value)} />
-              </label>
-
-              <label className="form-label users-role-field">
-                Rol
-                <select value={form.rol_id} onChange={(e) => updateForm('rol_id', e.target.value)}>
-                  <option
-                    value="1"
-                    disabled={
-                      Boolean(editingId) &&
-                      !users.some(
-                        (candidate) =>
-                          candidate.id === editingId &&
-                          isAdminUser(candidate)
-                      )
-                    }
-                  >
-                    Administrador
-                  </option>
-                  <option value="2">Empleado</option>
-                </select>
-              </label>
-
-              {!editingId && (
-                <p className="module-info">
-                  La persona recibirá una invitación en este correo. El enlace es personal,
-                  vence en 30 minutos y permite establecer su propia contraseña.
-                </p>
-              )}
-            </div>
-            </section>
-
-            <section className="users-form-section">
-              <div className="users-form-section-title"><span>02</span><div><strong>Contacto</strong><small>Información para comunicación y expediente interno.</small></div></div>
-              <div className="form-grid">
-
-              <label className="form-label">
-                Teléfono
-                <input value={form.telefono} onChange={(e) => updateForm('telefono', e.target.value)} />
-              </label>
-
-              <label className="form-label">
-                Dirección
-                <input value={form.direccion} onChange={(e) => updateForm('direccion', e.target.value)} />
-              </label>
+            <form className="users-modal-form" onSubmit={(event) => { event.preventDefault(); void saveUser(); }}>
+              {error && <p className="module-error" role="alert">{error}</p>}
+              <section className="users-form-section">
+                <div className="users-form-section-title"><span>01</span><div><strong>{editingId ? 'Datos de la cuenta' : 'Datos de la invitación'}</strong><small>{editingId ? 'Información de la persona y su cuenta.' : 'La persona completará su nombre y contacto al aceptar.'}</small></div></div>
+                <div className="form-grid">
+                  {editingId && <>
+                    <label className="form-label">Nombre<input required maxLength={100} value={form.nombre} onChange={(e) => updateForm('nombre', e.target.value)} /></label>
+                    <label className="form-label">Apellido<input required maxLength={100} value={form.apellido} onChange={(e) => updateForm('apellido', e.target.value)} /></label>
+                  </>}
+                  <label className="form-label">Correo<input required type="email" autoComplete="email" maxLength={191} value={form.correo} onChange={(e) => updateForm('correo', e.target.value)} /></label>
+                  <label className="form-label users-role-field">Rol
+                    <select required value={form.rol_id} onChange={(e) => updateForm('rol_id', e.target.value)}>
+                      <option value="1" disabled={Boolean(editingId) && !users.some((candidate) => candidate.id === editingId && isAdminUser(candidate))}>Administrador</option>
+                      <option value="2">Empleado</option>
+                    </select>
+                  </label>
+                  {!editingId && <label className="form-label">Fecha de ingreso<input required type="date" min="1900-01-01" max="2100-12-31" value={form.fecha_ingreso} onChange={(e) => updateForm('fecha_ingreso', e.target.value)} /></label>}
+                </div>
+                {!editingId && <p className="module-info">Vacaciones iniciales: <strong>12 días automáticos</strong>. El correo, rol y fecha de ingreso quedarán asignados a esta invitación. La persona completará sus datos y creará su contraseña mediante un enlace personal de 30 minutos.</p>}
+              </section>
+              {editingId && <>
+                <section className="users-form-section">
+                  <div className="users-form-section-title"><span>02</span><div><strong>Contacto</strong><small>Información para comunicación y expediente interno.</small></div></div>
+                  <div className="form-grid">
+                    <label className="form-label">Teléfono<input type="tel" maxLength={30} value={form.telefono} onChange={(e) => updateForm('telefono', e.target.value)} /></label>
+                    <label className="form-label">Dirección<input maxLength={500} value={form.direccion} onChange={(e) => updateForm('direccion', e.target.value)} /></label>
+                  </div>
+                </section>
+                <section className="users-form-section">
+                  <div className="users-form-section-title"><span>03</span><div><strong>Relación laboral</strong><small>Datos de la cuenta existente.</small></div></div>
+                  <div className="form-grid">
+                    <label className="form-label">Fecha de ingreso<input type="date" value={form.fecha_ingreso} onChange={(e) => updateForm('fecha_ingreso', e.target.value)} /></label>
+                    <label className="form-label">Días de vacaciones<input type="number" min={0} value={form.dias_vacaciones_disponibles} onChange={(e) => updateForm('dias_vacaciones_disponibles', e.target.value)} /></label>
+                  </div>
+                </section>
+              </>}
+              <div className="users-form-actions">
+                <button className="btn" type="submit" disabled={savingKey === 'user-form'}>{savingKey === 'user-form' ? 'Guardando…' : editingId ? 'Actualizar usuario' : 'Enviar invitación'}</button>
+                <button className="btn btn-secondary" type="button" disabled={savingKey === 'user-form'} onClick={() => { resetForm(); setShowUserForm(false); }}>Cancelar</button>
               </div>
-            </section>
-
-            <section className="users-form-section">
-              <div className="users-form-section-title"><span>03</span><div><strong>Relación laboral</strong><small>Fecha de ingreso y saldo inicial de vacaciones.</small></div></div>
-              <div className="form-grid">
-
-              <label className="form-label">
-                Fecha de ingreso
-                <input
-                  type="date"
-                  value={form.fecha_ingreso}
-                  onChange={(e) => updateForm('fecha_ingreso', e.target.value)}
-                />
-              </label>
-
-              <label className="form-label">
-                Días de vacaciones
-                <input
-                  type="number"
-                  min={0}
-                  value={form.dias_vacaciones_disponibles}
-                  onChange={(e) => updateForm('dias_vacaciones_disponibles', e.target.value)}
-                />
-              </label>
-            </div>
-            </section>
-
-            <div className="users-form-actions">
-              <button className="btn" type="button" disabled={savingKey === 'user-form'} onClick={saveUser}>
-                {
-                  savingKey === 'user-form'
-                    ? 'Guardando...'
-                    : editingId
-                      ? 'Actualizar usuario'
-                      : 'Enviar invitación'
-                }
-              </button>
-
-              {editingId && (
-                <button className="btn btn-secondary" type="button" onClick={() => { resetForm(); setShowUserForm(false); }}>
-                  Cancelar edición
-                </button>
-              )}
-            </div>
-            </div>
+            </form>
           </SmartRhModal>
 
           <div className="module-card users-crud-card">
