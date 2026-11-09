@@ -3,6 +3,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { api } from '../../services/api';
 import { useAuth } from '../../app/auth/AuthContext';
 import SmartRhModal from '../../components/SmartRhModal';
+import UserActions from './UserActions';
+import './Usuarios.css';
 
 type User = {
   invitation?: PendingInvitation;
@@ -20,7 +22,7 @@ type User = {
 };
 
 type PendingInvitation = {
-  existingUserId?: number; invitation_id: string; invite_email: string; nombre: string; apellido: string;
+  invitation_id: string; invite_email: string; nombre: string; apellido: string;
   account_type: 'admin' | 'empleado' | null; telefono: string | null; direccion: string | null;
   fecha_ingreso: string | null; dias_vacaciones_disponibles: number;
   created_at: string; expires_at: string; delivery_failed_at: string | null;
@@ -120,6 +122,9 @@ export default function Usuarios() {
   const [invitationEmail, setInvitationEmail] = useState('');
   const [invitationRole, setInvitationRole] = useState('');
   const [invitationEditError, setInvitationEditError] = useState('');
+  const [removingUser, setRemovingUser] = useState<User | null>(null);
+  const [removalEmail, setRemovalEmail] = useState('');
+  const [removalError, setRemovalError] = useState('');
   const [cancelingInvitation, setCancelingInvitation] = useState<PendingInvitation | null>(null);
   const [invitationCancelError, setInvitationCancelError] = useState('');
   const [now, setNow] = useState(Date.now());
@@ -441,21 +446,13 @@ export default function Usuarios() {
   function startResend(invitation: PendingInvitation) {
     setResending(invitation); setResendRole(invitation.account_type || ''); setResendError('');
   }
-  function startExistingResend(account: User) {
-    if (!account.activo) return;
-    setResending({ existingUserId: account.id, invitation_id: `user-${account.id}`, invite_email: account.correo,
-      nombre: account.nombre, apellido: account.apellido, account_type: isAdminUser(account) ? 'admin' : 'empleado',
-      telefono: account.telefono || null, direccion: account.direccion || null, fecha_ingreso: account.fecha_ingreso || null,
-      dias_vacaciones_disponibles: account.dias_vacaciones_disponibles, created_at: '2000-01-01T00:00:00Z', expires_at: '', delivery_failed_at: null });
-    setResendRole(isAdminUser(account) ? 'admin' : 'empleado'); setResendError('');
-  }
   async function resendInvitation() {
     if (!resending || savingKey.startsWith('resend-')) return;
     if (!resendRole) { setResendError('Selecciona el rol de la cuenta antes de reenviar.'); return; }
     const target = resending;
     try {
       setSavingKey(`resend-${target.invitation_id}`); setResendError('');
-      const { data } = await api.post(target.existingUserId ? `/auth/invitations/users/${target.existingUserId}/resend` : `/auth/invitations/${target.invitation_id}/resend`, { tipo_cuenta: resendRole }, { ...authConfig, timeout: 45000 });
+      const { data } = await api.post(`/auth/invitations/${target.invitation_id}/resend`, { tipo_cuenta: resendRole }, { ...authConfig, timeout: 45000 });
       assertSaved(data, 'No se pudo confirmar el reenvío.');
       setResending(null);
       feedback.success(`Invitación reenviada a ${target.invite_email}. El nuevo enlace vence en ${data.expiresInMinutes || 30} minutos.`);
@@ -467,7 +464,7 @@ export default function Usuarios() {
         const list: PendingInvitation[] = pending.data?.invitations || [];
         setInvitations(list);
         const replacement = list.find(item => item.invite_email === target.invite_email);
-        if (replacement && !target.existingUserId) setResending(replacement);
+        if (replacement) setResending(replacement);
       } catch { /* Keep the selected person's details until the operator closes the form. */ }
     } finally { setSavingKey(''); }
   }
@@ -651,28 +648,21 @@ export default function Usuarios() {
     }
   }
 
-  async function deleteUser(userId: number) {
-    if (!token) return;
-
-    const confirmed = window.confirm('¿Deseas desactivar este usuario?');
-    if (!confirmed) return;
-
+  async function deleteUser(event: React.FormEvent) {
+    event.preventDefault();
+    if (!token || !removingUser || savingKey || removalEmail.trim().toLowerCase() !== removingUser.correo.toLowerCase()) return;
+    const target = removingUser;
     try {
-      setSavingKey(`${userId}-delete`);
-      setError('');
-      setMessage('');
-
-      const confirmedMutation4 = await api.delete(`/users/${userId}`, authConfig);
-      assertSaved(confirmedMutation4.data, 'No se pudo confirmar la operación.');
-
-      setUsers((prev) => prev.map((u) => (u.id === userId ? { ...u, activo: 0 } : u)));
-      setMessage('Usuario desactivado correctamente.');
-    } catch (e: any) {
-      setError(e?.response?.data?.message ?? 'No se pudo desactivar el usuario.');
-    } finally {
-      setSavingKey('');
-    }
+      setSavingKey(`${target.id}-remove`); setRemovalError('');
+      const result = await api.post(`/users/${target.id}/permanent-deletion`, { confirmEmail: removalEmail.trim() }, { ...authConfig, timeout: 120000 });
+      assertSaved(result.data, 'No se pudo confirmar la eliminación.');
+      setUsers(before => before.filter(account => account.id !== target.id)); setRemovingUser(null); setRemovalEmail('');
+      setMessage(result.data.cleanupPending ? 'Usuario eliminado. La limpieza de archivos requiere revisión con el identificador ' + result.data.operationId + '.' : 'Usuario y datos asociados eliminados correctamente. Respaldo privado conservado.');
+      void loadUsers();
+    } catch (cause: any) { setRemovalError(mutationError(cause, 'No se confirmó la eliminación. Conserva esta ventana y revisa el estado antes de reintentar.')); }
+    finally { setSavingKey(''); }
   }
+  function protectedAccount(account: User) { return account.id === user?.id || account.id === 1 || account.correo.toLowerCase() === 'brandonbernal413@gmail.com'; }
 
   if (!isAdmin) {
     return (
@@ -872,13 +862,24 @@ export default function Usuarios() {
         )}
       </div>
 
+      <SmartRhModal open={Boolean(removingUser)} onClose={() => setRemovingUser(null)} title="Eliminar usuario" eyebrow="Eliminación permanente" size="compact" busy={savingKey.endsWith('-remove')}
+        description="Esta acción elimina la cuenta desactivada y sus datos asociados. Se conservará un respaldo privado para recuperación administrativa.">
+        {removingUser && <form className="user-removal-form" onSubmit={deleteUser}>
+          <div className="invitation-readonly"><small>Cuenta seleccionada</small><strong>{getUserFullName(removingUser)}</strong><span>{removingUser.correo}</span></div>
+          <div className="user-removal-warning">Se eliminarán sus asistencias, solicitudes, documentos, conversaciones y permisos. Las revisiones que realizó se archivarán en el respaldo. Esta acción no se puede deshacer desde el portal.</div>
+          <label className="form-label">Escribe el correo para confirmar<input type="email" required autoComplete="off" spellCheck={false} value={removalEmail} disabled={Boolean(savingKey)} onChange={event => setRemovalEmail(event.target.value)} /></label>
+          {removalError && <p className="module-error" role="alert">{removalError}</p>}
+          <div className="smart-form-actions"><button type="button" className="btn btn-secondary" disabled={Boolean(savingKey)} onClick={() => setRemovingUser(null)}>Conservar usuario</button><button type="submit" className="btn smart-action-danger" disabled={Boolean(savingKey) || removalEmail.trim().toLowerCase() !== removingUser.correo.toLowerCase()}>{savingKey ? 'Eliminando…' : 'Eliminar definitivamente'}</button></div>
+        </form>}
+      </SmartRhModal>
+
       <SmartRhModal open={Boolean(editingInvitation)} onClose={() => setEditingInvitation(null)}
         title="Editar invitación" eyebrow="Correo pendiente" size="compact" busy={savingKey==='invitation-email'}
         description="Corrige el correo y envía un enlace nuevo. El enlace anterior dejará de funcionar; se conservarán el rol y la fecha de ingreso.">
         {editingInvitation && <form onSubmit={saveInvitationEmail} className="invitation-resend-form">
-          <p>Correo anterior: <strong>{editingInvitation.invite_email}</strong></p>
+          <div className="invitation-readonly"><small>Correo anterior</small><strong>{editingInvitation.invite_email}</strong></div>
           <label className="form-label">Correo corregido<input type="email" required maxLength={191} autoComplete="email" spellCheck={false} value={invitationEmail} disabled={savingKey==='invitation-email'} onChange={event=>setInvitationEmail(event.target.value)} /></label>
-          {editingInvitation.account_type ? <p>Rol: {editingInvitation.account_type==='admin'?'Administrador':'Empleado'} · Ingreso: {normalizeDate(editingInvitation.fecha_ingreso)||'No registrado'}</p> :
+          {editingInvitation.account_type ? <div className="invitation-readonly"><small>Datos que se conservan</small><span>{editingInvitation.account_type==='admin'?'Administrador':'Empleado'} · Ingreso: {normalizeDate(editingInvitation.fecha_ingreso)||'No registrado'}</span></div> :
             <label className="form-label">Confirma el rol<select required value={invitationRole} disabled={savingKey==='invitation-email'} onChange={event=>setInvitationRole(event.target.value)}><option value="">Selecciona un rol</option><option value="empleado">Empleado</option><option value="admin">Administrador</option></select></label>}
           {invitationEditError && <p className="module-error" role="alert">{invitationEditError}</p>}
           <div className="smart-form-actions">
@@ -902,7 +903,7 @@ export default function Usuarios() {
 
       <SmartRhModal open={Boolean(resending)} onClose={() => { setResending(null); setResendError(''); }}
         title="Reenviar invitación" eyebrow="Acceso pendiente" size="compact" busy={savingKey.startsWith('resend-')}
-        description={resending?.existingUserId ? "Se enviará un enlace nuevo a esta cuenta existente. No se duplicará el usuario. Su contraseña solo cambiará si acepta el enlace y establece una nueva." : "Se enviará un enlace nuevo. El enlace anterior dejará de ser válido."}>
+        description="Se enviará un enlace nuevo a la invitación pendiente. El enlace anterior dejará de ser válido.">
         {resending && <div className="invitation-resend-form">
           <p><strong>{resending.nombre} {resending.apellido}</strong><br />{resending.invite_email}</p>
           {resending.account_type ? <p>Rol: {resending.account_type === 'admin' ? 'Administrador' : 'Empleado'}</p> :
@@ -1065,7 +1066,7 @@ export default function Usuarios() {
                       <td>
                         <div className="users-table-person">
                           <span>{`${u.nombre?.charAt(0) || ''}${u.apellido?.charAt(0) || ''}`.toUpperCase()}</span>
-                          <div><div className="table-main-text">{u.nombre} {u.apellido}</div><div className="table-secondary-text">{u.correo}</div></div>
+                          <div><div className="table-main-text">{u.invitation ? 'Invitación pendiente' : getUserFullName(u)}</div><div className="table-secondary-text">{u.correo}</div></div>
                         </div>
                         <div className="table-secondary-text">
                           Ingreso: {normalizeDate(u.fecha_ingreso) || 'No registrado'}
@@ -1084,14 +1085,7 @@ export default function Usuarios() {
                       </td>
 
                       <td>
-                        {u.invitation ? <span className="status-pill invitation-pending">{u.invitation.delivery_failed_at ? 'Envío no confirmado' : new Date(u.invitation.expires_at).getTime() <= now ? 'Invitación vencida' : 'Pendiente de aceptación'}</span> : <button
-                          type="button"
-                          className={`status-pill ${u.activo ? 'active' : 'inactive'}`}
-                          disabled={savingKey === `${u.id}-active`}
-                          onClick={() => toggleActive(u)}
-                        >
-                          {u.activo ? 'Activo' : 'Inactivo'}
-                        </button>}
+                        {u.invitation ? <span className="status-pill invitation-pending">{u.invitation.delivery_failed_at ? 'Envío no confirmado' : new Date(u.invitation.expires_at).getTime() <= now ? 'Invitación vencida' : 'Pendiente de aceptación'}</span> : <span className={`status-pill ${u.activo ? 'active' : 'inactive'}`}>{u.activo ? 'Activo' : 'Inactivo'}</span>}
                       </td>
 
                       <td>
@@ -1122,27 +1116,15 @@ export default function Usuarios() {
                       </td>
 
                       <td>
-                        {u.invitation ? <div className="users-row-actions">
-                          <button type="button" className="btn btn-small smart-action-correct" disabled={Boolean(savingKey)} onClick={() => startResend(u.invitation!)}>Reenviar invitación</button>
-                          <button type="button" className="btn btn-small smart-action-correct" disabled={Boolean(savingKey)} onClick={() => startInvitationEdit(u.invitation!)}>Editar invitación</button>
-                          <button type="button" className="btn btn-small smart-action-danger" disabled={Boolean(savingKey)} onClick={() => { setCancelingInvitation(u.invitation!);setInvitationCancelError(''); }}>Cancelar invitación</button>
-                        </div> : <>
-                        <div className="users-row-actions">
-                          <button type="button" className="btn btn-small smart-action-correct" disabled={!u.activo || Boolean(savingKey)} onClick={() => startExistingResend(u)} title={!u.activo ? 'Activa la cuenta antes de enviar una invitación.' : 'Enviar un enlace nuevo para acceder a esta cuenta.'}>Reenviar invitación</button>
-                          <button type="button" className="btn btn-small smart-action-correct" onClick={() => startEdit(u)}>
-                            Editar
-                          </button>
-
-                          <button
-                            type="button"
-                            className="btn btn-small smart-action-danger"
-                            disabled={savingKey === `${u.id}-delete`}
-                            onClick={() => deleteUser(u.id)}
-                          >
-                            Desactivar
-                          </button>
-                        </div>
-                        </>}
+                        <UserActions email={u.correo} disabled={Boolean(savingKey)} actions={u.invitation ? [
+                          { label: 'Reenviar invitación', hint: 'Enviar un enlace nuevo al mismo correo', run: () => startResend(u.invitation!) },
+                          { label: 'Editar invitación', hint: 'Corregir el correo de destino', run: () => startInvitationEdit(u.invitation!) },
+                          { label: 'Cancelar invitación', hint: 'Invalidar el enlace pendiente', danger: true, run: () => { setCancelingInvitation(u.invitation!); setInvitationCancelError(''); } },
+                        ] : [
+                          { label: 'Editar usuario', hint: 'Datos personales y relación laboral', run: () => startEdit(u) },
+                          { label: u.activo ? 'Desactivar usuario' : 'Activar usuario', hint: protectedAccount(u) ? 'Cuenta protegida' : 'Conservar los datos y cambiar el acceso', disabled: protectedAccount(u), run: () => toggleActive(u) },
+                          { label: 'Eliminar usuario', hint: protectedAccount(u) ? 'Cuenta protegida' : u.activo ? 'Desactiva la cuenta antes de eliminar' : 'Eliminar datos con respaldo privado', danger: true, disabled: protectedAccount(u) || Boolean(u.activo), run: () => { setRemovingUser(u); setRemovalEmail(''); setRemovalError(''); } },
+                        ]} />
                       </td>
                     </tr>
                   ))}
