@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { api } from '../../services/api';
 import { assertSaved } from '../../services/feedback';
+import SmartRhIcon from '../../components/SmartRhIcon';
 import PasswordField from '../../components/PasswordField';
 import './AdminInvitationAccept.css';
 
@@ -60,7 +61,7 @@ export default function AdminInvitationAccept() {
       });
       assertSaved(data, 'No se pudo confirmar la activación.');
       setSuccess(data?.message || 'Cuenta activada correctamente.');
-      setActivatedRole(String(data?.user?.role || '').toLowerCase());
+      setActivatedRole(String(data?.user?.role || preview.tipoCuenta).toLowerCase());
       setContrasena(''); setConfirmar(''); setProfile(EMPTY_PROFILE);
     } catch (cause: any) {
       setError(cause?.response?.data?.message || 'No se pudo confirmar la activación. Tus datos siguen en el formulario; reintenta o solicita un enlace nuevo si venció.');
@@ -68,14 +69,16 @@ export default function AdminInvitationAccept() {
   }
 
   return <main className="auth-page invitation-accept-page">
-    <div className="auth-card invitation-accept-card" aria-busy={checking || loading}>
+    <div className={`auth-card invitation-accept-card ${success ? 'invitation-activated' : ''}`} aria-busy={checking || loading}>
       <div className="auth-showcase-badge">SMART RH · Invitación personal</div>
+      <div className="invitation-stage-icon"><SmartRhIcon name={success ? 'check' : 'user'} /></div>
+      {!success && <ol className="invitation-steps" aria-label="Pasos de activación"><li className={preview ? 'complete' : 'current'}>1. Verificar enlace</li><li className={preview ? 'current' : ''}>2. Completar perfil</li><li>3. Cuenta lista</li></ol>}
       <h1>{success ? 'Tu cuenta está lista' : 'Activa tu cuenta'}</h1>
-      <p>{success ? 'La activación terminó correctamente. Ya puedes iniciar sesión.' : 'Verifica tu invitación y completa la información para empezar.'}</p>
+      {!success && <p className="invitation-lead">Tu acceso a SMART RH comienza aquí. Verifica tus datos y completa tu perfil.</p>}
       {checking && <p className="module-info" role="status">Verificando tu invitación…</p>}
       {error && <p className="module-error" role="alert">{error}</p>}
       {!checking && !preview && !success && linkValido && <button className="btn btn-secondary" type="button" onClick={() => setAttempt((value) => value + 1)}>Volver a verificar</button>}
-      {success && <div className="module-info" role="status">{success}</div>}
+      {success && <div className="invitation-success-message" role="status"><p>{success}</p><p className="auth-helper-text">{activatedRole === 'admin' ? 'Continúa al acceso administrativo con tu correo y la contraseña que acabas de crear.' : 'Ya puedes ingresar a la aplicación SMART RH con tu correo y tu nueva contraseña.'}</p></div>}
       {preview && !success && <>
         <dl className="invitation-assigned-data" aria-label="Datos asignados por administración">
           <div><dt>Correo</dt><dd>{preview.correo}</dd></div>
@@ -104,7 +107,7 @@ export default function AdminInvitationAccept() {
           </fieldset>
         </form>
       </>}
-      <div className="invitation-return"><Link to={activatedRole === 'admin' ? '/admin/acceso' : '/'}>{activatedRole === 'admin' ? 'Ir al acceso administrativo' : 'Volver al inicio'}</Link></div>
+      <div className="invitation-return"><Link className={success ? 'invitation-primary-link' : 'invitation-home-link'} to={activatedRole === 'admin' ? '/admin/acceso' : '/'}>{activatedRole === 'admin' ? 'Ir al acceso administrativo' : 'Volver al inicio'}{success && <SmartRhIcon name="send" />}</Link></div>
     </div>
   </main>;
 }

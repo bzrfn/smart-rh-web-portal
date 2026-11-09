@@ -28,3 +28,11 @@ it('does not send acceptance when passwords differ',async()=>{const post=mockPre
 it('invalid URL cannot reveal a profile or call the API',()=>{const post=mockPreview();page('?invitationId=invalid&token=invalid');expect(screen.getByRole('alert')).toHaveTextContent('inválida');expect(post).not.toHaveBeenCalled();});
 it('cannot use an existingAccount query flag to bypass the required profile',async()=>{mockPreview();page(`?invitationId=${id}&token=${token}&tipoCuenta=empleado&existingAccount=1`);await screen.findByLabelText('Nombre(s)');expect(screen.getByLabelText('Nombre(s)')).toBeRequired();});
 it('supports legacy account-recovery invitations without resetting existing personal data',async()=>{jest.spyOn(api,'post').mockResolvedValue({data:{ok:true,invitation:{...preview,requiresProfileCompletion:false,existingAccount:true}}});page();await screen.findByText(/La cuenta ya existe/);expect(screen.queryByLabelText('Teléfono')).not.toBeInTheDocument();});
+
+it('offers the administrative access CTA only after confirmed admin activation',async()=>{
+ jest.spyOn(api,'post').mockImplementation(async(url:any)=>url==='/auth/invitations/inspect'?{data:{ok:true,invitation:{...preview,tipoCuenta:'admin'}}}:{data:{ok:true,user:{role:'admin'},message:'Cuenta administrativa activada correctamente.'}});
+ page(`?invitationId=${id}&token=${token}&tipoCuenta=admin`);await fill();
+ expect(screen.queryByRole('link',{name:/Ir al acceso administrativo/})).not.toBeInTheDocument();
+ fireEvent.click(screen.getByRole('button',{name:'Guardar mis datos y activar cuenta'}));
+ const link=await screen.findByRole('link',{name:'Ir al acceso administrativo'});expect(link).toHaveAttribute('href','/admin/acceso');expect(link).toHaveClass('invitation-primary-link');expect(screen.getByRole('status')).toHaveTextContent('activada correctamente');
+});
