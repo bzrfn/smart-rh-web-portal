@@ -1,3 +1,4 @@
+import AdminAccessShowcase from './AdminAccessShowcase';
 import {
   useState,
 } from 'react';
@@ -202,7 +203,7 @@ export default function AdminLogin() {
 
 
   return (
-    <div className="auth-page auth-page-premium">
+    <div className="auth-page auth-page-premium auth-page-admin-access">
       <Link
         to="/"
         className="auth-back-home"
@@ -216,66 +217,7 @@ export default function AdminLogin() {
       <div className="bg-shape bg-shape-bottom-right-small" />
 
       <div className="auth-premium-grid">
-        <div className="auth-showcase-card">
-          <div className="auth-showcase-badge">
-            Autorización central validada
-          </div>
-
-          <h1 className="auth-showcase-title">
-            SMART RH
-          </h1>
-
-          <p className="auth-showcase-text">
-            El administrador general aprobó el acceso. Ahora escribe
-            el correo y la contraseña de tu propia cuenta.
-          </p>
-
-          <div className="auth-showcase-points">
-            <div className="auth-showcase-point">
-              <span className="auth-showcase-dot" />
-
-              <div>
-                <h3>
-                  Primer paso completado
-                </h3>
-
-                <p>
-                  El código anterior permitió continuar al inicio de sesión.
-                </p>
-              </div>
-            </div>
-
-            <div className="auth-showcase-point">
-              <span className="auth-showcase-dot" />
-
-              <div>
-                <h3>
-                  Tu cuenta personal
-                </h3>
-
-                <p>
-                  Ingresa el correo y la contraseña de tu
-                  propia cuenta administrativa.
-                </p>
-              </div>
-            </div>
-
-            <div className="auth-showcase-point">
-              <span className="auth-showcase-dot" />
-
-              <div>
-                <h3>
-                  Segundo código de seguridad
-                </h3>
-
-                <p>
-                  Después de validar la contraseña recibirás
-                  un segundo código en tu correo personal.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
+        <AdminAccessShowcase />
 
         <div className="auth-wrapper auth-wrapper-premium">
           <form
