@@ -52,6 +52,8 @@ export default function AdminInvitationAccept() {
       ]
     );
 
+  const existingAccount = searchParams.get('existingAccount') === '1';
+
   const tipoCuenta =
     useMemo(
       () =>
@@ -250,7 +252,8 @@ export default function AdminInvitationAccept() {
 
         {!success && (
           <div className="form-grid">
-            <PasswordField
+            {existingAccount && <p className="auth-helper-text">Esta invitación corresponde a una cuenta existente. Al confirmar, conservarás tus datos y establecerás una contraseña nueva.</p>}
+          <PasswordField
               label="Contraseña"
               autoComplete="new-password"
               value={contrasena}

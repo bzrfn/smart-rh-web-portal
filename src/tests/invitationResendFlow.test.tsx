@@ -23,17 +23,18 @@ function mockDirectory(invitation: any = pending) {
 }
 async function openResend() {
   fireEvent.click(screen.getByRole('button', { name: 'Gestionar usuarios' }));
-  fireEvent.click(await screen.findByRole('button', { name: 'Reenviar invitación' }));
+  const row = (await screen.findByText(pending.invite_email)).closest('tr')!;
+  fireEvent.click(within(row).getByRole('button', { name: 'Reenviar invitación' }));
   return screen.getByRole('dialog', { name: 'Reenviar invitación' });
 }
 afterEach(() => { cleanup(); jest.restoreAllMocks(); feedback.clear(); localStorage.clear(); });
-it('busca por correo e incluye solamente las invitaciones pendientes en reenvío', async () => {
+it('busca por correo y permite reenviar a cuentas existentes e invitaciones pendientes', async () => {
   mockDirectory(); mount(<Usuarios />); await screen.findByText('Usuarios, permisos y vacaciones');
   fireEvent.click(screen.getByRole('button', { name: 'Gestionar usuarios' }));
-  await screen.findByRole('button', { name: 'Reenviar invitación' });
+  await screen.findByText(pending.invite_email);
   const input = screen.getByPlaceholderText('Nombre, correo, teléfono o dirección...');
   fireEvent.change(input, { target: { value: 'active@example.invalid' } });
-  expect(screen.queryByRole('button', { name: 'Reenviar invitación' })).not.toBeInTheDocument();
+  expect(screen.getAllByRole('button', { name: 'Reenviar invitación' })).toHaveLength(1);
   fireEvent.change(input, { target: { value: 'pending@example.invalid' } });
   expect(screen.getAllByRole('button', { name: 'Reenviar invitación' })).toHaveLength(1);
 });
@@ -124,3 +125,16 @@ for (const [name, Component, buttonName] of [['contratos', Contratos, 'Registrar
     expect(screen.getByRole('status')).toHaveTextContent('correctamente');
   });
 }
+
+it('reenvía a una cuenta existente sin intentar crear otro usuario', async () => {
+  mockDirectory(); const post = jest.spyOn(api, 'post').mockResolvedValue({ data: { ok: true, expiresInMinutes: 30 } });
+  mount(<Usuarios />); fireEvent.click(screen.getByRole('button', { name: 'Gestionar usuarios' }));
+  const row = (await screen.findAllByText(user.correo)).map(item => item.closest('tr')).find(Boolean)!;
+  fireEvent.click(within(row).getByRole('button', { name: 'Reenviar invitación' }));
+  const dialog = screen.getByRole('dialog', { name: 'Reenviar invitación' });
+  expect(dialog).toHaveTextContent('No se duplicará el usuario');
+  fireEvent.click(within(dialog).getByRole('button', { name: 'Reenviar invitación' }));
+  await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
+  expect(post.mock.calls[0][0]).toBe('/auth/invitations/users/2/resend');
+  expect(screen.getByRole('status')).toHaveTextContent(user.correo);
+});

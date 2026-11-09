@@ -20,7 +20,7 @@ type User = {
 };
 
 type PendingInvitation = {
-  invitation_id: string; invite_email: string; nombre: string; apellido: string;
+  existingUserId?: number; invitation_id: string; invite_email: string; nombre: string; apellido: string;
   account_type: 'admin' | 'empleado' | null; telefono: string | null; direccion: string | null;
   fecha_ingreso: string | null; dias_vacaciones_disponibles: number;
   created_at: string; expires_at: string; delivery_failed_at: string | null;
@@ -432,13 +432,21 @@ export default function Usuarios() {
   function startResend(invitation: PendingInvitation) {
     setResending(invitation); setResendRole(invitation.account_type || ''); setResendError('');
   }
+  function startExistingResend(account: User) {
+    if (!account.activo) return;
+    setResending({ existingUserId: account.id, invitation_id: `user-${account.id}`, invite_email: account.correo,
+      nombre: account.nombre, apellido: account.apellido, account_type: isAdminUser(account) ? 'admin' : 'empleado',
+      telefono: account.telefono || null, direccion: account.direccion || null, fecha_ingreso: account.fecha_ingreso || null,
+      dias_vacaciones_disponibles: account.dias_vacaciones_disponibles, created_at: '2000-01-01T00:00:00Z', expires_at: '', delivery_failed_at: null });
+    setResendRole(isAdminUser(account) ? 'admin' : 'empleado'); setResendError('');
+  }
   async function resendInvitation() {
     if (!resending || savingKey.startsWith('resend-')) return;
     if (!resendRole) { setResendError('Selecciona el rol de la cuenta antes de reenviar.'); return; }
     const target = resending;
     try {
       setSavingKey(`resend-${target.invitation_id}`); setResendError('');
-      const { data } = await api.post(`/auth/invitations/${target.invitation_id}/resend`, { tipo_cuenta: resendRole }, { ...authConfig, timeout: 45000 });
+      const { data } = await api.post(target.existingUserId ? `/auth/invitations/users/${target.existingUserId}/resend` : `/auth/invitations/${target.invitation_id}/resend`, { tipo_cuenta: resendRole }, { ...authConfig, timeout: 45000 });
       assertSaved(data, 'No se pudo confirmar el reenvío.');
       setResending(null);
       feedback.success(`Invitación reenviada a ${target.invite_email}. El nuevo enlace vence en ${data.expiresInMinutes || 30} minutos.`);
@@ -450,7 +458,7 @@ export default function Usuarios() {
         const list: PendingInvitation[] = pending.data?.invitations || [];
         setInvitations(list);
         const replacement = list.find(item => item.invite_email === target.invite_email);
-        if (replacement) setResending(replacement);
+        if (replacement && !target.existingUserId) setResending(replacement);
       } catch { /* Keep the selected person's details until the operator closes the form. */ }
     } finally { setSavingKey(''); }
   }
@@ -816,7 +824,7 @@ export default function Usuarios() {
 
       <SmartRhModal open={Boolean(resending)} onClose={() => { setResending(null); setResendError(''); }}
         title="Reenviar invitación" eyebrow="Acceso pendiente" size="compact" busy={savingKey.startsWith('resend-')}
-        description="Se enviará un enlace nuevo. El enlace anterior dejará de ser válido.">
+        description={resending?.existingUserId ? "Se enviará un enlace nuevo a esta cuenta existente. No se duplicará el usuario. Su contraseña solo cambiará si acepta el enlace y establece una nueva." : "Se enviará un enlace nuevo. El enlace anterior dejará de ser válido."}>
         {resending && <div className="invitation-resend-form">
           <p><strong>{resending.nombre} {resending.apellido}</strong><br />{resending.invite_email}</p>
           {resending.account_type ? <p>Rol: {resending.account_type === 'admin' ? 'Administrador' : 'Empleado'}</p> :
@@ -1106,6 +1114,7 @@ export default function Usuarios() {
                       <td>
                         {u.invitation ? <button type="button" className="btn btn-small smart-action-correct" onClick={() => startResend(u.invitation!)}>Reenviar invitación</button> : <>
                         <div className="users-row-actions">
+                          <button type="button" className="btn btn-small smart-action-correct" disabled={!u.activo || Boolean(savingKey)} onClick={() => startExistingResend(u)} title={!u.activo ? 'Activa la cuenta antes de enviar una invitación.' : 'Enviar un enlace nuevo para acceder a esta cuenta.'}>Reenviar invitación</button>
                           <button type="button" className="btn btn-small smart-action-correct" onClick={() => startEdit(u)}>
                             Editar
                           </button>
