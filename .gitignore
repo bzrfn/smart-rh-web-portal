@@ -23,3 +23,7 @@ yarn-error.log*
 .vscode/
 .idea/
 !.env.production
+
+# Publicación aislada Expo
+dist-expo/
+__pycache__/
