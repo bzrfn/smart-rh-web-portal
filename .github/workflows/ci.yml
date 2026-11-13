@@ -35,3 +35,9 @@ jobs:
         run: npm test
       - name: Validate 2
         run: npm run build
+      - name: Validate isolated Expo demo
+        run: npm run check:expo
+      - name: Validate Expo publication
+        run: python3 -B ops/expo/deploy.test.py
+      - name: Build isolated Expo demo
+        run: npm run build:expo
