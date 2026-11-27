@@ -1,0 +1,14 @@
+services:
+  vista:
+    image: nginx:stable-alpine
+    restart: unless-stopped
+    ports:
+      - '127.0.0.1:8094:80'
+    volumes:
+      - ./vista.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - laboratorio
+networks:
+  laboratorio:
+    external: true
+    name: ${RED_CI:-ci-net}
