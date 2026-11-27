@@ -41,3 +41,5 @@ jobs:
         run: python3 -B ops/expo/deploy.test.py
       - name: Build isolated Expo demo
         run: npm run build:expo
+      - name: Probar promoción y recuperación de la demo
+        run: python3 -B -m unittest discover -s ops/devops -p 'test_*.py'
