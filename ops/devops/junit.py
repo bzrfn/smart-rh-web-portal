@@ -29,6 +29,8 @@ def report(source, target):
         node.set("failures", str(len(node.findall("testcase/failure"))))
         node.set("errors", str(len(node.findall("testcase/error"))))
         node.set("skipped", str(len(node.findall("testcase/skipped"))))
+    for attr in ('tests', 'failures', 'errors', 'skipped'):
+        root.set(attr, str(sum(int(n.get(attr, '0')) for n in root)))
     # Jest puede incluir colores ANSI en las trazas de una prueba fallida.
     xml = ET.tostring(root, encoding="unicode")
     clean = re.sub(r"[^\x09\x0a\x0d\x20-\ud7ff\ue000-\ufffd\U00010000-\U0010ffff]", "", xml)

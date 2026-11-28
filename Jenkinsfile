@@ -27,6 +27,7 @@ pipeline {
                     steps { sh 'python3 ops/devops/jenkins.py validar' }
                     post {
                         always {
+                            archiveArtifacts artifacts: 'salida-ci/informes/**', allowEmptyArchive: true, fingerprint: true
                             script {
                                 if (fileExists('salida-ci/informes/junit.xml')) {
                                     junit 'salida-ci/informes/junit.xml'

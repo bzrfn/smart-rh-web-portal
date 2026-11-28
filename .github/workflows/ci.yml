@@ -1,6 +1,7 @@
 name: CI Portal
 
 on:
+  workflow_call:
   pull_request:
     branches: [main]
   push:
@@ -15,7 +16,10 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  devops-calidad:
+    uses: ./.github/workflows/devops-calidad.yml
   portal-ci:
+    needs: devops-calidad
     name: portal-ci
     runs-on: ubuntu-latest
     timeout-minutes: 15

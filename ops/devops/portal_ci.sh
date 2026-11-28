@@ -1,7 +1,9 @@
 #!/bin/sh
 set -eu
 mkdir -p informes-ci
+python3 ops/devops/profesional/secrets.py --mode dir
 npm ci --no-audit --no-fund
+python3 ops/devops/profesional/quality.py
 jest_code=0
 npm test -- --json --outputFile=informes-ci/jest.json || jest_code=$?
 if test -s informes-ci/jest.json; then
